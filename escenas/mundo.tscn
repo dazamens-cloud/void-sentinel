@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://g2yrog5jvrmx"]
 
-[ext_resource type="PackedScene" uid="uid://csoega3qhpbvk" path="res://escenas/nucleo.tscn" id="1_6wjgb"]
+[ext_resource type="PackedScene" uid="uid://dp22un4er5u5u" path="res://escenas/nucleo.tscn" id="1_6wjgb"]
 [ext_resource type="PackedScene" uid="uid://cpjq2dkjcufnf" path="res://escenas/ui/hud.tscn" id="2_glrvs"]
 [ext_resource type="Script" uid="uid://b2im4k3j1xta3" path="res://scripts/utils/GestorOleadas.gd" id="2_v12yk"]
 [ext_resource type="PackedScene" uid="uid://dgd5fpkdaq144" path="res://escenas/enemigos/EnemigoBasico.tscn" id="3_16hu1"]

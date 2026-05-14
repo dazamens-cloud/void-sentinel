@@ -19,6 +19,8 @@ func _ready() -> void:
 	timer_disparo.start()
 	
 	print("Núcleo listo. Timer iniciado con wait_time = ", timer_disparo.wait_time)
+	await get_tree().process_frame
+	queue_redraw()
 
 func _process(delta: float) -> void:
 	if esta_muerto: return
@@ -105,3 +107,15 @@ func _parpadeo_dano() -> void:
 	var t = create_tween()
 	t.tween_property(sprite, "self_modulate", Color(1.5, 0.2, 0.2), 0.05)
 	t.tween_property(sprite, "self_modulate", Color.WHITE, 0.1)
+
+func _draw() -> void:
+	var rango: float = Economia.get_rango_escaneo()
+	var pulso := 0.70 + 0.30 * sin(Time.get_ticks_msec() * 0.003)
+
+	# Círculo relleno transparente
+	draw_circle(Vector2.ZERO, rango,
+		Color(0.0, 0.85, 1.0, 0.05 * pulso))
+	
+	# Círculo de borde
+	draw_arc(Vector2.ZERO, rango, 0.0, TAU, 72,
+		Color(0.0, 0.85, 1.0, 0.55 * pulso), 2.5)
