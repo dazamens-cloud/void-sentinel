@@ -1,0 +1,33 @@
+[gd_scene format=3 uid="uid://cpjq2dkjcufnf"]
+
+[node name="HUD" type="CanvasLayer" unique_id=1199303299]
+process_mode = 2
+
+[node name="PanelSuperior" type="VBoxContainer" parent="." unique_id=1439065326]
+anchors_preset = 10
+anchor_right = 1.0
+offset_top = 20.0
+offset_bottom = 100.0
+grow_horizontal = 2
+grow_vertical = 0
+alignment = 1
+
+[node name="LblOleada" type="Label" parent="PanelSuperior" unique_id=1013926726]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "Oleada: 0"
+horizontal_alignment = 1
+
+[node name="LblDinero" type="Label" parent="PanelSuperior" unique_id=1809509759]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.9, 0.9, 0.2, 1)
+theme_override_font_sizes/font_size = 22
+text = "$ 50"
+horizontal_alignment = 1
+
+[node name="LblVida" type="Label" parent="PanelSuperior" unique_id=1465356183]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.5, 1, 0.5, 1)
+theme_override_font_sizes/font_size = 18
+text = "HP: 100 / 100"
+horizontal_alignment = 1

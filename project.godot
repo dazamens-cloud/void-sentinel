@@ -11,13 +11,37 @@ config_version=5
 [application]
 
 config/name="void-sentinel"
+run/main_scene="uid://g2yrog5jvrmx"
 config/features=PackedStringArray("4.6", "GL Compatibility")
 config/icon="res://icon.svg"
+
+[autoload]
+
+Economia="*uid://8lf43xep6q0x"
+TorreStats="*uid://hhuldtka10uo"
+
+[display]
+
+window/size/viewport_width=720
+window/size/viewport_height=1280
+window/stretch/mode="canvas_items"
+window/stretch/aspect="expand"
+window/handheld/orientation=1
 
 [editor]
 
 version_control/plugin_name="GitPlugin"
 version_control/autoload_on_startup=true
+
+[global_group]
+
+nucleo=""
+
+[layer_names]
+
+2d_render/layer_1="enemigos"
+2d_render/layer_2="nucleo"
+2d_render/layer_3="bala"
 
 [physics]
 

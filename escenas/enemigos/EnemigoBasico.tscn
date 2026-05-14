@@ -1,0 +1,20 @@
+[gd_scene format=3 uid="uid://dgd5fpkdaq144"]
+
+[ext_resource type="Script" uid="uid://qy0sk57lotpm" path="res://scripts/enemigos/EnemigoBasico.gd" id="1_rlfsm"]
+[ext_resource type="Texture2D" uid="uid://cgnptwca6ldb8" path="res://assets/sprites/enemigos/enemigo basico.png" id="2_sff7t"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_sff7t"]
+radius = 24.94
+
+[node name="EnemigoBasico" type="CharacterBody2D" unique_id=817991119 groups=["enemigos"]]
+collision_layer = 1
+collision_mask = 2
+script = ExtResource("1_rlfsm")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=206026493]
+scale = Vector2(0.11, 0.11)
+texture = ExtResource("2_sff7t")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1900388485]
+shape = SubResource("CircleShape2D_sff7t")
+disabled = false

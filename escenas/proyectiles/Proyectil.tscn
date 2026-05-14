@@ -1,0 +1,28 @@
+[gd_scene format=3 uid="uid://bcsmc31kuep5b"]
+
+[ext_resource type="Script" uid="uid://dpcds4ml371cr" path="res://scripts/proyectiles/bala.gd" id="1_1d0hy"]
+[ext_resource type="Texture2D" uid="uid://bodcegwlh1m50" path="res://assets/sprites/proyectiles/bala.png" id="2_o3qfm"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_lo3qo"]
+radius = 2.0
+height = 18.0
+
+[node name="Bala" type="Area2D" unique_id=1019045575]
+collision_layer = 3
+script = ExtResource("1_1d0hy")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=62978686]
+position = Vector2(-2.9999998, 3.5527137e-15)
+scale = Vector2(0.05487804, 0.05487805)
+texture = ExtResource("2_o3qfm")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=252662744]
+position = Vector2(2, 0)
+rotation = 1.5707964
+shape = SubResource("CapsuleShape2D_lo3qo")
+
+[node name="TimerVida" type="Timer" parent="." unique_id=851655967]
+wait_time = 3.0
+one_shot = true
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]
