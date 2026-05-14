@@ -11,7 +11,7 @@ var base_salud: float = 100.0
 var base_dano: float = 10.0
 var base_cadencia: float = 1.0
 var base_regeneracion: float = 2.0
-var base_rango_escaneo: float = 400.0
+var base_rango_escaneo: float = 200.0
 
 var vida_actual: float = 100.0
 

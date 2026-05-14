@@ -71,6 +71,11 @@ func morir() -> void:
 	set_physics_process(false)
 	remove_from_group("enemigos")
 	
+	# 🔥 CREAR EXPLOSIÓN
+	var explosion = preload("res://escenas/objetos/Explosion.tscn").instantiate()
+	explosion.global_position = global_position
+	get_tree().current_scene.add_child(explosion)
+	
 	Economia.procesar_drop_enemigo({"recompensa": recompensa, "tipo": tipo})
 	enemigo_muerto.emit(global_position)
 	

@@ -70,7 +70,3 @@ func _cargar_datos() -> void:
 			if data is Dictionary:
 				monedas = data.get("monedas", 0)
 			file.close()
-func get_rango_escaneo() -> float:
-	return 200.0  # Valor base, se puede modificar con mejoras después
-	
-	

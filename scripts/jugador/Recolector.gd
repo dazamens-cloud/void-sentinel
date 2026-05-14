@@ -11,7 +11,7 @@ signal fragmentos_actualizados(actual: int, maximo: int)
 signal depositando_progreso(pct: float)
 
 # ── Explosión al recoger fragmento ────────────────────
-@export var explosion_escena: PackedScene = preload("res://escenas/Explosion.tscn")
+# @export var explosion_escena: PackedScene = preload("res://escenas/Explosion.tscn")
 
 # ── Movimiento ──────────────────────────────────────────
 const VELOCIDAD_NORMAL: float = 220.0
@@ -96,18 +96,18 @@ func _recoger_fragmento(frag: Node) -> void:
 	frag.queue_free()
 
 	# Efecto de explosión verde al recoger
-	if explosion_escena:
-		var exp: Node = explosion_escena.instantiate()
-		exp.global_position = global_position
-		exp.scale = Vector2(0.3, 0.3)
-		exp.self_modulate = Color(0.5, 1.0, 0.5)
-		get_tree().current_scene.add_child(exp)
+	#if explosion_escena:
+	#	var exp: Node = explosion_escena.instantiate()
+	#	exp.global_position = global_position
+	#	exp.scale = Vector2(0.3, 0.3)
+	#	exp.self_modulate = Color(0.5, 1.0, 0.5)
+	#	get_tree().current_scene.add_child(exp)
 
-	fragmentos_actualizados.emit(fragmentos_en_dron, capacidad_actual)
+	#fragmentos_actualizados.emit(fragmentos_en_dron, capacidad_actual)
 
-	if fragmentos_en_dron >= capacidad_actual:
-		_activar_laser_360()
-		estado = Estado.YENDO_NEXUS
+	#if fragmentos_en_dron >= capacidad_actual:
+	#	_activar_laser_360()
+	#	estado = Estado.YENDO_NEXUS
 
 # ═══════════════════════════════════════════════════════
 # LÁSER 360° — HABILIDAD ESPECIAL

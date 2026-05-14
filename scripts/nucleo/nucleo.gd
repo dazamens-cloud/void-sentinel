@@ -109,7 +109,7 @@ func _parpadeo_dano() -> void:
 	t.tween_property(sprite, "self_modulate", Color.WHITE, 0.1)
 
 func _draw() -> void:
-	var rango: float = Economia.get_rango_escaneo()
+	var rango: float = TorreStats.get_rango_escaneo()
 	var pulso := 0.70 + 0.30 * sin(Time.get_ticks_msec() * 0.003)
 
 	# Círculo relleno transparente
