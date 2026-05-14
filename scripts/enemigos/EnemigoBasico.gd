@@ -17,6 +17,7 @@ const INTERVALO_ATAQUE: float = 1.0
 var timer_ataque: float = 0.0
 var esta_muerto: bool = false
 var nucleo: Node2D = null
+var velocidad_rotacion: float = 3.0  # radianes por segundo (ajustable)
 
 @onready var sprite: Sprite2D = $Sprite2D
 
@@ -40,10 +41,11 @@ func _physics_process(delta: float) -> void:
 	if esta_muerto or not is_instance_valid(nucleo): return
 	
 	var dist = global_position.distance_to(nucleo.global_position)
+	
 	if dist > DISTANCIA_ATAQUE:
 		var dir = (nucleo.global_position - global_position).normalized()
 		velocity = dir * velocidad
-		rotation = dir.angle() + PI/2.0
+		rotation += velocidad_rotacion * delta  # 🔄 ROTACIÓN CONTINUA
 		timer_ataque = 0.0
 	else:
 		velocity = Vector2.ZERO
