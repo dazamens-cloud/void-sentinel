@@ -1,7 +1,10 @@
 [gd_scene format=3 uid="uid://cpjq2dkjcufnf"]
 
-[node name="HUD" type="CanvasLayer" unique_id=1199303299]
+[ext_resource type="Script" uid="uid://cisv2r3w5ijoy" path="res://scripts/ui/Interfaz.gd" id="1_qcxk7"]
+
+[node name="interfaz" type="CanvasLayer" unique_id=1199303299]
 process_mode = 2
+script = ExtResource("1_qcxk7")
 
 [node name="PanelSuperior" type="VBoxContainer" parent="." unique_id=1439065326]
 anchors_preset = 10

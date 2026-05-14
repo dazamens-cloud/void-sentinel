@@ -18,7 +18,7 @@ config/icon="res://icon.svg"
 [autoload]
 
 Economia="*uid://8lf43xep6q0x"
-TorreStats="*uid://hhuldtka10uo"
+NexusStats="*uid://hhuldtka10uo"
 
 [display]
 
@@ -32,10 +32,6 @@ window/handheld/orientation=1
 
 version_control/plugin_name="GitPlugin"
 version_control/autoload_on_startup=true
-
-[global_group]
-
-nucleo=""
 
 [layer_names]
 

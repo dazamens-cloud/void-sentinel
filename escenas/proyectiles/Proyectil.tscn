@@ -1,13 +1,13 @@
 [gd_scene format=3 uid="uid://cmxs145mbxuxk"]
 
-[ext_resource type="Script" uid="uid://dpcds4ml371cr" path="res://scripts/proyectiles/bala.gd" id="1_1d0hy"]
+[ext_resource type="Script" uid="uid://dpcds4ml371cr" path="res://scripts/proyectiles/Proyectil.gd" id="1_1d0hy"]
 [ext_resource type="Texture2D" uid="uid://bodcegwlh1m50" path="res://assets/sprites/proyectiles/bala.png" id="2_o3qfm"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_lo3qo"]
 radius = 2.0
 height = 18.0
 
-[node name="Bala" type="Area2D" unique_id=1019045575]
+[node name="Proyectil" type="Area2D" unique_id=1019045575 groups=["Proyectiles"]]
 collision_layer = 3
 script = ExtResource("1_1d0hy")
 

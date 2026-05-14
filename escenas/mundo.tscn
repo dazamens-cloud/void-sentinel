@@ -1,10 +1,10 @@
 [gd_scene format=3 uid="uid://g2yrog5jvrmx"]
 
 [ext_resource type="PackedScene" uid="uid://dp22un4er5u5u" path="res://escenas/nucleo.tscn" id="1_6wjgb"]
-[ext_resource type="PackedScene" uid="uid://cpjq2dkjcufnf" path="res://escenas/ui/hud.tscn" id="2_glrvs"]
-[ext_resource type="Script" uid="uid://b2im4k3j1xta3" path="res://scripts/utils/GestorOleadas.gd" id="2_v12yk"]
-[ext_resource type="PackedScene" uid="uid://dgd5fpkdaq144" path="res://escenas/enemigos/EnemigoBasico.tscn" id="3_16hu1"]
-[ext_resource type="Script" uid="uid://cisv2r3w5ijoy" path="res://scripts/ui/HUD.gd" id="5_16hu1"]
+[ext_resource type="PackedScene" uid="uid://bhl1f8ynlh2df" path="res://escenas/jugador/Dron.tscn" id="2_16hu1"]
+[ext_resource type="PackedScene" uid="uid://cpjq2dkjcufnf" path="res://escenas/ui/interfaz.tscn" id="2_glrvs"]
+[ext_resource type="Script" uid="uid://b2im4k3j1xta3" path="res://scripts/utils/AscensionManager.gd" id="2_v12yk"]
+[ext_resource type="PackedScene" uid="uid://dgd5fpkdaq144" path="res://escenas/enemigos/Espectro.tscn" id="3_16hu1"]
 
 [node name="Mundo" type="Node2D" unique_id=946159933]
 
@@ -22,11 +22,12 @@ color = Color(0, 0, 0.1764706, 1)
 [node name="Camera2D" type="Camera2D" parent="." unique_id=241927462]
 position = Vector2(360, 640)
 
-[node name="Nucleo" parent="." unique_id=51866483 instance=ExtResource("1_6wjgb")]
+[node name="Nexus" parent="." unique_id=51866483 instance=ExtResource("1_6wjgb")]
 
-[node name="GestorOleadas" type="Node2D" parent="." unique_id=1217520189]
+[node name="Dron" parent="." unique_id=1447324400 instance=ExtResource("2_16hu1")]
+
+[node name="AscensionManager" type="Node2D" parent="." unique_id=1217520189]
 script = ExtResource("2_v12yk")
-escena_enemigo = ExtResource("3_16hu1")
+escena_espectro = ExtResource("3_16hu1")
 
-[node name="HUD" parent="." unique_id=1199303299 instance=ExtResource("2_glrvs")]
-script = ExtResource("5_16hu1")
+[node name="Interfaz" parent="." unique_id=1199303299 instance=ExtResource("2_glrvs")]

@@ -1,8 +1,8 @@
 [gd_scene format=3 uid="uid://dp22un4er5u5u"]
 
 [ext_resource type="Texture2D" uid="uid://b0x4bgjho1dve" path="res://assets/sprites/nucleo/nucleo.png" id="1_cyj4n"]
-[ext_resource type="PackedScene" uid="uid://cmxs145mbxuxk" path="res://escenas/proyectiles/bala.tscn" id="2_8w8j7"]
-[ext_resource type="Script" uid="uid://cow4ssl6nxylg" path="res://scripts/nucleo/nucleo.gd" id="2_eijja"]
+[ext_resource type="PackedScene" uid="uid://cmxs145mbxuxk" path="res://escenas/proyectiles/Proyectil.tscn" id="2_8w8j7"]
+[ext_resource type="Script" uid="uid://cow4ssl6nxylg" path="res://scripts/nucleo/Nexus.gd" id="2_eijja"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_8w8j7"]
 radius = 60.0
@@ -10,7 +10,7 @@ radius = 60.0
 [sub_resource type="CircleShape2D" id="CircleShape2D_slxs4"]
 radius = 600.0
 
-[node name="Nucleo" type="Area2D" unique_id=51866483 groups=["nucleo"]]
+[node name="Nexus" type="Area2D" unique_id=51866483 groups=["nexus"]]
 position = Vector2(360, 640)
 collision_layer = 2
 script = ExtResource("2_eijja")

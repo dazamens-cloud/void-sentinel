@@ -1,17 +1,12 @@
 extends CharacterBody2D
 # ═══════════════════════════════════════════════════════
-# RECOLECTOR — Dron de recolección de Void Sentinel
-# (antes "jugador.gd")
-# Vaga por la pantalla, atrae fragmentos, y al llenar su
-# capacidad activa un láser 360° en el Nexus.
+# DRON — Nave recolectora de fragmentos (antes Recolector.gd)
 # ═══════════════════════════════════════════════════════
 
-# ── Señales ──────────────────────────────────────────
 signal fragmentos_actualizados(actual: int, maximo: int)
 signal depositando_progreso(pct: float)
 
-# ── Explosión al recoger fragmento ────────────────────
-# @export var explosion_escena: PackedScene = preload("res://escenas/Explosion.tscn")
+@export var explosion_escena: PackedScene = preload("res://escenas/Objetos/Explosion.tscn")
 
 # ── Movimiento ──────────────────────────────────────────
 const VELOCIDAD_NORMAL: float = 220.0
@@ -26,10 +21,9 @@ var fragmentos_en_dron: int = 0
 
 # ── Atracción de fragmentos ──────────────────────────
 const VELOCIDAD_ATRACCION_BASE: float = 280.0
-const FUERZA_SUCCION: float = 12.0
 
 func get_radio_atraccion() -> float:
-	return 140.0 + (Economia.nivel_rango * 25.0)
+	return 140.0
 
 # ── Estados del dron ────────────────────────────────────
 enum Estado { VAGANDO, YENDO_NEXUS, EN_RECARGA }
@@ -41,21 +35,17 @@ var _destino_vago: Vector2 = Vector2.ZERO
 var _timer_nuevo_destino: float = 0.0
 var _nexus: Node2D = null
 
-# ── Referencias visuales ────────────────────────────────
 @onready var sprite: Sprite2D = $Sprite2D
 
 # ═══════════════════════════════════════════════════════
-# INICIALIZACIÓN
-# ═══════════════════════════════════════════════════════
 func _ready() -> void:
+	add_to_group("drones")
 	await get_tree().process_frame
 	_nexus = get_tree().current_scene.find_child("Nexus", true, false)
 	_actualizar_capacidad()
 	Economia.ascension_cambiada.connect(_on_ascension_cambiada)
 	fragmentos_actualizados.emit(fragmentos_en_dron, capacidad_actual)
 
-# ═══════════════════════════════════════════════════════
-# LOOP PRINCIPAL
 # ═══════════════════════════════════════════════════════
 func _physics_process(delta: float) -> void:
 	match estado:
@@ -67,8 +57,6 @@ func _physics_process(delta: float) -> void:
 		Estado.EN_RECARGA:
 			_tick_recarga(delta)
 
-# ═══════════════════════════════════════════════════════
-# ATRACCIÓN DE FRAGMENTOS
 # ═══════════════════════════════════════════════════════
 func _atraer_fragmentos(delta: float) -> void:
 	if fragmentos_en_dron >= capacidad_actual:
@@ -95,39 +83,29 @@ func _recoger_fragmento(frag: Node) -> void:
 	fragmentos_en_dron += 1
 	frag.queue_free()
 
-	# Efecto de explosión verde al recoger
-	#if explosion_escena:
-	#	var exp: Node = explosion_escena.instantiate()
-	#	exp.global_position = global_position
-	#	exp.scale = Vector2(0.3, 0.3)
-	#	exp.self_modulate = Color(0.5, 1.0, 0.5)
-	#	get_tree().current_scene.add_child(exp)
+	if explosion_escena:
+		var exp: Node = explosion_escena.instantiate()
+		exp.global_position = global_position
+		exp.scale = Vector2(0.3, 0.3)
+		exp.self_modulate = Color(0.5, 1.0, 0.5)
+		get_tree().current_scene.add_child(exp)
 
-	#fragmentos_actualizados.emit(fragmentos_en_dron, capacidad_actual)
+	fragmentos_actualizados.emit(fragmentos_en_dron, capacidad_actual)
 
-	#if fragmentos_en_dron >= capacidad_actual:
-	#	_activar_laser_360()
-	#	estado = Estado.YENDO_NEXUS
+	if fragmentos_en_dron >= capacidad_actual:
+		_activar_laser_360()
+		estado = Estado.YENDO_NEXUS
 
-# ═══════════════════════════════════════════════════════
-# LÁSER 360° — HABILIDAD ESPECIAL
 # ═══════════════════════════════════════════════════════
 func _activar_laser_360() -> void:
-	var nivel_laser: int = Economia.nivel_laser if Economia.has_method("get") else 1
-	if nivel_laser == 0:
-		return
-
-	var danio: int = int(Economia.get_danio() * 2.0 * nivel_laser)
+	var danio: int = int(Economia.get_danio() * 2.0)
 	
-	# Daño a todos los espectros en rango
 	for espectro in get_tree().get_nodes_in_group("espectros"):
-		if is_instance_valid(espectro) and espectro.has_method("recibir_dano_espinas"):
-			espectro.recibir_dano_espinas(danio)
+		if is_instance_valid(espectro) and espectro.has_method("recibir_dano"):
+			espectro.recibir_dano(danio, true)
 
 	_sacudir_camara(12.0)
 
-# ═══════════════════════════════════════════════════════
-# ESTADOS DEL DRON
 # ═══════════════════════════════════════════════════════
 func _tick_vagando(delta: float) -> void:
 	_timer_nuevo_destino -= delta
@@ -149,7 +127,6 @@ func _tick_yendo_nexus(delta: float) -> void:
 	rotation = lerp_angle(rotation, direccion.angle(), 10.0 * delta)
 	move_and_slide()
 
-	# Progreso de aproximación: 0.0 (lejos) → 1.0 (llegando)
 	var distancia: float = global_position.distance_to(_nexus.global_position)
 	depositando_progreso.emit(1.0 - clamp(distancia / 400.0, 0.0, 1.0))
 
@@ -160,7 +137,6 @@ func _tick_recarga(delta: float) -> void:
 	velocity = velocity.lerp(Vector2.ZERO, 5.0 * delta)
 	_tiempo_recarga -= delta
 
-	# Progreso de recarga: 1.0 (recién depositado) → 0.0 (listo)
 	depositando_progreso.emit(max(0.0, _tiempo_recarga / TIEMPO_RECARGA))
 
 	if _tiempo_recarga <= 0.0:
@@ -168,7 +144,7 @@ func _tick_recarga(delta: float) -> void:
 		depositando_progreso.emit(0.0)
 
 func _depositar() -> void:
-	var ganancia: int = int(fragmentos_en_dron * 5 * Economia.get_bonus_ecos())
+	var ganancia: int = fragmentos_en_dron * 5
 	Economia.añadir_energia(ganancia)
 
 	fragmentos_en_dron = 0
@@ -178,8 +154,6 @@ func _depositar() -> void:
 	fragmentos_actualizados.emit(0, capacidad_actual)
 	depositando_progreso.emit(1.0)
 
-# ═══════════════════════════════════════════════════════
-# UTILIDADES
 # ═══════════════════════════════════════════════════════
 func _on_ascension_cambiada(_n: int) -> void:
 	_actualizar_capacidad()
