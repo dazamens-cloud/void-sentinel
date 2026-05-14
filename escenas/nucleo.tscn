@@ -1,4 +1,4 @@
-[gd_scene format=3 uid="uid://csoega3qhpbvk"]
+[gd_scene format=3 uid="uid://dp22un4er5u5u"]
 
 [ext_resource type="Texture2D" uid="uid://b0x4bgjho1dve" path="res://assets/sprites/nucleo/nucleo.png" id="1_cyj4n"]
 [ext_resource type="PackedScene" uid="uid://bcsmc31kuep5b" path="res://escenas/proyectiles/Proyectil.tscn" id="2_8w8j7"]
