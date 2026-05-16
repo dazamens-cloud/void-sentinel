@@ -25,6 +25,7 @@ func _ready() -> void:
 	await get_tree().process_frame
 	nexus = get_tree().get_first_node_in_group("nexus")
 	salud_actual = salud_maxima
+	print("👾 Espectro creado. Tipo: ", tipo_espectro, " | Salud: ", salud_actual)
 
 func configurar(datos: Dictionary) -> void:
 	salud_maxima = datos.get("hp", 100.0)
@@ -59,6 +60,7 @@ func _physics_process(delta: float) -> void:
 func recibir_dano(cantidad: float, es_critico: bool = false) -> void:
 	if esta_destruido: return
 	salud_actual -= cantidad
+	print("⚔️ Espectro recibe daño: ", cantidad, " | Salud restante: ", salud_actual)
 	_efecto_dano(es_critico)
 	if salud_actual <= 0.0:
 		_destruir()
@@ -75,15 +77,28 @@ func _destruir() -> void:
 	esta_destruido = true
 	set_physics_process(false)
 	remove_from_group("espectros")
-	
-	# Explosión
+	print("💀 Espectro muere")
+
+	# 📝 TEXTO FLOTANTE de energía
+	var texto_energia = preload("res://escenas/objetos/TextoFlotante.tscn").instantiate()
+	texto_energia.set_energia(recompensa_energia)  # ✅ Cambiado a set_energia
+	texto_energia.global_position = global_position
+	get_tree().current_scene.add_child(texto_energia)
+
+	# 💥 EXPLOSIÓN
 	var explosion = preload("res://escenas/Objetos/Explosion.tscn").instantiate()
 	explosion.global_position = global_position
 	get_tree().current_scene.add_child(explosion)
-	
-	Economia.procesar_drop_espectro({"recompensa": recompensa_energia, "tipo": tipo_espectro})
+
+	# 💰 ECONOMÍA (con posición para los ecos)
+	Economia.procesar_drop_espectro({
+		"recompensa": recompensa_energia,
+		"tipo": tipo_espectro,
+		"posicion": global_position
+	})
 	espectro_destruido.emit(global_position, recompensa_energia)
-	
+
+	# ✨ ANIMACIÓN DE MUERTE
 	var tw = create_tween()
 	if sprite:
 		tw.parallel().tween_property(sprite, "scale", Vector2.ZERO, 0.22)

@@ -17,16 +17,16 @@ func get_salud() -> float:
 	return salud_base
 
 func get_danio() -> float:
-	return 10.0
+	return 105.0
 
 func get_cadencia_timer() -> float:
-	return 1.0
+	return 0.45
 
 func get_regeneracion() -> float:
 	return 0.0
 
 func get_rango_escaneo() -> float:
-	return 200.0
+	return 220.0
 
 func get_critico_chance() -> float:
 	return 0.05

@@ -15,9 +15,10 @@ var temporizador_spawn: float = 0.0
 var temporizador_pausa: float = 5.0
 var en_combate: bool = false
 
-const INTERVALO_SPAWN: float = 1.5
-const ESPECTROS_BASE: int = 3
-const DURACION_ASCENSION: float = 26.0
+const DURACION_ASCENSION: float = 35.0  # ✅ 35 segundos
+const PAUSA_ENTRE_ASCENSIONES: float = 15.0  # ✅ 15 segundos
+const ESPECTROS_BASE: int = 8
+const MAX_ENEMIGOS_SIMULTANEOS: int = 15
 
 func _process(delta: float) -> void:
 	if not en_combate:
@@ -28,13 +29,14 @@ func _process(delta: float) -> void:
 		temporizador_spawn -= delta
 		if temporizador_spawn <= 0.0 and espectros_a_spawnear > 0:
 			_generar_espectro()
-			temporizador_spawn = INTERVALO_SPAWN
+			temporizador_spawn = _obtener_intervalo_spawn()
 
 func _iniciar_ascension() -> void:
 	en_combate = true
 	Economia.avanzar_ascension()
-	espectros_a_spawnear = ESPECTROS_BASE + Economia.numero_ascension
+	espectros_a_spawnear = ESPECTROS_BASE + Economia.numero_ascension * 2
 	temporizador_spawn = 0.0
+	print("🚀 Ascensión ", Economia.numero_ascension, " iniciada")
 	ascension_iniciada.emit(Economia.numero_ascension)
 	await get_tree().create_timer(DURACION_ASCENSION).timeout
 	if en_combate:
@@ -42,12 +44,17 @@ func _iniciar_ascension() -> void:
 
 func _terminar_ascension() -> void:
 	en_combate = false
-	temporizador_pausa = 5.0
+	temporizador_pausa = PAUSA_ENTRE_ASCENSIONES
 	ascension_completada.emit(Economia.numero_ascension)
 	pausa_entre_ascensiones.emit(temporizador_pausa)
+	print("⏸️ Ascensión ", Economia.numero_ascension, " completada. Pausa de ", PAUSA_ENTRE_ASCENSIONES, "s")
 
 func _generar_espectro() -> void:
 	if not escena_espectro: return
+	
+	# ✅ Verificar límite de enemigos simultáneos
+	if espectros_vivos >= MAX_ENEMIGOS_SIMULTANEOS:
+		return
 	
 	var espectro = escena_espectro.instantiate()
 	get_tree().root.add_child(espectro)
@@ -65,8 +72,9 @@ func _generar_espectro() -> void:
 		3: espectro.global_position = Vector2(tam_vista.x + 50, randf_range(0, tam_vista.y))
 	
 	var ascension = Economia.numero_ascension
-	var multiplicador_salud = pow(1.409, ascension - 1)
-	var multiplicador_ataque = pow(1.178, ascension - 1)
+	var nivel = (ascension - 1) / 5
+	var multiplicador_salud = pow(1.6, nivel)
+	var multiplicador_ataque = pow(1.3, nivel)
 	
 	espectro.configurar({
 		"hp": 100.0 * multiplicador_salud,
@@ -75,6 +83,7 @@ func _generar_espectro() -> void:
 		"recompensa": 5 + ascension,
 		"tipo": "basico"
 	})
+	print("📢 Generando espectro. Restantes por spawnear: ", espectros_a_spawnear)
 	
 	if espectro.has_signal("espectro_destruido"):
 		espectro.espectro_destruido.connect(_on_espectro_destruido)
@@ -84,5 +93,12 @@ func _generar_espectro() -> void:
 
 func _on_espectro_destruido(_pos: Vector2, _recompensa: int) -> void:
 	espectros_vivos -= 1
+	print("💀 Espectro destruido. Vivos: ", espectros_vivos, " | Por spawnear: ", espectros_a_spawnear)
 	if espectros_a_spawnear == 0 and espectros_vivos <= 0 and en_combate:
 		_terminar_ascension()
+
+func _obtener_intervalo_spawn() -> float:
+	# Tasa base: 0.75 enem/seg = 1.33 segundos entre spawns
+	# Rango: 0.5 a 1.0 enem/seg = 1.0 a 2.0 segundos entre spawns
+	return randf_range(1.0, 2.0)
+	

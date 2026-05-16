@@ -71,6 +71,7 @@ func _disparar() -> void:
 		proyectil.direccion = (objetivo.global_position - global_position).normalized()
 		proyectil.rotation = proyectil.direccion.angle()
 		proyectil.danio = NexusStats.get_danio()
+		print("🔫 Nexus disparando. Espectros en rango: ", get_tree().get_nodes_in_group("espectros").size())
 
 func recibir_ataque(cantidad: float) -> void:
 	if esta_destruido: return
@@ -81,11 +82,19 @@ func recibir_ataque(cantidad: float) -> void:
 		dano_final = max(1.0, cantidad * (1.0 - def_pct))
 	
 	NexusStats.recibir_ataque(dano_final)
-	
+
 	_parpadeo_dano()
-	
+
+	var texto_dano = preload("res://escenas/objetos/TextoFlotante.tscn").instantiate()
+	texto_dano.set_valor(dano_final, "dano")
+	texto_dano.add_theme_color_override("font_color", Color(1.0, 0.3, 0.3, 1.0))
+	texto_dano.global_position = global_position
+	get_tree().current_scene.add_child(texto_dano)
+
 	if NexusStats.salud_actual <= 0.0:
+		print("💥 Nexus recibe ataque: ", cantidad, " | Salud restante: ", NexusStats.salud_actual)
 		_destruir()
+
 
 func _destruir() -> void:
 	if esta_destruido: return

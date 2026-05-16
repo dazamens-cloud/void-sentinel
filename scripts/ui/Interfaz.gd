@@ -18,9 +18,12 @@ func _ready() -> void:
 
 func _actualizar_energia() -> void:
 	lbl_energia.text = "⚡ %d" % int(Economia.energia)
+	print("💰 Energía actualizada: ", Economia.energia)
 
 func _actualizar_ascension(numero: int) -> void:
 	lbl_ascension.text = "Ascensión: %d" % numero
 
 func _actualizar_salud(actual: float, maxima: float) -> void:
 	lbl_salud.text = "❤️ %d / %d" % [int(actual), int(maxima)]
+	print("❤️ Salud actualizada: ", actual, "/", maxima)
+	
