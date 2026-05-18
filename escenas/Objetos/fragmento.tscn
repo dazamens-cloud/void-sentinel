@@ -1,0 +1,19 @@
+[gd_scene format=3 uid="uid://cngpp1jkcd1tq"]
+
+[ext_resource type="Script" uid="uid://jwfsr7u3v0dp" path="res://scripts/Objetos/Fragmento.gd" id="1_fragmento"]
+[ext_resource type="Texture2D" uid="uid://pslxr15bx0n1" path="res://assets/sprites/proyectiles/fragmentos.png" id="2_textura"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_frag"]
+radius = 5.0
+
+[node name="Fragmento" type="Area2D" unique_id=2444051]
+collision_layer = 4
+collision_mask = 4
+script = ExtResource("1_fragmento")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=193185719]
+scale = Vector2(0.14207847, 0.14207847)
+texture = ExtResource("2_textura")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=394382982]
+shape = SubResource("CircleShape2D_frag")

@@ -70,10 +70,10 @@ func get_rango_escaneo() -> float:
 	return 200.0
 
 func get_danio() -> float:
-	return 10.0
+	return 15.0  # ✅ Balanceado: mata básico de 160HP en ~11 golpes
 
 func get_cadencia_timer() -> float:
-	return 0.85  # ✅ Ajustado
+	return 0.85
 
 func get_regeneracion() -> float:
 	return 0.0

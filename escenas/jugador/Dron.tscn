@@ -3,19 +3,17 @@
 [ext_resource type="Script" uid="uid://dd8w82vw2lf3t" path="res://scripts/jugador/Dron.gd" id="1_dron"]
 [ext_resource type="Texture2D" uid="uid://2xbxn22748sw" path="res://assets/sprites/nucleo/nave.png" id="2_textura"]
 
-[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_fjtoy"]
-radius = 14.0
-height = 78.0
+[sub_resource type="CircleShape2D" id="CircleShape2D_dron"]
+radius = 29.017237
 
-[node name="Dron" type="CharacterBody2D" unique_id=736083946]
+[node name="Dron" type="CharacterBody2D" unique_id=1322580691]
 collision_layer = 4
 collision_mask = 4
 script = ExtResource("1_dron")
 
-[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1588021638]
-scale = Vector2(0.25, 0.25)
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1431249176]
+scale = Vector2(0.2, 0.2)
 texture = ExtResource("2_textura")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1626003263]
-rotation = 1.5707964
-shape = SubResource("CapsuleShape2D_fjtoy")
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1359753999]
+shape = SubResource("CircleShape2D_dron")
