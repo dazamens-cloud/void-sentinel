@@ -1,0 +1,81 @@
+[gd_scene format=3 uid="uid://8uqxobgy8qi3"]
+
+[ext_resource type="Script" uid="uid://c6v0lwe4tbox1" path="res://scripts/ui/PanelMejoras.gd" id="1_panel"]
+
+[node name="PanelMejoras" type="Control" unique_id=1438627469]
+custom_minimum_size = Vector2(620, 50)
+layout_mode = 3
+anchors_preset = 0
+offset_left = 50.0
+offset_top = 1100.0
+offset_right = 670.0
+offset_bottom = 1150.0
+script = ExtResource("1_panel")
+
+[node name="Background" type="ColorRect" parent="." unique_id=1470267137]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0.05, 0.05, 0.15, 0.95)
+
+[node name="BarraTitulo" type="HBoxContainer" parent="." unique_id=1608797263]
+layout_mode = 0
+offset_top = 5.0
+offset_right = 620.0
+offset_bottom = 45.0
+
+[node name="Titulo" type="Label" parent="BarraTitulo" unique_id=48225099]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0, 0.85, 1, 1)
+theme_override_font_sizes/font_size = 24
+text = "MEJORAS"
+horizontal_alignment = 1
+
+[node name="BtnToggle" type="Button" parent="BarraTitulo" unique_id=13255605]
+layout_mode = 2
+text = "▲"
+
+[node name="Contenido" type="Control" parent="." unique_id=854792013]
+anchors_preset = 0
+offset_top = 45.0
+offset_right = 620.0
+offset_bottom = 545.0
+
+[node name="Tabs" type="HBoxContainer" parent="Contenido" unique_id=1591494621]
+layout_mode = 0
+offset_left = 20.0
+offset_right = 600.0
+offset_bottom = 40.0
+
+[node name="ScrollContainer" type="ScrollContainer" parent="Contenido" unique_id=1616870017]
+layout_mode = 0
+offset_left = 20.0
+offset_top = 50.0
+offset_right = 600.0
+offset_bottom = 490.0
+
+[node name="Tabs#BtnAtaque" type="Button" parent="." unique_id=1184095358]
+layout_mode = 0
+size_flags_horizontal = 3
+text = "⚔️ ATAQUE"
+
+[node name="Tabs#BtnDefensa" type="Button" parent="." unique_id=192887554]
+layout_mode = 0
+size_flags_horizontal = 3
+text = "🛡️ DEFENSA"
+
+[node name="Tabs#BtnBonificacion" type="Button" parent="." unique_id=1748586122]
+layout_mode = 0
+size_flags_horizontal = 3
+text = "💰 BONIFICACIÓN"
+
+[node name="Tabs#BtnCommander" type="Button" parent="." unique_id=48967338]
+layout_mode = 0
+size_flags_horizontal = 3
+disabled = true
+text = "👑 COMMANDER"
+
+[node name="ScrollContainer#MejorasContainer" type="VBoxContainer" parent="." unique_id=630600423]
+layout_mode = 0
+offset_right = 560.0

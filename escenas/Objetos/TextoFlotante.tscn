@@ -1,13 +1,13 @@
 [gd_scene format=3 uid="uid://d2brhhyhcljg3"]
 
-[ext_resource type="Script" uid="uid://v2yf6yfba784" path="res://scripts/Objetos/TextoFlotante.gd" id="1_texto"]
+[ext_resource type="Script" uid="uid://v2yf6yfba784" path="res://scripts/objetos/TextoFlotante.gd" id="1_texto"]
 
-[node name="TextoFlotante" type="Label" unique_id=712477039]
-script = ExtResource("1_texto")
+[node name="TextoFlotante" type="Label" unique_id=1495590714]
 offset_top = -20.0
 offset_bottom = -20.0
 theme_override_font_sizes/font_size = 18
+script = ExtResource("1_texto")
 
-[node name="Timer" type="Timer" parent="." unique_id=1455914643]
+[node name="Timer" type="Timer" parent="." unique_id=1074541411]
 wait_time = 0.8
 one_shot = true

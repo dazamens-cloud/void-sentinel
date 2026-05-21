@@ -1,0 +1,29 @@
+[gd_scene format=3 uid="uid://cfaspd7i0qf0s"]
+
+[ext_resource type="Texture2D" uid="uid://b0x4bgjho1dve" path="res://assets/sprites/nucleo/nucleo.png" id="1_cyj4n"]
+[ext_resource type="Script" uid="uid://cow4ssl6nxylg" path="res://scripts/nucleo/Nexus.gd" id="2_eijja"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_8w8j7"]
+radius = 60.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_slxs4"]
+radius = 600.0
+
+[node name="Nexus" type="Area2D" unique_id=51866483 groups=["nexus"]]
+position = Vector2(360, 640)
+collision_layer = 2
+script = ExtResource("2_eijja")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=238143471]
+scale = Vector2(0.25, 0.25)
+texture = ExtResource("1_cyj4n")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1377225171]
+shape = SubResource("CircleShape2D_8w8j7")
+
+[node name="AreaDeteccion" type="Area2D" parent="." unique_id=241046683]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="AreaDeteccion" unique_id=1874279699]
+shape = SubResource("CircleShape2D_slxs4")
+
+[node name="TimerAutoDisparo" type="Timer" parent="." unique_id=1111332334]

@@ -19,6 +19,7 @@ config/icon="res://icon.svg"
 
 Economia="*uid://8lf43xep6q0x"
 NexusStats="*uid://hhuldtka10uo"
+MejoraManager="*uid://xotm2x1622p5"
 
 [display]
 
@@ -35,9 +36,9 @@ version_control/autoload_on_startup=true
 
 [layer_names]
 
-2d_render/layer_1="enemigos"
-2d_render/layer_2="nucleo"
-2d_render/layer_3="bala"
+2d_render/layer_1="espectros"
+2d_render/layer_2="nexus"
+2d_render/layer_3="proyectiles"
 
 [physics]
 
@@ -48,3 +49,4 @@ version_control/autoload_on_startup=true
 rendering_device/driver.windows="d3d12"
 renderer/rendering_method="gl_compatibility"
 renderer/rendering_method.mobile="gl_compatibility"
+textures/vram_compression/import_etc2_astc=true

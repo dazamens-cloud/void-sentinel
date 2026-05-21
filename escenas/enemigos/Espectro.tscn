@@ -7,7 +7,6 @@
 radius = 24.94
 
 [node name="Espectro" type="CharacterBody2D" unique_id=817991119 groups=["espectros"]]
-collision_mask = 2
 script = ExtResource("1_rlfsm")
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=206026493]

@@ -169,3 +169,21 @@ func _on_juego_terminado(_causa: String) -> void:
 	# Detener temporizadores
 	temporizador_spawn = 0.0
 	
+func _spawn_enemigo() -> void:
+	var escena_elegida = _elegir_tipo_enemigo()
+	if not escena_elegida:
+		print("ERROR: No hay escena de enemigo seleccionada")
+		return
+	
+	var espectro = escena_elegida.instantiate()
+	
+	# ✅ VERIFICAR que el método existe ANTES de añadirlo a la escena
+	if not espectro.has_method("configurar"):
+		print("ERROR: El enemigo no tiene método 'configurar'. Escena: ", escena_elegida.resource_path)
+		espectro.queue_free()
+		return
+	
+	get_tree().root.add_child(espectro)
+	
+
+	

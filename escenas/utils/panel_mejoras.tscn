@@ -45,32 +45,30 @@ offset_bottom = 500.0
 [node name="ScrollContainer" type="ScrollContainer" parent="Contenido" unique_id=15927733]
 layout_mode = 0
 offset_left = 2.0
-offset_top = 3.0
+offset_top = -29.0
 offset_right = 718.0
 offset_bottom = 450.0
 
-[node name="Tabs" type="HBoxContainer" parent="Contenido" unique_id=775751883]
-layout_mode = 0
-offset_top = -45.0
-offset_right = 718.0
-offset_bottom = -5.0
+[node name="Tabs" type="HBoxContainer" parent="Contenido/ScrollContainer" unique_id=775751883]
+layout_mode = 2
+size_flags_horizontal = 3
 
-[node name="Tabs#BtnAtaque" type="Button" parent="Contenido/Tabs" unique_id=793412551]
+[node name="Tabs#BtnAtaque" type="Button" parent="Contenido/ScrollContainer/Tabs" unique_id=793412551]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "⚔️ ATAQUE"
 
-[node name="Tabs#BtnDefensa" type="Button" parent="Contenido/Tabs" unique_id=1620651039]
+[node name="Tabs#BtnDefensa" type="Button" parent="Contenido/ScrollContainer/Tabs" unique_id=1620651039]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "🛡️ DEFENSA"
 
-[node name="Tabs#BtnBonificacion" type="Button" parent="Contenido/Tabs" unique_id=1338995179]
+[node name="Tabs#BtnBonificacion" type="Button" parent="Contenido/ScrollContainer/Tabs" unique_id=1338995179]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "💰 BONIFICACIÓN"
 
-[node name="Tabs#BtnCommander" type="Button" parent="Contenido/Tabs" unique_id=880747090]
+[node name="Tabs#BtnCommander" type="Button" parent="Contenido/ScrollContainer/Tabs" unique_id=880747090]
 layout_mode = 2
 size_flags_horizontal = 3
 disabled = true

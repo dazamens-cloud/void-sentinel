@@ -137,7 +137,8 @@ func _recoger_fragmento(frag: Node) -> void:
 # ═══════════════════════════════════════════════════════
 func _activar_laser_360() -> void:
 	print("🤖 Dron: ACTIVANDO LÁSER 360°")
-	var danio: int = int(Economia.get_danio() * 5.0)
+	# ✅ CORREGIDO: Usar NexusStats en lugar de Economia
+	var danio: int = int(NexusStats.get_danio() * 5.0)
 
 	if _nexus:
 		var poligono = Polygon2D.new()
@@ -246,4 +247,3 @@ func _on_juego_terminado(_causa: String) -> void:
 # ✅ Explosión lenta (pública para llamar desde fuera)
 func explosion_lenta() -> void:
 	_on_juego_terminado("")
-	

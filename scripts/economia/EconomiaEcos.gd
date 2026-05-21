@@ -7,6 +7,7 @@ signal recursos_actualizados
 signal ascension_cambiada(numero: int)
 signal juego_terminado(causa: String)
 signal ecos_obtenidos(cantidad: int, posicion: Vector2)
+signal energia_cambiada(nueva_energia: float)
 
 var energia: float = 50.0
 var ecos: int = 0
@@ -26,11 +27,13 @@ func iniciar_partida() -> void:
 func añadir_energia(cantidad: float) -> void:
 	energia += cantidad
 	recursos_actualizados.emit()
+	energia_cambiada.emit(energia)
 
 func gastar_energia(cantidad: float) -> bool:
 	if energia >= cantidad:
 		energia -= cantidad
 		recursos_actualizados.emit()
+		energia_cambiada.emit(energia)
 		return true
 	return false
 
@@ -62,7 +65,6 @@ func procesar_drop_espectro(datos: Dictionary) -> void:
 		ecos += ecos_ganados
 		guardar_datos()
 		recursos_actualizados.emit()
-		# 3. Emitir señal para mostrar texto flotante de ecos
 		ecos_obtenidos.emit(ecos_ganados, posicion)
 
 # ── Funciones para el Nexus ──────────────────────────
@@ -70,7 +72,7 @@ func get_rango_escaneo() -> float:
 	return 200.0
 
 func get_danio() -> float:
-	return 15.0  # ✅ Balanceado: mata básico de 160HP en ~11 golpes
+	return 15.0
 
 func get_cadencia_timer() -> float:
 	return 0.85
@@ -78,6 +80,7 @@ func get_cadencia_timer() -> float:
 func get_regeneracion() -> float:
 	return 0.0
 
+# ✅ NUEVO MÉTODO AÑADIDO - Lo necesita Nexus.gd
 func get_defensa() -> float:
 	return 0.0
 
@@ -96,3 +99,4 @@ func _cargar_datos() -> void:
 			if data is Dictionary:
 				ecos = data.get("ecos", 0)
 			file.close()
+			

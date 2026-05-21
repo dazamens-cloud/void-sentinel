@@ -12,13 +12,19 @@ var esta_destruido: bool = false
 func _ready() -> void:
 	add_to_group("nexus")
 	
+	# ✅ Verificar que el Timer existe
 	if timer_disparo == null:
-		print("ERROR: TimerAutoDisparo no encontrado")
+		print("❌ ERROR: TimerAutoDisparo no encontrado en Nexus")
 		return
 	
+	# ✅ Conectar señal
 	timer_disparo.timeout.connect(_disparar)
+	
+	# ✅ Configurar tiempo desde NexusStats
 	timer_disparo.wait_time = NexusStats.get_cadencia_timer()
 	timer_disparo.start()
+	
+	print("✅ Nexus iniciado. Cadencia: ", timer_disparo.wait_time, "s")
 	
 	await get_tree().process_frame
 	queue_redraw()
@@ -46,7 +52,7 @@ func _disparar() -> void:
 		return
 		
 	if not escena_proyectil:
-		print("ERROR: escena_proyectil no asignada")
+		print("❌ ERROR: escena_proyectil no asignada en Nexus")
 		return
 	
 	var espectros = get_tree().get_nodes_in_group("espectros")
@@ -71,7 +77,7 @@ func _disparar() -> void:
 		proyectil.direccion = (objetivo.global_position - global_position).normalized()
 		proyectil.rotation = proyectil.direccion.angle()
 		proyectil.danio = NexusStats.get_danio()
-		print("🔫 Nexus disparando. Espectros en rango: ", get_tree().get_nodes_in_group("espectros").size())
+		# print("🔫 Nexus disparando. Espectros en rango: ", espectros.size())  # Descomentar para debug
 
 func recibir_ataque(cantidad: float) -> void:
 	if esta_destruido: return
@@ -92,9 +98,8 @@ func recibir_ataque(cantidad: float) -> void:
 	get_tree().current_scene.add_child(texto_dano)
 
 	if NexusStats.salud_actual <= 0.0:
-		print("💥 Nexus recibe ataque: ", cantidad, " | Salud restante: ", NexusStats.salud_actual)
+		print("💥 Nexus destruido!")
 		_destruir()
-
 
 func _destruir() -> void:
 	if esta_destruido: return
