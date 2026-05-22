@@ -86,6 +86,7 @@ func set_mejora_danio(extra: float) -> void:
 
 func set_mejora_cadencia(valor: float) -> void:
 	mejora_cadencia = valor
+	stats_actualizadas.emit()
 
 func set_mejora_critico(chance: float, factor: float) -> void:
 	mejora_critico_chance = chance

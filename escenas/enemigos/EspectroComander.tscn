@@ -1,0 +1,18 @@
+[gd_scene format=3 uid="uid://cmndr6t8x1py5"]
+
+[ext_resource type="Script" uid="uid://dk3rhjm8csnr1" path="res://scripts/enemigos/EspectroComander.gd" id="1_comander"]
+[ext_resource type="Texture2D" uid="uid://hoxigv1bskgl" path="res://assets/sprites/enemigos/enemigo jefe.png" id="2_tex"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_cmd"]
+radius = 50.0
+
+[node name="EspectroComander" type="CharacterBody2D" unique_id=220000001 groups=["espectros"]]
+script = ExtResource("1_comander")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=220000002]
+modulate = Color(0.7, 0.3, 1.0, 1)
+scale = Vector2(0.35, 0.35)
+texture = ExtResource("2_tex")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=220000003]
+shape = SubResource("CircleShape2D_cmd")

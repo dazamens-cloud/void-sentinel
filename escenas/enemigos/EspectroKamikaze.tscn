@@ -1,0 +1,18 @@
+[gd_scene format=3 uid="uid://dr9km4pf2qvx8"]
+
+[ext_resource type="Script" uid="uid://vl5vd75km5aq" path="res://scripts/enemigos/EspectroKamikaze.gd" id="1_kamikaze"]
+[ext_resource type="Texture2D" uid="uid://cgnptwca6ldb8" path="res://assets/sprites/enemigos/enemigo basico.png" id="2_tex"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_kami"]
+radius = 18.0
+
+[node name="EspectroKamikaze" type="CharacterBody2D" unique_id=210000001 groups=["espectros"]]
+script = ExtResource("1_kamikaze")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=210000002]
+modulate = Color(1.0, 0.4, 0.1, 1)
+scale = Vector2(0.09, 0.09)
+texture = ExtResource("2_tex")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=210000003]
+shape = SubResource("CircleShape2D_kami")

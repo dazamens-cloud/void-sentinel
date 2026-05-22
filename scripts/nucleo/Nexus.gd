@@ -17,13 +17,12 @@ func _ready() -> void:
 		print("❌ ERROR: TimerAutoDisparo no encontrado en Nexus")
 		return
 	
-	# ✅ Conectar señal
 	timer_disparo.timeout.connect(_disparar)
-	
-	# ✅ Configurar tiempo desde NexusStats
+	NexusStats.stats_actualizadas.connect(_on_stats_actualizadas)
+
 	timer_disparo.wait_time = NexusStats.get_cadencia_timer()
 	timer_disparo.start()
-	
+
 	print("✅ Nexus iniciado. Cadencia: ", timer_disparo.wait_time, "s")
 	
 	await get_tree().process_frame
@@ -91,7 +90,7 @@ func recibir_ataque(cantidad: float) -> void:
 
 	_parpadeo_dano()
 
-	var texto_dano = preload("res://escenas/objetos/TextoFlotante.tscn").instantiate()
+	var texto_dano = preload("res://escenas/Objetos/TextoFlotante.tscn").instantiate()
 	texto_dano.set_valor(dano_final, "dano")
 	texto_dano.add_theme_color_override("font_color", Color(1.0, 0.3, 0.3, 1.0))
 	texto_dano.global_position = global_position
@@ -107,6 +106,10 @@ func _destruir() -> void:
 	timer_disparo.stop()
 	sprite.modulate = Color(0.2, 0.2, 0.2)
 	Economia.juego_terminado.emit("Nexus Destruido")
+
+func _on_stats_actualizadas() -> void:
+	if not esta_destruido:
+		timer_disparo.wait_time = NexusStats.get_cadencia_timer()
 
 func _parpadeo_dano() -> void:
 	var t = create_tween()

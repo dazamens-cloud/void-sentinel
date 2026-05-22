@@ -10,6 +10,9 @@ signal pausa_entre_ascensiones(segundos: float)
 @export var escena_espectro: PackedScene
 @export var escena_espectro_tanque: PackedScene
 @export var escena_espectro_jefe: PackedScene
+@export var escena_espectro_kamikaze: PackedScene
+@export var escena_espectro_sniper: PackedScene
+@export var escena_espectro_comander: PackedScene
 
 var espectros_vivos: int = 0
 var espectros_a_spawnear: int = 0
@@ -26,6 +29,9 @@ const MAX_ENEMIGOS_SIMULTANEOS: int = 15
 const PROB_TANQUE: float = 0.05  # 5% desde ascensión 4
 const PROB_JEFE: float = 1.0    # 100% cuando toca (cada 15 ascensiones)
 const ASCENSION_JEFE_INTERVALO: int = 15
+
+func _ready() -> void:
+	Economia.juego_terminado.connect(_on_juego_terminado)
 
 func _process(delta: float) -> void:
 	if not en_combate:
@@ -89,34 +95,50 @@ func _generar_espectro() -> void:
 	var multiplicador_salud = pow(1.6, nivel)
 	var multiplicador_ataque = pow(1.3, nivel)
 	
-	# ✅ Identificar tipo de enemigo
-	var es_jefe = (escena_elegida == escena_espectro_jefe)
-	var es_tanque = (escena_elegida == escena_espectro_tanque)
-	
+	# Identificar tipo de enemigo y asignar stats base
 	var salud_base = 100.0
 	var ataque_base = 5.0
 	var velocidad_base = 80.0
 	var recompensa_base = 5
-	
-	if es_jefe:
+	var tipo_str = "basico"
+
+	if escena_elegida == escena_espectro_jefe:
 		salud_base = 500.0 * multiplicador_salud
-		ataque_base = 15.0
+		ataque_base = 15.0 * multiplicador_ataque
 		velocidad_base = 40.0
 		recompensa_base = 50
-		print("👾 JEFE generado en ascensión ", ascension)
-	elif es_tanque:
-		salud_base = 500.0
-		ataque_base = 5.0
+		tipo_str = "jefe"
+	elif escena_elegida == escena_espectro_tanque:
+		salud_base = 500.0 * multiplicador_salud
+		ataque_base = 5.0 * multiplicador_ataque
 		velocidad_base = 48.0
 		recompensa_base = 12
-		print("💪 TANQUE generado en ascensión ", ascension)
-	
+		tipo_str = "tanque"
+	elif escena_elegida == escena_espectro_kamikaze:
+		salud_base = 30.0 * multiplicador_salud
+		ataque_base = 15.0 * multiplicador_ataque
+		velocidad_base = 200.0
+		recompensa_base = 8
+		tipo_str = "kamikaze"
+	elif escena_elegida == escena_espectro_sniper:
+		salud_base = 60.0 * multiplicador_salud
+		ataque_base = 8.0 * multiplicador_ataque
+		velocidad_base = 100.0
+		recompensa_base = 15
+		tipo_str = "sniper"
+	elif escena_elegida == escena_espectro_comander:
+		salud_base = 200.0 * multiplicador_salud
+		ataque_base = 0.0
+		velocidad_base = 100.0
+		recompensa_base = 40
+		tipo_str = "commander"
+
 	espectro.configurar({
 		"hp": salud_base,
 		"atk": ataque_base,
 		"spd_px": velocidad_base,
 		"recompensa": recompensa_base + ascension,
-		"tipo": "jefe" if es_jefe else "tanque" if es_tanque else "basico"
+		"tipo": tipo_str
 	})
 	print("📢 Generando espectro. Restantes por spawnear: ", espectros_a_spawnear)
 	
@@ -128,19 +150,30 @@ func _generar_espectro() -> void:
 	
 func _elegir_tipo_enemigo() -> PackedScene:
 	var ascension = Economia.numero_ascension
-	
-	# ✅ JEFE: solo una vez por ascensión múltiplo de 15
+
+	# JEFE: solo una vez por ascensión múltiplo de 15
 	if ascension % 15 == 0 and ascension > 0 and not jefe_generado_esta_ascension:
 		if escena_espectro_jefe:
 			jefe_generado_esta_ascension = true
 			print("👾 JEFE generado en ascensión ", ascension, " (único)")
 			return escena_espectro_jefe
-	
-	# ✅ TANQUE: desde ascensión 4, con 8% de probabilidad
-	if ascension >= 4:
-		if escena_espectro_tanque and randf() < 0.08:
-			return escena_espectro_tanque
-	
+
+	# COMMANDER: desde ascensión 20, 5% de probabilidad
+	if ascension >= 20 and escena_espectro_comander and randf() < 0.05:
+		return escena_espectro_comander
+
+	# SNIPER: desde ascensión 10, 6% de probabilidad
+	if ascension >= 10 and escena_espectro_sniper and randf() < 0.06:
+		return escena_espectro_sniper
+
+	# KAMIKAZE: desde ascensión 6, 12% de probabilidad
+	if ascension >= 6 and escena_espectro_kamikaze and randf() < 0.12:
+		return escena_espectro_kamikaze
+
+	# TANQUE: desde ascensión 4, 8% de probabilidad
+	if ascension >= 4 and escena_espectro_tanque and randf() < 0.08:
+		return escena_espectro_tanque
+
 	return escena_espectro
 	
 

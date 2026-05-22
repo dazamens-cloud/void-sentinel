@@ -8,7 +8,10 @@
 [ext_resource type="PackedScene" uid="uid://dgd5fpkdaq144" path="res://escenas/enemigos/Espectro.tscn" id="3_16hu1"]
 [ext_resource type="PackedScene" uid="uid://cux5a21ygjj8p" path="res://escenas/enemigos/EspectroTanque.tscn" id="6_txhqv"]
 [ext_resource type="PackedScene" uid="uid://cipxdj32hc6nw" path="res://escenas/enemigos/EspectroJefe.tscn" id="7_mb57o"]
-[ext_resource type="PackedScene" uid="uid://3jybucq77vnr" path="res://escenas/utils/panel_mejoras.tscn" id="9_mb57o"]
+[ext_resource type="PackedScene" uid="uid://lygcwf5t4ap7" path="res://escenas/Mejoras/MejoraManager.tscn" id="9_mb57o"]
+[ext_resource type="PackedScene" uid="uid://dr9km4pf2qvx8" path="res://escenas/enemigos/EspectroKamikaze.tscn" id="10_kami"]
+[ext_resource type="PackedScene" uid="uid://bsnp3m7r4kq9v" path="res://escenas/enemigos/EspectroSniper.tscn" id="11_snip"]
+[ext_resource type="PackedScene" uid="uid://cmndr6t8x1py5" path="res://escenas/enemigos/EspectroComander.tscn" id="12_cmd"]
 
 [node name="Mundo" type="Node2D" unique_id=946159933]
 script = ExtResource("1_7oex1")
@@ -38,6 +41,9 @@ script = ExtResource("2_v12yk")
 escena_espectro = ExtResource("3_16hu1")
 escena_espectro_tanque = ExtResource("6_txhqv")
 escena_espectro_jefe = ExtResource("7_mb57o")
+escena_espectro_kamikaze = ExtResource("10_kami")
+escena_espectro_sniper = ExtResource("11_snip")
+escena_espectro_comander = ExtResource("12_cmd")
 
 [node name="Interfaz" parent="." unique_id=1199303299 instance=ExtResource("2_glrvs")]
 

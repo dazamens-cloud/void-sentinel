@@ -114,21 +114,6 @@ func _actualizar_salud(actual: float, maxima: float) -> void:
 	
 func _on_juego_terminado(causa: String) -> void:
 	mostrar_game_over(causa)
-	print("🖥️ Interfaz: GAME OVER - ", causa)
-	# Mostrar panel de game over (puedes crear un Label)
-	var game_over_label = Label.new()
-	game_over_label.text = "GAME OVER\n" + causa
-	game_over_label.add_theme_font_size_override("font_size", 32)
-	game_over_label.add_theme_color_override("font_color", Color.RED)
-	game_over_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	game_over_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	game_over_label.size = Vector2(720, 1280)
-	game_over_label.position = Vector2(0, 0)
-	add_child(game_over_label)
-	
-	# Opcional: botón para reiniciar
-	await get_tree().create_timer(3.0).timeout
-	get_tree().reload_current_scene()
 	
 func mostrar_game_over(causa: String) -> void:
 	print("🖥️ Interfaz: GAME OVER - ", causa)

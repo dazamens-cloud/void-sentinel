@@ -7,14 +7,12 @@
 radius = 28.01785
 
 [node name="EspectroTanque" type="CharacterBody2D" unique_id=618351801]
-collision_mask = 2
 script = ExtResource("1_tanque")
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=1121692872]
 modulate = Color(0.9796564, 0.6700484, 0.3480472, 1)
 scale = Vector2(0.14419976, 0.14419976)
 texture = ExtResource("2_textura")
-script = ExtResource("1_tanque")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1634432957]
 modulate = Color(0.15665394, 0.37673056, 0.30213365, 1)

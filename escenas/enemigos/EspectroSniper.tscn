@@ -1,0 +1,18 @@
+[gd_scene format=3 uid="uid://bsnp3m7r4kq9v"]
+
+[ext_resource type="Script" uid="uid://bxsnpr7q3km41" path="res://scripts/enemigos/EspectroSniper.gd" id="1_sniper"]
+[ext_resource type="Texture2D" uid="uid://cgnptwca6ldb8" path="res://assets/sprites/enemigos/enemigo basico.png" id="2_tex"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_snip"]
+radius = 20.0
+
+[node name="EspectroSniper" type="CharacterBody2D" unique_id=230000001 groups=["espectros"]]
+script = ExtResource("1_sniper")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=230000002]
+modulate = Color(0.3, 1.0, 0.8, 1)
+scale = Vector2(0.10, 0.10)
+texture = ExtResource("2_tex")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=230000003]
+shape = SubResource("CircleShape2D_snip")

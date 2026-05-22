@@ -4,7 +4,7 @@ extends Node2D
 # Orquestador de la escena de combate.
 # ═══════════════════════════════════════════════════
 
-@onready var camara: Camera2D = $CamaraJuego
+@onready var camara: Camera2D = $Camera2D
 @onready var nucleo: Node2D = $Nexus
 @onready var gestor_oleadas: Node = $AscensionManager
 @onready var hud: CanvasLayer = $Interfaz
@@ -36,9 +36,7 @@ func _conectar_gestor_oleadas() -> void:
 
 func _conectar_nucleo() -> void:
 	if not is_instance_valid(nucleo): return
-	if nucleo.has_signal("nucleo_destruido"):
-		nucleo.nucleo_destruido.connect(_on_nucleo_destruido)
-		print("🌍 Mundo: Conectada señal nucleo_destruido")
+	print("🌍 Mundo: Nexus encontrado")
 
 func _conectar_dron() -> void:
 	if not is_instance_valid(dron): return
@@ -61,10 +59,6 @@ func _on_ascension_completada(numero: int) -> void:
 
 func _on_pausa_entre_ascensiones(segundos: float) -> void:
 	print("🌍 Mundo: Pausa de ", segundos, " segundos")
-
-func _on_nucleo_destruido(tipo_enemigo: String) -> void:
-	print("🌍 Mundo: Núcleo destruido por ", tipo_enemigo)
-	Economia.juego_terminado.emit(tipo_enemigo)
 
 func _on_juego_terminado(causa: String) -> void:
 	print("🌍 Mundo: JUEGO TERMINADO - ", causa)

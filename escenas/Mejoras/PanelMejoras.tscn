@@ -1,0 +1,1436 @@
+[gd_scene format=3 uid="uid://bqc4vp0l8l0kt"]
+
+[ext_resource type="Script" uid="uid://c6v0lwe4tbox1" path="res://scripts/ui/PanelMejoras.gd" id="1_panel"]
+[ext_resource type="Script" uid="uid://0s13tto8mla1" path="res://scripts/mejoras/MejoraCard.gd" id="2_card"]
+
+[node name="PanelMejoras" type="Control" unique_id=1787974972]
+custom_minimum_size = Vector2(620, 550)
+layout_mode = 3
+anchors_preset = 0
+offset_top = 836.0
+offset_right = 720.0
+offset_bottom = 1386.0
+script = ExtResource("1_panel")
+
+[node name="Background" type="ColorRect" parent="." unique_id=924165536]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0.05, 0.05, 0.15, 0.95)
+
+[node name="BarraTitulo" type="HBoxContainer" parent="." unique_id=975417834]
+layout_mode = 0
+offset_top = 5.0
+offset_right = 718.0
+offset_bottom = 45.0
+
+[node name="Titulo" type="Label" parent="BarraTitulo" unique_id=1760060020]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0, 0.85, 1, 1)
+theme_override_font_sizes/font_size = 24
+text = "MEJORAS"
+horizontal_alignment = 1
+
+[node name="BtnToggle" type="Button" parent="BarraTitulo" unique_id=1114299882]
+layout_mode = 2
+text = "▼"
+
+[node name="Contenido" type="Control" parent="." unique_id=375081346]
+anchors_preset = 0
+offset_top = 45.0
+offset_right = 720.0
+offset_bottom = 550.0
+
+[node name="Tabs" type="HBoxContainer" parent="Contenido" unique_id=2128111092]
+layout_mode = 0
+offset_right = 717.0
+offset_bottom = 40.0
+
+[node name="BtnAtaque" type="Button" parent="Contenido/Tabs" unique_id=79100243]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "⚔️ ATAQUE"
+
+[node name="BtnDefensa" type="Button" parent="Contenido/Tabs" unique_id=1621839610]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "🛡️ DEFENSA"
+
+[node name="BtnBonificacion" type="Button" parent="Contenido/Tabs" unique_id=1360576400]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "💰 BONIFICACIÓN"
+
+[node name="BtnCommander" type="Button" parent="Contenido/Tabs" unique_id=1589177744]
+layout_mode = 2
+size_flags_horizontal = 3
+disabled = true
+text = "👑 COMMANDER"
+
+[node name="ScrollContainer" type="ScrollContainer" parent="Contenido" unique_id=2071394460]
+layout_mode = 0
+offset_top = 43.0
+offset_right = 717.0
+offset_bottom = 550.0
+
+[node name="MejorasContainer" type="VBoxContainer" parent="Contenido/ScrollContainer" unique_id=1385201570]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="AtaqueContainer" type="GridContainer" parent="Contenido/ScrollContainer/MejorasContainer" unique_id=467645732]
+layout_mode = 2
+size_flags_horizontal = 3
+columns = 2
+
+[node name="CardDanio" type="PanelContainer" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer" unique_id=586846181]
+custom_minimum_size = Vector2(0, 70)
+layout_mode = 2
+size_flags_horizontal = 3
+script = ExtResource("2_card")
+mejora_id = "danio"
+
+[node name="VBox" type="VBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardDanio" unique_id=152228839]
+layout_mode = 2
+
+[node name="HBoxTop" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardDanio/VBox" unique_id=606436726]
+layout_mode = 2
+
+[node name="LblNombre" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardDanio/VBox/HBoxTop" unique_id=21428426]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 18
+text = "Nombre"
+
+[node name="LblValor" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardDanio/VBox/HBoxTop" unique_id=2068796093]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0.85, 1, 1)
+theme_override_font_sizes/font_size = 16
+text = "+0"
+
+[node name="BtnComprar" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardDanio/VBox/HBoxTop" unique_id=1786694599]
+layout_mode = 2
+text = "0⚡"
+
+[node name="HBoxBottom" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardDanio/VBox" unique_id=1508750338]
+layout_mode = 2
+
+[node name="LblNivel" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardDanio/VBox/HBoxBottom" unique_id=1660252931]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
+theme_override_font_sizes/font_size = 12
+text = "Nivel 0 / 0"
+
+[node name="BtnX2" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardDanio/VBox/HBoxBottom" unique_id=1642966941]
+layout_mode = 2
+text = "x2"
+
+[node name="BtnX5" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardDanio/VBox/HBoxBottom" unique_id=565733670]
+layout_mode = 2
+text = "x5"
+
+[node name="BtnMax" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardDanio/VBox/HBoxBottom" unique_id=608359194]
+layout_mode = 2
+text = "MAX"
+
+[node name="LblBloqueada" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardDanio/VBox/HBoxBottom" unique_id=370430000]
+visible = false
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0, 0, 1)
+theme_override_font_sizes/font_size = 10
+text = "🔒 DESBLOQUEAR EN ASCENSIÓN 45"
+
+[node name="CardVelocidadAtaque" type="PanelContainer" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer" unique_id=768230086]
+custom_minimum_size = Vector2(0, 70)
+layout_mode = 2
+size_flags_horizontal = 3
+script = ExtResource("2_card")
+mejora_id = "velocidad_ataque"
+
+[node name="VBox" type="VBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardVelocidadAtaque" unique_id=1980980594]
+layout_mode = 2
+
+[node name="HBoxTop" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardVelocidadAtaque/VBox" unique_id=903453279]
+layout_mode = 2
+
+[node name="LblNombre" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardVelocidadAtaque/VBox/HBoxTop" unique_id=382309400]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 18
+text = "Nombre"
+
+[node name="LblValor" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardVelocidadAtaque/VBox/HBoxTop" unique_id=1609415392]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0.85, 1, 1)
+theme_override_font_sizes/font_size = 16
+text = "+0"
+
+[node name="BtnComprar" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardVelocidadAtaque/VBox/HBoxTop" unique_id=1746300668]
+layout_mode = 2
+text = "0⚡"
+
+[node name="HBoxBottom" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardVelocidadAtaque/VBox" unique_id=809715453]
+layout_mode = 2
+
+[node name="LblNivel" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardVelocidadAtaque/VBox/HBoxBottom" unique_id=2088554164]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
+theme_override_font_sizes/font_size = 12
+text = "Nivel 0 / 0"
+
+[node name="BtnX2" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardVelocidadAtaque/VBox/HBoxBottom" unique_id=1070552050]
+layout_mode = 2
+text = "x2"
+
+[node name="BtnX5" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardVelocidadAtaque/VBox/HBoxBottom" unique_id=58707790]
+layout_mode = 2
+text = "x5"
+
+[node name="BtnMax" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardVelocidadAtaque/VBox/HBoxBottom" unique_id=1877744242]
+layout_mode = 2
+text = "MAX"
+
+[node name="LblBloqueada" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardVelocidadAtaque/VBox/HBoxBottom" unique_id=178295495]
+visible = false
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0, 0, 1)
+theme_override_font_sizes/font_size = 10
+text = "🔒 DESBLOQUEAR EN ASCENSIÓN 45"
+
+[node name="CardDisparoCritico" type="PanelContainer" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer" unique_id=1483192967]
+custom_minimum_size = Vector2(0, 70)
+layout_mode = 2
+size_flags_horizontal = 3
+script = ExtResource("2_card")
+mejora_id = "disparo_critico"
+
+[node name="VBox" type="VBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardDisparoCritico" unique_id=208860703]
+layout_mode = 2
+
+[node name="HBoxTop" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardDisparoCritico/VBox" unique_id=201895401]
+layout_mode = 2
+
+[node name="LblNombre" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardDisparoCritico/VBox/HBoxTop" unique_id=1971671111]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 18
+text = "Nombre"
+
+[node name="LblValor" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardDisparoCritico/VBox/HBoxTop" unique_id=1707243814]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0.85, 1, 1)
+theme_override_font_sizes/font_size = 16
+text = "+0"
+
+[node name="BtnComprar" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardDisparoCritico/VBox/HBoxTop" unique_id=81090390]
+layout_mode = 2
+text = "0⚡"
+
+[node name="HBoxBottom" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardDisparoCritico/VBox" unique_id=1442245409]
+layout_mode = 2
+
+[node name="LblNivel" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardDisparoCritico/VBox/HBoxBottom" unique_id=40080519]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
+theme_override_font_sizes/font_size = 12
+text = "Nivel 0 / 0"
+
+[node name="BtnX2" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardDisparoCritico/VBox/HBoxBottom" unique_id=475394379]
+layout_mode = 2
+text = "x2"
+
+[node name="BtnX5" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardDisparoCritico/VBox/HBoxBottom" unique_id=813896426]
+layout_mode = 2
+text = "x5"
+
+[node name="BtnMax" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardDisparoCritico/VBox/HBoxBottom" unique_id=1453177334]
+layout_mode = 2
+text = "MAX"
+
+[node name="LblBloqueada" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardDisparoCritico/VBox/HBoxBottom" unique_id=789675088]
+visible = false
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0, 0, 1)
+theme_override_font_sizes/font_size = 10
+text = "🔒 DESBLOQUEAR EN ASCENSIÓN 45"
+
+[node name="CardMultidisparo" type="PanelContainer" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer" unique_id=2138043005]
+custom_minimum_size = Vector2(0, 70)
+layout_mode = 2
+size_flags_horizontal = 3
+script = ExtResource("2_card")
+mejora_id = "multidisparo"
+
+[node name="VBox" type="VBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardMultidisparo" unique_id=691630064]
+layout_mode = 2
+
+[node name="HBoxTop" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardMultidisparo/VBox" unique_id=287642732]
+layout_mode = 2
+
+[node name="LblNombre" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardMultidisparo/VBox/HBoxTop" unique_id=406684439]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 18
+text = "Nombre"
+
+[node name="LblValor" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardMultidisparo/VBox/HBoxTop" unique_id=920024103]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0.85, 1, 1)
+theme_override_font_sizes/font_size = 16
+text = "+0"
+
+[node name="BtnComprar" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardMultidisparo/VBox/HBoxTop" unique_id=195508818]
+layout_mode = 2
+text = "0⚡"
+
+[node name="HBoxBottom" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardMultidisparo/VBox" unique_id=1463899477]
+layout_mode = 2
+
+[node name="LblNivel" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardMultidisparo/VBox/HBoxBottom" unique_id=438954263]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
+theme_override_font_sizes/font_size = 12
+text = "Nivel 0 / 0"
+
+[node name="BtnX2" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardMultidisparo/VBox/HBoxBottom" unique_id=1007885789]
+layout_mode = 2
+text = "x2"
+
+[node name="BtnX5" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardMultidisparo/VBox/HBoxBottom" unique_id=1921764920]
+layout_mode = 2
+text = "x5"
+
+[node name="BtnMax" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardMultidisparo/VBox/HBoxBottom" unique_id=1557867246]
+layout_mode = 2
+text = "MAX"
+
+[node name="LblBloqueada" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardMultidisparo/VBox/HBoxBottom" unique_id=464963191]
+visible = false
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0, 0, 1)
+theme_override_font_sizes/font_size = 10
+text = "🔒 DESBLOQUEAR EN ASCENSIÓN 45"
+
+[node name="CardRebote" type="PanelContainer" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer" unique_id=845625335]
+custom_minimum_size = Vector2(0, 70)
+layout_mode = 2
+size_flags_horizontal = 3
+script = ExtResource("2_card")
+mejora_id = "rebote"
+
+[node name="VBox" type="VBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardRebote" unique_id=303024492]
+layout_mode = 2
+
+[node name="HBoxTop" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardRebote/VBox" unique_id=209404034]
+layout_mode = 2
+
+[node name="LblNombre" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardRebote/VBox/HBoxTop" unique_id=75158554]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 18
+text = "Nombre"
+
+[node name="LblValor" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardRebote/VBox/HBoxTop" unique_id=1016164916]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0.85, 1, 1)
+theme_override_font_sizes/font_size = 16
+text = "+0"
+
+[node name="BtnComprar" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardRebote/VBox/HBoxTop" unique_id=1905288321]
+layout_mode = 2
+text = "0⚡"
+
+[node name="HBoxBottom" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardRebote/VBox" unique_id=2132778120]
+layout_mode = 2
+
+[node name="LblNivel" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardRebote/VBox/HBoxBottom" unique_id=524261822]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
+theme_override_font_sizes/font_size = 12
+text = "Nivel 0 / 0"
+
+[node name="BtnX2" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardRebote/VBox/HBoxBottom" unique_id=1125615510]
+layout_mode = 2
+text = "x2"
+
+[node name="BtnX5" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardRebote/VBox/HBoxBottom" unique_id=267091408]
+layout_mode = 2
+text = "x5"
+
+[node name="BtnMax" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardRebote/VBox/HBoxBottom" unique_id=1421791045]
+layout_mode = 2
+text = "MAX"
+
+[node name="LblBloqueada" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardRebote/VBox/HBoxBottom" unique_id=361545767]
+visible = false
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0, 0, 1)
+theme_override_font_sizes/font_size = 10
+text = "🔒 DESBLOQUEAR EN ASCENSIÓN 45"
+
+[node name="CardAlcanceRebote" type="PanelContainer" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer" unique_id=1235765525]
+custom_minimum_size = Vector2(0, 70)
+layout_mode = 2
+size_flags_horizontal = 3
+script = ExtResource("2_card")
+mejora_id = "alcance_rebote"
+
+[node name="VBox" type="VBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardAlcanceRebote" unique_id=1435742033]
+layout_mode = 2
+
+[node name="HBoxTop" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardAlcanceRebote/VBox" unique_id=1999269868]
+layout_mode = 2
+
+[node name="LblNombre" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardAlcanceRebote/VBox/HBoxTop" unique_id=1176305089]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 18
+text = "Nombre"
+
+[node name="LblValor" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardAlcanceRebote/VBox/HBoxTop" unique_id=1847889796]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0.85, 1, 1)
+theme_override_font_sizes/font_size = 16
+text = "+0"
+
+[node name="BtnComprar" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardAlcanceRebote/VBox/HBoxTop" unique_id=1507206457]
+layout_mode = 2
+text = "0⚡"
+
+[node name="HBoxBottom" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardAlcanceRebote/VBox" unique_id=1068236714]
+layout_mode = 2
+
+[node name="LblNivel" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardAlcanceRebote/VBox/HBoxBottom" unique_id=1671267434]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
+theme_override_font_sizes/font_size = 12
+text = "Nivel 0 / 0"
+
+[node name="BtnX2" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardAlcanceRebote/VBox/HBoxBottom" unique_id=1006220520]
+layout_mode = 2
+text = "x2"
+
+[node name="BtnX5" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardAlcanceRebote/VBox/HBoxBottom" unique_id=200894038]
+layout_mode = 2
+text = "x5"
+
+[node name="BtnMax" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardAlcanceRebote/VBox/HBoxBottom" unique_id=1285042313]
+layout_mode = 2
+text = "MAX"
+
+[node name="LblBloqueada" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardAlcanceRebote/VBox/HBoxBottom" unique_id=2064296451]
+visible = false
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0, 0, 1)
+theme_override_font_sizes/font_size = 10
+text = "🔒 DESBLOQUEAR EN ASCENSIÓN 45"
+
+[node name="DefensaContainer" type="GridContainer" parent="Contenido/ScrollContainer/MejorasContainer" unique_id=1493635998]
+visible = false
+layout_mode = 2
+size_flags_horizontal = 3
+columns = 2
+
+[node name="CardSalud" type="PanelContainer" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer" unique_id=266674355]
+custom_minimum_size = Vector2(0, 70)
+layout_mode = 2
+size_flags_horizontal = 3
+script = ExtResource("2_card")
+mejora_id = "salud"
+
+[node name="VBox" type="VBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardSalud" unique_id=448997788]
+layout_mode = 2
+
+[node name="HBoxTop" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardSalud/VBox" unique_id=1722766318]
+layout_mode = 2
+
+[node name="LblNombre" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardSalud/VBox/HBoxTop" unique_id=1187065676]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 18
+text = "Nombre"
+
+[node name="LblValor" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardSalud/VBox/HBoxTop" unique_id=536776248]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0.85, 1, 1)
+theme_override_font_sizes/font_size = 16
+text = "+0"
+
+[node name="BtnComprar" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardSalud/VBox/HBoxTop" unique_id=1704258127]
+layout_mode = 2
+text = "0⚡"
+
+[node name="HBoxBottom" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardSalud/VBox" unique_id=571601113]
+layout_mode = 2
+
+[node name="LblNivel" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardSalud/VBox/HBoxBottom" unique_id=81078768]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
+theme_override_font_sizes/font_size = 12
+text = "Nivel 0 / 0"
+
+[node name="BtnX2" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardSalud/VBox/HBoxBottom" unique_id=928338378]
+layout_mode = 2
+text = "x2"
+
+[node name="BtnX5" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardSalud/VBox/HBoxBottom" unique_id=1209532589]
+layout_mode = 2
+text = "x5"
+
+[node name="BtnMax" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardSalud/VBox/HBoxBottom" unique_id=1556017669]
+layout_mode = 2
+text = "MAX"
+
+[node name="LblBloqueada" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardSalud/VBox/HBoxBottom" unique_id=585340209]
+visible = false
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0, 0, 1)
+theme_override_font_sizes/font_size = 10
+text = "🔒 DESBLOQUEAR EN ASCENSIÓN 45"
+
+[node name="CardRecuperacion" type="PanelContainer" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer" unique_id=1173586947]
+custom_minimum_size = Vector2(0, 70)
+layout_mode = 2
+size_flags_horizontal = 3
+script = ExtResource("2_card")
+mejora_id = "recuperacion"
+
+[node name="VBox" type="VBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardRecuperacion" unique_id=1388398342]
+layout_mode = 2
+
+[node name="HBoxTop" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardRecuperacion/VBox" unique_id=1788841741]
+layout_mode = 2
+
+[node name="LblNombre" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardRecuperacion/VBox/HBoxTop" unique_id=1128152227]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 18
+text = "Nombre"
+
+[node name="LblValor" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardRecuperacion/VBox/HBoxTop" unique_id=418384842]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0.85, 1, 1)
+theme_override_font_sizes/font_size = 16
+text = "+0"
+
+[node name="BtnComprar" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardRecuperacion/VBox/HBoxTop" unique_id=81358165]
+layout_mode = 2
+text = "0⚡"
+
+[node name="HBoxBottom" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardRecuperacion/VBox" unique_id=1498498443]
+layout_mode = 2
+
+[node name="LblNivel" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardRecuperacion/VBox/HBoxBottom" unique_id=1344822842]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
+theme_override_font_sizes/font_size = 12
+text = "Nivel 0 / 0"
+
+[node name="BtnX2" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardRecuperacion/VBox/HBoxBottom" unique_id=461108950]
+layout_mode = 2
+text = "x2"
+
+[node name="BtnX5" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardRecuperacion/VBox/HBoxBottom" unique_id=338450203]
+layout_mode = 2
+text = "x5"
+
+[node name="BtnMax" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardRecuperacion/VBox/HBoxBottom" unique_id=1501266693]
+layout_mode = 2
+text = "MAX"
+
+[node name="LblBloqueada" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardRecuperacion/VBox/HBoxBottom" unique_id=1056477008]
+visible = false
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0, 0, 1)
+theme_override_font_sizes/font_size = 10
+text = "🔒 DESBLOQUEAR EN ASCENSIÓN 45"
+
+[node name="CardEscudo" type="PanelContainer" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer" unique_id=1118622030]
+custom_minimum_size = Vector2(0, 70)
+layout_mode = 2
+size_flags_horizontal = 3
+script = ExtResource("2_card")
+mejora_id = "escudo"
+
+[node name="VBox" type="VBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardEscudo" unique_id=209538441]
+layout_mode = 2
+
+[node name="HBoxTop" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardEscudo/VBox" unique_id=1815251223]
+layout_mode = 2
+
+[node name="LblNombre" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardEscudo/VBox/HBoxTop" unique_id=388945378]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 18
+text = "Nombre"
+
+[node name="LblValor" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardEscudo/VBox/HBoxTop" unique_id=1051187454]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0.85, 1, 1)
+theme_override_font_sizes/font_size = 16
+text = "+0"
+
+[node name="BtnComprar" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardEscudo/VBox/HBoxTop" unique_id=1354674473]
+layout_mode = 2
+text = "0⚡"
+
+[node name="HBoxBottom" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardEscudo/VBox" unique_id=1651606291]
+layout_mode = 2
+
+[node name="LblNivel" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardEscudo/VBox/HBoxBottom" unique_id=1307439106]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
+theme_override_font_sizes/font_size = 12
+text = "Nivel 0 / 0"
+
+[node name="BtnX2" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardEscudo/VBox/HBoxBottom" unique_id=126602854]
+layout_mode = 2
+text = "x2"
+
+[node name="BtnX5" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardEscudo/VBox/HBoxBottom" unique_id=97136725]
+layout_mode = 2
+text = "x5"
+
+[node name="BtnMax" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardEscudo/VBox/HBoxBottom" unique_id=1547083527]
+layout_mode = 2
+text = "MAX"
+
+[node name="LblBloqueada" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardEscudo/VBox/HBoxBottom" unique_id=1954976571]
+visible = false
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0, 0, 1)
+theme_override_font_sizes/font_size = 10
+text = "🔒 DESBLOQUEAR EN ASCENSIÓN 45"
+
+[node name="CardDurezaEscudo" type="PanelContainer" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer" unique_id=1279370165]
+custom_minimum_size = Vector2(0, 70)
+layout_mode = 2
+size_flags_horizontal = 3
+script = ExtResource("2_card")
+mejora_id = "dureza_escudo"
+
+[node name="VBox" type="VBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardDurezaEscudo" unique_id=119266224]
+layout_mode = 2
+
+[node name="HBoxTop" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardDurezaEscudo/VBox" unique_id=366103033]
+layout_mode = 2
+
+[node name="LblNombre" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardDurezaEscudo/VBox/HBoxTop" unique_id=1781687570]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 18
+text = "Nombre"
+
+[node name="LblValor" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardDurezaEscudo/VBox/HBoxTop" unique_id=103039227]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0.85, 1, 1)
+theme_override_font_sizes/font_size = 16
+text = "+0"
+
+[node name="BtnComprar" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardDurezaEscudo/VBox/HBoxTop" unique_id=2031925917]
+layout_mode = 2
+text = "0⚡"
+
+[node name="HBoxBottom" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardDurezaEscudo/VBox" unique_id=812849988]
+layout_mode = 2
+
+[node name="LblNivel" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardDurezaEscudo/VBox/HBoxBottom" unique_id=158173533]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
+theme_override_font_sizes/font_size = 12
+text = "Nivel 0 / 0"
+
+[node name="BtnX2" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardDurezaEscudo/VBox/HBoxBottom" unique_id=820721151]
+layout_mode = 2
+text = "x2"
+
+[node name="BtnX5" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardDurezaEscudo/VBox/HBoxBottom" unique_id=787715664]
+layout_mode = 2
+text = "x5"
+
+[node name="BtnMax" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardDurezaEscudo/VBox/HBoxBottom" unique_id=690145745]
+layout_mode = 2
+text = "MAX"
+
+[node name="LblBloqueada" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardDurezaEscudo/VBox/HBoxBottom" unique_id=1582328091]
+visible = false
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0, 0, 1)
+theme_override_font_sizes/font_size = 10
+text = "🔒 DESBLOQUEAR EN ASCENSIÓN 45"
+
+[node name="CardPulsoQuartz" type="PanelContainer" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer" unique_id=613477531]
+custom_minimum_size = Vector2(0, 70)
+layout_mode = 2
+size_flags_horizontal = 3
+script = ExtResource("2_card")
+mejora_id = "pulso_quartz"
+
+[node name="VBox" type="VBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardPulsoQuartz" unique_id=2031214768]
+layout_mode = 2
+
+[node name="HBoxTop" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardPulsoQuartz/VBox" unique_id=946259907]
+layout_mode = 2
+
+[node name="LblNombre" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardPulsoQuartz/VBox/HBoxTop" unique_id=1019427042]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 18
+text = "Nombre"
+
+[node name="LblValor" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardPulsoQuartz/VBox/HBoxTop" unique_id=2060068501]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0.85, 1, 1)
+theme_override_font_sizes/font_size = 16
+text = "+0"
+
+[node name="BtnComprar" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardPulsoQuartz/VBox/HBoxTop" unique_id=1078213757]
+layout_mode = 2
+text = "0⚡"
+
+[node name="HBoxBottom" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardPulsoQuartz/VBox" unique_id=662398496]
+layout_mode = 2
+
+[node name="LblNivel" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardPulsoQuartz/VBox/HBoxBottom" unique_id=1497519034]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
+theme_override_font_sizes/font_size = 12
+text = "Nivel 0 / 0"
+
+[node name="BtnX2" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardPulsoQuartz/VBox/HBoxBottom" unique_id=1519330477]
+layout_mode = 2
+text = "x2"
+
+[node name="BtnX5" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardPulsoQuartz/VBox/HBoxBottom" unique_id=885054940]
+layout_mode = 2
+text = "x5"
+
+[node name="BtnMax" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardPulsoQuartz/VBox/HBoxBottom" unique_id=1279266814]
+layout_mode = 2
+text = "MAX"
+
+[node name="LblBloqueada" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardPulsoQuartz/VBox/HBoxBottom" unique_id=9349536]
+visible = false
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0, 0, 1)
+theme_override_font_sizes/font_size = 10
+text = "🔒 DESBLOQUEAR EN ASCENSIÓN 45"
+
+[node name="CardPoderPulso" type="PanelContainer" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer" unique_id=1238046399]
+custom_minimum_size = Vector2(0, 70)
+layout_mode = 2
+size_flags_horizontal = 3
+script = ExtResource("2_card")
+mejora_id = "poder_pulso"
+
+[node name="VBox" type="VBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardPoderPulso" unique_id=1693559960]
+layout_mode = 2
+
+[node name="HBoxTop" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardPoderPulso/VBox" unique_id=1934357085]
+layout_mode = 2
+
+[node name="LblNombre" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardPoderPulso/VBox/HBoxTop" unique_id=1475121508]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 18
+text = "Nombre"
+
+[node name="LblValor" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardPoderPulso/VBox/HBoxTop" unique_id=2049967550]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0.85, 1, 1)
+theme_override_font_sizes/font_size = 16
+text = "+0"
+
+[node name="BtnComprar" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardPoderPulso/VBox/HBoxTop" unique_id=1230817851]
+layout_mode = 2
+text = "0⚡"
+
+[node name="HBoxBottom" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardPoderPulso/VBox" unique_id=821635244]
+layout_mode = 2
+
+[node name="LblNivel" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardPoderPulso/VBox/HBoxBottom" unique_id=2009755665]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
+theme_override_font_sizes/font_size = 12
+text = "Nivel 0 / 0"
+
+[node name="BtnX2" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardPoderPulso/VBox/HBoxBottom" unique_id=1688455570]
+layout_mode = 2
+text = "x2"
+
+[node name="BtnX5" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardPoderPulso/VBox/HBoxBottom" unique_id=1096340367]
+layout_mode = 2
+text = "x5"
+
+[node name="BtnMax" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardPoderPulso/VBox/HBoxBottom" unique_id=2097617366]
+layout_mode = 2
+text = "MAX"
+
+[node name="LblBloqueada" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardPoderPulso/VBox/HBoxBottom" unique_id=1292345494]
+visible = false
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0, 0, 1)
+theme_override_font_sizes/font_size = 10
+text = "🔒 DESBLOQUEAR EN ASCENSIÓN 45"
+
+[node name="BonificacionContainer" type="GridContainer" parent="Contenido/ScrollContainer/MejorasContainer" unique_id=702543587]
+visible = false
+layout_mode = 2
+size_flags_horizontal = 3
+columns = 2
+
+[node name="CardEnergiaAscension" type="PanelContainer" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer" unique_id=621029895]
+custom_minimum_size = Vector2(0, 70)
+layout_mode = 2
+size_flags_horizontal = 3
+script = ExtResource("2_card")
+mejora_id = "energia_ascension"
+
+[node name="VBox" type="VBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEnergiaAscension" unique_id=2038538779]
+layout_mode = 2
+
+[node name="HBoxTop" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEnergiaAscension/VBox" unique_id=1154988835]
+layout_mode = 2
+
+[node name="LblNombre" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEnergiaAscension/VBox/HBoxTop" unique_id=624142764]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 18
+text = "Nombre"
+
+[node name="LblValor" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEnergiaAscension/VBox/HBoxTop" unique_id=2062872725]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0.85, 1, 1)
+theme_override_font_sizes/font_size = 16
+text = "+0"
+
+[node name="BtnComprar" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEnergiaAscension/VBox/HBoxTop" unique_id=854184801]
+layout_mode = 2
+text = "0⚡"
+
+[node name="HBoxBottom" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEnergiaAscension/VBox" unique_id=1058516392]
+layout_mode = 2
+
+[node name="LblNivel" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEnergiaAscension/VBox/HBoxBottom" unique_id=629784321]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
+theme_override_font_sizes/font_size = 12
+text = "Nivel 0 / 0"
+
+[node name="BtnX2" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEnergiaAscension/VBox/HBoxBottom" unique_id=720921758]
+layout_mode = 2
+text = "x2"
+
+[node name="BtnX5" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEnergiaAscension/VBox/HBoxBottom" unique_id=366044724]
+layout_mode = 2
+text = "x5"
+
+[node name="BtnMax" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEnergiaAscension/VBox/HBoxBottom" unique_id=1543245982]
+layout_mode = 2
+text = "MAX"
+
+[node name="LblBloqueada" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEnergiaAscension/VBox/HBoxBottom" unique_id=227874127]
+visible = false
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0, 0, 1)
+theme_override_font_sizes/font_size = 10
+text = "🔒 DESBLOQUEAR EN ASCENSIÓN 45"
+
+[node name="CardEnergiaEspectro" type="PanelContainer" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer" unique_id=1789617692]
+custom_minimum_size = Vector2(0, 70)
+layout_mode = 2
+size_flags_horizontal = 3
+script = ExtResource("2_card")
+mejora_id = "energia_espectro"
+
+[node name="VBox" type="VBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEnergiaEspectro" unique_id=1984701781]
+layout_mode = 2
+
+[node name="HBoxTop" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEnergiaEspectro/VBox" unique_id=935972351]
+layout_mode = 2
+
+[node name="LblNombre" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEnergiaEspectro/VBox/HBoxTop" unique_id=233661578]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 18
+text = "Nombre"
+
+[node name="LblValor" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEnergiaEspectro/VBox/HBoxTop" unique_id=476655471]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0.85, 1, 1)
+theme_override_font_sizes/font_size = 16
+text = "+0"
+
+[node name="BtnComprar" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEnergiaEspectro/VBox/HBoxTop" unique_id=1327946596]
+layout_mode = 2
+text = "0⚡"
+
+[node name="HBoxBottom" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEnergiaEspectro/VBox" unique_id=2026639243]
+layout_mode = 2
+
+[node name="LblNivel" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEnergiaEspectro/VBox/HBoxBottom" unique_id=2005427478]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
+theme_override_font_sizes/font_size = 12
+text = "Nivel 0 / 0"
+
+[node name="BtnX2" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEnergiaEspectro/VBox/HBoxBottom" unique_id=29148105]
+layout_mode = 2
+text = "x2"
+
+[node name="BtnX5" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEnergiaEspectro/VBox/HBoxBottom" unique_id=2118316598]
+layout_mode = 2
+text = "x5"
+
+[node name="BtnMax" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEnergiaEspectro/VBox/HBoxBottom" unique_id=1118341941]
+layout_mode = 2
+text = "MAX"
+
+[node name="LblBloqueada" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEnergiaEspectro/VBox/HBoxBottom" unique_id=1769656662]
+visible = false
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0, 0, 1)
+theme_override_font_sizes/font_size = 10
+text = "🔒 DESBLOQUEAR EN ASCENSIÓN 45"
+
+[node name="CardEcosAscension" type="PanelContainer" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer" unique_id=203543267]
+custom_minimum_size = Vector2(0, 70)
+layout_mode = 2
+size_flags_horizontal = 3
+script = ExtResource("2_card")
+mejora_id = "ecos_ascension"
+
+[node name="VBox" type="VBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEcosAscension" unique_id=1415712646]
+layout_mode = 2
+
+[node name="HBoxTop" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEcosAscension/VBox" unique_id=594382209]
+layout_mode = 2
+
+[node name="LblNombre" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEcosAscension/VBox/HBoxTop" unique_id=1178931986]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 18
+text = "Nombre"
+
+[node name="LblValor" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEcosAscension/VBox/HBoxTop" unique_id=1034406034]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0.85, 1, 1)
+theme_override_font_sizes/font_size = 16
+text = "+0"
+
+[node name="BtnComprar" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEcosAscension/VBox/HBoxTop" unique_id=694813085]
+layout_mode = 2
+text = "0⚡"
+
+[node name="HBoxBottom" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEcosAscension/VBox" unique_id=1104890883]
+layout_mode = 2
+
+[node name="LblNivel" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEcosAscension/VBox/HBoxBottom" unique_id=1498261549]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
+theme_override_font_sizes/font_size = 12
+text = "Nivel 0 / 0"
+
+[node name="BtnX2" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEcosAscension/VBox/HBoxBottom" unique_id=1423929550]
+layout_mode = 2
+text = "x2"
+
+[node name="BtnX5" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEcosAscension/VBox/HBoxBottom" unique_id=1478190000]
+layout_mode = 2
+text = "x5"
+
+[node name="BtnMax" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEcosAscension/VBox/HBoxBottom" unique_id=1056208192]
+layout_mode = 2
+text = "MAX"
+
+[node name="LblBloqueada" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEcosAscension/VBox/HBoxBottom" unique_id=1508314726]
+visible = false
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0, 0, 1)
+theme_override_font_sizes/font_size = 10
+text = "🔒 DESBLOQUEAR EN ASCENSIÓN 45"
+
+[node name="CardEcosRapido" type="PanelContainer" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer" unique_id=749607094]
+custom_minimum_size = Vector2(0, 70)
+layout_mode = 2
+size_flags_horizontal = 3
+script = ExtResource("2_card")
+mejora_id = "ecos_rapido"
+
+[node name="VBox" type="VBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEcosRapido" unique_id=847774357]
+layout_mode = 2
+
+[node name="HBoxTop" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEcosRapido/VBox" unique_id=877074410]
+layout_mode = 2
+
+[node name="LblNombre" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEcosRapido/VBox/HBoxTop" unique_id=1851958415]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 18
+text = "Nombre"
+
+[node name="LblValor" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEcosRapido/VBox/HBoxTop" unique_id=651342417]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0.85, 1, 1)
+theme_override_font_sizes/font_size = 16
+text = "+0"
+
+[node name="BtnComprar" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEcosRapido/VBox/HBoxTop" unique_id=2136312212]
+layout_mode = 2
+text = "0⚡"
+
+[node name="HBoxBottom" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEcosRapido/VBox" unique_id=1042710731]
+layout_mode = 2
+
+[node name="LblNivel" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEcosRapido/VBox/HBoxBottom" unique_id=1015348129]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
+theme_override_font_sizes/font_size = 12
+text = "Nivel 0 / 0"
+
+[node name="BtnX2" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEcosRapido/VBox/HBoxBottom" unique_id=1104502221]
+layout_mode = 2
+text = "x2"
+
+[node name="BtnX5" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEcosRapido/VBox/HBoxBottom" unique_id=407162177]
+layout_mode = 2
+text = "x5"
+
+[node name="BtnMax" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEcosRapido/VBox/HBoxBottom" unique_id=1268124803]
+layout_mode = 2
+text = "MAX"
+
+[node name="LblBloqueada" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEcosRapido/VBox/HBoxBottom" unique_id=1775558788]
+visible = false
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0, 0, 1)
+theme_override_font_sizes/font_size = 10
+text = "🔒 DESBLOQUEAR EN ASCENSIÓN 45"
+
+[node name="CardAtaqueGratis" type="PanelContainer" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer" unique_id=1571696985]
+custom_minimum_size = Vector2(0, 70)
+layout_mode = 2
+size_flags_horizontal = 3
+script = ExtResource("2_card")
+mejora_id = "mejora_ataque_gratis"
+
+[node name="VBox" type="VBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardAtaqueGratis" unique_id=1499825316]
+layout_mode = 2
+
+[node name="HBoxTop" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardAtaqueGratis/VBox" unique_id=408644296]
+layout_mode = 2
+
+[node name="LblNombre" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardAtaqueGratis/VBox/HBoxTop" unique_id=987987526]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 18
+text = "Nombre"
+
+[node name="LblValor" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardAtaqueGratis/VBox/HBoxTop" unique_id=2103597179]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0.85, 1, 1)
+theme_override_font_sizes/font_size = 16
+text = "+0"
+
+[node name="BtnComprar" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardAtaqueGratis/VBox/HBoxTop" unique_id=1087973962]
+layout_mode = 2
+text = "0⚡"
+
+[node name="HBoxBottom" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardAtaqueGratis/VBox" unique_id=271536259]
+layout_mode = 2
+
+[node name="LblNivel" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardAtaqueGratis/VBox/HBoxBottom" unique_id=2001968553]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
+theme_override_font_sizes/font_size = 12
+text = "Nivel 0 / 0"
+
+[node name="BtnX2" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardAtaqueGratis/VBox/HBoxBottom" unique_id=513352892]
+layout_mode = 2
+text = "x2"
+
+[node name="BtnX5" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardAtaqueGratis/VBox/HBoxBottom" unique_id=1996632981]
+layout_mode = 2
+text = "x5"
+
+[node name="BtnMax" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardAtaqueGratis/VBox/HBoxBottom" unique_id=949856223]
+layout_mode = 2
+text = "MAX"
+
+[node name="LblBloqueada" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardAtaqueGratis/VBox/HBoxBottom" unique_id=592745902]
+visible = false
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0, 0, 1)
+theme_override_font_sizes/font_size = 10
+text = "🔒 DESBLOQUEAR EN ASCENSIÓN 45"
+
+[node name="CardDefensaGratis" type="PanelContainer" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer" unique_id=1886715017]
+custom_minimum_size = Vector2(0, 70)
+layout_mode = 2
+size_flags_horizontal = 3
+script = ExtResource("2_card")
+mejora_id = "mejora_defensa_gratis"
+
+[node name="VBox" type="VBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardDefensaGratis" unique_id=1543373910]
+layout_mode = 2
+
+[node name="HBoxTop" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardDefensaGratis/VBox" unique_id=83687515]
+layout_mode = 2
+
+[node name="LblNombre" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardDefensaGratis/VBox/HBoxTop" unique_id=993121456]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 18
+text = "Nombre"
+
+[node name="LblValor" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardDefensaGratis/VBox/HBoxTop" unique_id=1990093764]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0.85, 1, 1)
+theme_override_font_sizes/font_size = 16
+text = "+0"
+
+[node name="BtnComprar" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardDefensaGratis/VBox/HBoxTop" unique_id=1397898360]
+layout_mode = 2
+text = "0⚡"
+
+[node name="HBoxBottom" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardDefensaGratis/VBox" unique_id=1686133527]
+layout_mode = 2
+
+[node name="LblNivel" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardDefensaGratis/VBox/HBoxBottom" unique_id=444346337]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
+theme_override_font_sizes/font_size = 12
+text = "Nivel 0 / 0"
+
+[node name="BtnX2" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardDefensaGratis/VBox/HBoxBottom" unique_id=585611943]
+layout_mode = 2
+text = "x2"
+
+[node name="BtnX5" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardDefensaGratis/VBox/HBoxBottom" unique_id=563562571]
+layout_mode = 2
+text = "x5"
+
+[node name="BtnMax" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardDefensaGratis/VBox/HBoxBottom" unique_id=1868344508]
+layout_mode = 2
+text = "MAX"
+
+[node name="LblBloqueada" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardDefensaGratis/VBox/HBoxBottom" unique_id=1643165618]
+visible = false
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0, 0, 1)
+theme_override_font_sizes/font_size = 10
+text = "🔒 DESBLOQUEAR EN ASCENSIÓN 45"
+
+[node name="CardBonificacionGratis" type="PanelContainer" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer" unique_id=441622724]
+custom_minimum_size = Vector2(0, 70)
+layout_mode = 2
+size_flags_horizontal = 3
+script = ExtResource("2_card")
+mejora_id = "mejora_bonificacion_gratis"
+
+[node name="VBox" type="VBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardBonificacionGratis" unique_id=1802441680]
+layout_mode = 2
+
+[node name="HBoxTop" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardBonificacionGratis/VBox" unique_id=1045122519]
+layout_mode = 2
+
+[node name="LblNombre" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardBonificacionGratis/VBox/HBoxTop" unique_id=2064938245]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 18
+text = "Nombre"
+
+[node name="LblValor" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardBonificacionGratis/VBox/HBoxTop" unique_id=1490667386]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0.85, 1, 1)
+theme_override_font_sizes/font_size = 16
+text = "+0"
+
+[node name="BtnComprar" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardBonificacionGratis/VBox/HBoxTop" unique_id=124033681]
+layout_mode = 2
+text = "0⚡"
+
+[node name="HBoxBottom" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardBonificacionGratis/VBox" unique_id=1364131795]
+layout_mode = 2
+
+[node name="LblNivel" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardBonificacionGratis/VBox/HBoxBottom" unique_id=521787149]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
+theme_override_font_sizes/font_size = 12
+text = "Nivel 0 / 0"
+
+[node name="BtnX2" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardBonificacionGratis/VBox/HBoxBottom" unique_id=1929062601]
+layout_mode = 2
+text = "x2"
+
+[node name="BtnX5" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardBonificacionGratis/VBox/HBoxBottom" unique_id=523391549]
+layout_mode = 2
+text = "x5"
+
+[node name="BtnMax" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardBonificacionGratis/VBox/HBoxBottom" unique_id=1194313474]
+layout_mode = 2
+text = "MAX"
+
+[node name="LblBloqueada" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardBonificacionGratis/VBox/HBoxBottom" unique_id=1460973294]
+visible = false
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0, 0, 1)
+theme_override_font_sizes/font_size = 10
+text = "🔒 DESBLOQUEAR EN ASCENSIÓN 45"
+
+[node name="CommanderContainer" type="GridContainer" parent="Contenido/ScrollContainer/MejorasContainer" unique_id=1800457641]
+visible = false
+layout_mode = 2
+size_flags_horizontal = 3
+columns = 2
+
+[node name="CardBlindaje" type="PanelContainer" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer" unique_id=110325883]
+custom_minimum_size = Vector2(0, 70)
+layout_mode = 2
+size_flags_horizontal = 3
+script = ExtResource("2_card")
+mejora_id = "blindaje"
+
+[node name="VBox" type="VBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardBlindaje" unique_id=2092743102]
+layout_mode = 2
+
+[node name="HBoxTop" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardBlindaje/VBox" unique_id=1268254483]
+layout_mode = 2
+
+[node name="LblNombre" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardBlindaje/VBox/HBoxTop" unique_id=1641110011]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 18
+text = "Nombre"
+
+[node name="LblValor" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardBlindaje/VBox/HBoxTop" unique_id=257218150]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0.85, 1, 1)
+theme_override_font_sizes/font_size = 16
+text = "+0"
+
+[node name="BtnComprar" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardBlindaje/VBox/HBoxTop" unique_id=611820590]
+layout_mode = 2
+text = "0⚡"
+
+[node name="HBoxBottom" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardBlindaje/VBox" unique_id=773865095]
+layout_mode = 2
+
+[node name="LblNivel" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardBlindaje/VBox/HBoxBottom" unique_id=314170025]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
+theme_override_font_sizes/font_size = 12
+text = "Nivel 0 / 0"
+
+[node name="BtnX2" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardBlindaje/VBox/HBoxBottom" unique_id=67048297]
+layout_mode = 2
+text = "x2"
+
+[node name="BtnX5" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardBlindaje/VBox/HBoxBottom" unique_id=815658148]
+layout_mode = 2
+text = "x5"
+
+[node name="BtnMax" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardBlindaje/VBox/HBoxBottom" unique_id=1643938614]
+layout_mode = 2
+text = "MAX"
+
+[node name="LblBloqueada" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardBlindaje/VBox/HBoxBottom" unique_id=1969382807]
+visible = false
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0, 0, 1)
+theme_override_font_sizes/font_size = 10
+text = "🔒 DESBLOQUEAR EN ASCENSIÓN 45"
+
+[node name="CardDisparosIniciales" type="PanelContainer" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer" unique_id=430443496]
+custom_minimum_size = Vector2(0, 70)
+layout_mode = 2
+size_flags_horizontal = 3
+script = ExtResource("2_card")
+mejora_id = "disparos_iniciales"
+
+[node name="VBox" type="VBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardDisparosIniciales" unique_id=1577610161]
+layout_mode = 2
+
+[node name="HBoxTop" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardDisparosIniciales/VBox" unique_id=1865131561]
+layout_mode = 2
+
+[node name="LblNombre" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardDisparosIniciales/VBox/HBoxTop" unique_id=1168891792]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 18
+text = "Nombre"
+
+[node name="LblValor" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardDisparosIniciales/VBox/HBoxTop" unique_id=540939401]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0.85, 1, 1)
+theme_override_font_sizes/font_size = 16
+text = "+0"
+
+[node name="BtnComprar" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardDisparosIniciales/VBox/HBoxTop" unique_id=1326329354]
+layout_mode = 2
+text = "0⚡"
+
+[node name="HBoxBottom" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardDisparosIniciales/VBox" unique_id=1122111578]
+layout_mode = 2
+
+[node name="LblNivel" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardDisparosIniciales/VBox/HBoxBottom" unique_id=1391808214]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
+theme_override_font_sizes/font_size = 12
+text = "Nivel 0 / 0"
+
+[node name="BtnX2" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardDisparosIniciales/VBox/HBoxBottom" unique_id=711510299]
+layout_mode = 2
+text = "x2"
+
+[node name="BtnX5" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardDisparosIniciales/VBox/HBoxBottom" unique_id=1149532636]
+layout_mode = 2
+text = "x5"
+
+[node name="BtnMax" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardDisparosIniciales/VBox/HBoxBottom" unique_id=1001391885]
+layout_mode = 2
+text = "MAX"
+
+[node name="LblBloqueada" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardDisparosIniciales/VBox/HBoxBottom" unique_id=1556293697]
+visible = false
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0, 0, 1)
+theme_override_font_sizes/font_size = 10
+text = "🔒 DESBLOQUEAR EN ASCENSIÓN 45"
+
+[node name="CardRecargaRapida" type="PanelContainer" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer" unique_id=1705187982]
+custom_minimum_size = Vector2(0, 70)
+layout_mode = 2
+size_flags_horizontal = 3
+script = ExtResource("2_card")
+mejora_id = "recarga_rapida"
+
+[node name="VBox" type="VBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardRecargaRapida" unique_id=1750790220]
+layout_mode = 2
+
+[node name="HBoxTop" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardRecargaRapida/VBox" unique_id=249665463]
+layout_mode = 2
+
+[node name="LblNombre" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardRecargaRapida/VBox/HBoxTop" unique_id=580449559]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 18
+text = "Nombre"
+
+[node name="LblValor" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardRecargaRapida/VBox/HBoxTop" unique_id=1822297478]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0.85, 1, 1)
+theme_override_font_sizes/font_size = 16
+text = "+0"
+
+[node name="BtnComprar" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardRecargaRapida/VBox/HBoxTop" unique_id=931348827]
+layout_mode = 2
+text = "0⚡"
+
+[node name="HBoxBottom" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardRecargaRapida/VBox" unique_id=2017084087]
+layout_mode = 2
+
+[node name="LblNivel" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardRecargaRapida/VBox/HBoxBottom" unique_id=447752821]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
+theme_override_font_sizes/font_size = 12
+text = "Nivel 0 / 0"
+
+[node name="BtnX2" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardRecargaRapida/VBox/HBoxBottom" unique_id=1045535320]
+layout_mode = 2
+text = "x2"
+
+[node name="BtnX5" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardRecargaRapida/VBox/HBoxBottom" unique_id=390416136]
+layout_mode = 2
+text = "x5"
+
+[node name="BtnMax" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardRecargaRapida/VBox/HBoxBottom" unique_id=1638760836]
+layout_mode = 2
+text = "MAX"
+
+[node name="LblBloqueada" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardRecargaRapida/VBox/HBoxBottom" unique_id=916586440]
+visible = false
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0, 0, 1)
+theme_override_font_sizes/font_size = 10
+text = "🔒 DESBLOQUEAR EN ASCENSIÓN 45"
+
+[node name="CardLockOn" type="PanelContainer" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer" unique_id=1067430631]
+custom_minimum_size = Vector2(0, 70)
+layout_mode = 2
+size_flags_horizontal = 3
+script = ExtResource("2_card")
+mejora_id = "lock_on"
+
+[node name="VBox" type="VBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardLockOn" unique_id=1688136486]
+layout_mode = 2
+
+[node name="HBoxTop" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardLockOn/VBox" unique_id=638110110]
+layout_mode = 2
+
+[node name="LblNombre" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardLockOn/VBox/HBoxTop" unique_id=1083963206]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 18
+text = "Nombre"
+
+[node name="LblValor" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardLockOn/VBox/HBoxTop" unique_id=1538760150]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0.85, 1, 1)
+theme_override_font_sizes/font_size = 16
+text = "+0"
+
+[node name="BtnComprar" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardLockOn/VBox/HBoxTop" unique_id=320218583]
+layout_mode = 2
+text = "0⚡"
+
+[node name="HBoxBottom" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardLockOn/VBox" unique_id=1505457488]
+layout_mode = 2
+
+[node name="LblNivel" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardLockOn/VBox/HBoxBottom" unique_id=1704195627]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
+theme_override_font_sizes/font_size = 12
+text = "Nivel 0 / 0"
+
+[node name="BtnX2" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardLockOn/VBox/HBoxBottom" unique_id=1074476277]
+layout_mode = 2
+text = "x2"
+
+[node name="BtnX5" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardLockOn/VBox/HBoxBottom" unique_id=716136872]
+layout_mode = 2
+text = "x5"
+
+[node name="BtnMax" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardLockOn/VBox/HBoxBottom" unique_id=6281118]
+layout_mode = 2
+text = "MAX"
+
+[node name="LblBloqueada" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardLockOn/VBox/HBoxBottom" unique_id=942210626]
+visible = false
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0, 0, 1)
+theme_override_font_sizes/font_size = 10
+text = "🔒 DESBLOQUEAR EN ASCENSIÓN 45"

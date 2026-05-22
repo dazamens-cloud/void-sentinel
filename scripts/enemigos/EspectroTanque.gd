@@ -77,7 +77,7 @@ func _destruir() -> void:
 	remove_from_group("espectros")
 	
 	# Texto flotante de energía
-	var texto_energia = preload("res://escenas/objetos/TextoFlotante.tscn").instantiate()
+	var texto_energia = preload("res://escenas/Objetos/TextoFlotante.tscn").instantiate()
 	texto_energia.set_energia(recompensa_energia)
 	texto_energia.global_position = global_position
 	get_tree().current_scene.add_child(texto_energia)
@@ -89,7 +89,7 @@ func _destruir() -> void:
 	
 	# 2 fragmentos al morir
 	for i in range(2):
-		var fragmento = preload("res://escenas/objetos/Fragmento.tscn").instantiate()
+		var fragmento = preload("res://escenas/Objetos/fragmento.tscn").instantiate()
 		fragmento.global_position = global_position + Vector2(randf_range(-20, 20), randf_range(-20, 20))
 		get_tree().current_scene.add_child(fragmento)
 	

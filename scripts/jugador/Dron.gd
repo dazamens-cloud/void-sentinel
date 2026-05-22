@@ -222,7 +222,7 @@ func _actualizar_capacidad() -> void:
 	print("🤖 Dron: Capacidad actualizada a ", capacidad_actual)
 
 func _sacudir_camara(fuerza: float) -> void:
-	var camara: Node = get_tree().current_scene.find_child("CamaraJuego", true, false)
+	var camara: Node = get_tree().current_scene.find_child("Camera2D", true, false)
 	if camara and camara.has_method("sacudir"):
 		camara.sacudir(fuerza)
 

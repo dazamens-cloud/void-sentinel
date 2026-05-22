@@ -80,7 +80,7 @@ func _destruir() -> void:
 	print("💀 Espectro muere")
 
 	# 📝 TEXTO FLOTANTE de energía
-	var texto_energia = preload("res://escenas/objetos/TextoFlotante.tscn").instantiate()
+	var texto_energia = preload("res://escenas/Objetos/TextoFlotante.tscn").instantiate()
 	texto_energia.set_energia(recompensa_energia)
 	texto_energia.global_position = global_position
 	get_tree().current_scene.add_child(texto_energia)
@@ -106,7 +106,7 @@ func _destruir() -> void:
 	tw.tween_callback(queue_free)
 	
 	# ✅ Fragmento al morir (ruta corregida)
-	var fragmento = preload("res://escenas/objetos/Fragmento.tscn").instantiate()
+	var fragmento = preload("res://escenas/Objetos/fragmento.tscn").instantiate()
 	fragmento.global_position = global_position
 	get_tree().current_scene.add_child(fragmento)
 	
