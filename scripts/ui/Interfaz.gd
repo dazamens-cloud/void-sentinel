@@ -21,7 +21,6 @@ func _ready() -> void:
 	NexusStats.salud_cambiada.connect(_actualizar_salud)
 	Economia.juego_terminado.connect(_on_juego_terminado)
 	
-	
 	_actualizar_energia()
 	_actualizar_ascension(0)
 	_actualizar_salud(NexusStats.salud_actual, NexusStats.get_salud())
@@ -40,17 +39,19 @@ func _ready() -> void:
 			asc.pausa_entre_ascensiones.connect(_on_pausa_iniciada)
 		print("🖥️ Interfaz: Conectadas señales de AscensionManager")
 
-func _process(delta: float) -> void:
-	# ✅ Actualizar barra de ascensión con tiempo real
+func _process(_delta: float) -> void:
+	# Actualizar barra de ascensión con tiempo real
 	if barra_ascension and barra_ascension.visible:
 		var asc = get_tree().current_scene.find_child("AscensionManager", true, false)
 		if asc and asc.has_method("get_tiempo_restante"):
 			var tiempo_restante = asc.get_tiempo_restante()
-			var progreso = (tiempo_restante / 35.0) * 100  # 35 es DURACION_ASCENSION
+			var progreso = (tiempo_restante / 35.0) * 100
 			barra_ascension.value = clamp(progreso, 0, 100)
 
 func _construir_interfaz() -> void:
 	print("🖥️ Interfaz: Construyendo UI...")
+	
+	# ── Contenedor base (ignora input para no bloquear botones) ──
 	raiz = Control.new()
 	raiz.set_anchors_preset(Control.PRESET_FULL_RECT)
 	raiz.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -62,13 +63,15 @@ func _construir_interfaz() -> void:
 	barra_dron.size = Vector2(200, 20)
 	barra_dron.max_value = 50
 	barra_dron.value = 0
+	barra_dron.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	barra_dron.add_theme_color_override("font_color", Color.CYAN)
 	raiz.add_child(barra_dron)
 	
-	# Label para texto de la barra del dron
+	# Label texto barra dron
 	label_dron = Label.new()
 	label_dron.position = Vector2(20, 1215)
 	label_dron.add_theme_font_size_override("font_size", 10)
+	label_dron.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	label_dron.text = "🔋 0/50"
 	raiz.add_child(label_dron)
 	
@@ -79,9 +82,20 @@ func _construir_interfaz() -> void:
 	barra_ascension.max_value = 100
 	barra_ascension.value = 100
 	barra_ascension.visible = false
+	barra_ascension.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	raiz.add_child(barra_ascension)
 	
 	print("🖥️ Interfaz: Barras creadas")
+	
+	# ✅ CLAVE: mover PanelMejoras al final del árbol para que
+	# quede POR ENCIMA de raiz y reciba el input correctamente
+	var panel = get_node_or_null("PanelMejoras")
+	if panel:
+		remove_child(panel)
+		add_child(panel)
+		print("🖥️ Interfaz: PanelMejoras reordenado ✅")
+	else:
+		print("⚠️ Interfaz: PanelMejoras no encontrado")
 
 func _on_ascension_iniciada(_n: int) -> void:
 	print("🖥️ Interfaz: Ascensión iniciada, mostrando barra")
@@ -111,14 +125,13 @@ func _actualizar_ascension(numero: int) -> void:
 func _actualizar_salud(actual: float, maxima: float) -> void:
 	lbl_salud.text = "❤️ %d / %d" % [int(actual), int(maxima)]
 	print("❤️ Salud actualizada: ", actual, "/", maxima)
-	
+
 func _on_juego_terminado(causa: String) -> void:
 	mostrar_game_over(causa)
-	
+
 func mostrar_game_over(causa: String) -> void:
 	print("🖥️ Interfaz: GAME OVER - ", causa)
 	
-	# Crear panel oscuro semitransparente
 	var panel = ColorRect.new()
 	panel.color = Color(0.0, 0.0, 0.0, 0.7)
 	panel.size = Vector2(720, 1280)
@@ -126,7 +139,6 @@ func mostrar_game_over(causa: String) -> void:
 	panel.z_index = 200
 	add_child(panel)
 	
-	# Texto GAME OVER
 	var game_over_label = Label.new()
 	game_over_label.text = "GAME OVER"
 	game_over_label.add_theme_font_size_override("font_size", 48)
@@ -138,7 +150,6 @@ func mostrar_game_over(causa: String) -> void:
 	game_over_label.z_index = 201
 	add_child(game_over_label)
 	
-	# Texto de causa
 	var causa_label = Label.new()
 	causa_label.text = causa
 	causa_label.add_theme_font_size_override("font_size", 24)
@@ -149,7 +160,6 @@ func mostrar_game_over(causa: String) -> void:
 	causa_label.z_index = 201
 	add_child(causa_label)
 	
-	# Botón de reinicio (opcional)
 	var boton = Button.new()
 	boton.text = "REINICIAR"
 	boton.size = Vector2(200, 50)

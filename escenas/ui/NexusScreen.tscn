@@ -1,0 +1,66 @@
+[gd_scene format=3 uid="uid://dnxy2ghjbernx"]
+
+[ext_resource type="Script" uid="uid://lqp3tfvwhloh" path="res://scripts/ui/NexusScreen.gd" id="1_nexus"]
+
+[node name="NexusScreen" type="Control" unique_id=182563486]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_nexus")
+
+[node name="Background" type="ColorRect" parent="." unique_id=104545101]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0.031, 0.031, 0.071, 1)
+
+[node name="VBox" type="VBoxContainer" parent="." unique_id=1124648627]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme_override_constants/separation = 0
+
+[node name="MejorasScroll" type="ScrollContainer" parent="VBox" unique_id=9986833]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="MejorasList" type="VBoxContainer" parent="VBox/MejorasScroll" unique_id=1360242378]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 0
+
+[node name="TabsBar" type="HBoxContainer" parent="VBox" unique_id=2070199539]
+custom_minimum_size = Vector2(0, 46)
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="BtnAtaque" type="Button" parent="VBox/TabsBar" unique_id=2019941151]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 10
+text = "⚔ Ataque"
+flat = true
+
+[node name="BtnDefensa" type="Button" parent="VBox/TabsBar" unique_id=751612990]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 10
+text = "🛡 Defensa"
+flat = true
+
+[node name="BtnBonus" type="Button" parent="VBox/TabsBar" unique_id=387547838]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 10
+text = "✦ Bonific."
+flat = true
+
+[node name="BtnCommander" type="Button" parent="VBox/TabsBar" unique_id=1204001846]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 10
+text = "♛ Cmd."
+flat = true

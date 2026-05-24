@@ -238,6 +238,7 @@ var mejoras: Dictionary = {
 # ═══════════════════════════════════════════════════
 func _ready() -> void:
 	Economia.energia_cambiada.connect(_on_energia_cambiada)
+	call_deferred("test_costos")
 
 # ═══════════════════════════════════════════════════
 # GETTERS
@@ -282,8 +283,21 @@ func get_coste(mejora_id: String) -> int:
 	var data = mejoras.get(mejora_id, {})
 	if data.is_empty():
 		return 0
-	return data["coste_base"] + (data["nivel"] * 2)
-
+	
+	var coste_base: int = data["coste_base"]
+	var nivel: int = data["nivel"]
+	
+	# Factor exponencial por categoría (9% base por nivel)
+	var factor: float = 1.09
+	match data.get("categoria", ""):
+		"ataque":      factor = 1.09
+		"defensa":     factor = 1.08  # Ligeramente más barata
+		"bonificacion": factor = 1.11 # Ligeramente más cara
+		"commander":   factor = 1.12  # La más cara
+		"interes":     factor = 1.10  # Para cuando lo añadamos
+	
+	return int(coste_base * pow(factor, nivel))
+	
 func get_max_nivel(mejora_id: String) -> int:
 	var data = mejoras.get(mejora_id, {})
 	return data.get("max_nivel", 0)

@@ -3,7 +3,7 @@
 [ext_resource type="Script" uid="uid://c6v0lwe4tbox1" path="res://scripts/ui/PanelMejoras.gd" id="1_panel"]
 [ext_resource type="Script" uid="uid://0s13tto8mla1" path="res://scripts/mejoras/MejoraCard.gd" id="2_card"]
 
-[node name="PanelMejoras" type="Control" unique_id=1787974972]
+[node name="PanelMejoras" type="Control" unique_id=1350333271]
 custom_minimum_size = Vector2(620, 550)
 layout_mode = 3
 anchors_preset = 0
@@ -12,19 +12,20 @@ offset_right = 720.0
 offset_bottom = 1386.0
 script = ExtResource("1_panel")
 
-[node name="Background" type="ColorRect" parent="." unique_id=924165536]
+[node name="Background" type="ColorRect" parent="." unique_id=1929192911]
 layout_mode = 0
 anchor_right = 1.0
 anchor_bottom = 1.0
+mouse_filter = 2
 color = Color(0.05, 0.05, 0.15, 0.95)
 
-[node name="BarraTitulo" type="HBoxContainer" parent="." unique_id=975417834]
+[node name="BarraTitulo" type="HBoxContainer" parent="." unique_id=1752168397]
 layout_mode = 0
 offset_top = 5.0
 offset_right = 718.0
 offset_bottom = 45.0
 
-[node name="Titulo" type="Label" parent="BarraTitulo" unique_id=1760060020]
+[node name="Titulo" type="Label" parent="BarraTitulo" unique_id=965756029]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0, 0.85, 1, 1)
@@ -32,1405 +33,1543 @@ theme_override_font_sizes/font_size = 24
 text = "MEJORAS"
 horizontal_alignment = 1
 
-[node name="BtnToggle" type="Button" parent="BarraTitulo" unique_id=1114299882]
+[node name="BtnToggle" type="Button" parent="BarraTitulo" unique_id=1761144479]
 layout_mode = 2
 text = "▼"
 
-[node name="Contenido" type="Control" parent="." unique_id=375081346]
+[node name="Contenido" type="Control" parent="." unique_id=1954967490]
 anchors_preset = 0
 offset_top = 45.0
 offset_right = 720.0
 offset_bottom = 550.0
 
-[node name="Tabs" type="HBoxContainer" parent="Contenido" unique_id=2128111092]
+[node name="Tabs" type="HBoxContainer" parent="Contenido" unique_id=341953218]
 layout_mode = 0
 offset_right = 717.0
 offset_bottom = 40.0
 
-[node name="BtnAtaque" type="Button" parent="Contenido/Tabs" unique_id=79100243]
+[node name="BtnAtaque" type="Button" parent="Contenido/Tabs" unique_id=748350967]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "⚔️ ATAQUE"
 
-[node name="BtnDefensa" type="Button" parent="Contenido/Tabs" unique_id=1621839610]
+[node name="BtnDefensa" type="Button" parent="Contenido/Tabs" unique_id=1867725234]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "🛡️ DEFENSA"
 
-[node name="BtnBonificacion" type="Button" parent="Contenido/Tabs" unique_id=1360576400]
+[node name="BtnBonificacion" type="Button" parent="Contenido/Tabs" unique_id=49058361]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "💰 BONIFICACIÓN"
 
-[node name="BtnCommander" type="Button" parent="Contenido/Tabs" unique_id=1589177744]
+[node name="BtnCommander" type="Button" parent="Contenido/Tabs" unique_id=1822434372]
 layout_mode = 2
 size_flags_horizontal = 3
 disabled = true
 text = "👑 COMMANDER"
 
-[node name="ScrollContainer" type="ScrollContainer" parent="Contenido" unique_id=2071394460]
+[node name="ScrollContainer" type="ScrollContainer" parent="Contenido" unique_id=784172453]
 layout_mode = 0
 offset_top = 43.0
 offset_right = 717.0
 offset_bottom = 550.0
 
-[node name="MejorasContainer" type="VBoxContainer" parent="Contenido/ScrollContainer" unique_id=1385201570]
+[node name="MejorasContainer" type="VBoxContainer" parent="Contenido/ScrollContainer" unique_id=280656580]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="AtaqueContainer" type="GridContainer" parent="Contenido/ScrollContainer/MejorasContainer" unique_id=467645732]
+[node name="AtaqueContainer" type="GridContainer" parent="Contenido/ScrollContainer/MejorasContainer" unique_id=565120967]
 layout_mode = 2
 size_flags_horizontal = 3
 columns = 2
 
-[node name="CardDanio" type="PanelContainer" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer" unique_id=586846181]
+[node name="CardDanio" type="PanelContainer" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer" unique_id=1424429154]
 custom_minimum_size = Vector2(0, 70)
 layout_mode = 2
 size_flags_horizontal = 3
 script = ExtResource("2_card")
 mejora_id = "danio"
 
-[node name="VBox" type="VBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardDanio" unique_id=152228839]
+[node name="HBoxMain" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardDanio" unique_id=585825809]
 layout_mode = 2
 
-[node name="HBoxTop" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardDanio/VBox" unique_id=606436726]
-layout_mode = 2
-
-[node name="LblNombre" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardDanio/VBox/HBoxTop" unique_id=21428426]
+[node name="InfoArea" type="VBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardDanio/HBoxMain" unique_id=976812040]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_font_sizes/font_size = 18
-text = "Nombre"
 
-[node name="LblValor" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardDanio/VBox/HBoxTop" unique_id=2068796093]
+[node name="LblNombre" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardDanio/HBoxMain/InfoArea" unique_id=758165120]
 layout_mode = 2
-theme_override_colors/font_color = Color(0, 0.85, 1, 1)
-theme_override_font_sizes/font_size = 16
-text = "+0"
+theme_override_font_sizes/font_size = 15
+text = "Daño"
 
-[node name="BtnComprar" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardDanio/VBox/HBoxTop" unique_id=1786694599]
+[node name="LblNivel" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardDanio/HBoxMain/InfoArea" unique_id=519960839]
 layout_mode = 2
-text = "0⚡"
-
-[node name="HBoxBottom" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardDanio/VBox" unique_id=1508750338]
-layout_mode = 2
-
-[node name="LblNivel" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardDanio/VBox/HBoxBottom" unique_id=1660252931]
-layout_mode = 2
-size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
-theme_override_font_sizes/font_size = 12
+theme_override_font_sizes/font_size = 11
 text = "Nivel 0 / 0"
 
-[node name="BtnX2" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardDanio/VBox/HBoxBottom" unique_id=1642966941]
+[node name="CompraArea" type="VBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardDanio/HBoxMain" unique_id=1900943353]
+layout_mode = 2
+
+[node name="HBoxCompra" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardDanio/HBoxMain/CompraArea" unique_id=342688345]
+layout_mode = 2
+
+[node name="LblValor" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardDanio/HBoxMain/CompraArea/HBoxCompra" unique_id=788831481]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0.85, 1, 1)
+theme_override_font_sizes/font_size = 14
+text = "+0"
+
+[node name="BtnComprar" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardDanio/HBoxMain/CompraArea/HBoxCompra" unique_id=626938475]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "0⚡"
+
+[node name="HBoxBotones" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardDanio/HBoxMain/CompraArea" unique_id=1147406541]
+layout_mode = 2
+
+[node name="BtnX2" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardDanio/HBoxMain/CompraArea/HBoxBotones" unique_id=444233263]
 layout_mode = 2
 text = "x2"
 
-[node name="BtnX5" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardDanio/VBox/HBoxBottom" unique_id=565733670]
+[node name="BtnX5" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardDanio/HBoxMain/CompraArea/HBoxBotones" unique_id=1544856815]
 layout_mode = 2
 text = "x5"
 
-[node name="BtnMax" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardDanio/VBox/HBoxBottom" unique_id=608359194]
+[node name="BtnMax" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardDanio/HBoxMain/CompraArea/HBoxBotones" unique_id=47323189]
 layout_mode = 2
 text = "MAX"
 
-[node name="LblBloqueada" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardDanio/VBox/HBoxBottom" unique_id=370430000]
+[node name="LblBloqueada" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardDanio/HBoxMain/CompraArea" unique_id=1510430879]
 visible = false
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0, 0, 1)
 theme_override_font_sizes/font_size = 10
-text = "🔒 DESBLOQUEAR EN ASCENSIÓN 45"
+text = "🔒 BLOQUEADA"
 
-[node name="CardVelocidadAtaque" type="PanelContainer" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer" unique_id=768230086]
+[node name="CardVelocidadAtaque" type="PanelContainer" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer" unique_id=239074987]
 custom_minimum_size = Vector2(0, 70)
 layout_mode = 2
 size_flags_horizontal = 3
 script = ExtResource("2_card")
 mejora_id = "velocidad_ataque"
 
-[node name="VBox" type="VBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardVelocidadAtaque" unique_id=1980980594]
+[node name="HBoxMain" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardVelocidadAtaque" unique_id=424851958]
 layout_mode = 2
 
-[node name="HBoxTop" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardVelocidadAtaque/VBox" unique_id=903453279]
-layout_mode = 2
-
-[node name="LblNombre" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardVelocidadAtaque/VBox/HBoxTop" unique_id=382309400]
+[node name="InfoArea" type="VBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardVelocidadAtaque/HBoxMain" unique_id=1880260671]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_font_sizes/font_size = 18
-text = "Nombre"
 
-[node name="LblValor" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardVelocidadAtaque/VBox/HBoxTop" unique_id=1609415392]
+[node name="LblNombre" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardVelocidadAtaque/HBoxMain/InfoArea" unique_id=1308306436]
 layout_mode = 2
-theme_override_colors/font_color = Color(0, 0.85, 1, 1)
-theme_override_font_sizes/font_size = 16
-text = "+0"
+theme_override_font_sizes/font_size = 15
+text = "Velocidad de Ataque"
 
-[node name="BtnComprar" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardVelocidadAtaque/VBox/HBoxTop" unique_id=1746300668]
+[node name="LblNivel" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardVelocidadAtaque/HBoxMain/InfoArea" unique_id=1092430193]
 layout_mode = 2
-text = "0⚡"
-
-[node name="HBoxBottom" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardVelocidadAtaque/VBox" unique_id=809715453]
-layout_mode = 2
-
-[node name="LblNivel" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardVelocidadAtaque/VBox/HBoxBottom" unique_id=2088554164]
-layout_mode = 2
-size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
-theme_override_font_sizes/font_size = 12
+theme_override_font_sizes/font_size = 11
 text = "Nivel 0 / 0"
 
-[node name="BtnX2" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardVelocidadAtaque/VBox/HBoxBottom" unique_id=1070552050]
+[node name="CompraArea" type="VBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardVelocidadAtaque/HBoxMain" unique_id=83570396]
+layout_mode = 2
+
+[node name="HBoxCompra" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardVelocidadAtaque/HBoxMain/CompraArea" unique_id=722171976]
+layout_mode = 2
+
+[node name="LblValor" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardVelocidadAtaque/HBoxMain/CompraArea/HBoxCompra" unique_id=756969354]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0.85, 1, 1)
+theme_override_font_sizes/font_size = 14
+text = "+0"
+
+[node name="BtnComprar" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardVelocidadAtaque/HBoxMain/CompraArea/HBoxCompra" unique_id=1431281207]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "0⚡"
+
+[node name="HBoxBotones" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardVelocidadAtaque/HBoxMain/CompraArea" unique_id=424991735]
+layout_mode = 2
+
+[node name="BtnX2" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardVelocidadAtaque/HBoxMain/CompraArea/HBoxBotones" unique_id=922688358]
 layout_mode = 2
 text = "x2"
 
-[node name="BtnX5" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardVelocidadAtaque/VBox/HBoxBottom" unique_id=58707790]
+[node name="BtnX5" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardVelocidadAtaque/HBoxMain/CompraArea/HBoxBotones" unique_id=561107109]
 layout_mode = 2
 text = "x5"
 
-[node name="BtnMax" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardVelocidadAtaque/VBox/HBoxBottom" unique_id=1877744242]
+[node name="BtnMax" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardVelocidadAtaque/HBoxMain/CompraArea/HBoxBotones" unique_id=29032157]
 layout_mode = 2
 text = "MAX"
 
-[node name="LblBloqueada" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardVelocidadAtaque/VBox/HBoxBottom" unique_id=178295495]
+[node name="LblBloqueada" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardVelocidadAtaque/HBoxMain/CompraArea" unique_id=983492826]
 visible = false
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0, 0, 1)
 theme_override_font_sizes/font_size = 10
-text = "🔒 DESBLOQUEAR EN ASCENSIÓN 45"
+text = "🔒 BLOQUEADA"
 
-[node name="CardDisparoCritico" type="PanelContainer" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer" unique_id=1483192967]
+[node name="CardDisparoCritico" type="PanelContainer" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer" unique_id=558594104]
 custom_minimum_size = Vector2(0, 70)
 layout_mode = 2
 size_flags_horizontal = 3
 script = ExtResource("2_card")
 mejora_id = "disparo_critico"
 
-[node name="VBox" type="VBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardDisparoCritico" unique_id=208860703]
+[node name="HBoxMain" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardDisparoCritico" unique_id=925448272]
 layout_mode = 2
 
-[node name="HBoxTop" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardDisparoCritico/VBox" unique_id=201895401]
-layout_mode = 2
-
-[node name="LblNombre" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardDisparoCritico/VBox/HBoxTop" unique_id=1971671111]
+[node name="InfoArea" type="VBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardDisparoCritico/HBoxMain" unique_id=1666278251]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_font_sizes/font_size = 18
-text = "Nombre"
 
-[node name="LblValor" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardDisparoCritico/VBox/HBoxTop" unique_id=1707243814]
+[node name="LblNombre" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardDisparoCritico/HBoxMain/InfoArea" unique_id=1000715324]
 layout_mode = 2
-theme_override_colors/font_color = Color(0, 0.85, 1, 1)
-theme_override_font_sizes/font_size = 16
-text = "+0"
+theme_override_font_sizes/font_size = 15
+text = "Disparo Crítico"
 
-[node name="BtnComprar" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardDisparoCritico/VBox/HBoxTop" unique_id=81090390]
+[node name="LblNivel" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardDisparoCritico/HBoxMain/InfoArea" unique_id=703056617]
 layout_mode = 2
-text = "0⚡"
-
-[node name="HBoxBottom" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardDisparoCritico/VBox" unique_id=1442245409]
-layout_mode = 2
-
-[node name="LblNivel" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardDisparoCritico/VBox/HBoxBottom" unique_id=40080519]
-layout_mode = 2
-size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
-theme_override_font_sizes/font_size = 12
+theme_override_font_sizes/font_size = 11
 text = "Nivel 0 / 0"
 
-[node name="BtnX2" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardDisparoCritico/VBox/HBoxBottom" unique_id=475394379]
+[node name="CompraArea" type="VBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardDisparoCritico/HBoxMain" unique_id=1292767652]
+layout_mode = 2
+
+[node name="HBoxCompra" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardDisparoCritico/HBoxMain/CompraArea" unique_id=1418487636]
+layout_mode = 2
+
+[node name="LblValor" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardDisparoCritico/HBoxMain/CompraArea/HBoxCompra" unique_id=1997428239]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0.85, 1, 1)
+theme_override_font_sizes/font_size = 14
+text = "+0"
+
+[node name="BtnComprar" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardDisparoCritico/HBoxMain/CompraArea/HBoxCompra" unique_id=949687681]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "0⚡"
+
+[node name="HBoxBotones" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardDisparoCritico/HBoxMain/CompraArea" unique_id=244426924]
+layout_mode = 2
+
+[node name="BtnX2" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardDisparoCritico/HBoxMain/CompraArea/HBoxBotones" unique_id=389901327]
 layout_mode = 2
 text = "x2"
 
-[node name="BtnX5" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardDisparoCritico/VBox/HBoxBottom" unique_id=813896426]
+[node name="BtnX5" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardDisparoCritico/HBoxMain/CompraArea/HBoxBotones" unique_id=490766]
 layout_mode = 2
 text = "x5"
 
-[node name="BtnMax" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardDisparoCritico/VBox/HBoxBottom" unique_id=1453177334]
+[node name="BtnMax" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardDisparoCritico/HBoxMain/CompraArea/HBoxBotones" unique_id=1743504955]
 layout_mode = 2
 text = "MAX"
 
-[node name="LblBloqueada" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardDisparoCritico/VBox/HBoxBottom" unique_id=789675088]
+[node name="LblBloqueada" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardDisparoCritico/HBoxMain/CompraArea" unique_id=618198519]
 visible = false
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0, 0, 1)
 theme_override_font_sizes/font_size = 10
-text = "🔒 DESBLOQUEAR EN ASCENSIÓN 45"
+text = "🔒 BLOQUEADA"
 
-[node name="CardMultidisparo" type="PanelContainer" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer" unique_id=2138043005]
+[node name="CardMultidisparo" type="PanelContainer" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer" unique_id=1121697329]
 custom_minimum_size = Vector2(0, 70)
 layout_mode = 2
 size_flags_horizontal = 3
 script = ExtResource("2_card")
 mejora_id = "multidisparo"
 
-[node name="VBox" type="VBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardMultidisparo" unique_id=691630064]
+[node name="HBoxMain" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardMultidisparo" unique_id=1557561014]
 layout_mode = 2
 
-[node name="HBoxTop" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardMultidisparo/VBox" unique_id=287642732]
-layout_mode = 2
-
-[node name="LblNombre" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardMultidisparo/VBox/HBoxTop" unique_id=406684439]
+[node name="InfoArea" type="VBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardMultidisparo/HBoxMain" unique_id=332464101]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_font_sizes/font_size = 18
-text = "Nombre"
 
-[node name="LblValor" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardMultidisparo/VBox/HBoxTop" unique_id=920024103]
+[node name="LblNombre" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardMultidisparo/HBoxMain/InfoArea" unique_id=1180326082]
 layout_mode = 2
-theme_override_colors/font_color = Color(0, 0.85, 1, 1)
-theme_override_font_sizes/font_size = 16
-text = "+0"
+theme_override_font_sizes/font_size = 15
+text = "Multidisparo"
 
-[node name="BtnComprar" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardMultidisparo/VBox/HBoxTop" unique_id=195508818]
+[node name="LblNivel" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardMultidisparo/HBoxMain/InfoArea" unique_id=241409873]
 layout_mode = 2
-text = "0⚡"
-
-[node name="HBoxBottom" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardMultidisparo/VBox" unique_id=1463899477]
-layout_mode = 2
-
-[node name="LblNivel" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardMultidisparo/VBox/HBoxBottom" unique_id=438954263]
-layout_mode = 2
-size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
-theme_override_font_sizes/font_size = 12
+theme_override_font_sizes/font_size = 11
 text = "Nivel 0 / 0"
 
-[node name="BtnX2" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardMultidisparo/VBox/HBoxBottom" unique_id=1007885789]
+[node name="CompraArea" type="VBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardMultidisparo/HBoxMain" unique_id=166211313]
+layout_mode = 2
+
+[node name="HBoxCompra" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardMultidisparo/HBoxMain/CompraArea" unique_id=287763054]
+layout_mode = 2
+
+[node name="LblValor" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardMultidisparo/HBoxMain/CompraArea/HBoxCompra" unique_id=633892576]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0.85, 1, 1)
+theme_override_font_sizes/font_size = 14
+text = "+0"
+
+[node name="BtnComprar" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardMultidisparo/HBoxMain/CompraArea/HBoxCompra" unique_id=834081322]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "0⚡"
+
+[node name="HBoxBotones" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardMultidisparo/HBoxMain/CompraArea" unique_id=112852614]
+layout_mode = 2
+
+[node name="BtnX2" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardMultidisparo/HBoxMain/CompraArea/HBoxBotones" unique_id=1147763003]
 layout_mode = 2
 text = "x2"
 
-[node name="BtnX5" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardMultidisparo/VBox/HBoxBottom" unique_id=1921764920]
+[node name="BtnX5" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardMultidisparo/HBoxMain/CompraArea/HBoxBotones" unique_id=2078270061]
 layout_mode = 2
 text = "x5"
 
-[node name="BtnMax" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardMultidisparo/VBox/HBoxBottom" unique_id=1557867246]
+[node name="BtnMax" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardMultidisparo/HBoxMain/CompraArea/HBoxBotones" unique_id=813052737]
 layout_mode = 2
 text = "MAX"
 
-[node name="LblBloqueada" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardMultidisparo/VBox/HBoxBottom" unique_id=464963191]
+[node name="LblBloqueada" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardMultidisparo/HBoxMain/CompraArea" unique_id=738492024]
 visible = false
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0, 0, 1)
 theme_override_font_sizes/font_size = 10
-text = "🔒 DESBLOQUEAR EN ASCENSIÓN 45"
+text = "🔒 BLOQUEADA"
 
-[node name="CardRebote" type="PanelContainer" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer" unique_id=845625335]
+[node name="CardRebote" type="PanelContainer" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer" unique_id=1512386576]
 custom_minimum_size = Vector2(0, 70)
 layout_mode = 2
 size_flags_horizontal = 3
 script = ExtResource("2_card")
 mejora_id = "rebote"
 
-[node name="VBox" type="VBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardRebote" unique_id=303024492]
+[node name="HBoxMain" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardRebote" unique_id=1458784416]
 layout_mode = 2
 
-[node name="HBoxTop" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardRebote/VBox" unique_id=209404034]
-layout_mode = 2
-
-[node name="LblNombre" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardRebote/VBox/HBoxTop" unique_id=75158554]
+[node name="InfoArea" type="VBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardRebote/HBoxMain" unique_id=158718391]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_font_sizes/font_size = 18
-text = "Nombre"
 
-[node name="LblValor" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardRebote/VBox/HBoxTop" unique_id=1016164916]
+[node name="LblNombre" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardRebote/HBoxMain/InfoArea" unique_id=1461221109]
 layout_mode = 2
-theme_override_colors/font_color = Color(0, 0.85, 1, 1)
-theme_override_font_sizes/font_size = 16
-text = "+0"
+theme_override_font_sizes/font_size = 15
+text = "Rebote"
 
-[node name="BtnComprar" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardRebote/VBox/HBoxTop" unique_id=1905288321]
+[node name="LblNivel" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardRebote/HBoxMain/InfoArea" unique_id=1777191644]
 layout_mode = 2
-text = "0⚡"
-
-[node name="HBoxBottom" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardRebote/VBox" unique_id=2132778120]
-layout_mode = 2
-
-[node name="LblNivel" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardRebote/VBox/HBoxBottom" unique_id=524261822]
-layout_mode = 2
-size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
-theme_override_font_sizes/font_size = 12
+theme_override_font_sizes/font_size = 11
 text = "Nivel 0 / 0"
 
-[node name="BtnX2" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardRebote/VBox/HBoxBottom" unique_id=1125615510]
+[node name="CompraArea" type="VBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardRebote/HBoxMain" unique_id=1232886065]
+layout_mode = 2
+
+[node name="HBoxCompra" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardRebote/HBoxMain/CompraArea" unique_id=456477476]
+layout_mode = 2
+
+[node name="LblValor" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardRebote/HBoxMain/CompraArea/HBoxCompra" unique_id=894463603]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0.85, 1, 1)
+theme_override_font_sizes/font_size = 14
+text = "+0"
+
+[node name="BtnComprar" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardRebote/HBoxMain/CompraArea/HBoxCompra" unique_id=638766544]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "0⚡"
+
+[node name="HBoxBotones" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardRebote/HBoxMain/CompraArea" unique_id=89020496]
+layout_mode = 2
+
+[node name="BtnX2" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardRebote/HBoxMain/CompraArea/HBoxBotones" unique_id=798107481]
 layout_mode = 2
 text = "x2"
 
-[node name="BtnX5" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardRebote/VBox/HBoxBottom" unique_id=267091408]
+[node name="BtnX5" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardRebote/HBoxMain/CompraArea/HBoxBotones" unique_id=97744914]
 layout_mode = 2
 text = "x5"
 
-[node name="BtnMax" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardRebote/VBox/HBoxBottom" unique_id=1421791045]
+[node name="BtnMax" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardRebote/HBoxMain/CompraArea/HBoxBotones" unique_id=1260676626]
 layout_mode = 2
 text = "MAX"
 
-[node name="LblBloqueada" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardRebote/VBox/HBoxBottom" unique_id=361545767]
+[node name="LblBloqueada" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardRebote/HBoxMain/CompraArea" unique_id=966129480]
 visible = false
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0, 0, 1)
 theme_override_font_sizes/font_size = 10
-text = "🔒 DESBLOQUEAR EN ASCENSIÓN 45"
+text = "🔒 BLOQUEADA"
 
-[node name="CardAlcanceRebote" type="PanelContainer" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer" unique_id=1235765525]
+[node name="CardAlcanceRebote" type="PanelContainer" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer" unique_id=1959086428]
 custom_minimum_size = Vector2(0, 70)
 layout_mode = 2
 size_flags_horizontal = 3
 script = ExtResource("2_card")
 mejora_id = "alcance_rebote"
 
-[node name="VBox" type="VBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardAlcanceRebote" unique_id=1435742033]
+[node name="HBoxMain" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardAlcanceRebote" unique_id=3092931]
 layout_mode = 2
 
-[node name="HBoxTop" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardAlcanceRebote/VBox" unique_id=1999269868]
-layout_mode = 2
-
-[node name="LblNombre" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardAlcanceRebote/VBox/HBoxTop" unique_id=1176305089]
+[node name="InfoArea" type="VBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardAlcanceRebote/HBoxMain" unique_id=2072699029]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_font_sizes/font_size = 18
-text = "Nombre"
 
-[node name="LblValor" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardAlcanceRebote/VBox/HBoxTop" unique_id=1847889796]
+[node name="LblNombre" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardAlcanceRebote/HBoxMain/InfoArea" unique_id=1511890059]
 layout_mode = 2
-theme_override_colors/font_color = Color(0, 0.85, 1, 1)
-theme_override_font_sizes/font_size = 16
-text = "+0"
+theme_override_font_sizes/font_size = 15
+text = "Alcance de Rebote"
 
-[node name="BtnComprar" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardAlcanceRebote/VBox/HBoxTop" unique_id=1507206457]
+[node name="LblNivel" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardAlcanceRebote/HBoxMain/InfoArea" unique_id=680359561]
 layout_mode = 2
-text = "0⚡"
-
-[node name="HBoxBottom" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardAlcanceRebote/VBox" unique_id=1068236714]
-layout_mode = 2
-
-[node name="LblNivel" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardAlcanceRebote/VBox/HBoxBottom" unique_id=1671267434]
-layout_mode = 2
-size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
-theme_override_font_sizes/font_size = 12
+theme_override_font_sizes/font_size = 11
 text = "Nivel 0 / 0"
 
-[node name="BtnX2" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardAlcanceRebote/VBox/HBoxBottom" unique_id=1006220520]
+[node name="CompraArea" type="VBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardAlcanceRebote/HBoxMain" unique_id=613874106]
+layout_mode = 2
+
+[node name="HBoxCompra" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardAlcanceRebote/HBoxMain/CompraArea" unique_id=709209851]
+layout_mode = 2
+
+[node name="LblValor" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardAlcanceRebote/HBoxMain/CompraArea/HBoxCompra" unique_id=1550487328]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0.85, 1, 1)
+theme_override_font_sizes/font_size = 14
+text = "+0"
+
+[node name="BtnComprar" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardAlcanceRebote/HBoxMain/CompraArea/HBoxCompra" unique_id=693261291]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "0⚡"
+
+[node name="HBoxBotones" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardAlcanceRebote/HBoxMain/CompraArea" unique_id=1307652967]
+layout_mode = 2
+
+[node name="BtnX2" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardAlcanceRebote/HBoxMain/CompraArea/HBoxBotones" unique_id=1177394104]
 layout_mode = 2
 text = "x2"
 
-[node name="BtnX5" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardAlcanceRebote/VBox/HBoxBottom" unique_id=200894038]
+[node name="BtnX5" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardAlcanceRebote/HBoxMain/CompraArea/HBoxBotones" unique_id=1247852271]
 layout_mode = 2
 text = "x5"
 
-[node name="BtnMax" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardAlcanceRebote/VBox/HBoxBottom" unique_id=1285042313]
+[node name="BtnMax" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardAlcanceRebote/HBoxMain/CompraArea/HBoxBotones" unique_id=1790672548]
 layout_mode = 2
 text = "MAX"
 
-[node name="LblBloqueada" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardAlcanceRebote/VBox/HBoxBottom" unique_id=2064296451]
+[node name="LblBloqueada" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardAlcanceRebote/HBoxMain/CompraArea" unique_id=1423295037]
 visible = false
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0, 0, 1)
 theme_override_font_sizes/font_size = 10
-text = "🔒 DESBLOQUEAR EN ASCENSIÓN 45"
+text = "🔒 BLOQUEADA"
 
-[node name="DefensaContainer" type="GridContainer" parent="Contenido/ScrollContainer/MejorasContainer" unique_id=1493635998]
+[node name="DefensaContainer" type="GridContainer" parent="Contenido/ScrollContainer/MejorasContainer" unique_id=556255991]
 visible = false
 layout_mode = 2
 size_flags_horizontal = 3
 columns = 2
 
-[node name="CardSalud" type="PanelContainer" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer" unique_id=266674355]
+[node name="CardSalud" type="PanelContainer" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer" unique_id=87380822]
 custom_minimum_size = Vector2(0, 70)
 layout_mode = 2
 size_flags_horizontal = 3
 script = ExtResource("2_card")
 mejora_id = "salud"
 
-[node name="VBox" type="VBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardSalud" unique_id=448997788]
+[node name="HBoxMain" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardSalud" unique_id=1715733153]
 layout_mode = 2
 
-[node name="HBoxTop" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardSalud/VBox" unique_id=1722766318]
-layout_mode = 2
-
-[node name="LblNombre" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardSalud/VBox/HBoxTop" unique_id=1187065676]
+[node name="InfoArea" type="VBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardSalud/HBoxMain" unique_id=444379223]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_font_sizes/font_size = 18
-text = "Nombre"
 
-[node name="LblValor" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardSalud/VBox/HBoxTop" unique_id=536776248]
+[node name="LblNombre" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardSalud/HBoxMain/InfoArea" unique_id=2021918269]
 layout_mode = 2
-theme_override_colors/font_color = Color(0, 0.85, 1, 1)
-theme_override_font_sizes/font_size = 16
-text = "+0"
+theme_override_font_sizes/font_size = 15
+text = "Salud"
 
-[node name="BtnComprar" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardSalud/VBox/HBoxTop" unique_id=1704258127]
+[node name="LblNivel" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardSalud/HBoxMain/InfoArea" unique_id=763041792]
 layout_mode = 2
-text = "0⚡"
-
-[node name="HBoxBottom" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardSalud/VBox" unique_id=571601113]
-layout_mode = 2
-
-[node name="LblNivel" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardSalud/VBox/HBoxBottom" unique_id=81078768]
-layout_mode = 2
-size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
-theme_override_font_sizes/font_size = 12
+theme_override_font_sizes/font_size = 11
 text = "Nivel 0 / 0"
 
-[node name="BtnX2" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardSalud/VBox/HBoxBottom" unique_id=928338378]
+[node name="CompraArea" type="VBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardSalud/HBoxMain" unique_id=1332544484]
+layout_mode = 2
+
+[node name="HBoxCompra" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardSalud/HBoxMain/CompraArea" unique_id=1483075899]
+layout_mode = 2
+
+[node name="LblValor" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardSalud/HBoxMain/CompraArea/HBoxCompra" unique_id=1212940294]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0.85, 1, 1)
+theme_override_font_sizes/font_size = 14
+text = "+0"
+
+[node name="BtnComprar" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardSalud/HBoxMain/CompraArea/HBoxCompra" unique_id=1451500102]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "0⚡"
+
+[node name="HBoxBotones" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardSalud/HBoxMain/CompraArea" unique_id=1850961298]
+layout_mode = 2
+
+[node name="BtnX2" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardSalud/HBoxMain/CompraArea/HBoxBotones" unique_id=1467515975]
 layout_mode = 2
 text = "x2"
 
-[node name="BtnX5" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardSalud/VBox/HBoxBottom" unique_id=1209532589]
+[node name="BtnX5" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardSalud/HBoxMain/CompraArea/HBoxBotones" unique_id=508991303]
 layout_mode = 2
 text = "x5"
 
-[node name="BtnMax" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardSalud/VBox/HBoxBottom" unique_id=1556017669]
+[node name="BtnMax" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardSalud/HBoxMain/CompraArea/HBoxBotones" unique_id=1850102460]
 layout_mode = 2
 text = "MAX"
 
-[node name="LblBloqueada" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardSalud/VBox/HBoxBottom" unique_id=585340209]
+[node name="LblBloqueada" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardSalud/HBoxMain/CompraArea" unique_id=115924945]
 visible = false
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0, 0, 1)
 theme_override_font_sizes/font_size = 10
-text = "🔒 DESBLOQUEAR EN ASCENSIÓN 45"
+text = "🔒 BLOQUEADA"
 
-[node name="CardRecuperacion" type="PanelContainer" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer" unique_id=1173586947]
+[node name="CardRecuperacion" type="PanelContainer" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer" unique_id=1313893942]
 custom_minimum_size = Vector2(0, 70)
 layout_mode = 2
 size_flags_horizontal = 3
 script = ExtResource("2_card")
 mejora_id = "recuperacion"
 
-[node name="VBox" type="VBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardRecuperacion" unique_id=1388398342]
+[node name="HBoxMain" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardRecuperacion" unique_id=507426103]
 layout_mode = 2
 
-[node name="HBoxTop" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardRecuperacion/VBox" unique_id=1788841741]
-layout_mode = 2
-
-[node name="LblNombre" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardRecuperacion/VBox/HBoxTop" unique_id=1128152227]
+[node name="InfoArea" type="VBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardRecuperacion/HBoxMain" unique_id=978272862]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_font_sizes/font_size = 18
-text = "Nombre"
 
-[node name="LblValor" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardRecuperacion/VBox/HBoxTop" unique_id=418384842]
+[node name="LblNombre" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardRecuperacion/HBoxMain/InfoArea" unique_id=1921773050]
 layout_mode = 2
-theme_override_colors/font_color = Color(0, 0.85, 1, 1)
-theme_override_font_sizes/font_size = 16
-text = "+0"
+theme_override_font_sizes/font_size = 15
+text = "Recuperación"
 
-[node name="BtnComprar" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardRecuperacion/VBox/HBoxTop" unique_id=81358165]
+[node name="LblNivel" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardRecuperacion/HBoxMain/InfoArea" unique_id=1838334528]
 layout_mode = 2
-text = "0⚡"
-
-[node name="HBoxBottom" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardRecuperacion/VBox" unique_id=1498498443]
-layout_mode = 2
-
-[node name="LblNivel" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardRecuperacion/VBox/HBoxBottom" unique_id=1344822842]
-layout_mode = 2
-size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
-theme_override_font_sizes/font_size = 12
+theme_override_font_sizes/font_size = 11
 text = "Nivel 0 / 0"
 
-[node name="BtnX2" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardRecuperacion/VBox/HBoxBottom" unique_id=461108950]
+[node name="CompraArea" type="VBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardRecuperacion/HBoxMain" unique_id=2032277404]
+layout_mode = 2
+
+[node name="HBoxCompra" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardRecuperacion/HBoxMain/CompraArea" unique_id=1733691148]
+layout_mode = 2
+
+[node name="LblValor" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardRecuperacion/HBoxMain/CompraArea/HBoxCompra" unique_id=1221252607]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0.85, 1, 1)
+theme_override_font_sizes/font_size = 14
+text = "+0"
+
+[node name="BtnComprar" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardRecuperacion/HBoxMain/CompraArea/HBoxCompra" unique_id=2139351427]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "0⚡"
+
+[node name="HBoxBotones" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardRecuperacion/HBoxMain/CompraArea" unique_id=1424181564]
+layout_mode = 2
+
+[node name="BtnX2" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardRecuperacion/HBoxMain/CompraArea/HBoxBotones" unique_id=593521135]
 layout_mode = 2
 text = "x2"
 
-[node name="BtnX5" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardRecuperacion/VBox/HBoxBottom" unique_id=338450203]
+[node name="BtnX5" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardRecuperacion/HBoxMain/CompraArea/HBoxBotones" unique_id=1457197822]
 layout_mode = 2
 text = "x5"
 
-[node name="BtnMax" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardRecuperacion/VBox/HBoxBottom" unique_id=1501266693]
+[node name="BtnMax" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardRecuperacion/HBoxMain/CompraArea/HBoxBotones" unique_id=681269339]
 layout_mode = 2
 text = "MAX"
 
-[node name="LblBloqueada" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardRecuperacion/VBox/HBoxBottom" unique_id=1056477008]
+[node name="LblBloqueada" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardRecuperacion/HBoxMain/CompraArea" unique_id=908092910]
 visible = false
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0, 0, 1)
 theme_override_font_sizes/font_size = 10
-text = "🔒 DESBLOQUEAR EN ASCENSIÓN 45"
+text = "🔒 BLOQUEADA"
 
-[node name="CardEscudo" type="PanelContainer" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer" unique_id=1118622030]
+[node name="CardEscudo" type="PanelContainer" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer" unique_id=1143056297]
 custom_minimum_size = Vector2(0, 70)
 layout_mode = 2
 size_flags_horizontal = 3
 script = ExtResource("2_card")
 mejora_id = "escudo"
 
-[node name="VBox" type="VBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardEscudo" unique_id=209538441]
+[node name="HBoxMain" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardEscudo" unique_id=1852924942]
 layout_mode = 2
 
-[node name="HBoxTop" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardEscudo/VBox" unique_id=1815251223]
-layout_mode = 2
-
-[node name="LblNombre" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardEscudo/VBox/HBoxTop" unique_id=388945378]
+[node name="InfoArea" type="VBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardEscudo/HBoxMain" unique_id=2015986602]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_font_sizes/font_size = 18
-text = "Nombre"
 
-[node name="LblValor" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardEscudo/VBox/HBoxTop" unique_id=1051187454]
+[node name="LblNombre" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardEscudo/HBoxMain/InfoArea" unique_id=1588791233]
 layout_mode = 2
-theme_override_colors/font_color = Color(0, 0.85, 1, 1)
-theme_override_font_sizes/font_size = 16
-text = "+0"
+theme_override_font_sizes/font_size = 15
+text = "Escudo"
 
-[node name="BtnComprar" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardEscudo/VBox/HBoxTop" unique_id=1354674473]
+[node name="LblNivel" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardEscudo/HBoxMain/InfoArea" unique_id=1386239062]
 layout_mode = 2
-text = "0⚡"
-
-[node name="HBoxBottom" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardEscudo/VBox" unique_id=1651606291]
-layout_mode = 2
-
-[node name="LblNivel" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardEscudo/VBox/HBoxBottom" unique_id=1307439106]
-layout_mode = 2
-size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
-theme_override_font_sizes/font_size = 12
+theme_override_font_sizes/font_size = 11
 text = "Nivel 0 / 0"
 
-[node name="BtnX2" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardEscudo/VBox/HBoxBottom" unique_id=126602854]
+[node name="CompraArea" type="VBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardEscudo/HBoxMain" unique_id=1521133328]
+layout_mode = 2
+
+[node name="HBoxCompra" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardEscudo/HBoxMain/CompraArea" unique_id=319670711]
+layout_mode = 2
+
+[node name="LblValor" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardEscudo/HBoxMain/CompraArea/HBoxCompra" unique_id=740142447]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0.85, 1, 1)
+theme_override_font_sizes/font_size = 14
+text = "+0"
+
+[node name="BtnComprar" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardEscudo/HBoxMain/CompraArea/HBoxCompra" unique_id=595337367]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "0⚡"
+
+[node name="HBoxBotones" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardEscudo/HBoxMain/CompraArea" unique_id=1888353023]
+layout_mode = 2
+
+[node name="BtnX2" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardEscudo/HBoxMain/CompraArea/HBoxBotones" unique_id=982403832]
 layout_mode = 2
 text = "x2"
 
-[node name="BtnX5" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardEscudo/VBox/HBoxBottom" unique_id=97136725]
+[node name="BtnX5" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardEscudo/HBoxMain/CompraArea/HBoxBotones" unique_id=39707769]
 layout_mode = 2
 text = "x5"
 
-[node name="BtnMax" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardEscudo/VBox/HBoxBottom" unique_id=1547083527]
+[node name="BtnMax" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardEscudo/HBoxMain/CompraArea/HBoxBotones" unique_id=443596032]
 layout_mode = 2
 text = "MAX"
 
-[node name="LblBloqueada" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardEscudo/VBox/HBoxBottom" unique_id=1954976571]
+[node name="LblBloqueada" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardEscudo/HBoxMain/CompraArea" unique_id=1895460829]
 visible = false
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0, 0, 1)
 theme_override_font_sizes/font_size = 10
-text = "🔒 DESBLOQUEAR EN ASCENSIÓN 45"
+text = "🔒 BLOQUEADA"
 
-[node name="CardDurezaEscudo" type="PanelContainer" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer" unique_id=1279370165]
+[node name="CardDurezaEscudo" type="PanelContainer" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer" unique_id=260773811]
 custom_minimum_size = Vector2(0, 70)
 layout_mode = 2
 size_flags_horizontal = 3
 script = ExtResource("2_card")
 mejora_id = "dureza_escudo"
 
-[node name="VBox" type="VBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardDurezaEscudo" unique_id=119266224]
+[node name="HBoxMain" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardDurezaEscudo" unique_id=869562118]
 layout_mode = 2
 
-[node name="HBoxTop" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardDurezaEscudo/VBox" unique_id=366103033]
-layout_mode = 2
-
-[node name="LblNombre" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardDurezaEscudo/VBox/HBoxTop" unique_id=1781687570]
+[node name="InfoArea" type="VBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardDurezaEscudo/HBoxMain" unique_id=1957659216]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_font_sizes/font_size = 18
-text = "Nombre"
 
-[node name="LblValor" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardDurezaEscudo/VBox/HBoxTop" unique_id=103039227]
+[node name="LblNombre" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardDurezaEscudo/HBoxMain/InfoArea" unique_id=607844522]
 layout_mode = 2
-theme_override_colors/font_color = Color(0, 0.85, 1, 1)
-theme_override_font_sizes/font_size = 16
-text = "+0"
+theme_override_font_sizes/font_size = 15
+text = "Dureza del Escudo"
 
-[node name="BtnComprar" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardDurezaEscudo/VBox/HBoxTop" unique_id=2031925917]
+[node name="LblNivel" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardDurezaEscudo/HBoxMain/InfoArea" unique_id=272254640]
 layout_mode = 2
-text = "0⚡"
-
-[node name="HBoxBottom" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardDurezaEscudo/VBox" unique_id=812849988]
-layout_mode = 2
-
-[node name="LblNivel" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardDurezaEscudo/VBox/HBoxBottom" unique_id=158173533]
-layout_mode = 2
-size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
-theme_override_font_sizes/font_size = 12
+theme_override_font_sizes/font_size = 11
 text = "Nivel 0 / 0"
 
-[node name="BtnX2" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardDurezaEscudo/VBox/HBoxBottom" unique_id=820721151]
+[node name="CompraArea" type="VBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardDurezaEscudo/HBoxMain" unique_id=52139359]
+layout_mode = 2
+
+[node name="HBoxCompra" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardDurezaEscudo/HBoxMain/CompraArea" unique_id=2139782295]
+layout_mode = 2
+
+[node name="LblValor" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardDurezaEscudo/HBoxMain/CompraArea/HBoxCompra" unique_id=1151945450]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0.85, 1, 1)
+theme_override_font_sizes/font_size = 14
+text = "+0"
+
+[node name="BtnComprar" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardDurezaEscudo/HBoxMain/CompraArea/HBoxCompra" unique_id=2037726584]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "0⚡"
+
+[node name="HBoxBotones" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardDurezaEscudo/HBoxMain/CompraArea" unique_id=645619135]
+layout_mode = 2
+
+[node name="BtnX2" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardDurezaEscudo/HBoxMain/CompraArea/HBoxBotones" unique_id=1556507757]
 layout_mode = 2
 text = "x2"
 
-[node name="BtnX5" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardDurezaEscudo/VBox/HBoxBottom" unique_id=787715664]
+[node name="BtnX5" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardDurezaEscudo/HBoxMain/CompraArea/HBoxBotones" unique_id=146319852]
 layout_mode = 2
 text = "x5"
 
-[node name="BtnMax" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardDurezaEscudo/VBox/HBoxBottom" unique_id=690145745]
+[node name="BtnMax" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardDurezaEscudo/HBoxMain/CompraArea/HBoxBotones" unique_id=1317814538]
 layout_mode = 2
 text = "MAX"
 
-[node name="LblBloqueada" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardDurezaEscudo/VBox/HBoxBottom" unique_id=1582328091]
+[node name="LblBloqueada" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardDurezaEscudo/HBoxMain/CompraArea" unique_id=875856193]
 visible = false
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0, 0, 1)
 theme_override_font_sizes/font_size = 10
-text = "🔒 DESBLOQUEAR EN ASCENSIÓN 45"
+text = "🔒 BLOQUEADA"
 
-[node name="CardPulsoQuartz" type="PanelContainer" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer" unique_id=613477531]
+[node name="CardPulsoQuartz" type="PanelContainer" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer" unique_id=1333321294]
 custom_minimum_size = Vector2(0, 70)
 layout_mode = 2
 size_flags_horizontal = 3
 script = ExtResource("2_card")
 mejora_id = "pulso_quartz"
 
-[node name="VBox" type="VBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardPulsoQuartz" unique_id=2031214768]
+[node name="HBoxMain" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardPulsoQuartz" unique_id=1379382745]
 layout_mode = 2
 
-[node name="HBoxTop" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardPulsoQuartz/VBox" unique_id=946259907]
-layout_mode = 2
-
-[node name="LblNombre" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardPulsoQuartz/VBox/HBoxTop" unique_id=1019427042]
+[node name="InfoArea" type="VBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardPulsoQuartz/HBoxMain" unique_id=2022355930]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_font_sizes/font_size = 18
-text = "Nombre"
 
-[node name="LblValor" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardPulsoQuartz/VBox/HBoxTop" unique_id=2060068501]
+[node name="LblNombre" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardPulsoQuartz/HBoxMain/InfoArea" unique_id=744548241]
 layout_mode = 2
-theme_override_colors/font_color = Color(0, 0.85, 1, 1)
-theme_override_font_sizes/font_size = 16
-text = "+0"
+theme_override_font_sizes/font_size = 15
+text = "Pulso de Quartz"
 
-[node name="BtnComprar" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardPulsoQuartz/VBox/HBoxTop" unique_id=1078213757]
+[node name="LblNivel" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardPulsoQuartz/HBoxMain/InfoArea" unique_id=18554754]
 layout_mode = 2
-text = "0⚡"
-
-[node name="HBoxBottom" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardPulsoQuartz/VBox" unique_id=662398496]
-layout_mode = 2
-
-[node name="LblNivel" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardPulsoQuartz/VBox/HBoxBottom" unique_id=1497519034]
-layout_mode = 2
-size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
-theme_override_font_sizes/font_size = 12
+theme_override_font_sizes/font_size = 11
 text = "Nivel 0 / 0"
 
-[node name="BtnX2" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardPulsoQuartz/VBox/HBoxBottom" unique_id=1519330477]
+[node name="CompraArea" type="VBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardPulsoQuartz/HBoxMain" unique_id=472032873]
+layout_mode = 2
+
+[node name="HBoxCompra" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardPulsoQuartz/HBoxMain/CompraArea" unique_id=516160527]
+layout_mode = 2
+
+[node name="LblValor" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardPulsoQuartz/HBoxMain/CompraArea/HBoxCompra" unique_id=839789931]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0.85, 1, 1)
+theme_override_font_sizes/font_size = 14
+text = "+0"
+
+[node name="BtnComprar" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardPulsoQuartz/HBoxMain/CompraArea/HBoxCompra" unique_id=670408597]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "0⚡"
+
+[node name="HBoxBotones" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardPulsoQuartz/HBoxMain/CompraArea" unique_id=1644704798]
+layout_mode = 2
+
+[node name="BtnX2" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardPulsoQuartz/HBoxMain/CompraArea/HBoxBotones" unique_id=307640173]
 layout_mode = 2
 text = "x2"
 
-[node name="BtnX5" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardPulsoQuartz/VBox/HBoxBottom" unique_id=885054940]
+[node name="BtnX5" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardPulsoQuartz/HBoxMain/CompraArea/HBoxBotones" unique_id=702679878]
 layout_mode = 2
 text = "x5"
 
-[node name="BtnMax" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardPulsoQuartz/VBox/HBoxBottom" unique_id=1279266814]
+[node name="BtnMax" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardPulsoQuartz/HBoxMain/CompraArea/HBoxBotones" unique_id=1085537502]
 layout_mode = 2
 text = "MAX"
 
-[node name="LblBloqueada" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardPulsoQuartz/VBox/HBoxBottom" unique_id=9349536]
+[node name="LblBloqueada" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardPulsoQuartz/HBoxMain/CompraArea" unique_id=1271234228]
 visible = false
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0, 0, 1)
 theme_override_font_sizes/font_size = 10
-text = "🔒 DESBLOQUEAR EN ASCENSIÓN 45"
+text = "🔒 BLOQUEADA"
 
-[node name="CardPoderPulso" type="PanelContainer" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer" unique_id=1238046399]
+[node name="CardPoderPulso" type="PanelContainer" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer" unique_id=916269539]
 custom_minimum_size = Vector2(0, 70)
 layout_mode = 2
 size_flags_horizontal = 3
 script = ExtResource("2_card")
 mejora_id = "poder_pulso"
 
-[node name="VBox" type="VBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardPoderPulso" unique_id=1693559960]
+[node name="HBoxMain" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardPoderPulso" unique_id=1511125130]
 layout_mode = 2
 
-[node name="HBoxTop" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardPoderPulso/VBox" unique_id=1934357085]
-layout_mode = 2
-
-[node name="LblNombre" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardPoderPulso/VBox/HBoxTop" unique_id=1475121508]
+[node name="InfoArea" type="VBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardPoderPulso/HBoxMain" unique_id=1723473808]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_font_sizes/font_size = 18
-text = "Nombre"
 
-[node name="LblValor" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardPoderPulso/VBox/HBoxTop" unique_id=2049967550]
+[node name="LblNombre" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardPoderPulso/HBoxMain/InfoArea" unique_id=1441526961]
 layout_mode = 2
-theme_override_colors/font_color = Color(0, 0.85, 1, 1)
-theme_override_font_sizes/font_size = 16
-text = "+0"
+theme_override_font_sizes/font_size = 15
+text = "Poder del Pulso"
 
-[node name="BtnComprar" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardPoderPulso/VBox/HBoxTop" unique_id=1230817851]
+[node name="LblNivel" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardPoderPulso/HBoxMain/InfoArea" unique_id=388726992]
 layout_mode = 2
-text = "0⚡"
-
-[node name="HBoxBottom" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardPoderPulso/VBox" unique_id=821635244]
-layout_mode = 2
-
-[node name="LblNivel" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardPoderPulso/VBox/HBoxBottom" unique_id=2009755665]
-layout_mode = 2
-size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
-theme_override_font_sizes/font_size = 12
+theme_override_font_sizes/font_size = 11
 text = "Nivel 0 / 0"
 
-[node name="BtnX2" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardPoderPulso/VBox/HBoxBottom" unique_id=1688455570]
+[node name="CompraArea" type="VBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardPoderPulso/HBoxMain" unique_id=113713675]
+layout_mode = 2
+
+[node name="HBoxCompra" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardPoderPulso/HBoxMain/CompraArea" unique_id=126950285]
+layout_mode = 2
+
+[node name="LblValor" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardPoderPulso/HBoxMain/CompraArea/HBoxCompra" unique_id=1328340340]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0.85, 1, 1)
+theme_override_font_sizes/font_size = 14
+text = "+0"
+
+[node name="BtnComprar" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardPoderPulso/HBoxMain/CompraArea/HBoxCompra" unique_id=1011062293]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "0⚡"
+
+[node name="HBoxBotones" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardPoderPulso/HBoxMain/CompraArea" unique_id=1413253026]
+layout_mode = 2
+
+[node name="BtnX2" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardPoderPulso/HBoxMain/CompraArea/HBoxBotones" unique_id=2025030903]
 layout_mode = 2
 text = "x2"
 
-[node name="BtnX5" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardPoderPulso/VBox/HBoxBottom" unique_id=1096340367]
+[node name="BtnX5" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardPoderPulso/HBoxMain/CompraArea/HBoxBotones" unique_id=259763130]
 layout_mode = 2
 text = "x5"
 
-[node name="BtnMax" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardPoderPulso/VBox/HBoxBottom" unique_id=2097617366]
+[node name="BtnMax" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardPoderPulso/HBoxMain/CompraArea/HBoxBotones" unique_id=2080409371]
 layout_mode = 2
 text = "MAX"
 
-[node name="LblBloqueada" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardPoderPulso/VBox/HBoxBottom" unique_id=1292345494]
+[node name="LblBloqueada" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardPoderPulso/HBoxMain/CompraArea" unique_id=1810673214]
 visible = false
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0, 0, 1)
 theme_override_font_sizes/font_size = 10
-text = "🔒 DESBLOQUEAR EN ASCENSIÓN 45"
+text = "🔒 BLOQUEADA"
 
-[node name="BonificacionContainer" type="GridContainer" parent="Contenido/ScrollContainer/MejorasContainer" unique_id=702543587]
+[node name="BonificacionContainer" type="GridContainer" parent="Contenido/ScrollContainer/MejorasContainer" unique_id=838192009]
 visible = false
 layout_mode = 2
 size_flags_horizontal = 3
 columns = 2
 
-[node name="CardEnergiaAscension" type="PanelContainer" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer" unique_id=621029895]
+[node name="CardEnergiaAscension" type="PanelContainer" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer" unique_id=460406168]
 custom_minimum_size = Vector2(0, 70)
 layout_mode = 2
 size_flags_horizontal = 3
 script = ExtResource("2_card")
 mejora_id = "energia_ascension"
 
-[node name="VBox" type="VBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEnergiaAscension" unique_id=2038538779]
+[node name="HBoxMain" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEnergiaAscension" unique_id=244651589]
 layout_mode = 2
 
-[node name="HBoxTop" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEnergiaAscension/VBox" unique_id=1154988835]
-layout_mode = 2
-
-[node name="LblNombre" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEnergiaAscension/VBox/HBoxTop" unique_id=624142764]
+[node name="InfoArea" type="VBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEnergiaAscension/HBoxMain" unique_id=1340619176]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_font_sizes/font_size = 18
-text = "Nombre"
 
-[node name="LblValor" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEnergiaAscension/VBox/HBoxTop" unique_id=2062872725]
+[node name="LblNombre" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEnergiaAscension/HBoxMain/InfoArea" unique_id=716132538]
 layout_mode = 2
-theme_override_colors/font_color = Color(0, 0.85, 1, 1)
-theme_override_font_sizes/font_size = 16
-text = "+0"
+theme_override_font_sizes/font_size = 15
+text = "Energía por Ascensión"
 
-[node name="BtnComprar" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEnergiaAscension/VBox/HBoxTop" unique_id=854184801]
+[node name="LblNivel" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEnergiaAscension/HBoxMain/InfoArea" unique_id=1104453732]
 layout_mode = 2
-text = "0⚡"
-
-[node name="HBoxBottom" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEnergiaAscension/VBox" unique_id=1058516392]
-layout_mode = 2
-
-[node name="LblNivel" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEnergiaAscension/VBox/HBoxBottom" unique_id=629784321]
-layout_mode = 2
-size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
-theme_override_font_sizes/font_size = 12
+theme_override_font_sizes/font_size = 11
 text = "Nivel 0 / 0"
 
-[node name="BtnX2" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEnergiaAscension/VBox/HBoxBottom" unique_id=720921758]
+[node name="CompraArea" type="VBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEnergiaAscension/HBoxMain" unique_id=1474049763]
+layout_mode = 2
+
+[node name="HBoxCompra" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEnergiaAscension/HBoxMain/CompraArea" unique_id=1693765465]
+layout_mode = 2
+
+[node name="LblValor" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEnergiaAscension/HBoxMain/CompraArea/HBoxCompra" unique_id=2083567313]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0.85, 1, 1)
+theme_override_font_sizes/font_size = 14
+text = "+0"
+
+[node name="BtnComprar" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEnergiaAscension/HBoxMain/CompraArea/HBoxCompra" unique_id=1161773837]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "0⚡"
+
+[node name="HBoxBotones" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEnergiaAscension/HBoxMain/CompraArea" unique_id=1660939463]
+layout_mode = 2
+
+[node name="BtnX2" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEnergiaAscension/HBoxMain/CompraArea/HBoxBotones" unique_id=1750538181]
 layout_mode = 2
 text = "x2"
 
-[node name="BtnX5" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEnergiaAscension/VBox/HBoxBottom" unique_id=366044724]
+[node name="BtnX5" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEnergiaAscension/HBoxMain/CompraArea/HBoxBotones" unique_id=1338393286]
 layout_mode = 2
 text = "x5"
 
-[node name="BtnMax" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEnergiaAscension/VBox/HBoxBottom" unique_id=1543245982]
+[node name="BtnMax" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEnergiaAscension/HBoxMain/CompraArea/HBoxBotones" unique_id=68714430]
 layout_mode = 2
 text = "MAX"
 
-[node name="LblBloqueada" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEnergiaAscension/VBox/HBoxBottom" unique_id=227874127]
+[node name="LblBloqueada" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEnergiaAscension/HBoxMain/CompraArea" unique_id=2093103271]
 visible = false
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0, 0, 1)
 theme_override_font_sizes/font_size = 10
-text = "🔒 DESBLOQUEAR EN ASCENSIÓN 45"
+text = "🔒 BLOQUEADA"
 
-[node name="CardEnergiaEspectro" type="PanelContainer" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer" unique_id=1789617692]
+[node name="CardEnergiaEspectro" type="PanelContainer" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer" unique_id=862735154]
 custom_minimum_size = Vector2(0, 70)
 layout_mode = 2
 size_flags_horizontal = 3
 script = ExtResource("2_card")
 mejora_id = "energia_espectro"
 
-[node name="VBox" type="VBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEnergiaEspectro" unique_id=1984701781]
+[node name="HBoxMain" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEnergiaEspectro" unique_id=1253035024]
 layout_mode = 2
 
-[node name="HBoxTop" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEnergiaEspectro/VBox" unique_id=935972351]
-layout_mode = 2
-
-[node name="LblNombre" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEnergiaEspectro/VBox/HBoxTop" unique_id=233661578]
+[node name="InfoArea" type="VBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEnergiaEspectro/HBoxMain" unique_id=1051375548]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_font_sizes/font_size = 18
-text = "Nombre"
 
-[node name="LblValor" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEnergiaEspectro/VBox/HBoxTop" unique_id=476655471]
+[node name="LblNombre" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEnergiaEspectro/HBoxMain/InfoArea" unique_id=1176248205]
 layout_mode = 2
-theme_override_colors/font_color = Color(0, 0.85, 1, 1)
-theme_override_font_sizes/font_size = 16
-text = "+0"
+theme_override_font_sizes/font_size = 15
+text = "Energía por Espectro"
 
-[node name="BtnComprar" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEnergiaEspectro/VBox/HBoxTop" unique_id=1327946596]
+[node name="LblNivel" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEnergiaEspectro/HBoxMain/InfoArea" unique_id=1476994323]
 layout_mode = 2
-text = "0⚡"
-
-[node name="HBoxBottom" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEnergiaEspectro/VBox" unique_id=2026639243]
-layout_mode = 2
-
-[node name="LblNivel" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEnergiaEspectro/VBox/HBoxBottom" unique_id=2005427478]
-layout_mode = 2
-size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
-theme_override_font_sizes/font_size = 12
+theme_override_font_sizes/font_size = 11
 text = "Nivel 0 / 0"
 
-[node name="BtnX2" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEnergiaEspectro/VBox/HBoxBottom" unique_id=29148105]
+[node name="CompraArea" type="VBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEnergiaEspectro/HBoxMain" unique_id=1279127826]
+layout_mode = 2
+
+[node name="HBoxCompra" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEnergiaEspectro/HBoxMain/CompraArea" unique_id=1333720029]
+layout_mode = 2
+
+[node name="LblValor" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEnergiaEspectro/HBoxMain/CompraArea/HBoxCompra" unique_id=1018886203]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0.85, 1, 1)
+theme_override_font_sizes/font_size = 14
+text = "+0"
+
+[node name="BtnComprar" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEnergiaEspectro/HBoxMain/CompraArea/HBoxCompra" unique_id=1280907579]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "0⚡"
+
+[node name="HBoxBotones" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEnergiaEspectro/HBoxMain/CompraArea" unique_id=2145740633]
+layout_mode = 2
+
+[node name="BtnX2" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEnergiaEspectro/HBoxMain/CompraArea/HBoxBotones" unique_id=112344264]
 layout_mode = 2
 text = "x2"
 
-[node name="BtnX5" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEnergiaEspectro/VBox/HBoxBottom" unique_id=2118316598]
+[node name="BtnX5" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEnergiaEspectro/HBoxMain/CompraArea/HBoxBotones" unique_id=377883729]
 layout_mode = 2
 text = "x5"
 
-[node name="BtnMax" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEnergiaEspectro/VBox/HBoxBottom" unique_id=1118341941]
+[node name="BtnMax" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEnergiaEspectro/HBoxMain/CompraArea/HBoxBotones" unique_id=624676592]
 layout_mode = 2
 text = "MAX"
 
-[node name="LblBloqueada" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEnergiaEspectro/VBox/HBoxBottom" unique_id=1769656662]
+[node name="LblBloqueada" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEnergiaEspectro/HBoxMain/CompraArea" unique_id=940513195]
 visible = false
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0, 0, 1)
 theme_override_font_sizes/font_size = 10
-text = "🔒 DESBLOQUEAR EN ASCENSIÓN 45"
+text = "🔒 BLOQUEADA"
 
-[node name="CardEcosAscension" type="PanelContainer" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer" unique_id=203543267]
+[node name="CardEcosAscension" type="PanelContainer" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer" unique_id=2099518050]
 custom_minimum_size = Vector2(0, 70)
 layout_mode = 2
 size_flags_horizontal = 3
 script = ExtResource("2_card")
 mejora_id = "ecos_ascension"
 
-[node name="VBox" type="VBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEcosAscension" unique_id=1415712646]
+[node name="HBoxMain" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEcosAscension" unique_id=1743318752]
 layout_mode = 2
 
-[node name="HBoxTop" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEcosAscension/VBox" unique_id=594382209]
-layout_mode = 2
-
-[node name="LblNombre" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEcosAscension/VBox/HBoxTop" unique_id=1178931986]
+[node name="InfoArea" type="VBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEcosAscension/HBoxMain" unique_id=401252137]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_font_sizes/font_size = 18
-text = "Nombre"
 
-[node name="LblValor" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEcosAscension/VBox/HBoxTop" unique_id=1034406034]
+[node name="LblNombre" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEcosAscension/HBoxMain/InfoArea" unique_id=1209418892]
 layout_mode = 2
-theme_override_colors/font_color = Color(0, 0.85, 1, 1)
-theme_override_font_sizes/font_size = 16
-text = "+0"
+theme_override_font_sizes/font_size = 15
+text = "Ecos por Ascensión"
 
-[node name="BtnComprar" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEcosAscension/VBox/HBoxTop" unique_id=694813085]
+[node name="LblNivel" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEcosAscension/HBoxMain/InfoArea" unique_id=35790064]
 layout_mode = 2
-text = "0⚡"
-
-[node name="HBoxBottom" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEcosAscension/VBox" unique_id=1104890883]
-layout_mode = 2
-
-[node name="LblNivel" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEcosAscension/VBox/HBoxBottom" unique_id=1498261549]
-layout_mode = 2
-size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
-theme_override_font_sizes/font_size = 12
+theme_override_font_sizes/font_size = 11
 text = "Nivel 0 / 0"
 
-[node name="BtnX2" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEcosAscension/VBox/HBoxBottom" unique_id=1423929550]
+[node name="CompraArea" type="VBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEcosAscension/HBoxMain" unique_id=717927207]
+layout_mode = 2
+
+[node name="HBoxCompra" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEcosAscension/HBoxMain/CompraArea" unique_id=1673340095]
+layout_mode = 2
+
+[node name="LblValor" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEcosAscension/HBoxMain/CompraArea/HBoxCompra" unique_id=639310194]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0.85, 1, 1)
+theme_override_font_sizes/font_size = 14
+text = "+0"
+
+[node name="BtnComprar" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEcosAscension/HBoxMain/CompraArea/HBoxCompra" unique_id=617029211]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "0⚡"
+
+[node name="HBoxBotones" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEcosAscension/HBoxMain/CompraArea" unique_id=1395132716]
+layout_mode = 2
+
+[node name="BtnX2" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEcosAscension/HBoxMain/CompraArea/HBoxBotones" unique_id=576716078]
 layout_mode = 2
 text = "x2"
 
-[node name="BtnX5" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEcosAscension/VBox/HBoxBottom" unique_id=1478190000]
+[node name="BtnX5" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEcosAscension/HBoxMain/CompraArea/HBoxBotones" unique_id=1763151256]
 layout_mode = 2
 text = "x5"
 
-[node name="BtnMax" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEcosAscension/VBox/HBoxBottom" unique_id=1056208192]
+[node name="BtnMax" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEcosAscension/HBoxMain/CompraArea/HBoxBotones" unique_id=752257264]
 layout_mode = 2
 text = "MAX"
 
-[node name="LblBloqueada" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEcosAscension/VBox/HBoxBottom" unique_id=1508314726]
+[node name="LblBloqueada" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEcosAscension/HBoxMain/CompraArea" unique_id=1802269949]
 visible = false
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0, 0, 1)
 theme_override_font_sizes/font_size = 10
-text = "🔒 DESBLOQUEAR EN ASCENSIÓN 45"
+text = "🔒 BLOQUEADA"
 
-[node name="CardEcosRapido" type="PanelContainer" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer" unique_id=749607094]
+[node name="CardEcosRapido" type="PanelContainer" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer" unique_id=2022903392]
 custom_minimum_size = Vector2(0, 70)
 layout_mode = 2
 size_flags_horizontal = 3
 script = ExtResource("2_card")
 mejora_id = "ecos_rapido"
 
-[node name="VBox" type="VBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEcosRapido" unique_id=847774357]
+[node name="HBoxMain" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEcosRapido" unique_id=807126995]
 layout_mode = 2
 
-[node name="HBoxTop" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEcosRapido/VBox" unique_id=877074410]
-layout_mode = 2
-
-[node name="LblNombre" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEcosRapido/VBox/HBoxTop" unique_id=1851958415]
+[node name="InfoArea" type="VBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEcosRapido/HBoxMain" unique_id=1018255079]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_font_sizes/font_size = 18
-text = "Nombre"
 
-[node name="LblValor" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEcosRapido/VBox/HBoxTop" unique_id=651342417]
+[node name="LblNombre" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEcosRapido/HBoxMain/InfoArea" unique_id=1446919714]
 layout_mode = 2
-theme_override_colors/font_color = Color(0, 0.85, 1, 1)
-theme_override_font_sizes/font_size = 16
-text = "+0"
+theme_override_font_sizes/font_size = 15
+text = "Ecos Rápidos"
 
-[node name="BtnComprar" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEcosRapido/VBox/HBoxTop" unique_id=2136312212]
+[node name="LblNivel" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEcosRapido/HBoxMain/InfoArea" unique_id=1460681645]
 layout_mode = 2
-text = "0⚡"
-
-[node name="HBoxBottom" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEcosRapido/VBox" unique_id=1042710731]
-layout_mode = 2
-
-[node name="LblNivel" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEcosRapido/VBox/HBoxBottom" unique_id=1015348129]
-layout_mode = 2
-size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
-theme_override_font_sizes/font_size = 12
+theme_override_font_sizes/font_size = 11
 text = "Nivel 0 / 0"
 
-[node name="BtnX2" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEcosRapido/VBox/HBoxBottom" unique_id=1104502221]
+[node name="CompraArea" type="VBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEcosRapido/HBoxMain" unique_id=1123216755]
+layout_mode = 2
+
+[node name="HBoxCompra" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEcosRapido/HBoxMain/CompraArea" unique_id=492328164]
+layout_mode = 2
+
+[node name="LblValor" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEcosRapido/HBoxMain/CompraArea/HBoxCompra" unique_id=1446395159]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0.85, 1, 1)
+theme_override_font_sizes/font_size = 14
+text = "+0"
+
+[node name="BtnComprar" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEcosRapido/HBoxMain/CompraArea/HBoxCompra" unique_id=1103082615]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "0⚡"
+
+[node name="HBoxBotones" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEcosRapido/HBoxMain/CompraArea" unique_id=2004951555]
+layout_mode = 2
+
+[node name="BtnX2" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEcosRapido/HBoxMain/CompraArea/HBoxBotones" unique_id=1017180392]
 layout_mode = 2
 text = "x2"
 
-[node name="BtnX5" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEcosRapido/VBox/HBoxBottom" unique_id=407162177]
+[node name="BtnX5" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEcosRapido/HBoxMain/CompraArea/HBoxBotones" unique_id=1793813303]
 layout_mode = 2
 text = "x5"
 
-[node name="BtnMax" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEcosRapido/VBox/HBoxBottom" unique_id=1268124803]
+[node name="BtnMax" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEcosRapido/HBoxMain/CompraArea/HBoxBotones" unique_id=369064904]
 layout_mode = 2
 text = "MAX"
 
-[node name="LblBloqueada" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEcosRapido/VBox/HBoxBottom" unique_id=1775558788]
+[node name="LblBloqueada" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEcosRapido/HBoxMain/CompraArea" unique_id=130678675]
 visible = false
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0, 0, 1)
 theme_override_font_sizes/font_size = 10
-text = "🔒 DESBLOQUEAR EN ASCENSIÓN 45"
+text = "🔒 BLOQUEADA"
 
-[node name="CardAtaqueGratis" type="PanelContainer" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer" unique_id=1571696985]
+[node name="CardAtaqueGratis" type="PanelContainer" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer" unique_id=1341839177]
 custom_minimum_size = Vector2(0, 70)
 layout_mode = 2
 size_flags_horizontal = 3
 script = ExtResource("2_card")
 mejora_id = "mejora_ataque_gratis"
 
-[node name="VBox" type="VBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardAtaqueGratis" unique_id=1499825316]
+[node name="HBoxMain" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardAtaqueGratis" unique_id=784704964]
 layout_mode = 2
 
-[node name="HBoxTop" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardAtaqueGratis/VBox" unique_id=408644296]
-layout_mode = 2
-
-[node name="LblNombre" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardAtaqueGratis/VBox/HBoxTop" unique_id=987987526]
+[node name="InfoArea" type="VBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardAtaqueGratis/HBoxMain" unique_id=1079604696]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_font_sizes/font_size = 18
-text = "Nombre"
 
-[node name="LblValor" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardAtaqueGratis/VBox/HBoxTop" unique_id=2103597179]
+[node name="LblNombre" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardAtaqueGratis/HBoxMain/InfoArea" unique_id=853049989]
 layout_mode = 2
-theme_override_colors/font_color = Color(0, 0.85, 1, 1)
-theme_override_font_sizes/font_size = 16
-text = "+0"
+theme_override_font_sizes/font_size = 15
+text = "Ataque Gratis"
 
-[node name="BtnComprar" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardAtaqueGratis/VBox/HBoxTop" unique_id=1087973962]
+[node name="LblNivel" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardAtaqueGratis/HBoxMain/InfoArea" unique_id=2143970883]
 layout_mode = 2
-text = "0⚡"
-
-[node name="HBoxBottom" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardAtaqueGratis/VBox" unique_id=271536259]
-layout_mode = 2
-
-[node name="LblNivel" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardAtaqueGratis/VBox/HBoxBottom" unique_id=2001968553]
-layout_mode = 2
-size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
-theme_override_font_sizes/font_size = 12
+theme_override_font_sizes/font_size = 11
 text = "Nivel 0 / 0"
 
-[node name="BtnX2" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardAtaqueGratis/VBox/HBoxBottom" unique_id=513352892]
+[node name="CompraArea" type="VBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardAtaqueGratis/HBoxMain" unique_id=2089395284]
+layout_mode = 2
+
+[node name="HBoxCompra" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardAtaqueGratis/HBoxMain/CompraArea" unique_id=713438993]
+layout_mode = 2
+
+[node name="LblValor" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardAtaqueGratis/HBoxMain/CompraArea/HBoxCompra" unique_id=2042604140]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0.85, 1, 1)
+theme_override_font_sizes/font_size = 14
+text = "+0"
+
+[node name="BtnComprar" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardAtaqueGratis/HBoxMain/CompraArea/HBoxCompra" unique_id=267870359]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "0⚡"
+
+[node name="HBoxBotones" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardAtaqueGratis/HBoxMain/CompraArea" unique_id=1727705686]
+layout_mode = 2
+
+[node name="BtnX2" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardAtaqueGratis/HBoxMain/CompraArea/HBoxBotones" unique_id=1396331774]
 layout_mode = 2
 text = "x2"
 
-[node name="BtnX5" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardAtaqueGratis/VBox/HBoxBottom" unique_id=1996632981]
+[node name="BtnX5" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardAtaqueGratis/HBoxMain/CompraArea/HBoxBotones" unique_id=1332531447]
 layout_mode = 2
 text = "x5"
 
-[node name="BtnMax" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardAtaqueGratis/VBox/HBoxBottom" unique_id=949856223]
+[node name="BtnMax" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardAtaqueGratis/HBoxMain/CompraArea/HBoxBotones" unique_id=976332694]
 layout_mode = 2
 text = "MAX"
 
-[node name="LblBloqueada" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardAtaqueGratis/VBox/HBoxBottom" unique_id=592745902]
+[node name="LblBloqueada" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardAtaqueGratis/HBoxMain/CompraArea" unique_id=799988781]
 visible = false
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0, 0, 1)
 theme_override_font_sizes/font_size = 10
-text = "🔒 DESBLOQUEAR EN ASCENSIÓN 45"
+text = "🔒 BLOQUEADA"
 
-[node name="CardDefensaGratis" type="PanelContainer" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer" unique_id=1886715017]
+[node name="CardDefensaGratis" type="PanelContainer" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer" unique_id=496142079]
 custom_minimum_size = Vector2(0, 70)
 layout_mode = 2
 size_flags_horizontal = 3
 script = ExtResource("2_card")
 mejora_id = "mejora_defensa_gratis"
 
-[node name="VBox" type="VBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardDefensaGratis" unique_id=1543373910]
+[node name="HBoxMain" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardDefensaGratis" unique_id=1207866086]
 layout_mode = 2
 
-[node name="HBoxTop" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardDefensaGratis/VBox" unique_id=83687515]
-layout_mode = 2
-
-[node name="LblNombre" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardDefensaGratis/VBox/HBoxTop" unique_id=993121456]
+[node name="InfoArea" type="VBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardDefensaGratis/HBoxMain" unique_id=1335698608]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_font_sizes/font_size = 18
-text = "Nombre"
 
-[node name="LblValor" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardDefensaGratis/VBox/HBoxTop" unique_id=1990093764]
+[node name="LblNombre" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardDefensaGratis/HBoxMain/InfoArea" unique_id=2002870111]
 layout_mode = 2
-theme_override_colors/font_color = Color(0, 0.85, 1, 1)
-theme_override_font_sizes/font_size = 16
-text = "+0"
+theme_override_font_sizes/font_size = 15
+text = "Defensa Gratis"
 
-[node name="BtnComprar" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardDefensaGratis/VBox/HBoxTop" unique_id=1397898360]
+[node name="LblNivel" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardDefensaGratis/HBoxMain/InfoArea" unique_id=1476048421]
 layout_mode = 2
-text = "0⚡"
-
-[node name="HBoxBottom" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardDefensaGratis/VBox" unique_id=1686133527]
-layout_mode = 2
-
-[node name="LblNivel" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardDefensaGratis/VBox/HBoxBottom" unique_id=444346337]
-layout_mode = 2
-size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
-theme_override_font_sizes/font_size = 12
+theme_override_font_sizes/font_size = 11
 text = "Nivel 0 / 0"
 
-[node name="BtnX2" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardDefensaGratis/VBox/HBoxBottom" unique_id=585611943]
+[node name="CompraArea" type="VBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardDefensaGratis/HBoxMain" unique_id=1993949666]
+layout_mode = 2
+
+[node name="HBoxCompra" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardDefensaGratis/HBoxMain/CompraArea" unique_id=1170020023]
+layout_mode = 2
+
+[node name="LblValor" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardDefensaGratis/HBoxMain/CompraArea/HBoxCompra" unique_id=1339492596]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0.85, 1, 1)
+theme_override_font_sizes/font_size = 14
+text = "+0"
+
+[node name="BtnComprar" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardDefensaGratis/HBoxMain/CompraArea/HBoxCompra" unique_id=1583405398]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "0⚡"
+
+[node name="HBoxBotones" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardDefensaGratis/HBoxMain/CompraArea" unique_id=1595403993]
+layout_mode = 2
+
+[node name="BtnX2" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardDefensaGratis/HBoxMain/CompraArea/HBoxBotones" unique_id=1604608174]
 layout_mode = 2
 text = "x2"
 
-[node name="BtnX5" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardDefensaGratis/VBox/HBoxBottom" unique_id=563562571]
+[node name="BtnX5" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardDefensaGratis/HBoxMain/CompraArea/HBoxBotones" unique_id=1310576960]
 layout_mode = 2
 text = "x5"
 
-[node name="BtnMax" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardDefensaGratis/VBox/HBoxBottom" unique_id=1868344508]
+[node name="BtnMax" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardDefensaGratis/HBoxMain/CompraArea/HBoxBotones" unique_id=1922274532]
 layout_mode = 2
 text = "MAX"
 
-[node name="LblBloqueada" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardDefensaGratis/VBox/HBoxBottom" unique_id=1643165618]
+[node name="LblBloqueada" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardDefensaGratis/HBoxMain/CompraArea" unique_id=296747585]
 visible = false
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0, 0, 1)
 theme_override_font_sizes/font_size = 10
-text = "🔒 DESBLOQUEAR EN ASCENSIÓN 45"
+text = "🔒 BLOQUEADA"
 
-[node name="CardBonificacionGratis" type="PanelContainer" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer" unique_id=441622724]
+[node name="CardBonificacionGratis" type="PanelContainer" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer" unique_id=1619573607]
 custom_minimum_size = Vector2(0, 70)
 layout_mode = 2
 size_flags_horizontal = 3
 script = ExtResource("2_card")
 mejora_id = "mejora_bonificacion_gratis"
 
-[node name="VBox" type="VBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardBonificacionGratis" unique_id=1802441680]
+[node name="HBoxMain" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardBonificacionGratis" unique_id=596466206]
 layout_mode = 2
 
-[node name="HBoxTop" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardBonificacionGratis/VBox" unique_id=1045122519]
-layout_mode = 2
-
-[node name="LblNombre" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardBonificacionGratis/VBox/HBoxTop" unique_id=2064938245]
+[node name="InfoArea" type="VBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardBonificacionGratis/HBoxMain" unique_id=704304894]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_font_sizes/font_size = 18
-text = "Nombre"
 
-[node name="LblValor" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardBonificacionGratis/VBox/HBoxTop" unique_id=1490667386]
+[node name="LblNombre" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardBonificacionGratis/HBoxMain/InfoArea" unique_id=1864369228]
 layout_mode = 2
-theme_override_colors/font_color = Color(0, 0.85, 1, 1)
-theme_override_font_sizes/font_size = 16
-text = "+0"
+theme_override_font_sizes/font_size = 15
+text = "Bonificación Gratis"
 
-[node name="BtnComprar" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardBonificacionGratis/VBox/HBoxTop" unique_id=124033681]
+[node name="LblNivel" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardBonificacionGratis/HBoxMain/InfoArea" unique_id=1136503729]
 layout_mode = 2
-text = "0⚡"
-
-[node name="HBoxBottom" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardBonificacionGratis/VBox" unique_id=1364131795]
-layout_mode = 2
-
-[node name="LblNivel" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardBonificacionGratis/VBox/HBoxBottom" unique_id=521787149]
-layout_mode = 2
-size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
-theme_override_font_sizes/font_size = 12
+theme_override_font_sizes/font_size = 11
 text = "Nivel 0 / 0"
 
-[node name="BtnX2" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardBonificacionGratis/VBox/HBoxBottom" unique_id=1929062601]
+[node name="CompraArea" type="VBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardBonificacionGratis/HBoxMain" unique_id=602507856]
+layout_mode = 2
+
+[node name="HBoxCompra" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardBonificacionGratis/HBoxMain/CompraArea" unique_id=1958986572]
+layout_mode = 2
+
+[node name="LblValor" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardBonificacionGratis/HBoxMain/CompraArea/HBoxCompra" unique_id=1636127399]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0.85, 1, 1)
+theme_override_font_sizes/font_size = 14
+text = "+0"
+
+[node name="BtnComprar" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardBonificacionGratis/HBoxMain/CompraArea/HBoxCompra" unique_id=2101914973]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "0⚡"
+
+[node name="HBoxBotones" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardBonificacionGratis/HBoxMain/CompraArea" unique_id=1520914294]
+layout_mode = 2
+
+[node name="BtnX2" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardBonificacionGratis/HBoxMain/CompraArea/HBoxBotones" unique_id=1721921020]
 layout_mode = 2
 text = "x2"
 
-[node name="BtnX5" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardBonificacionGratis/VBox/HBoxBottom" unique_id=523391549]
+[node name="BtnX5" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardBonificacionGratis/HBoxMain/CompraArea/HBoxBotones" unique_id=1136022952]
 layout_mode = 2
 text = "x5"
 
-[node name="BtnMax" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardBonificacionGratis/VBox/HBoxBottom" unique_id=1194313474]
+[node name="BtnMax" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardBonificacionGratis/HBoxMain/CompraArea/HBoxBotones" unique_id=1295644027]
 layout_mode = 2
 text = "MAX"
 
-[node name="LblBloqueada" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardBonificacionGratis/VBox/HBoxBottom" unique_id=1460973294]
+[node name="LblBloqueada" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardBonificacionGratis/HBoxMain/CompraArea" unique_id=2046143659]
 visible = false
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0, 0, 1)
 theme_override_font_sizes/font_size = 10
-text = "🔒 DESBLOQUEAR EN ASCENSIÓN 45"
+text = "🔒 BLOQUEADA"
 
-[node name="CommanderContainer" type="GridContainer" parent="Contenido/ScrollContainer/MejorasContainer" unique_id=1800457641]
+[node name="CommanderContainer" type="GridContainer" parent="Contenido/ScrollContainer/MejorasContainer" unique_id=1252128830]
 visible = false
 layout_mode = 2
 size_flags_horizontal = 3
 columns = 2
 
-[node name="CardBlindaje" type="PanelContainer" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer" unique_id=110325883]
+[node name="CardBlindaje" type="PanelContainer" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer" unique_id=2080024836]
 custom_minimum_size = Vector2(0, 70)
 layout_mode = 2
 size_flags_horizontal = 3
 script = ExtResource("2_card")
 mejora_id = "blindaje"
 
-[node name="VBox" type="VBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardBlindaje" unique_id=2092743102]
+[node name="HBoxMain" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardBlindaje" unique_id=755999477]
 layout_mode = 2
 
-[node name="HBoxTop" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardBlindaje/VBox" unique_id=1268254483]
-layout_mode = 2
-
-[node name="LblNombre" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardBlindaje/VBox/HBoxTop" unique_id=1641110011]
+[node name="InfoArea" type="VBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardBlindaje/HBoxMain" unique_id=2097690592]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_font_sizes/font_size = 18
-text = "Nombre"
 
-[node name="LblValor" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardBlindaje/VBox/HBoxTop" unique_id=257218150]
+[node name="LblNombre" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardBlindaje/HBoxMain/InfoArea" unique_id=1089520958]
 layout_mode = 2
-theme_override_colors/font_color = Color(0, 0.85, 1, 1)
-theme_override_font_sizes/font_size = 16
-text = "+0"
+theme_override_font_sizes/font_size = 15
+text = "Blindaje"
 
-[node name="BtnComprar" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardBlindaje/VBox/HBoxTop" unique_id=611820590]
+[node name="LblNivel" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardBlindaje/HBoxMain/InfoArea" unique_id=100367733]
 layout_mode = 2
-text = "0⚡"
-
-[node name="HBoxBottom" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardBlindaje/VBox" unique_id=773865095]
-layout_mode = 2
-
-[node name="LblNivel" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardBlindaje/VBox/HBoxBottom" unique_id=314170025]
-layout_mode = 2
-size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
-theme_override_font_sizes/font_size = 12
+theme_override_font_sizes/font_size = 11
 text = "Nivel 0 / 0"
 
-[node name="BtnX2" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardBlindaje/VBox/HBoxBottom" unique_id=67048297]
+[node name="CompraArea" type="VBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardBlindaje/HBoxMain" unique_id=267473266]
+layout_mode = 2
+
+[node name="HBoxCompra" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardBlindaje/HBoxMain/CompraArea" unique_id=1097663281]
+layout_mode = 2
+
+[node name="LblValor" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardBlindaje/HBoxMain/CompraArea/HBoxCompra" unique_id=214152520]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0.85, 1, 1)
+theme_override_font_sizes/font_size = 14
+text = "+0"
+
+[node name="BtnComprar" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardBlindaje/HBoxMain/CompraArea/HBoxCompra" unique_id=1263746512]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "0⚡"
+
+[node name="HBoxBotones" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardBlindaje/HBoxMain/CompraArea" unique_id=1964167556]
+layout_mode = 2
+
+[node name="BtnX2" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardBlindaje/HBoxMain/CompraArea/HBoxBotones" unique_id=1541700709]
 layout_mode = 2
 text = "x2"
 
-[node name="BtnX5" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardBlindaje/VBox/HBoxBottom" unique_id=815658148]
+[node name="BtnX5" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardBlindaje/HBoxMain/CompraArea/HBoxBotones" unique_id=672396415]
 layout_mode = 2
 text = "x5"
 
-[node name="BtnMax" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardBlindaje/VBox/HBoxBottom" unique_id=1643938614]
+[node name="BtnMax" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardBlindaje/HBoxMain/CompraArea/HBoxBotones" unique_id=1315666251]
 layout_mode = 2
 text = "MAX"
 
-[node name="LblBloqueada" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardBlindaje/VBox/HBoxBottom" unique_id=1969382807]
+[node name="LblBloqueada" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardBlindaje/HBoxMain/CompraArea" unique_id=1594338172]
 visible = false
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0, 0, 1)
 theme_override_font_sizes/font_size = 10
-text = "🔒 DESBLOQUEAR EN ASCENSIÓN 45"
+text = "🔒 BLOQUEADA"
 
-[node name="CardDisparosIniciales" type="PanelContainer" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer" unique_id=430443496]
+[node name="CardDisparosIniciales" type="PanelContainer" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer" unique_id=481602295]
 custom_minimum_size = Vector2(0, 70)
 layout_mode = 2
 size_flags_horizontal = 3
 script = ExtResource("2_card")
 mejora_id = "disparos_iniciales"
 
-[node name="VBox" type="VBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardDisparosIniciales" unique_id=1577610161]
+[node name="HBoxMain" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardDisparosIniciales" unique_id=930676514]
 layout_mode = 2
 
-[node name="HBoxTop" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardDisparosIniciales/VBox" unique_id=1865131561]
-layout_mode = 2
-
-[node name="LblNombre" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardDisparosIniciales/VBox/HBoxTop" unique_id=1168891792]
+[node name="InfoArea" type="VBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardDisparosIniciales/HBoxMain" unique_id=103718707]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_font_sizes/font_size = 18
-text = "Nombre"
 
-[node name="LblValor" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardDisparosIniciales/VBox/HBoxTop" unique_id=540939401]
+[node name="LblNombre" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardDisparosIniciales/HBoxMain/InfoArea" unique_id=489104126]
 layout_mode = 2
-theme_override_colors/font_color = Color(0, 0.85, 1, 1)
-theme_override_font_sizes/font_size = 16
-text = "+0"
+theme_override_font_sizes/font_size = 15
+text = "Disparos Iniciales"
 
-[node name="BtnComprar" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardDisparosIniciales/VBox/HBoxTop" unique_id=1326329354]
+[node name="LblNivel" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardDisparosIniciales/HBoxMain/InfoArea" unique_id=1829395186]
 layout_mode = 2
-text = "0⚡"
-
-[node name="HBoxBottom" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardDisparosIniciales/VBox" unique_id=1122111578]
-layout_mode = 2
-
-[node name="LblNivel" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardDisparosIniciales/VBox/HBoxBottom" unique_id=1391808214]
-layout_mode = 2
-size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
-theme_override_font_sizes/font_size = 12
+theme_override_font_sizes/font_size = 11
 text = "Nivel 0 / 0"
 
-[node name="BtnX2" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardDisparosIniciales/VBox/HBoxBottom" unique_id=711510299]
+[node name="CompraArea" type="VBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardDisparosIniciales/HBoxMain" unique_id=1552156825]
+layout_mode = 2
+
+[node name="HBoxCompra" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardDisparosIniciales/HBoxMain/CompraArea" unique_id=1726639720]
+layout_mode = 2
+
+[node name="LblValor" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardDisparosIniciales/HBoxMain/CompraArea/HBoxCompra" unique_id=910041748]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0.85, 1, 1)
+theme_override_font_sizes/font_size = 14
+text = "+0"
+
+[node name="BtnComprar" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardDisparosIniciales/HBoxMain/CompraArea/HBoxCompra" unique_id=377690179]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "0⚡"
+
+[node name="HBoxBotones" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardDisparosIniciales/HBoxMain/CompraArea" unique_id=1083684150]
+layout_mode = 2
+
+[node name="BtnX2" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardDisparosIniciales/HBoxMain/CompraArea/HBoxBotones" unique_id=1033767175]
 layout_mode = 2
 text = "x2"
 
-[node name="BtnX5" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardDisparosIniciales/VBox/HBoxBottom" unique_id=1149532636]
+[node name="BtnX5" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardDisparosIniciales/HBoxMain/CompraArea/HBoxBotones" unique_id=1314295794]
 layout_mode = 2
 text = "x5"
 
-[node name="BtnMax" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardDisparosIniciales/VBox/HBoxBottom" unique_id=1001391885]
+[node name="BtnMax" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardDisparosIniciales/HBoxMain/CompraArea/HBoxBotones" unique_id=1275118367]
 layout_mode = 2
 text = "MAX"
 
-[node name="LblBloqueada" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardDisparosIniciales/VBox/HBoxBottom" unique_id=1556293697]
+[node name="LblBloqueada" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardDisparosIniciales/HBoxMain/CompraArea" unique_id=1455671645]
 visible = false
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0, 0, 1)
 theme_override_font_sizes/font_size = 10
-text = "🔒 DESBLOQUEAR EN ASCENSIÓN 45"
+text = "🔒 BLOQUEADA"
 
-[node name="CardRecargaRapida" type="PanelContainer" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer" unique_id=1705187982]
+[node name="CardRecargaRapida" type="PanelContainer" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer" unique_id=636061423]
 custom_minimum_size = Vector2(0, 70)
 layout_mode = 2
 size_flags_horizontal = 3
 script = ExtResource("2_card")
 mejora_id = "recarga_rapida"
 
-[node name="VBox" type="VBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardRecargaRapida" unique_id=1750790220]
+[node name="HBoxMain" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardRecargaRapida" unique_id=1666404052]
 layout_mode = 2
 
-[node name="HBoxTop" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardRecargaRapida/VBox" unique_id=249665463]
-layout_mode = 2
-
-[node name="LblNombre" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardRecargaRapida/VBox/HBoxTop" unique_id=580449559]
+[node name="InfoArea" type="VBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardRecargaRapida/HBoxMain" unique_id=1119345250]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_font_sizes/font_size = 18
-text = "Nombre"
 
-[node name="LblValor" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardRecargaRapida/VBox/HBoxTop" unique_id=1822297478]
+[node name="LblNombre" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardRecargaRapida/HBoxMain/InfoArea" unique_id=593722349]
 layout_mode = 2
-theme_override_colors/font_color = Color(0, 0.85, 1, 1)
-theme_override_font_sizes/font_size = 16
-text = "+0"
+theme_override_font_sizes/font_size = 15
+text = "Recarga Rápida"
 
-[node name="BtnComprar" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardRecargaRapida/VBox/HBoxTop" unique_id=931348827]
+[node name="LblNivel" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardRecargaRapida/HBoxMain/InfoArea" unique_id=1983144759]
 layout_mode = 2
-text = "0⚡"
-
-[node name="HBoxBottom" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardRecargaRapida/VBox" unique_id=2017084087]
-layout_mode = 2
-
-[node name="LblNivel" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardRecargaRapida/VBox/HBoxBottom" unique_id=447752821]
-layout_mode = 2
-size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
-theme_override_font_sizes/font_size = 12
+theme_override_font_sizes/font_size = 11
 text = "Nivel 0 / 0"
 
-[node name="BtnX2" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardRecargaRapida/VBox/HBoxBottom" unique_id=1045535320]
+[node name="CompraArea" type="VBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardRecargaRapida/HBoxMain" unique_id=291659876]
+layout_mode = 2
+
+[node name="HBoxCompra" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardRecargaRapida/HBoxMain/CompraArea" unique_id=1427464289]
+layout_mode = 2
+
+[node name="LblValor" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardRecargaRapida/HBoxMain/CompraArea/HBoxCompra" unique_id=795597553]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0.85, 1, 1)
+theme_override_font_sizes/font_size = 14
+text = "+0"
+
+[node name="BtnComprar" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardRecargaRapida/HBoxMain/CompraArea/HBoxCompra" unique_id=1551948048]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "0⚡"
+
+[node name="HBoxBotones" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardRecargaRapida/HBoxMain/CompraArea" unique_id=1520478753]
+layout_mode = 2
+
+[node name="BtnX2" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardRecargaRapida/HBoxMain/CompraArea/HBoxBotones" unique_id=1834460451]
 layout_mode = 2
 text = "x2"
 
-[node name="BtnX5" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardRecargaRapida/VBox/HBoxBottom" unique_id=390416136]
+[node name="BtnX5" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardRecargaRapida/HBoxMain/CompraArea/HBoxBotones" unique_id=175111469]
 layout_mode = 2
 text = "x5"
 
-[node name="BtnMax" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardRecargaRapida/VBox/HBoxBottom" unique_id=1638760836]
+[node name="BtnMax" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardRecargaRapida/HBoxMain/CompraArea/HBoxBotones" unique_id=611379613]
 layout_mode = 2
 text = "MAX"
 
-[node name="LblBloqueada" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardRecargaRapida/VBox/HBoxBottom" unique_id=916586440]
+[node name="LblBloqueada" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardRecargaRapida/HBoxMain/CompraArea" unique_id=784350169]
 visible = false
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0, 0, 1)
 theme_override_font_sizes/font_size = 10
-text = "🔒 DESBLOQUEAR EN ASCENSIÓN 45"
+text = "🔒 BLOQUEADA"
 
-[node name="CardLockOn" type="PanelContainer" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer" unique_id=1067430631]
+[node name="CardLockOn" type="PanelContainer" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer" unique_id=1085714250]
 custom_minimum_size = Vector2(0, 70)
 layout_mode = 2
 size_flags_horizontal = 3
 script = ExtResource("2_card")
 mejora_id = "lock_on"
 
-[node name="VBox" type="VBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardLockOn" unique_id=1688136486]
+[node name="HBoxMain" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardLockOn" unique_id=2030054080]
 layout_mode = 2
 
-[node name="HBoxTop" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardLockOn/VBox" unique_id=638110110]
-layout_mode = 2
-
-[node name="LblNombre" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardLockOn/VBox/HBoxTop" unique_id=1083963206]
+[node name="InfoArea" type="VBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardLockOn/HBoxMain" unique_id=872707062]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_font_sizes/font_size = 18
-text = "Nombre"
 
-[node name="LblValor" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardLockOn/VBox/HBoxTop" unique_id=1538760150]
+[node name="LblNombre" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardLockOn/HBoxMain/InfoArea" unique_id=985653579]
 layout_mode = 2
-theme_override_colors/font_color = Color(0, 0.85, 1, 1)
-theme_override_font_sizes/font_size = 16
-text = "+0"
+theme_override_font_sizes/font_size = 15
+text = "Lock-On"
 
-[node name="BtnComprar" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardLockOn/VBox/HBoxTop" unique_id=320218583]
+[node name="LblNivel" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardLockOn/HBoxMain/InfoArea" unique_id=2064494565]
 layout_mode = 2
-text = "0⚡"
-
-[node name="HBoxBottom" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardLockOn/VBox" unique_id=1505457488]
-layout_mode = 2
-
-[node name="LblNivel" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardLockOn/VBox/HBoxBottom" unique_id=1704195627]
-layout_mode = 2
-size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
-theme_override_font_sizes/font_size = 12
+theme_override_font_sizes/font_size = 11
 text = "Nivel 0 / 0"
 
-[node name="BtnX2" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardLockOn/VBox/HBoxBottom" unique_id=1074476277]
+[node name="CompraArea" type="VBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardLockOn/HBoxMain" unique_id=2092363736]
+layout_mode = 2
+
+[node name="HBoxCompra" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardLockOn/HBoxMain/CompraArea" unique_id=1564687195]
+layout_mode = 2
+
+[node name="LblValor" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardLockOn/HBoxMain/CompraArea/HBoxCompra" unique_id=526394584]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0.85, 1, 1)
+theme_override_font_sizes/font_size = 14
+text = "+0"
+
+[node name="BtnComprar" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardLockOn/HBoxMain/CompraArea/HBoxCompra" unique_id=2131718538]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "0⚡"
+
+[node name="HBoxBotones" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardLockOn/HBoxMain/CompraArea" unique_id=1085633951]
+layout_mode = 2
+
+[node name="BtnX2" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardLockOn/HBoxMain/CompraArea/HBoxBotones" unique_id=1352227356]
 layout_mode = 2
 text = "x2"
 
-[node name="BtnX5" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardLockOn/VBox/HBoxBottom" unique_id=716136872]
+[node name="BtnX5" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardLockOn/HBoxMain/CompraArea/HBoxBotones" unique_id=741570014]
 layout_mode = 2
 text = "x5"
 
-[node name="BtnMax" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardLockOn/VBox/HBoxBottom" unique_id=6281118]
+[node name="BtnMax" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardLockOn/HBoxMain/CompraArea/HBoxBotones" unique_id=2113690499]
 layout_mode = 2
 text = "MAX"
 
-[node name="LblBloqueada" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardLockOn/VBox/HBoxBottom" unique_id=942210626]
+[node name="LblBloqueada" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardLockOn/HBoxMain/CompraArea" unique_id=1545479877]
 visible = false
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0, 0, 1)
 theme_override_font_sizes/font_size = 10
-text = "🔒 DESBLOQUEAR EN ASCENSIÓN 45"
+text = "🔒 BLOQUEADA"

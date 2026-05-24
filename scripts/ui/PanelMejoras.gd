@@ -43,11 +43,11 @@ func _toggle_panel() -> void:
 	expandido = not expandido
 	_expandir(expandido)
 
-func _expandir(abrir: bool) -> void:
-	expandido = abrir
-	contenido.visible = abrir
-	btn_toggle.text = "▲" if abrir else "▼"
-	custom_minimum_size = Vector2(620, 550) if abrir else Vector2(620, 50)
+func _expandir(estado: bool) -> void:
+	expandido = estado
+	contenido.visible = estado
+	btn_toggle.text = "▲" if estado else "▼"
+	custom_minimum_size = Vector2(620, 550) if estado else Vector2(620, 50)
 
 func cambiar_categoria(categoria: String) -> void:
 	categoria_actual = categoria
@@ -63,7 +63,7 @@ func _actualizar_botones() -> void:
 	btn_bonificacion.modulate = Color(1, 1, 1) if categoria_actual == "bonificacion" else Color(0.6, 0.6, 0.6)
 	btn_commander.modulate = Color(1, 1, 1) if categoria_actual == "commander" else Color(0.6, 0.6, 0.6)
 
-func _actualizar_ui() -> void:
+func _actualizar_ui(_valor: float = 0.0) -> void:
 	for container in [ataque_container, defensa_container, bonificacion_container, commander_container]:
 		for card in container.get_children():
 			card.refrescar()

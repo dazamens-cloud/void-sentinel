@@ -1,0 +1,161 @@
+[gd_scene format=3 uid="uid://navbar"]
+
+[ext_resource type="Script" path="res://scripts/ui/NavBar.gd" id="1_navbar"]
+
+[node name="NavBar" type="PanelContainer"]
+custom_minimum_size = Vector2(0, 72)
+anchors_preset = 12
+anchor_left = 0.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -72.0
+grow_vertical = 0
+script = ExtResource("1_navbar")
+
+[node name="StyleBox" type="StyleBoxFlat" parent="."]
+
+[node name="HBox" type="HBoxContainer" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+alignment = 1
+
+[node name="BtnHome" type="Button" parent="HBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+name = "BtnHome"
+flat = true
+custom_minimum_size = Vector2(0, 72)
+
+[node name="VBox" type="VBoxContainer" parent="HBox/BtnHome"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+alignment = 1
+
+[node name="Icon" type="TextureRect" parent="HBox/BtnHome/VBox"]
+layout_mode = 2
+size_flags_horizontal = 4
+custom_minimum_size = Vector2(24, 24)
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Label" type="Label" parent="HBox/BtnHome/VBox"]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "Home"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 10
+
+[node name="BtnNexus" type="Button" parent="HBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+flat = true
+custom_minimum_size = Vector2(0, 72)
+
+[node name="VBox" type="VBoxContainer" parent="HBox/BtnNexus"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+alignment = 1
+
+[node name="Icon" type="TextureRect" parent="HBox/BtnNexus/VBox"]
+layout_mode = 2
+size_flags_horizontal = 4
+custom_minimum_size = Vector2(24, 24)
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Label" type="Label" parent="HBox/BtnNexus/VBox"]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "Nexus"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 10
+
+[node name="BtnForja" type="Button" parent="HBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+flat = true
+custom_minimum_size = Vector2(0, 72)
+
+[node name="VBox" type="VBoxContainer" parent="HBox/BtnForja"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+alignment = 1
+
+[node name="Icon" type="TextureRect" parent="HBox/BtnForja/VBox"]
+layout_mode = 2
+size_flags_horizontal = 4
+custom_minimum_size = Vector2(24, 24)
+expand_mode = 1
+stretch_mode = 5
+
+[node name="LockIcon" type="TextureRect" parent="HBox/BtnForja/VBox"]
+layout_mode = 2
+size_flags_horizontal = 4
+custom_minimum_size = Vector2(12, 12)
+expand_mode = 1
+stretch_mode = 5
+visible = true
+
+[node name="Label" type="Label" parent="HBox/BtnForja/VBox"]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "Forja"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 10
+
+[node name="BtnPerfil" type="Button" parent="HBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+flat = true
+custom_minimum_size = Vector2(0, 72)
+
+[node name="VBox" type="VBoxContainer" parent="HBox/BtnPerfil"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+alignment = 1
+
+[node name="Icon" type="TextureRect" parent="HBox/BtnPerfil/VBox"]
+layout_mode = 2
+size_flags_horizontal = 4
+custom_minimum_size = Vector2(24, 24)
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Label" type="Label" parent="HBox/BtnPerfil/VBox"]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "Perfil"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 10
+
+[node name="BtnTienda" type="Button" parent="HBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+flat = true
+custom_minimum_size = Vector2(0, 72)
+
+[node name="VBox" type="VBoxContainer" parent="HBox/BtnTienda"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+alignment = 1
+
+[node name="Icon" type="TextureRect" parent="HBox/BtnTienda/VBox"]
+layout_mode = 2
+size_flags_horizontal = 4
+custom_minimum_size = Vector2(24, 24)
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Label" type="Label" parent="HBox/BtnTienda/VBox"]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "Tienda"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 10

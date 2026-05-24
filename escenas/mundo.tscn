@@ -8,9 +8,9 @@
 [ext_resource type="PackedScene" uid="uid://dgd5fpkdaq144" path="res://escenas/enemigos/Espectro.tscn" id="3_16hu1"]
 [ext_resource type="PackedScene" uid="uid://cux5a21ygjj8p" path="res://escenas/enemigos/EspectroTanque.tscn" id="6_txhqv"]
 [ext_resource type="PackedScene" uid="uid://cipxdj32hc6nw" path="res://escenas/enemigos/EspectroJefe.tscn" id="7_mb57o"]
-[ext_resource type="PackedScene" uid="uid://lygcwf5t4ap7" path="res://escenas/Mejoras/MejoraManager.tscn" id="9_mb57o"]
-[ext_resource type="PackedScene" uid="uid://dr9km4pf2qvx8" path="res://escenas/enemigos/EspectroKamikaze.tscn" id="10_kami"]
-[ext_resource type="PackedScene" uid="uid://bsnp3m7r4kq9v" path="res://escenas/enemigos/EspectroSniper.tscn" id="11_snip"]
+[ext_resource type="PackedScene" uid="uid://bqc4vp0l8l0kt" path="res://escenas/Mejoras/PanelMejoras.tscn" id="9_mb57o"]
+[ext_resource type="PackedScene" uid="uid://dsakm4pf2qvx8" path="res://escenas/enemigos/EspectroKamikaze.tscn" id="10_kami"]
+[ext_resource type="PackedScene" uid="uid://bsnp3m7r4krav" path="res://escenas/enemigos/EspectroSniper.tscn" id="11_snip"]
 [ext_resource type="PackedScene" uid="uid://cmndr6t8x1py5" path="res://escenas/enemigos/EspectroComander.tscn" id="12_cmd"]
 
 [node name="Mundo" type="Node2D" unique_id=946159933]
@@ -45,6 +45,6 @@ escena_espectro_kamikaze = ExtResource("10_kami")
 escena_espectro_sniper = ExtResource("11_snip")
 escena_espectro_comander = ExtResource("12_cmd")
 
-[node name="Interfaz" parent="." unique_id=1199303299 instance=ExtResource("2_glrvs")]
+[node name="interfaz" parent="." unique_id=1199303299 instance=ExtResource("2_glrvs")]
 
-[node name="PanelMejoras" parent="." unique_id=421382226 instance=ExtResource("9_mb57o")]
+[node name="PanelMejoras" parent="." unique_id=1787974972 instance=ExtResource("9_mb57o")]

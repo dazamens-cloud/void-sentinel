@@ -3,14 +3,14 @@ extends PanelContainer
 @export var mejora_id: String = ""
 var mejora_manager = null
 
-@onready var lbl_nombre: Label = $VBox/HBoxTop/LblNombre
-@onready var lbl_valor: Label = $VBox/HBoxTop/LblValor
-@onready var btn_comprar: Button = $VBox/HBoxTop/BtnComprar
-@onready var lbl_nivel: Label = $VBox/HBoxBottom/LblNivel
-@onready var btn_x2: Button = $VBox/HBoxBottom/BtnX2
-@onready var btn_x5: Button = $VBox/HBoxBottom/BtnX5
-@onready var btn_max: Button = $VBox/HBoxBottom/BtnMax
-@onready var lbl_bloqueada: Label = $VBox/HBoxBottom/LblBloqueada
+@onready var lbl_nombre: Label = $HBoxMain/InfoArea/LblNombre
+@onready var lbl_nivel: Label = $HBoxMain/InfoArea/LblNivel
+@onready var lbl_valor: Label = $HBoxMain/CompraArea/HBoxCompra/LblValor
+@onready var btn_comprar: Button = $HBoxMain/CompraArea/HBoxCompra/BtnComprar
+@onready var btn_x2: Button = $HBoxMain/CompraArea/HBoxBotones/BtnX2
+@onready var btn_x5: Button = $HBoxMain/CompraArea/HBoxBotones/BtnX5
+@onready var btn_max: Button = $HBoxMain/CompraArea/HBoxBotones/BtnMax
+@onready var lbl_bloqueada: Label = $HBoxMain/CompraArea/LblBloqueada
 
 func inicializar(manager) -> void:
 	mejora_manager = manager

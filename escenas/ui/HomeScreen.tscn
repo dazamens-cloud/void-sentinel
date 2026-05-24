@@ -1,0 +1,290 @@
+[gd_scene format=3 uid="uid://home_screen"]
+
+[ext_resource type="Script" path="res://scripts/ui/HomeScreen.gd" id="1_home"]
+
+[node name="HomeScreen" type="Control"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource("1_home")
+
+# ── Fondo ──────────────────────────────────────────────────────────────────
+[node name="Background" type="ColorRect" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0.031, 0.031, 0.071, 1)
+
+# ── Layout principal ───────────────────────────────────────────────────────
+[node name="VBox" type="VBoxContainer" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_right = -20.0
+offset_top = 12.0
+offset_bottom = -12.0
+alignment = 1
+theme_override_constants/separation = 16
+
+# ── Monedas (cabecera) ─────────────────────────────────────────────────────
+[node name="CoinsBar" type="HBoxContainer" parent="VBox"]
+layout_mode = 2
+alignment = 0
+theme_override_constants/separation = 8
+
+[node name="GoldBadge" type="PanelContainer" parent="VBox/CoinsBar"]
+layout_mode = 2
+
+[node name="HBox" type="HBoxContainer" parent="VBox/CoinsBar/GoldBadge"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="Symbol" type="Label" parent="VBox/CoinsBar/GoldBadge/HBox"]
+layout_mode = 2
+text = "©"
+theme_override_colors/font_color = Color(0.961, 0.651, 0.137)
+theme_override_font_sizes/font_size = 12
+
+[node name="LblGold" type="Label" parent="VBox/CoinsBar/GoldBadge/HBox"]
+layout_mode = 2
+text = "0"
+theme_override_font_sizes/font_size = 11
+
+[node name="FragBadge" type="PanelContainer" parent="VBox/CoinsBar"]
+layout_mode = 2
+
+[node name="HBox" type="HBoxContainer" parent="VBox/CoinsBar/FragBadge"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="Symbol" type="Label" parent="VBox/CoinsBar/FragBadge/HBox"]
+layout_mode = 2
+text = "⬡"
+theme_override_colors/font_color = Color(1.0, 0.42, 0.0)
+theme_override_font_sizes/font_size = 12
+
+[node name="LblFrag" type="Label" parent="VBox/CoinsBar/FragBadge/HBox"]
+layout_mode = 2
+text = "0"
+theme_override_font_sizes/font_size = 11
+
+[node name="PlatBadge" type="PanelContainer" parent="VBox/CoinsBar"]
+layout_mode = 2
+
+[node name="HBox" type="HBoxContainer" parent="VBox/CoinsBar/PlatBadge"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="Symbol" type="Label" parent="VBox/CoinsBar/PlatBadge/HBox"]
+layout_mode = 2
+text = "◆"
+theme_override_colors/font_color = Color(0.494, 0.784, 0.89)
+theme_override_font_sizes/font_size = 12
+
+[node name="LblPlat" type="Label" parent="VBox/CoinsBar/PlatBadge/HBox"]
+layout_mode = 2
+text = "0"
+theme_override_font_sizes/font_size = 11
+
+# ── Núcleo animado ─────────────────────────────────────────────────────────
+[node name="NucleoCentro" type="Control" parent="VBox"]
+layout_mode = 2
+size_flags_horizontal = 4
+custom_minimum_size = Vector2(160, 160)
+
+[node name="Ring3" type="ColorRect" parent="VBox/NucleoCentro"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -75.0
+offset_top = -75.0
+offset_right = 75.0
+offset_bottom = 75.0
+color = Color(0.0, 0.898, 1.0, 0.08)
+
+[node name="Ring2" type="ColorRect" parent="VBox/NucleoCentro"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -57.0
+offset_top = -57.0
+offset_right = 57.0
+offset_bottom = 57.0
+color = Color(0.0, 0.898, 1.0, 0.12)
+
+[node name="Ring1" type="ColorRect" parent="VBox/NucleoCentro"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -40.0
+offset_top = -40.0
+offset_right = 40.0
+offset_bottom = 40.0
+color = Color(0.0, 0.898, 1.0, 0.18)
+
+[node name="CoreOuter" type="ColorRect" parent="VBox/NucleoCentro"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -28.0
+offset_top = -28.0
+offset_right = 28.0
+offset_bottom = 28.0
+color = Color(0.039, 0.165, 0.369)
+
+[node name="CoreInner" type="ColorRect" parent="VBox/NucleoCentro"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -14.0
+offset_top = -14.0
+offset_right = 14.0
+offset_bottom = 14.0
+color = Color(0.0, 0.898, 1.0, 0.9)
+
+# ── Badge Tier ─────────────────────────────────────────────────────────────
+[node name="TierBadge" type="HBoxContainer" parent="VBox"]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_constants/separation = 8
+
+[node name="LblTierKey" type="Label" parent="VBox/TierBadge"]
+layout_mode = 2
+text = "TIER"
+theme_override_colors/font_color = Color(0.333, 0.333, 0.333)
+theme_override_font_sizes/font_size = 10
+
+[node name="DotsContainer" type="HBoxContainer" parent="VBox/TierBadge"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="Dot1" type="ColorRect" parent="VBox/TierBadge/DotsContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(8, 8)
+color = Color(0.0, 0.898, 1.0)
+
+[node name="Dot2" type="ColorRect" parent="VBox/TierBadge/DotsContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(8, 8)
+color = Color(0.102, 0.102, 0.18)
+
+[node name="Dot3" type="ColorRect" parent="VBox/TierBadge/DotsContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(8, 8)
+color = Color(0.102, 0.102, 0.18)
+
+[node name="LblTierName" type="Label" parent="VBox/TierBadge"]
+layout_mode = 2
+text = "I — Void Initiate"
+theme_override_colors/font_color = Color(0.0, 0.898, 1.0)
+theme_override_font_sizes/font_size = 11
+
+# ── Stats ──────────────────────────────────────────────────────────────────
+[node name="StatsRow" type="HBoxContainer" parent="VBox"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="StatAscension" type="PanelContainer" parent="VBox/StatsRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="VBox" type="VBoxContainer" parent="VBox/StatsRow/StatAscension"]
+layout_mode = 2
+alignment = 1
+
+[node name="LblKey" type="Label" parent="VBox/StatsRow/StatAscension/VBox"]
+layout_mode = 2
+text = "ASCENSIÓN MÁX"
+horizontal_alignment = 1
+theme_override_colors/font_color = Color(0.267, 0.267, 0.267)
+theme_override_font_sizes/font_size = 8
+
+[node name="LblVal" type="Label" parent="VBox/StatsRow/StatAscension/VBox"]
+layout_mode = 2
+text = "0"
+horizontal_alignment = 1
+theme_override_colors/font_color = Color(0.0, 0.898, 1.0)
+theme_override_font_sizes/font_size = 15
+
+[node name="StatPartidas" type="PanelContainer" parent="VBox/StatsRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="VBox" type="VBoxContainer" parent="VBox/StatsRow/StatPartidas"]
+layout_mode = 2
+alignment = 1
+
+[node name="LblKey" type="Label" parent="VBox/StatsRow/StatPartidas/VBox"]
+layout_mode = 2
+text = "PARTIDAS"
+horizontal_alignment = 1
+theme_override_colors/font_color = Color(0.267, 0.267, 0.267)
+theme_override_font_sizes/font_size = 8
+
+[node name="LblVal" type="Label" parent="VBox/StatsRow/StatPartidas/VBox"]
+layout_mode = 2
+text = "0"
+horizontal_alignment = 1
+theme_override_colors/font_color = Color(0.667, 0.667, 0.667)
+theme_override_font_sizes/font_size = 15
+
+[node name="StatCommanders" type="PanelContainer" parent="VBox/StatsRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="VBox" type="VBoxContainer" parent="VBox/StatsRow/StatCommanders"]
+layout_mode = 2
+alignment = 1
+
+[node name="LblKey" type="Label" parent="VBox/StatsRow/StatCommanders/VBox"]
+layout_mode = 2
+text = "COMMANDERS"
+horizontal_alignment = 1
+theme_override_colors/font_color = Color(0.267, 0.267, 0.267)
+theme_override_font_sizes/font_size = 8
+
+[node name="LblVal" type="Label" parent="VBox/StatsRow/StatCommanders/VBox"]
+layout_mode = 2
+text = "0"
+horizontal_alignment = 1
+theme_override_colors/font_color = Color(0.961, 0.651, 0.137)
+theme_override_font_sizes/font_size = 15
+
+# ── Botón JUGAR ────────────────────────────────────────────────────────────
+[node name="BtnJugar" type="Button" parent="VBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+custom_minimum_size = Vector2(0, 54)
+flat = false
+text = ""
+
+[node name="VBox" type="VBoxContainer" parent="VBox/BtnJugar"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+alignment = 1
+
+[node name="LblJugar" type="Label" parent="VBox/BtnJugar/VBox"]
+layout_mode = 2
+text = "JUGAR"
+horizontal_alignment = 1
+theme_override_colors/font_color = Color(1, 1, 1)
+theme_override_font_sizes/font_size = 18
+
+[node name="LblSub" type="Label" parent="VBox/BtnJugar/VBox"]
+layout_mode = 2
+text = "CONTINUAR ASCENSIÓN"
+horizontal_alignment = 1
+theme_override_colors/font_color = Color(0.333, 0.6, 1.0)
+theme_override_font_sizes/font_size = 9
