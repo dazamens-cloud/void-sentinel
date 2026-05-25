@@ -35,7 +35,7 @@ func configurar(datos: Dictionary) -> void:
 	recompensa_energia = datos.get("recompensa", 5)
 	tipo_espectro = datos.get("tipo", "basico")
 	if sprite:
-		scale = Vector2.ONE * clamp(salud_maxima / 100.0, 0.55, 2.2)
+		scale = Vector2.ONE * 0.8  # Básico — tamaño estándar
 
 func _physics_process(delta: float) -> void:
 	if esta_destruido or not is_instance_valid(nexus): return
@@ -108,5 +108,5 @@ func _destruir() -> void:
 	# ✅ Fragmento al morir (ruta corregida)
 	var fragmento = preload("res://escenas/Objetos/fragmento.tscn").instantiate()
 	fragmento.global_position = global_position
-	get_tree().current_scene.add_child(fragmento)
+	get_tree().current_scene.call_deferred("add_child", fragmento)
 	

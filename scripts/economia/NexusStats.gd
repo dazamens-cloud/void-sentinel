@@ -7,11 +7,11 @@ signal salud_cambiada(actual: float, maxima: float)
 signal stats_actualizadas
 
 # ── Stats base ──────────────────────────────────────────
-var salud_base: float = 100.0
-var danio_base: float = 100.0
+var salud_base: float = 200.0
+var danio_base: float = 200.0
 var cadencia_base: float = 1.0
-var regeneracion_base: float = 0.0
-var rango_escaneo_base: float = 220.0
+var regeneracion_base: float = 0.5
+var rango_escaneo_base: float = 280.0
 var critico_chance_base: float = 0.05
 var critico_factor_base: float = 1.5
 
@@ -81,8 +81,10 @@ func curar(cantidad: float) -> void:
 	_emitir_salud_si_cambio()
 
 func reiniciar_partida() -> void:
-	# ✅ Resetear TODAS las mejoras al reiniciar — fix del bug salud 0
 	salud_base = 100.0
+	danio_base = 200.0        # ← añadir
+	rango_escaneo_base = 280.0  # ← añadir
+	regeneracion_base = 0.5   # ← añadir
 	mejora_salud_extra = 0.0
 	mejora_regeneracion = 0.0
 	mejora_danio_extra = 0.0
@@ -97,7 +99,8 @@ func reiniciar_partida() -> void:
 
 # ── Emite salud solo si cambió más de 0.5 HP (evita spam en consola) ──
 func _emitir_salud_si_cambio() -> void:
-	if abs(salud_actual - _ultimo_salud_emitida) >= 0.5:
+	# ✅ Umbral 0.1 para capturar el último tramo hasta el máximo
+	if abs(salud_actual - _ultimo_salud_emitida) >= 0.1:
 		_ultimo_salud_emitida = salud_actual
 		salud_cambiada.emit(salud_actual, salud_base)
 

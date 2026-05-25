@@ -7,7 +7,7 @@ signal espectro_destruido(posicion: Vector2, recompensa: int)
 
 var salud_maxima: float = 100.0
 var salud_actual: float = 100.0
-var velocidad: float = 48.0  # -40% respecto al básico (80 * 0.6)
+var velocidad: float = 48.0
 var danio_ataque: float = 5.0
 var recompensa_energia: int = 12
 var tipo_espectro: String = "tanque"
@@ -25,6 +25,9 @@ func _ready() -> void:
 	await get_tree().process_frame
 	nexus = get_tree().get_first_node_in_group("nexus")
 	salud_actual = salud_maxima
+	# ✅ Scale fijo AQUÍ — sprite ya existe después del await
+	scale = Vector2.ONE * 1.2
+	print("👾 Espectro creado. Tipo: tanque | Salud: ", salud_maxima)
 
 func configurar(datos: Dictionary) -> void:
 	salud_maxima = datos.get("hp", 100.0)
@@ -33,76 +36,5 @@ func configurar(datos: Dictionary) -> void:
 	danio_ataque = datos.get("atk", 5.0)
 	recompensa_energia = datos.get("recompensa", 12)
 	tipo_espectro = datos.get("tipo", "tanque")
-	if sprite:
-		scale = Vector2.ONE * clamp(salud_maxima / 100.0, 0.8, 2.5)
-
-func _physics_process(delta: float) -> void:
-	if esta_destruido or not is_instance_valid(nexus): return
-	
-	var distancia = global_position.distance_to(nexus.global_position)
-	
-	if distancia > DISTANCIA_ATAQUE:
-		var direccion = (nexus.global_position - global_position).normalized()
-		velocity = direccion * velocidad
-		rotation += 1.5 * delta  # Rotación más lenta
-		temporizador_ataque = 0.0
-	else:
-		velocity = Vector2.ZERO
-		temporizador_ataque -= delta
-		if temporizador_ataque <= 0.0:
-			if nexus.has_method("recibir_ataque"):
-				nexus.recibir_ataque(danio_ataque)
-			temporizador_ataque = INTERVALO_ATAQUE
-			
-	move_and_slide()
-
-func recibir_dano(cantidad: float, es_critico: bool = false) -> void:
-	if esta_destruido: return
-	salud_actual -= cantidad
-	_efecto_dano(es_critico)
-	if salud_actual <= 0.0:
-		_destruir()
-
-func _efecto_dano(es_critico: bool) -> void:
-	if not sprite: return
-	var color = Color(2.0, 1.5, 0.1) if es_critico else Color(1.8, 0.3, 0.3)
-	var tw = create_tween()
-	tw.tween_property(sprite, "self_modulate", color, 0.05)
-	tw.tween_property(sprite, "self_modulate", Color.WHITE, 0.10)
-
-func _destruir() -> void:
-	if esta_destruido: return
-	esta_destruido = true
-	set_physics_process(false)
-	remove_from_group("espectros")
-	
-	# Texto flotante de energía
-	var texto_energia = preload("res://escenas/Objetos/TextoFlotante.tscn").instantiate()
-	texto_energia.set_energia(recompensa_energia)
-	texto_energia.global_position = global_position
-	get_tree().current_scene.add_child(texto_energia)
-	
-	# Explosión
-	var explosion = preload("res://escenas/Objetos/Explosion.tscn").instantiate()
-	explosion.global_position = global_position
-	get_tree().current_scene.add_child(explosion)
-	
-	# 2 fragmentos al morir
-	for i in range(2):
-		var fragmento = preload("res://escenas/Objetos/fragmento.tscn").instantiate()
-		fragmento.global_position = global_position + Vector2(randf_range(-20, 20), randf_range(-20, 20))
-		get_tree().current_scene.add_child(fragmento)
-	
-	Economia.procesar_drop_espectro({
-		"recompensa": recompensa_energia,
-		"tipo": tipo_espectro,
-		"posicion": global_position
-	})
-	espectro_destruido.emit(global_position, recompensa_energia)
-	
-	var tw = create_tween()
-	if sprite:
-		tw.parallel().tween_property(sprite, "scale", Vector2.ZERO, 0.22)
-		tw.parallel().tween_property(sprite, "self_modulate", Color(1.0, 0.5, 0.1, 0.0), 0.28)
-	tw.tween_callback(queue_free)
+	# ✅ Scale eliminado de aquí — sprite es null en este momento
 	

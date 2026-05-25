@@ -21,6 +21,7 @@ var temporizador_pausa: float = 5.0
 var temporizador_ascension: float = 0.0
 var en_combate: bool = false
 var jefe_generado_esta_ascension: bool = false
+var commander_generado_esta_ascension: bool = false
 
 const DURACION_ASCENSION: float = 35.0
 const PAUSA_ENTRE_ASCENSIONES: float = 15.0
@@ -48,6 +49,7 @@ func _process(delta: float) -> void:
 func _iniciar_ascension() -> void:
 	en_combate = true
 	jefe_generado_esta_ascension = false
+	commander_generado_esta_ascension = false
 	Economia.avanzar_ascension()
 	espectros_a_spawnear = ESPECTROS_BASE + Economia.numero_ascension * 2
 	temporizador_spawn = 0.0
@@ -61,6 +63,9 @@ func _iniciar_ascension() -> void:
 func _terminar_ascension() -> void:
 	en_combate = false
 	temporizador_pausa = PAUSA_ENTRE_ASCENSIONES
+	# ✅ Limpiar espectros vivos al terminar por tiempo
+	espectros_vivos = 0
+	espectros_a_spawnear = 0
 	ascension_completada.emit(Economia.numero_ascension)
 	pausa_entre_ascensiones.emit(temporizador_pausa)
 	print("⏸️ Ascensión ", Economia.numero_ascension, " completada. Pausa de ", PAUSA_ENTRE_ASCENSIONES, "s")
@@ -92,8 +97,8 @@ func _generar_espectro() -> void:
 	var ascension = Economia.numero_ascension
 
 	# ✅ Escalado directo por ascensión (DOC_B — como The Tower)
-	var multiplicador_salud = pow(1.38, ascension)
-	var multiplicador_ataque = pow(1.16, ascension)
+	var multiplicador_salud = pow(1.15, ascension)
+	var multiplicador_ataque = pow(1.08, ascension)
 
 	# ✅ Stats base reducidos — números pequeños = progresión más satisfactoria
 	var salud_base = 15.0 * multiplicador_salud
@@ -161,10 +166,6 @@ func _elegir_tipo_enemigo() -> PackedScene:
 			print("👾 JEFE generado en ascensión ", ascension, " (único)")
 			return escena_espectro_jefe
 
-	# COMMANDER: desde ascensión 20, 5% de probabilidad
-	if ascension >= 20 and escena_espectro_comander and randf() < 0.05:
-		return escena_espectro_comander
-
 	# SNIPER: desde ascensión 10, 6% de probabilidad
 	if ascension >= 10 and escena_espectro_sniper and randf() < 0.06:
 		return escena_espectro_sniper
@@ -177,10 +178,19 @@ func _elegir_tipo_enemigo() -> PackedScene:
 	if ascension >= 4 and escena_espectro_tanque and randf() < 0.08:
 		return escena_espectro_tanque
 
+# COMMANDER: desde ascensión 20, 5% de probabilidad
+	if ascension % 50 == 0 and ascension > 0 and escena_espectro_comander and not commander_generado_esta_ascension:
+		commander_generado_esta_ascension = true
+		return escena_espectro_comander
+
 	return escena_espectro
 
 func _on_espectro_destruido(_pos: Vector2, _recompensa: int) -> void:
 	espectros_vivos -= 1
+	# ✅ Evitar negativos — si ya terminó la ascensión, ignorar
+	if not en_combate:
+		espectros_vivos = 0
+		return
 	print("💀 Espectro destruido. Vivos: ", espectros_vivos, " | Por spawnear: ", espectros_a_spawnear)
 	if espectros_a_spawnear == 0 and espectros_vivos <= 0 and en_combate:
 		_terminar_ascension()

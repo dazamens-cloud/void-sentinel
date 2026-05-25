@@ -45,6 +45,6 @@ escena_espectro_kamikaze = ExtResource("10_kami")
 escena_espectro_sniper = ExtResource("11_snip")
 escena_espectro_comander = ExtResource("12_cmd")
 
-[node name="interfaz" parent="." unique_id=1199303299 instance=ExtResource("2_glrvs")]
+[node name="Interfaz" parent="." unique_id=1199303299 instance=ExtResource("2_glrvs")]
 
 [node name="PanelMejoras" parent="." unique_id=1787974972 instance=ExtResource("9_mb57o")]

@@ -238,7 +238,7 @@ var mejoras: Dictionary = {
 # ═══════════════════════════════════════════════════
 func _ready() -> void:
 	Economia.energia_cambiada.connect(_on_energia_cambiada)
-	call_deferred("test_costos")
+	
 
 # ═══════════════════════════════════════════════════
 # GETTERS

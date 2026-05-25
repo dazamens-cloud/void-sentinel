@@ -35,7 +35,7 @@ func configurar(datos: Dictionary) -> void:
 	recompensa_energia = datos.get("recompensa", 100)
 	tipo_espectro = datos.get("tipo", "jefe")
 	if sprite:
-		scale = Vector2.ONE * clamp(salud_maxima / 1000.0, 1.0, 3.0)
+		scale = Vector2.ONE * 2.0  # Jefe — imponente pero no ocupa pantalla
 
 func _physics_process(delta: float) -> void:
 	if esta_destruido or not is_instance_valid(nexus): return

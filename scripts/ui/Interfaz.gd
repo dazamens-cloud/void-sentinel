@@ -89,7 +89,7 @@ func _construir_interfaz() -> void:
 	
 	# ✅ CLAVE: mover PanelMejoras al final del árbol para que
 	# quede POR ENCIMA de raiz y reciba el input correctamente
-	var panel = get_node_or_null("PanelMejoras")
+	var panel = find_child("PanelMejoras", true, false)
 	if panel:
 		remove_child(panel)
 		add_child(panel)
@@ -131,40 +131,44 @@ func _on_juego_terminado(causa: String) -> void:
 
 func mostrar_game_over(causa: String) -> void:
 	print("🖥️ Interfaz: GAME OVER - ", causa)
-	
+
 	var panel = ColorRect.new()
 	panel.color = Color(0.0, 0.0, 0.0, 0.7)
 	panel.size = Vector2(720, 1280)
 	panel.position = Vector2(0, 0)
 	panel.z_index = 200
 	add_child(panel)
-	
+
 	var game_over_label = Label.new()
 	game_over_label.text = "GAME OVER"
 	game_over_label.add_theme_font_size_override("font_size", 48)
 	game_over_label.add_theme_color_override("font_color", Color.RED)
 	game_over_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	game_over_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	game_over_label.size = Vector2(720, 1280)
-	game_over_label.position = Vector2(0, 0)
+	game_over_label.size = Vector2(720, 200)
+	game_over_label.position = Vector2(0, 500)
 	game_over_label.z_index = 201
 	add_child(game_over_label)
-	
+
+	# ✅ Causa con texto amigable
 	var causa_label = Label.new()
-	causa_label.text = causa
+	causa_label.text = "Has muerto por: " + causa
 	causa_label.add_theme_font_size_override("font_size", 24)
 	causa_label.add_theme_color_override("font_color", Color.WHITE)
 	causa_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	causa_label.size = Vector2(720, 100)
-	causa_label.position = Vector2(0, 600)
+	causa_label.position = Vector2(0, 680)
 	causa_label.z_index = 201
 	add_child(causa_label)
-	
-	var boton = Button.new()
-	boton.text = "REINICIAR"
-	boton.size = Vector2(200, 50)
-	boton.position = Vector2(260, 700)
-	boton.z_index = 201
-	boton.pressed.connect(func(): get_tree().paused = false; get_tree().reload_current_scene())
-	add_child(boton)
+
+	# ✅ Ascensión alcanzada
+	var asc_label = Label.new()
+	asc_label.text = "Ascensión alcanzada: " + str(Economia.numero_ascension)
+	asc_label.add_theme_font_size_override("font_size", 20)
+	asc_label.add_theme_color_override("font_color", Color.YELLOW)
+	asc_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	asc_label.size = Vector2(720, 80)
+	asc_label.position = Vector2(0, 760)
+	asc_label.z_index = 201
+	add_child(asc_label)
 	

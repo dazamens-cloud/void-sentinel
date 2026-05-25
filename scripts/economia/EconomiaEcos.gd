@@ -84,7 +84,7 @@ func obtener_energia_por_espectro() -> int:
 	return min(50, 5 + numero_ascension)
 
 func obtener_ecos_por_5_muertes() -> int:
-	return 1 + numero_ascension / 5
+	return 1 + int(numero_ascension / 5)
 
 func procesar_drop_espectro(datos: Dictionary) -> void:
 	espectros_eliminados += 1
@@ -105,7 +105,7 @@ func get_rango_escaneo() -> float:
 	return 200.0
 
 func get_danio() -> float:
-	return 15.0
+	return 150
 
 func get_cadencia_timer() -> float:
 	return 0.85
