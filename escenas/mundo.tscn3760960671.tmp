@@ -1,0 +1,50 @@
+[gd_scene format=3 uid="uid://g2yrog5jvrmx"]
+
+[ext_resource type="PackedScene" uid="uid://dp22un4er5u5u" path="res://escenas/nucleo.tscn" id="1_6wjgb"]
+[ext_resource type="Script" uid="uid://x3pkuth650ih" path="res://scripts/utils/mundo.gd" id="1_7oex1"]
+[ext_resource type="PackedScene" uid="uid://dh8702yg81hye" path="res://escenas/jugador/Dron.tscn" id="2_16hu1"]
+[ext_resource type="PackedScene" uid="uid://cpjq2dkjcufnf" path="res://escenas/ui/interfaz.tscn" id="2_glrvs"]
+[ext_resource type="Script" uid="uid://b2im4k3j1xta3" path="res://scripts/utils/AscensionManager.gd" id="2_v12yk"]
+[ext_resource type="PackedScene" uid="uid://dgd5fpkdaq144" path="res://escenas/enemigos/Espectro.tscn" id="3_16hu1"]
+[ext_resource type="PackedScene" uid="uid://cux5a21ygjj8p" path="res://escenas/enemigos/EspectroTanque.tscn" id="6_txhqv"]
+[ext_resource type="PackedScene" uid="uid://cipxdj32hc6nw" path="res://escenas/enemigos/EspectroJefe.tscn" id="7_mb57o"]
+[ext_resource type="PackedScene" uid="uid://bqc4vp0l8l0kt" path="res://escenas/Mejoras/PanelMejoras.tscn" id="9_mb57o"]
+[ext_resource type="PackedScene" uid="uid://dsakm4pf2qvx8" path="res://escenas/enemigos/EspectroKamikaze.tscn" id="10_kami"]
+[ext_resource type="PackedScene" uid="uid://bsnp3m7r4krav" path="res://escenas/enemigos/EspectroSniper.tscn" id="11_snip"]
+[ext_resource type="PackedScene" uid="uid://cmndr6t8x1py5" path="res://escenas/enemigos/EspectroComander.tscn" id="12_cmd"]
+
+[node name="Mundo" type="Node2D" unique_id=946159933]
+script = ExtResource("1_7oex1")
+
+[node name="CapaFondo" type="CanvasLayer" parent="." unique_id=693471545]
+layer = -1
+
+[node name="Fondo" type="ColorRect" parent="CapaFondo" unique_id=51743185]
+anchors_preset = -1
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0.1764706, 1)
+
+[node name="Camera2D" type="Camera2D" parent="." unique_id=241927462]
+position = Vector2(360, 640)
+
+[node name="Nexus" parent="." unique_id=51866483 instance=ExtResource("1_6wjgb")]
+
+[node name="Dron" parent="." unique_id=1447324400 instance=ExtResource("2_16hu1")]
+position = Vector2(375, 663)
+
+[node name="AscensionManager" type="Node2D" parent="." unique_id=1217520189]
+position = Vector2(361, 641)
+script = ExtResource("2_v12yk")
+escena_espectro = ExtResource("3_16hu1")
+escena_espectro_tanque = ExtResource("6_txhqv")
+escena_espectro_jefe = ExtResource("7_mb57o")
+escena_espectro_kamikaze = ExtResource("10_kami")
+escena_espectro_sniper = ExtResource("11_snip")
+escena_espectro_comander = ExtResource("12_cmd")
+
+[node name="interfaz" parent="." unique_id=1199303299 instance=ExtResource("2_glrvs")]
+
+[node name="PanelMejoras" parent="." unique_id=1787974972 instance=ExtResource("9_mb57o")]

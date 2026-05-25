@@ -165,6 +165,6 @@ func mostrar_game_over(causa: String) -> void:
 	boton.size = Vector2(200, 50)
 	boton.position = Vector2(260, 700)
 	boton.z_index = 201
-	boton.pressed.connect(func(): get_tree().reload_current_scene())
+	boton.pressed.connect(func(): get_tree().paused = false; get_tree().reload_current_scene())
 	add_child(boton)
 	

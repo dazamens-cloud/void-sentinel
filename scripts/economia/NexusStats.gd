@@ -27,9 +27,13 @@ var mejora_salud_extra: float = 0.0
 var mejora_regeneracion: float = 0.0
 var mejora_defensa: float = 0.0
 
+# ── Control interno ─────────────────────────────────────
+var _ultimo_salud_emitida: float = -1.0  # Para evitar spam de señal
+
 # ═══════════════════════════════════════════════════════
 func _ready() -> void:
 	salud_actual = salud_base
+	_ultimo_salud_emitida = salud_actual
 	salud_cambiada.emit(salud_actual, salud_base)
 
 # ═══════════════════════════════════════════════════════
@@ -66,17 +70,36 @@ func get_defensa() -> float:
 # ═══════════════════════════════════════════════════════
 func recibir_ataque(cantidad: float) -> bool:
 	salud_actual = max(0.0, salud_actual - cantidad)
-	salud_cambiada.emit(salud_actual, salud_base)
+	_emitir_salud_si_cambio()
 	return salud_actual > 0.0
 
 func curar(cantidad: float) -> void:
+	# ✅ No curar si ya está al máximo — evita señal innecesaria cada frame
+	if salud_actual >= salud_base:
+		return
 	salud_actual = min(salud_base, salud_actual + cantidad)
-	salud_cambiada.emit(salud_actual, salud_base)
+	_emitir_salud_si_cambio()
 
 func reiniciar_partida() -> void:
+	# ✅ Resetear TODAS las mejoras al reiniciar — fix del bug salud 0
+	salud_base = 100.0
+	mejora_salud_extra = 0.0
+	mejora_regeneracion = 0.0
+	mejora_danio_extra = 0.0
+	mejora_cadencia = 0.0
+	mejora_critico_chance = 0.0
+	mejora_critico_factor = 0.0
+	mejora_defensa = 0.0
 	salud_actual = salud_base
+	_ultimo_salud_emitida = -1.0
 	salud_cambiada.emit(salud_actual, salud_base)
 	stats_actualizadas.emit()
+
+# ── Emite salud solo si cambió más de 0.5 HP (evita spam en consola) ──
+func _emitir_salud_si_cambio() -> void:
+	if abs(salud_actual - _ultimo_salud_emitida) >= 0.5:
+		_ultimo_salud_emitida = salud_actual
+		salud_cambiada.emit(salud_actual, salud_base)
 
 # ═══════════════════════════════════════════════════════
 # SETTERS DE MEJORAS
@@ -95,11 +118,12 @@ func set_mejora_critico(chance: float, factor: float) -> void:
 func set_mejora_salud(extra: float, regen: float) -> void:
 	mejora_salud_extra = extra
 	mejora_regeneracion = regen
-	# Actualizar salud máxima
 	salud_base = 100.0 + mejora_salud_extra
 	if salud_actual > salud_base:
 		salud_actual = salud_base
 	salud_cambiada.emit(salud_actual, salud_base)
+	_ultimo_salud_emitida = salud_actual
 
 func set_mejora_defensa(valor: float) -> void:
 	mejora_defensa = valor
+	

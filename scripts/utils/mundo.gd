@@ -1,7 +1,6 @@
 extends Node2D
 # ═══════════════════════════════════════════════════
 # MUNDO — Void Sentinel
-# Orquestador de la escena de combate.
 # ═══════════════════════════════════════════════════
 
 @onready var camara: Camera2D = $Camera2D
@@ -12,6 +11,11 @@ extends Node2D
 
 # ═══════════════════════════════════════════════════
 func _ready() -> void:
+	# ✅ Resetear autoloads SIEMPRE al entrar a la escena
+	NexusStats.reiniciar_partida()
+	Economia.iniciar_partida()
+	MejoraManager.reiniciar_mejoras()
+	
 	_conectar_economia()
 	_conectar_gestor_oleadas()
 	_conectar_nucleo()
@@ -63,12 +67,6 @@ func _on_pausa_entre_ascensiones(segundos: float) -> void:
 func _on_juego_terminado(causa: String) -> void:
 	print("🌍 Mundo: JUEGO TERMINADO - ", causa)
 	get_tree().paused = true
-	# Opcional: mostrar mensaje de game over
+	# ✅ Siempre mostrar Game Over — el hud siempre existe
 	if hud and hud.has_method("mostrar_game_over"):
 		hud.mostrar_game_over(causa)
-	else:
-		# Esperar 3 segundos y recargar
-		await get_tree().create_timer(3.0).timeout
-		get_tree().paused = false
-		get_tree().reload_current_scene()
-		
