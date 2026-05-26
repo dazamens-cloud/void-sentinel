@@ -4,20 +4,20 @@
 [ext_resource type="Texture2D" uid="uid://bodcegwlh1m50" path="res://assets/sprites/proyectiles/bala.png" id="2_o3qfm"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_lo3qo"]
-radius = 2.0
-height = 18.0
+radius = 3.0
+height = 14.0
 
 [node name="Proyectil" type="Area2D" unique_id=1019045575 groups=["Proyectiles"]]
 collision_layer = 3
 script = ExtResource("1_1d0hy")
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=62978686]
-position = Vector2(-2.9999998, 3.5527137e-15)
-scale = Vector2(0.05487804, 0.05487805)
+position = Vector2(0, 0)
+scale = Vector2(0.18, 0.18)
 texture = ExtResource("2_o3qfm")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=252662744]
-position = Vector2(2, 0)
+position = Vector2(0, 0)
 rotation = 1.5707964
 shape = SubResource("CapsuleShape2D_lo3qo")
 

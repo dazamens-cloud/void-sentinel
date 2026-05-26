@@ -1,86 +1,187 @@
 extends PanelContainer
+# ═══════════════════════════════════════════════════
+# MEJORA CARD — Void Sentinel
+# FASE 3: Lado izquierdo abre modal global
+#         Lado derecho = botón de compra completo
+# ═══════════════════════════════════════════════════
 
-@export var mejora_id: String = ""
-var mejora_manager = null
+signal info_solicitada(mejora_id: String, color_categoria: Color)
 
-@onready var lbl_nombre: Label = $HBoxMain/InfoArea/LblNombre
-@onready var lbl_nivel: Label = $HBoxMain/InfoArea/LblNivel
-@onready var lbl_valor: Label = $HBoxMain/CompraArea/HBoxCompra/LblValor
-@onready var btn_comprar: Button = $HBoxMain/CompraArea/HBoxCompra/BtnComprar
-@onready var btn_x2: Button = $HBoxMain/CompraArea/HBoxBotones/BtnX2
-@onready var btn_x5: Button = $HBoxMain/CompraArea/HBoxBotones/BtnX5
-@onready var btn_max: Button = $HBoxMain/CompraArea/HBoxBotones/BtnMax
-@onready var lbl_bloqueada: Label = $HBoxMain/CompraArea/LblBloqueada
+@export var mejora_id:  String = ""
+var mejora_manager     = null
+var multiplicador: int = 1
+var color_boton:   Color = Color(0.06, 0.35, 0.54)  # azul por defecto
+var _senales_conectadas: bool = false
 
-func inicializar(manager) -> void:
+# Lado izquierdo — área info (Button contenedor)
+@onready var btn_info:     Button = $HBoxMain/BtnInfo
+var lbl_info_nombre:       Label  = null  # creada por código
+
+# Lado derecho — botón compra
+@onready var lbl_valor:    Label  = $HBoxMain/BtnComprar/VBox/LblValor
+@onready var lbl_coste:    Label  = $HBoxMain/BtnComprar/VBox/LblCoste
+@onready var lbl_accion:   Label  = $HBoxMain/BtnComprar/VBox/LblAccion
+@onready var btn_comprar:  Button = $HBoxMain/BtnComprar
+@onready var lbl_bloqueada:Label  = $HBoxMain/BtnComprar/VBox/LblBloqueada
+
+func inicializar(manager, color: Color) -> void:
 	mejora_manager = manager
+	color_boton    = color
+	if not _senales_conectadas:
+		btn_info.pressed.connect(_on_info_presionado)
+		btn_comprar.pressed.connect(_on_comprar)
+		_senales_conectadas = true
+	# ✅ Crear Label dentro del BtnInfo para tener autowrap real
+	if not lbl_info_nombre:
+		# Limpiar el texto del botón (lo mostrará la label)
+		btn_info.text = ""
+		lbl_info_nombre = Label.new()
+		lbl_info_nombre.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		lbl_info_nombre.vertical_alignment   = VERTICAL_ALIGNMENT_CENTER
+		lbl_info_nombre.autowrap_mode        = TextServer.AUTOWRAP_WORD
+		lbl_info_nombre.size_flags_horizontal = Control.SIZE_FILL
+		lbl_info_nombre.size_flags_vertical   = Control.SIZE_FILL
+		lbl_info_nombre.add_theme_font_size_override("font_size", 13)
+		# La label no debe capturar input — el botón padre lo hace
+		lbl_info_nombre.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		btn_info.add_child(lbl_info_nombre)
 	refrescar()
 
+func set_multiplicador(valor: int) -> void:
+	multiplicador = valor
+	refrescar()
+
+# ═══════════════════════════════════════════════════
 func refrescar() -> void:
 	if not mejora_manager or mejora_id.is_empty():
 		return
 
-	var data = mejora_manager.mejoras[mejora_id]
-	var nivel = mejora_manager.get_nivel(mejora_id)
-	var max_nivel = mejora_manager.get_max_nivel(mejora_id)
-	var coste = mejora_manager.get_coste(mejora_id)
-	var puede = mejora_manager.puede_comprar(mejora_id)
-	var esta_bloq = mejora_manager.esta_bloqueada(mejora_id)
+	var data       = mejora_manager.mejoras[mejora_id]
+	var nivel: int      = mejora_manager.get_nivel(mejora_id)
+	var max_nivel: int  = mejora_manager.get_max_nivel(mejora_id)
+	var bloqueada: bool = mejora_manager.esta_bloqueada(mejora_id)
+	var cantidad: int   = _calcular_cantidad(nivel, max_nivel, bloqueada)
+	var puede: bool     = mejora_manager.puede_comprar(mejora_id) and not bloqueada
 
-	lbl_nombre.text = data["nombre"]
-	lbl_valor.text = _formatear_valor()
-	btn_comprar.text = str(coste) + "⚡"
-	lbl_nivel.text = "Nivel %d / %d" % [nivel, max_nivel]
+	# Lado izquierdo: nombre en dos líneas si es largo
+	btn_info.text = data["nombre"].to_upper()
 
-	lbl_bloqueada.visible = esta_bloq
-	btn_x2.visible = not esta_bloq
-	btn_x5.visible = not esta_bloq
-	btn_max.visible = not esta_bloq
+	# Lado derecho: info + acción
+	lbl_valor.text  = _formatear_valor_siguiente(nivel, cantidad)
+	lbl_coste.text  = _formatear_coste(cantidad)
+	lbl_accion.text = "COMPRAR" if not bloqueada else ""
 
-	btn_comprar.disabled = not puede or esta_bloq
-	btn_x2.disabled = not puede
-	btn_x5.disabled = not puede
-	btn_max.disabled = not puede
+	# Color del botón de compra según categoría
+	var color_oscuro = color_boton.darkened(0.3)
+	btn_comprar.add_theme_color_override("font_color",         Color.WHITE)
+	btn_comprar.add_theme_color_override("font_hover_color",   Color.WHITE)
+	btn_comprar.add_theme_color_override("font_pressed_color", Color.WHITE)
+	btn_comprar.add_theme_stylebox_override("normal",  _hacer_stylebox(color_oscuro, 0.9))
+	btn_comprar.add_theme_stylebox_override("hover",   _hacer_stylebox(color_boton,  1.0))
+	btn_comprar.add_theme_stylebox_override("pressed", _hacer_stylebox(color_oscuro, 1.0))
+	btn_comprar.add_theme_stylebox_override("disabled",_hacer_stylebox(Color(0.15, 0.15, 0.15), 0.5))
 
-	if not btn_comprar.pressed.is_connected(_on_comprar_x1):
-		btn_comprar.pressed.connect(_on_comprar_x1)
-		btn_x2.pressed.connect(_on_comprar_x2)
-		btn_x5.pressed.connect(_on_comprar_x5)
-		btn_max.pressed.connect(_on_comprar_max)
+	btn_comprar.disabled    = not puede or cantidad == 0
+	lbl_bloqueada.visible   = bloqueada
+	lbl_valor.visible       = not bloqueada
+	lbl_coste.visible       = not bloqueada
+	lbl_accion.visible      = not bloqueada
 
-func _on_comprar_x1() -> void: _comprar(1)
-func _on_comprar_x2() -> void: _comprar(2)
-func _on_comprar_x5() -> void: _comprar(5)
+func _hacer_stylebox(color: Color, alpha: float) -> StyleBoxFlat:
+	var sb = StyleBoxFlat.new()
+	sb.bg_color          = Color(color.r, color.g, color.b, alpha)
+	sb.corner_radius_top_right    = 10
+	sb.corner_radius_bottom_right = 10
+	sb.content_margin_left   = 6
+	sb.content_margin_right  = 6
+	sb.content_margin_top    = 4
+	sb.content_margin_bottom = 4
+	return sb
 
-func _on_comprar_max() -> void:
-	var cantidad = mejora_manager.get_max_nivel(mejora_id) - mejora_manager.get_nivel(mejora_id)
-	if cantidad > 0:
-		_comprar(cantidad)
+# ═══════════════════════════════════════════════════
+# ACCIONES
+# ═══════════════════════════════════════════════════
+func _on_info_presionado() -> void:
+	info_solicitada.emit(mejora_id, color_boton)
 
-func _comprar(cantidad: int) -> void:
-	var compradas = mejora_manager.comprar_mejora(mejora_id, cantidad)
+func _on_comprar() -> void:
+	var nivel: int      = mejora_manager.get_nivel(mejora_id)
+	var max_nivel: int  = mejora_manager.get_max_nivel(mejora_id)
+	var bloqueada: bool = mejora_manager.esta_bloqueada(mejora_id)
+	var cantidad: int   = _calcular_cantidad(nivel, max_nivel, bloqueada)
+	if cantidad <= 0: return
+	var compradas: int = mejora_manager.comprar_mejora(mejora_id, cantidad)
 	if compradas > 0:
 		refrescar()
 
-func _formatear_valor() -> String:
-	var valor = mejora_manager.get_valor(mejora_id)
+func _calcular_cantidad(nivel: int, max_nivel: int, bloqueada: bool) -> int:
+	if bloqueada: return 0
+	if multiplicador == -1: return min(max_nivel - nivel, 50)
+	return min(multiplicador, max_nivel - nivel)
+
+
+# ═══════════════════════════════════════════════════
+# FORMATEO
+# ═══════════════════════════════════════════════════
+func _formatear_valor_siguiente(nivel: int, cantidad: int) -> String:
+	if cantidad <= 0: return _valor_en_nivel(nivel)
+	return _valor_en_nivel(nivel) + " → " + _valor_en_nivel(nivel + cantidad)
+
+func _valor_en_nivel(nivel: int) -> String:
+	var data = mejora_manager.mejoras[mejora_id]
 	match mejora_id:
-		"danio": return "+" + str(int(valor))
-		"velocidad_ataque": return str(abs(valor)) + "s"
+		"danio":
+			return str(int(nivel * data.get("incremento", 0.0))) + " atk"
+		"velocidad_ataque":
+			var v: float = nivel * data.get("incremento", 0.0)
+			if data.has("min_valor"): v = max(v, data["min_valor"])
+			return "%.2fs" % abs(v)
 		"disparo_critico":
-			var prob = valor * 100
-			var danio = mejora_manager.get_valor_secundario(mejora_id) + 1.5
-			return str(int(prob)) + "% / " + str(danio) + "x"
-		"multidisparo": return "+" + str(int(valor))
-		"rebote": return str(int(valor)) + " rebotes"
-		"alcance_rebote": return "+" + str(int(valor)) + "px"
-		"salud": return "+" + str(int(valor))
-		"recuperacion": return "+" + str(valor) + "/s"
-		"escudo": return "+" + str(int(valor))
-		"dureza_escudo": return "-" + str(int(abs(valor) * 100)) + "%"
-		"pulso_quartz": return str(int(valor)) + "px"
+			var prob: float  = nivel * data.get("incremento_prob", 0.005) * 100.0
+			var danio: float = nivel * data.get("incremento_danio", 0.25) + 1.5
+			return "%d%% / %.1fx" % [int(prob), danio]
+		"multidisparo":
+			return "+" + str(int(nivel * data.get("incremento", 1.0))) + " proj"
+		"rebote":
+			return str(int(nivel * data.get("incremento", 1.0))) + " reb"
+		"alcance_rebote":
+			return str(int(nivel * data.get("incremento", 30.0))) + "px"
+		"salud":
+			return "+" + str(int(nivel * data.get("incremento", 5.0))) + " HP"
+		"recuperacion":
+			return "+%.1f HP/s" % (nivel * data.get("incremento", 0.1))
+		"escudo":
+			return "+" + str(int(nivel * data.get("incremento", 5.0))) + " esc"
+		"dureza_escudo":
+			var v2: float = nivel * data.get("incremento", -0.005)
+			if data.has("min_valor"): v2 = max(v2, data["min_valor"])
+			return "-%d%%" % int(abs(v2) * 100.0)
+		"pulso_quartz":
+			return str(int(nivel * data.get("incremento", 40.0))) + "px"
 		"poder_pulso":
-			var lentitud = valor
-			var empuje = mejora_manager.get_valor_secundario(mejora_id) * 100
-			return str(lentitud) + "s / +" + str(int(empuje)) + "%"
-		_: return "+" + str(valor)
+			var lent: float = nivel * data.get("incremento_lentitud", 0.2)
+			var emp: float  = nivel * data.get("incremento_empuje", 0.05) * 100.0
+			return "%.1fs/+%d%%" % [lent, int(emp)]
+		_:
+			return str(nivel * data.get("incremento", 1.0))
+
+func _formatear_coste(cantidad: int) -> String:
+	if cantidad <= 0: return ""
+	var data = mejora_manager.mejoras[mejora_id]
+	var coste_base: int = data["coste_base"]
+	var factor: float = 1.09
+	match data.get("categoria", ""):
+		"ataque":       factor = 1.09
+		"defensa":      factor = 1.08
+		"bonificacion": factor = 1.11
+		"commander":    factor = 1.12
+	var nivel_actual: int = mejora_manager.get_nivel(mejora_id)
+	var total: int = 0
+	for i in range(cantidad):
+		total += int(coste_base * pow(factor, nivel_actual + i))
+	return _abreviar(total) + " ⚡"
+
+func _abreviar(n: int) -> String:
+	if n >= 1_000_000: return "%.1fM" % (n / 1_000_000.0)
+	elif n >= 1_000:   return "%.1fK" % (n / 1_000.0)
+	return str(n)

@@ -4,15 +4,15 @@
 [ext_resource type="Texture2D" uid="uid://hoxigv1bskgl" path="res://assets/sprites/enemigos/enemigo jefe.png" id="2_textura"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_fur75"]
-radius = 52.153618
+radius = 30.016663
 
 [node name="EspectroJefe" type="CharacterBody2D" unique_id=526211480]
 script = ExtResource("1_jefe")
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=675687891]
 modulate = Color(0.20787245, 0.7579977, 0.365651, 1)
-position = Vector2(0, 2)
-scale = Vector2(0.2967742, 0.2967742)
+position = Vector2(-1, 0)
+scale = Vector2(0.1781618, 0.17841192)
 texture = ExtResource("2_textura")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1769262581]

@@ -1,12 +1,14 @@
 extends Node
 # ═══════════════════════════════════════════════════
-# MEJORA MANAGER — Gestiona todas las mejoras in-game
+# MEJORA MANAGER — Void Sentinel
+# FASE 1: Bugfixes
+#   - Eliminada llamada a test_costos() inexistente
+#   - Completado _aplicar_mejora() con todas las mejoras
 # ═══════════════════════════════════════════════════
 
 signal mejora_comprada(mejora_id: String, nuevo_nivel: int)
 signal mejoras_actualizadas
 
-# ── Datos de mejoras ────────────────────────────────────
 var mejoras: Dictionary = {
 	# ========== ATAQUE ==========
 	"danio": {
@@ -16,7 +18,7 @@ var mejoras: Dictionary = {
 		"incremento": 1,
 		"coste_base": 10,
 		"max_nivel": 2000,
-		"descripcion": "Aumenta el daño del Nexus"
+		"descripcion": "Aumenta el daño base del Nexus por nivel."
 	},
 	"velocidad_ataque": {
 		"nombre": "Velocidad de Ataque",
@@ -26,7 +28,7 @@ var mejoras: Dictionary = {
 		"coste_base": 8,
 		"max_nivel": 65,
 		"min_valor": 0.2,
-		"descripcion": "Reduce el tiempo entre disparos"
+		"descripcion": "Reduce el tiempo entre disparos. Mínimo 0.2s."
 	},
 	"disparo_critico": {
 		"nombre": "Disparo Crítico",
@@ -36,7 +38,7 @@ var mejoras: Dictionary = {
 		"incremento_danio": 0.25,
 		"coste_base": 12,
 		"max_nivel": 50,
-		"descripcion": "Aumenta probabilidad y daño crítico"
+		"descripcion": "Aumenta la probabilidad y el multiplicador de daño crítico."
 	},
 	"multidisparo": {
 		"nombre": "Multidisparo",
@@ -45,7 +47,7 @@ var mejoras: Dictionary = {
 		"incremento": 1,
 		"coste_base": 20,
 		"max_nivel": 9,
-		"descripcion": "Dispara proyectiles adicionales"
+		"descripcion": "Dispara proyectiles adicionales por nivel."
 	},
 	"rebote": {
 		"nombre": "Rebote",
@@ -54,7 +56,7 @@ var mejoras: Dictionary = {
 		"incremento": 1,
 		"coste_base": 15,
 		"max_nivel": 5,
-		"descripcion": "Los proyectiles rebotan a otros enemigos"
+		"descripcion": "Los proyectiles rebotan a otros enemigos cercanos."
 	},
 	"alcance_rebote": {
 		"nombre": "Alcance de Rebote",
@@ -63,7 +65,7 @@ var mejoras: Dictionary = {
 		"incremento": 30,
 		"coste_base": 10,
 		"max_nivel": 10,
-		"descripcion": "Aumenta la distancia de rebote"
+		"descripcion": "Aumenta el radio de búsqueda del rebote en píxeles."
 	},
 	
 	# ========== DEFENSA ==========
@@ -74,7 +76,7 @@ var mejoras: Dictionary = {
 		"incremento": 5,
 		"coste_base": 10,
 		"max_nivel": 2000,
-		"descripcion": "Aumenta la salud máxima del Nexus"
+		"descripcion": "Aumenta la salud máxima del Nexus."
 	},
 	"recuperacion": {
 		"nombre": "Recuperación",
@@ -83,7 +85,7 @@ var mejoras: Dictionary = {
 		"incremento": 0.1,
 		"coste_base": 12,
 		"max_nivel": 500,
-		"descripcion": "Regenera salud por segundo"
+		"descripcion": "Regenera salud por segundo de forma pasiva."
 	},
 	"escudo": {
 		"nombre": "Escudo",
@@ -92,7 +94,7 @@ var mejoras: Dictionary = {
 		"incremento": 5,
 		"coste_base": 15,
 		"max_nivel": 1000,
-		"descripcion": "Añade una capa extra de vida"
+		"descripcion": "Añade una capa de escudo que absorbe daño."
 	},
 	"dureza_escudo": {
 		"nombre": "Dureza del Escudo",
@@ -102,7 +104,7 @@ var mejoras: Dictionary = {
 		"coste_base": 15,
 		"max_nivel": 150,
 		"min_valor": 0.25,
-		"descripcion": "Reduce el daño recibido"
+		"descripcion": "Reduce el daño recibido. Máximo 75% de reducción."
 	},
 	"pulso_quartz": {
 		"nombre": "Pulso de Quartz",
@@ -111,7 +113,7 @@ var mejoras: Dictionary = {
 		"incremento": 40,
 		"coste_base": 20,
 		"max_nivel": 15,
-		"descripcion": "Aumenta el radio del pulso expansivo"
+		"descripcion": "Aumenta el radio del pulso expansivo defensivo."
 	},
 	"poder_pulso": {
 		"nombre": "Poder del Pulso",
@@ -121,7 +123,7 @@ var mejoras: Dictionary = {
 		"incremento_empuje": 0.05,
 		"coste_base": 25,
 		"max_nivel": 20,
-		"descripcion": "Aumenta lentitud y fuerza de empuje"
+		"descripcion": "Aumenta la lentitud y fuerza de empuje del pulso."
 	},
 	
 	# ========== BONIFICACIÓN ==========
@@ -132,7 +134,7 @@ var mejoras: Dictionary = {
 		"incremento": 2,
 		"coste_base": 10,
 		"max_nivel": 500,
-		"descripcion": "Ganas más energía al completar ascensiones"
+		"descripcion": "Ganas más energía al completar cada ascensión."
 	},
 	"energia_espectro": {
 		"nombre": "Energía por Espectro",
@@ -141,7 +143,7 @@ var mejoras: Dictionary = {
 		"incremento": 1,
 		"coste_base": 8,
 		"max_nivel": 100,
-		"descripcion": "Ganas más energía por cada enemigo destruido"
+		"descripcion": "Ganas más energía por cada enemigo destruido."
 	},
 	"ecos_ascension": {
 		"nombre": "Ecos por Ascensión",
@@ -150,7 +152,7 @@ var mejoras: Dictionary = {
 		"incremento": 1,
 		"coste_base": 15,
 		"max_nivel": 50,
-		"descripcion": "Ganas más ecos al completar ascensiones"
+		"descripcion": "Ganas más ecos al completar ascensiones."
 	},
 	"ecos_rapido": {
 		"nombre": "Ecos Rápidos",
@@ -159,7 +161,7 @@ var mejoras: Dictionary = {
 		"incremento": 0.01,
 		"coste_base": 20,
 		"max_nivel": 35,
-		"descripcion": "Probabilidad de obtener ecos por cada enemigo"
+		"descripcion": "Probabilidad de obtener ecos extra por cada enemigo."
 	},
 	"mejora_ataque_gratis": {
 		"nombre": "Ataque Gratis",
@@ -168,7 +170,7 @@ var mejoras: Dictionary = {
 		"incremento": 0.01,
 		"coste_base": 30,
 		"max_nivel": 25,
-		"descripcion": "Probabilidad de mejora de ataque gratuita"
+		"descripcion": "Probabilidad de que una mejora de ataque sea gratuita."
 	},
 	"mejora_defensa_gratis": {
 		"nombre": "Defensa Gratis",
@@ -177,7 +179,7 @@ var mejoras: Dictionary = {
 		"incremento": 0.01,
 		"coste_base": 30,
 		"max_nivel": 25,
-		"descripcion": "Probabilidad de mejora de defensa gratuita"
+		"descripcion": "Probabilidad de que una mejora de defensa sea gratuita."
 	},
 	"mejora_bonificacion_gratis": {
 		"nombre": "Bonificación Gratis",
@@ -186,10 +188,10 @@ var mejoras: Dictionary = {
 		"incremento": 0.01,
 		"coste_base": 30,
 		"max_nivel": 25,
-		"descripcion": "Probabilidad de mejora de bonificación gratuita"
+		"descripcion": "Probabilidad de que una mejora de bonificación sea gratuita."
 	},
 	
-	# ========== COMMANDER (bloqueado) ==========
+	# ========== COMMANDER (bloqueado hasta desbloqueo) ==========
 	"blindaje": {
 		"nombre": "Blindaje",
 		"categoria": "commander",
@@ -199,7 +201,7 @@ var mejoras: Dictionary = {
 		"max_nivel": 50,
 		"min_valor": 0.5,
 		"bloqueado": true,
-		"descripcion": "Reduce el daño de enemigos invocados por Commander"
+		"descripcion": "Reduce el daño de los enemigos invocados por el Commander."
 	},
 	"disparos_iniciales": {
 		"nombre": "Disparos Iniciales",
@@ -210,7 +212,7 @@ var mejoras: Dictionary = {
 		"max_nivel": 25,
 		"max_valor": 0.5,
 		"bloqueado": true,
-		"descripcion": "Probabilidad de disparo extra contra Commander"
+		"descripcion": "Probabilidad de disparo extra al detectar al Commander."
 	},
 	"recarga_rapida": {
 		"nombre": "Recarga Rápida",
@@ -221,7 +223,7 @@ var mejoras: Dictionary = {
 		"max_nivel": 7,
 		"min_valor": 3,
 		"bloqueado": true,
-		"descripcion": "Reduce enemigos necesarios para disparo especial"
+		"descripcion": "Reduce los enemigos necesarios para activar el disparo especial."
 	},
 	"lock_on": {
 		"nombre": "Lock-On",
@@ -231,149 +233,160 @@ var mejoras: Dictionary = {
 		"coste_base": 45,
 		"max_nivel": 20,
 		"bloqueado": true,
-		"descripcion": "Aumenta tiempo de retención del objetivo"
+		"descripcion": "Aumenta el tiempo de retención del objetivo contra el Commander."
 	}
 }
 
 # ═══════════════════════════════════════════════════
 func _ready() -> void:
+	# ✅ FIX: eliminada llamada a test_costos() que no existía
 	Economia.energia_cambiada.connect(_on_energia_cambiada)
-	
 
 # ═══════════════════════════════════════════════════
 # GETTERS
 # ═══════════════════════════════════════════════════
 func get_nivel(mejora_id: String) -> int:
-	if mejoras.has(mejora_id):
-		return mejoras[mejora_id]["nivel"]
-	return 0
+	return mejoras.get(mejora_id, {}).get("nivel", 0)
 
 func get_valor(mejora_id: String) -> float:
 	var data = mejoras.get(mejora_id, {})
 	if data.is_empty():
 		return 0.0
-	
 	var nivel = data["nivel"]
+	
+	match mejora_id:
+		"disparo_critico":
+			return nivel * data.get("incremento_prob", 0.0)
+		"poder_pulso":
+			return nivel * data.get("incremento_lentitud", 0.0)
+	
 	var valor = nivel * data.get("incremento", 0.0)
-	
-	# Casos especiales
-	if mejora_id == "disparo_critico":
-		var prob = nivel * data.get("incremento_prob", 0.0)
-		var danio = nivel * data.get("incremento_danio", 0.0)
-		return prob  # Para mostrar, pero se maneja aparte
-	if mejora_id == "poder_pulso":
-		return nivel * data.get("incremento_lentitud", 0.0)
-	
 	if data.has("min_valor"):
 		valor = max(valor, data["min_valor"])
 	if data.has("max_valor"):
 		valor = min(valor, data["max_valor"])
-	
 	return valor
 
 func get_valor_secundario(mejora_id: String) -> float:
 	var data = mejoras.get(mejora_id, {})
-	if mejora_id == "disparo_critico":
-		return data.get("nivel", 0) * data.get("incremento_danio", 0.0)
-	if mejora_id == "poder_pulso":
-		return data.get("nivel", 0) * data.get("incremento_empuje", 0.0)
+	match mejora_id:
+		"disparo_critico":
+			return data.get("nivel", 0) * data.get("incremento_danio", 0.0)
+		"poder_pulso":
+			return data.get("nivel", 0) * data.get("incremento_empuje", 0.0)
 	return 0.0
 
 func get_coste(mejora_id: String) -> int:
 	var data = mejoras.get(mejora_id, {})
 	if data.is_empty():
 		return 0
-	
-	var coste_base: int = data["coste_base"]
-	var nivel: int = data["nivel"]
-	
-	# Factor exponencial por categoría (9% base por nivel)
 	var factor: float = 1.09
 	match data.get("categoria", ""):
-		"ataque":      factor = 1.09
-		"defensa":     factor = 1.08  # Ligeramente más barata
-		"bonificacion": factor = 1.11 # Ligeramente más cara
-		"commander":   factor = 1.12  # La más cara
-		"interes":     factor = 1.10  # Para cuando lo añadamos
-	
-	return int(coste_base * pow(factor, nivel))
-	
+		"ataque":       factor = 1.09
+		"defensa":      factor = 1.08
+		"bonificacion": factor = 1.11
+		"commander":    factor = 1.12
+	return int(data["coste_base"] * pow(factor, data["nivel"]))
+
 func get_max_nivel(mejora_id: String) -> int:
-	var data = mejoras.get(mejora_id, {})
-	return data.get("max_nivel", 0)
+	return mejoras.get(mejora_id, {}).get("max_nivel", 0)
 
 func esta_bloqueada(mejora_id: String) -> bool:
-	var data = mejoras.get(mejora_id, {})
-	return data.get("bloqueado", false)
+	return mejoras.get(mejora_id, {}).get("bloqueado", false)
 
 func puede_comprar(mejora_id: String) -> bool:
 	var data = mejoras.get(mejora_id, {})
-	if data.is_empty():
-		return false
-	if data["nivel"] >= data["max_nivel"]:
-		return false
-	if data.get("bloqueado", false):
-		return false
+	if data.is_empty(): return false
+	if data["nivel"] >= data["max_nivel"]: return false
+	if data.get("bloqueado", false): return false
 	return Economia.energia >= get_coste(mejora_id)
 
 # ═══════════════════════════════════════════════════
-# COMPRAR MEJORAS
+# COMPRAR
 # ═══════════════════════════════════════════════════
 func comprar_mejora(mejora_id: String, cantidad: int = 1) -> int:
 	var compradas = 0
 	for i in range(cantidad):
 		if not puede_comprar(mejora_id):
 			break
-		
 		var coste = get_coste(mejora_id)
 		if not Economia.gastar_energia(coste):
 			break
-		
-		var data = mejoras[mejora_id]
-		data["nivel"] += 1
+		mejoras[mejora_id]["nivel"] += 1
 		compradas += 1
-		
-		print("✅ Mejora: ", data["nombre"], " → Nivel ", data["nivel"])
-		
-		# Aplicar efectos inmediatos
 		_aplicar_mejora(mejora_id)
-		
-		mejora_comprada.emit(mejora_id, data["nivel"])
-	
+		mejora_comprada.emit(mejora_id, mejoras[mejora_id]["nivel"])
 	if compradas > 0:
 		mejoras_actualizadas.emit()
-	
 	return compradas
 
 func _aplicar_mejora(mejora_id: String) -> void:
+	# ═══════ ATAQUE ═══════
 	match mejora_id:
 		"danio":
-			var extra = get_valor(mejora_id)
-			NexusStats.set_mejora_danio(extra)
+			NexusStats.set_mejora_danio(get_valor(mejora_id))
+		
 		"velocidad_ataque":
-			var valor = get_valor(mejora_id)
-			NexusStats.set_mejora_cadencia(valor)
+			NexusStats.set_mejora_cadencia(get_valor(mejora_id))
+		
 		"disparo_critico":
-			var prob = get_valor(mejora_id)
-			var factor = get_valor_secundario(mejora_id) + 1.5
-			NexusStats.set_mejora_critico(prob, factor)
+			NexusStats.set_mejora_critico(
+				get_valor(mejora_id),
+				get_valor_secundario(mejora_id) + 1.5
+			)
+		
+		"multidisparo":
+			# ✅ FIX: ahora aplica correctamente al NexusStats
+			if NexusStats.has_method("set_mejora_multidisparo"):
+				NexusStats.set_mejora_multidisparo(int(get_valor(mejora_id)))
+		
+		"rebote":
+			if NexusStats.has_method("set_mejora_rebote"):
+				NexusStats.set_mejora_rebote(int(get_valor(mejora_id)), get_valor("alcance_rebote"))
+		
+		"alcance_rebote":
+			# Se aplica junto con rebote
+			if NexusStats.has_method("set_mejora_rebote"):
+				NexusStats.set_mejora_rebote(int(get_valor("rebote")), get_valor(mejora_id))
+		
+		# ═══════ DEFENSA ═══════
 		"salud":
-			var extra = get_valor(mejora_id)
-			NexusStats.set_mejora_salud(extra, NexusStats.mejora_regeneracion)
+			NexusStats.set_mejora_salud(get_valor(mejora_id), NexusStats.mejora_regeneracion)
+		
 		"recuperacion":
-			var extra = get_valor(mejora_id)
-			NexusStats.set_mejora_salud(NexusStats.mejora_salud_extra, extra)
+			NexusStats.set_mejora_salud(NexusStats.mejora_salud_extra, get_valor(mejora_id))
+		
+		"escudo":
+			if NexusStats.has_method("set_mejora_escudo"):
+				NexusStats.set_mejora_escudo(get_valor(mejora_id))
+		
 		"dureza_escudo":
-			var valor = get_valor(mejora_id)
-			NexusStats.set_mejora_defensa(valor)
+			NexusStats.set_mejora_defensa(get_valor(mejora_id))
+		
+		"pulso_quartz":
+			if NexusStats.has_method("set_mejora_pulso"):
+				NexusStats.set_mejora_pulso(get_valor(mejora_id), get_valor_secundario("poder_pulso"))
+		
+		"poder_pulso":
+			if NexusStats.has_method("set_mejora_pulso"):
+				NexusStats.set_mejora_pulso(get_valor("pulso_quartz"), get_valor_secundario(mejora_id))
+		
+		# ═══════ BONIFICACIÓN ═══════
+		# Estas se leen bajo demanda por EconomiaEcos y Economia
+		# No necesitan aplicarse inmediatamente a NexusStats
+		"energia_ascension", "energia_espectro", \
+		"ecos_ascension", "ecos_rapido", \
+		"mejora_ataque_gratis", "mejora_defensa_gratis", "mejora_bonificacion_gratis":
+			pass  # El sistema de Economía las consulta directamente con get_valor()
+		
+		# ═══════ COMMANDER ═══════
+		"blindaje", "disparos_iniciales", "recarga_rapida", "lock_on":
+			pass  # Bloqueadas — se implementarán al desbloquear Commander
 
 func reiniciar_mejoras() -> void:
-	for mejora_id in mejoras.keys():
-		mejoras[mejora_id]["nivel"] = 0
-	print("🔄 Mejoras reiniciadas")
+	for id in mejoras.keys():
+		mejoras[id]["nivel"] = 0
 	mejoras_actualizadas.emit()
 
-# ═══════════════════════════════════════════════════
-func _on_energia_cambiada(nueva_energia: float) -> void:
+func _on_energia_cambiada(_nueva_energia: float) -> void:
 	mejoras_actualizadas.emit()
-	

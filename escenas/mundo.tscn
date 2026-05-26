@@ -47,4 +47,4 @@ escena_espectro_comander = ExtResource("12_cmd")
 
 [node name="Interfaz" parent="." unique_id=1199303299 instance=ExtResource("2_glrvs")]
 
-[node name="PanelMejoras" parent="." unique_id=1787974972 instance=ExtResource("9_mb57o")]
+[node name="PanelMejoras" parent="." unique_id=2106992869 instance=ExtResource("9_mb57o")]
