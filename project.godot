@@ -20,7 +20,7 @@ config/icon="res://icon.svg"
 Economia="*uid://8lf43xep6q0x"
 NexusStats="*uid://hhuldtka10uo"
 MejoraManager="*uid://cvxf7onkdmu4r"
-CommaderManager="*uid://bxvom83aidhxj"
+CommanderManager="*uid://bxvom83aidhxj"
 Sistemadisparosespeciales="*uid://dhk5yhskeov7a"
 
 [display]

@@ -36,9 +36,7 @@ func _ready() -> void:
 	Economia.juego_terminado.connect(_on_juego_terminado)
 
 	# Buscar CommanderManager por ruta segura
-	_commander_manager = get_node_or_null("/root/CommaderManager")
-	if _commander_manager == null:
-		_commander_manager = get_node_or_null("/root/CommanderManager")
+	_commander_manager = get_node_or_null("/root/CommanderManager")
 
 	if _commander_manager:
 		print("✅ AscensionManager conectado a CommanderManager")

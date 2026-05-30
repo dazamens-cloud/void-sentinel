@@ -23,9 +23,7 @@ func _ready() -> void:
 		Economia.ascension_cambiada.connect(_on_ascension_cambiada)
 
 	# Buscar CommanderManager por ruta segura
-	_commander_manager = get_node_or_null("/root/CommaderManager")
-	if _commander_manager == null:
-		_commander_manager = get_node_or_null("/root/CommanderManager")
+	_commander_manager = get_node_or_null("/root/CommanderManager")
 
 	if _commander_manager:
 		if _commander_manager.has_signal("commander_spawned"):
