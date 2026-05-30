@@ -22,17 +22,28 @@ var temporizador_ascension: float = 0.0
 var en_combate: bool = false
 var jefe_generado_esta_ascension: bool = false
 var commander_generado_esta_ascension: bool = false
+var escena_espectro_comander_ref: Node2D = null
+
+# Referencia segura al CommanderManager
+var _commander_manager: Node = null
 
 const DURACION_ASCENSION: float = 35.0
 const PAUSA_ENTRE_ASCENSIONES: float = 15.0
 const ESPECTROS_BASE: int = 8
 const MAX_ENEMIGOS_SIMULTANEOS: int = 15
-const PROB_TANQUE: float = 0.05
-const PROB_JEFE: float = 1.0
-const ASCENSION_JEFE_INTERVALO: int = 15
 
 func _ready() -> void:
 	Economia.juego_terminado.connect(_on_juego_terminado)
+
+	# Buscar CommanderManager por ruta segura
+	_commander_manager = get_node_or_null("/root/CommaderManager")
+	if _commander_manager == null:
+		_commander_manager = get_node_or_null("/root/CommanderManager")
+
+	if _commander_manager:
+		print("✅ AscensionManager conectado a CommanderManager")
+	else:
+		print("⚠️ AscensionManager: CommanderManager no encontrado")
 
 func _process(delta: float) -> void:
 	if not en_combate:
@@ -55,6 +66,11 @@ func _iniciar_ascension() -> void:
 	temporizador_spawn = 0.0
 	temporizador_ascension = DURACION_ASCENSION
 	print("🚀 Ascensión ", Economia.numero_ascension, " iniciada")
+
+	# Notificar a CommanderManager de forma segura
+	if _commander_manager and _commander_manager.has_method("_on_ascension_cambiada"):
+		_commander_manager._on_ascension_cambiada(Economia.numero_ascension)
+
 	ascension_iniciada.emit(Economia.numero_ascension)
 	await get_tree().create_timer(DURACION_ASCENSION).timeout
 	if en_combate:
@@ -63,7 +79,6 @@ func _iniciar_ascension() -> void:
 func _terminar_ascension() -> void:
 	en_combate = false
 	temporizador_pausa = PAUSA_ENTRE_ASCENSIONES
-	# ✅ Limpiar espectros vivos al terminar por tiempo
 	espectros_vivos = 0
 	espectros_a_spawnear = 0
 	ascension_completada.emit(Economia.numero_ascension)
@@ -75,10 +90,13 @@ func get_tiempo_restante() -> float:
 
 func _generar_espectro() -> void:
 	if not escena_espectro: return
-	if espectros_vivos >= MAX_ENEMIGOS_SIMULTANEOS:
-		return
 
 	var escena_elegida = _elegir_tipo_enemigo()
+	var es_commander = (escena_elegida == escena_espectro_comander)
+
+	if not es_commander and espectros_vivos >= MAX_ENEMIGOS_SIMULTANEOS:
+		return
+
 	var espectro = escena_elegida.instantiate()
 	get_tree().root.add_child(espectro)
 
@@ -94,61 +112,77 @@ func _generar_espectro() -> void:
 		2: espectro.global_position = Vector2(-50, randf_range(0, tam_vista.y))
 		3: espectro.global_position = Vector2(tam_vista.x + 50, randf_range(0, tam_vista.y))
 
+# ✅ Garantizar distancia mínima al nexus
+	var nexus_node = get_tree().get_first_node_in_group("nexus")
+	if nexus_node:
+		var intentos = 0
+		while espectro.global_position.distance_to(nexus_node.global_position) < 300.0 and intentos < 10:
+			lado = randi() % 4
+			match lado:
+				0: espectro.global_position = Vector2(randf_range(0, tam_vista.x), -50)
+				1: espectro.global_position = Vector2(randf_range(0, tam_vista.x), tam_vista.y + 50)
+				2: espectro.global_position = Vector2(-50, randf_range(0, tam_vista.y))
+				3: espectro.global_position = Vector2(tam_vista.x + 50, randf_range(0, tam_vista.y))
+			intentos += 1
+
 	var ascension = Economia.numero_ascension
+	var multiplicador_salud  = pow(1.38, ascension)
+	var multiplicador_ataque = pow(1.16, ascension)
 
-	# ✅ Escalado directo por ascensión (DOC_B — como The Tower)
-	var multiplicador_salud = pow(1.15, ascension)
-	var multiplicador_ataque = pow(1.08, ascension)
-
-	# ✅ Stats base reducidos — números pequeños = progresión más satisfactoria
-	var salud_base = 15.0 * multiplicador_salud
-	var ataque_base = 3.0 * multiplicador_ataque
+	var salud_base    = 15.0 * multiplicador_salud
+	var ataque_base   = 3.0  * multiplicador_ataque
 	var velocidad_base = 100.0
 	var recompensa_base = 5
 	var tipo_str = "basico"
 
 	if escena_elegida == escena_espectro_jefe:
-		salud_base = 150.0 * multiplicador_salud    # 15 × 10
-		ataque_base = 6.0 * multiplicador_ataque     # 3 × 2
+		salud_base     = 150.0 * multiplicador_salud
+		ataque_base    = 6.0   * multiplicador_ataque
 		velocidad_base = 50.0
 		recompensa_base = 50
 		tipo_str = "jefe"
 	elif escena_elegida == escena_espectro_tanque:
-		salud_base = 75.0 * multiplicador_salud      # 15 × 5
-		ataque_base = 3.0 * multiplicador_ataque     # igual que básico
+		salud_base     = 75.0 * multiplicador_salud
+		ataque_base    = 3.0  * multiplicador_ataque
 		velocidad_base = 60.0
-		recompensa_base = 15                          # 5 × 3
+		recompensa_base = 15
 		tipo_str = "tanque"
 	elif escena_elegida == escena_espectro_kamikaze:
-		salud_base = 10.0 * multiplicador_salud      # 15 × 0.67
-		ataque_base = 6.0 * multiplicador_ataque     # 3 × 2
+		salud_base     = 10.0 * multiplicador_salud
+		ataque_base    = 6.0  * multiplicador_ataque
 		velocidad_base = 200.0
 		recompensa_base = 8
 		tipo_str = "kamikaze"
 	elif escena_elegida == escena_espectro_sniper:
-		salud_base = 12.0 * multiplicador_salud      # 15 × 0.8
-		ataque_base = 4.5 * multiplicador_ataque     # 3 × 1.5
+		salud_base     = 12.0 * multiplicador_salud
+		ataque_base    = 4.5  * multiplicador_ataque
 		velocidad_base = 80.0
 		recompensa_base = 8
 		tipo_str = "sniper"
 	elif escena_elegida == escena_espectro_comander:
-		salud_base = 30.0 * multiplicador_salud      # 15 × 2
-		ataque_base = 0.0
+		salud_base     = 30.0 * multiplicador_salud
+		ataque_base    = 0.0
 		velocidad_base = 100.0
 		recompensa_base = 40
 		tipo_str = "commander"
 
-	# TEST TEMPORAL — borrar después de verificar
 	print("📊 Stats: ", tipo_str, " | HP: ", snapped(salud_base, 0.1), " | ATK: ", snapped(ataque_base, 0.1))
 
 	espectro.configurar({
 		"hp": salud_base,
 		"atk": ataque_base,
 		"spd_px": velocidad_base,
-		"recompensa": recompensa_base + ascension,
+		"recompensa": int(recompensa_base * pow(1.12, ascension)),
 		"tipo": tipo_str
 	})
+
 	print("📢 Generando espectro. Restantes por spawnear: ", espectros_a_spawnear)
+
+	# Notificar al CommanderManager si es un Commander
+	if tipo_str == "commander" and _commander_manager:
+		if _commander_manager.has_method("registrar_hp_commander"):
+			_commander_manager.registrar_hp_commander(salud_base)
+		escena_espectro_comander_ref = espectro
 
 	if espectro.has_signal("espectro_destruido"):
 		espectro.espectro_destruido.connect(_on_espectro_destruido)
@@ -159,35 +193,25 @@ func _generar_espectro() -> void:
 func _elegir_tipo_enemigo() -> PackedScene:
 	var ascension = Economia.numero_ascension
 
-	# JEFE: solo una vez por ascensión múltiplo de 15
 	if ascension % 15 == 0 and ascension > 0 and not jefe_generado_esta_ascension:
 		if escena_espectro_jefe:
 			jefe_generado_esta_ascension = true
 			print("👾 JEFE generado en ascensión ", ascension, " (único)")
 			return escena_espectro_jefe
 
-	# SNIPER: desde ascensión 10, 6% de probabilidad
 	if ascension >= 10 and escena_espectro_sniper and randf() < 0.06:
 		return escena_espectro_sniper
 
-	# KAMIKAZE: desde ascensión 6, 12% de probabilidad
 	if ascension >= 6 and escena_espectro_kamikaze and randf() < 0.12:
 		return escena_espectro_kamikaze
 
-	# TANQUE: desde ascensión 4, 8% de probabilidad
 	if ascension >= 4 and escena_espectro_tanque and randf() < 0.08:
 		return escena_espectro_tanque
-
-# COMMANDER: desde ascensión 20, 5% de probabilidad
-	if ascension % 50 == 0 and ascension > 0 and escena_espectro_comander and not commander_generado_esta_ascension:
-		commander_generado_esta_ascension = true
-		return escena_espectro_comander
 
 	return escena_espectro
 
 func _on_espectro_destruido(_pos: Vector2, _recompensa: int) -> void:
 	espectros_vivos -= 1
-	# ✅ Evitar negativos — si ya terminó la ascensión, ignorar
 	if not en_combate:
 		espectros_vivos = 0
 		return
@@ -208,15 +232,3 @@ func _on_juego_terminado(_causa: String) -> void:
 		if is_instance_valid(e):
 			e.queue_free()
 	temporizador_spawn = 0.0
-
-func _spawn_enemigo() -> void:
-	var escena_elegida = _elegir_tipo_enemigo()
-	if not escena_elegida:
-		print("ERROR: No hay escena de enemigo seleccionada")
-		return
-	var espectro = escena_elegida.instantiate()
-	if not espectro.has_method("configurar"):
-		print("ERROR: El enemigo no tiene método 'configurar'. Escena: ", escena_elegida.resource_path)
-		espectro.queue_free()
-		return
-	get_tree().root.add_child(espectro)

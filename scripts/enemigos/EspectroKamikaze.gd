@@ -15,6 +15,9 @@ var tipo_espectro: String = "kamikaze"
 const RADIO_EXPLOSION: float = 60.0
 const ACELERACION_POR_SEG: float = 0.1
 const MAX_MULTIPLICADOR_VELOCIDAD: float = 2.5
+const ESCENA_TEXTO     = preload("res://escenas/Objetos/TextoFlotante.tscn")
+const ESCENA_EXPLOSION = preload("res://escenas/Objetos/Explosion.tscn")
+const ESCENA_FRAGMENTO = preload("res://escenas/Objetos/fragmento.tscn")
 
 var tiempo_vivo: float = 0.0
 var esta_destruido: bool = false
@@ -78,7 +81,7 @@ func _efecto_dano(es_critico: bool) -> void:
 	tw.tween_property(sprite, "self_modulate", color, 0.05)
 	tw.tween_property(sprite, "self_modulate", Color.WHITE, 0.10)
 
-# Llega al nexus: daño alto y se elimina sin dejar texto ni fragmento
+# Llega al nexus: daño alto, sin recompensa
 func _explotar_en_nexus() -> void:
 	if esta_destruido: return
 	esta_destruido = true
@@ -88,7 +91,7 @@ func _explotar_en_nexus() -> void:
 	if nexus and nexus.has_method("recibir_ataque"):
 		nexus.recibir_ataque(danio_explosion)
 
-	var explosion = preload("res://escenas/Objetos/Explosion.tscn").instantiate()
+	var explosion = ESCENA_EXPLOSION.instantiate()
 	explosion.global_position = global_position
 	explosion.scale = Vector2(1.5, 1.5)
 	get_tree().current_scene.add_child(explosion)
@@ -108,17 +111,17 @@ func _destruir() -> void:
 	set_physics_process(false)
 	remove_from_group("espectros")
 
-	var texto_energia = preload("res://escenas/Objetos/TextoFlotante.tscn").instantiate()
+	var texto_energia = ESCENA_TEXTO.instantiate()
 	texto_energia.set_energia(recompensa_energia)
 	texto_energia.global_position = global_position
 	get_tree().current_scene.add_child(texto_energia)
 
-	var explosion = preload("res://escenas/Objetos/Explosion.tscn").instantiate()
+	var explosion = ESCENA_EXPLOSION.instantiate()
 	explosion.global_position = global_position
 	explosion.scale = Vector2(0.8, 0.8)
 	get_tree().current_scene.add_child(explosion)
 
-	var fragmento = preload("res://escenas/Objetos/fragmento.tscn").instantiate()
+	var fragmento = ESCENA_FRAGMENTO.instantiate()
 	fragmento.global_position = global_position
 	get_tree().current_scene.add_child(fragmento)
 

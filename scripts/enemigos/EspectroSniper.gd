@@ -12,6 +12,10 @@ var danio_ataque: float = 8.0
 var recompensa_energia: int = 15
 var tipo_espectro: String = "sniper"
 
+const ESCENA_TEXTO     = preload("res://escenas/Objetos/TextoFlotante.tscn")
+const ESCENA_EXPLOSION = preload("res://escenas/Objetos/Explosion.tscn")
+const ESCENA_FRAGMENTO = preload("res://escenas/Objetos/fragmento.tscn")
+
 # Posicionamiento orbital
 var angulo_actual: float = 0.0
 const VELOCIDAD_ORBITAL: float = 1.0
@@ -118,16 +122,16 @@ func _destruir() -> void:
 	set_process(false)
 	remove_from_group("espectros")
 
-	var texto_energia = preload("res://escenas/Objetos/TextoFlotante.tscn").instantiate()
+	var texto_energia = ESCENA_TEXTO.instantiate()
 	texto_energia.set_energia(recompensa_energia)
 	texto_energia.global_position = global_position
 	get_tree().current_scene.add_child(texto_energia)
 
-	var explosion = preload("res://escenas/Objetos/Explosion.tscn").instantiate()
+	var explosion = ESCENA_EXPLOSION.instantiate()
 	explosion.global_position = global_position
 	get_tree().current_scene.add_child(explosion)
 
-	var fragmento = preload("res://escenas/Objetos/fragmento.tscn").instantiate()
+	var fragmento = ESCENA_FRAGMENTO.instantiate()
 	fragmento.global_position = global_position
 	get_tree().current_scene.add_child(fragmento)
 

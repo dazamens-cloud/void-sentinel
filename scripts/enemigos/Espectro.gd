@@ -14,6 +14,10 @@ var tipo_espectro: String = "basico"
 
 const DISTANCIA_ATAQUE: float = 85.0
 const INTERVALO_ATAQUE: float = 1.0
+const ESCENA_TEXTO     = preload("res://escenas/Objetos/TextoFlotante.tscn")
+const ESCENA_EXPLOSION = preload("res://escenas/Objetos/Explosion.tscn")
+const ESCENA_FRAGMENTO = preload("res://escenas/Objetos/fragmento.tscn")
+
 var temporizador_ataque: float = 0.0
 var esta_destruido: bool = false
 
@@ -35,7 +39,7 @@ func configurar(datos: Dictionary) -> void:
 	recompensa_energia = datos.get("recompensa", 5)
 	tipo_espectro = datos.get("tipo", "basico")
 	if sprite:
-		scale = Vector2.ONE * 0.8  # Básico — tamaño estándar
+		scale = Vector2.ONE * 0.8
 
 func _physics_process(delta: float) -> void:
 	if esta_destruido or not is_instance_valid(nexus): return
@@ -79,18 +83,19 @@ func _destruir() -> void:
 	remove_from_group("espectros")
 	print("💀 Espectro muere")
 
-	# 📝 TEXTO FLOTANTE de energía
-	var texto_energia = preload("res://escenas/Objetos/TextoFlotante.tscn").instantiate()
+	var texto_energia = ESCENA_TEXTO.instantiate()
 	texto_energia.set_energia(recompensa_energia)
 	texto_energia.global_position = global_position
 	get_tree().current_scene.add_child(texto_energia)
 
-	# 💥 EXPLOSIÓN
-	var explosion = preload("res://escenas/Objetos/Explosion.tscn").instantiate()
+	var explosion = ESCENA_EXPLOSION.instantiate()
 	explosion.global_position = global_position
 	get_tree().current_scene.add_child(explosion)
 
-	# 💰 ECONOMÍA (con posición para los ecos)
+	var fragmento = ESCENA_FRAGMENTO.instantiate()
+	fragmento.global_position = global_position
+	get_tree().current_scene.add_child(fragmento)
+
 	Economia.procesar_drop_espectro({
 		"recompensa": recompensa_energia,
 		"tipo": tipo_espectro,
@@ -98,15 +103,8 @@ func _destruir() -> void:
 	})
 	espectro_destruido.emit(global_position, recompensa_energia)
 
-	# ✨ ANIMACIÓN DE MUERTE
 	var tw = create_tween()
 	if sprite:
 		tw.parallel().tween_property(sprite, "scale", Vector2.ZERO, 0.22)
 		tw.parallel().tween_property(sprite, "self_modulate", Color(1.0, 0.5, 0.1, 0.0), 0.28)
 	tw.tween_callback(queue_free)
-	
-	# ✅ Fragmento al morir (ruta corregida)
-	var fragmento = preload("res://escenas/Objetos/fragmento.tscn").instantiate()
-	fragmento.global_position = global_position
-	get_tree().current_scene.call_deferred("add_child", fragmento)
-	

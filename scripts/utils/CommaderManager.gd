@@ -155,45 +155,32 @@ func _tick_advertencia(delta: float) -> void:
 func _ejecutar_spawn() -> void:
 	var escena: PackedScene
 	var datos: Dictionary
-	var asc = Economia.numero_ascension
 
 	match tipo_spawn_pendiente:
 		"basico":
 			escena = ESCENA_BASICO
-			datos = {
-				"hp": 15.0 * pow(1.38, asc),
-				"atk": 3.0 * pow(1.16, asc),
-				"spd_px": 80.0,
-				"recompensa": int(5 * pow(1.12, asc)),
-				"tipo": "basico"
-			}
+			datos = {"hp": 100.0, "atk": 5.0, "spd_px": 80.0, "recompensa": 5, "tipo": "basico"}
 		"tanque":
 			escena = ESCENA_TANQUE
-			datos = {
-				"hp": 75.0 * pow(1.38, asc),
-				"atk": 3.0 * pow(1.16, asc),
-				"spd_px": 48.0,
-				"recompensa": int(15 * pow(1.12, asc)),
-				"tipo": "tanque"
-			}
+			datos = {"hp": 500.0, "atk": 5.0, "spd_px": 48.0, "recompensa": 12, "tipo": "tanque"}
 		"kamikaze":
 			escena = ESCENA_KAMIKAZE
-			datos = {
-				"hp": 10.0 * pow(1.38, asc),
-				"atk": 6.0 * pow(1.16, asc),
-				"spd_px": 200.0,
-				"recompensa": int(8 * pow(1.12, asc)),
-				"tipo": "kamikaze"
-			}
+			datos = {"hp": 30.0, "atk": 15.0, "spd_px": 200.0, "recompensa": 8, "tipo": "kamikaze"}
 		"sniper":
 			escena = ESCENA_SNIPER
-			datos = {
-				"hp": 12.0 * pow(1.38, asc),
-				"atk": 4.5 * pow(1.16, asc),
-				"spd_px": 100.0,
-				"recompensa": int(8 * pow(1.12, asc)),
-				"tipo": "sniper"
-			}
+			datos = {"hp": 60.0, "atk": 8.0, "spd_px": 100.0, "recompensa": 15, "tipo": "sniper"}
+
+	if escena:
+		var invocado = escena.instantiate()
+		get_parent().add_child(invocado)
+		invocado.global_position = global_position + Vector2(randf_range(-50, 50), randf_range(-50, 50))
+		if invocado.has_method("configurar"):
+			invocado.configurar(datos)
+		if invocado.has_signal("espectro_destruido"):
+			invocado.espectro_destruido.connect(_on_invocado_destruido)
+
+	cooldown_spawn = COOLDOWN_BASE_SPAWN
+	_reiniciar_spawn()
 
 func _reiniciar_spawn() -> void:
 	en_advertencia = false
