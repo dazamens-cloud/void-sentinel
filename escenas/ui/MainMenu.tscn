@@ -1,9 +1,9 @@
 [gd_scene format=3]
 
 [ext_resource type="Script" uid="uid://butqd3p44a6k7" path="res://scripts/ui/MainMenu.gd" id="1_mainmenu"]
-[ext_resource type="PackedScene" path="res://escenas/ui/NavBar.tscn" id="2_navbar"]
+[ext_resource type="PackedScene" uid="uid://navbar" path="res://escenas/ui/NavBar.tscn" id="2_navbar"]
 [ext_resource type="PackedScene" path="res://escenas/ui/HomeScreen.tscn" id="3_home"]
-[ext_resource type="PackedScene" path="res://escenas/ui/NexusScreen.tscn" id="4_nexus"]
+[ext_resource type="PackedScene" uid="uid://dnxy2ghjbernx" path="res://escenas/ui/NexusScreen.tscn" id="4_nexus"]
 [ext_resource type="PackedScene" path="res://escenas/ui/ForjaScreen.tscn" id="5_forja"]
 [ext_resource type="PackedScene" path="res://escenas/ui/PerfilScreen.tscn" id="6_perfil"]
 [ext_resource type="PackedScene" path="res://escenas/ui/TiendaScreen.tscn" id="7_tienda"]
@@ -26,40 +26,34 @@ anchor_bottom = 1.0
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="HomeScreen" type="Control" parent="Layout/ScreenContainer"]
+[node name="HomeScreen" parent="Layout/ScreenContainer" instance=ExtResource("3_home")]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-script = ExtResource("3_home")
 
-[node name="NexusScreen" type="Control" parent="Layout/ScreenContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-visible = false
-script = ExtResource("4_nexus")
-
-[node name="ForjaScreen" type="Control" parent="Layout/ScreenContainer"]
+[node name="NexusScreen" parent="Layout/ScreenContainer" instance=ExtResource("4_nexus")]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 visible = false
-script = ExtResource("5_forja")
 
-[node name="PerfilScreen" type="Control" parent="Layout/ScreenContainer"]
+[node name="ForjaScreen" parent="Layout/ScreenContainer" instance=ExtResource("5_forja")]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 visible = false
-script = ExtResource("6_perfil")
 
-[node name="TiendaScreen" type="Control" parent="Layout/ScreenContainer"]
+[node name="PerfilScreen" parent="Layout/ScreenContainer" instance=ExtResource("6_perfil")]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 visible = false
-script = ExtResource("7_tienda")
 
-[node name="NavBar" type="Control" parent="Layout"]
+[node name="TiendaScreen" parent="Layout/ScreenContainer" instance=ExtResource("7_tienda")]
 layout_mode = 2
-script = ExtResource("2_navbar")
+size_flags_horizontal = 3
+size_flags_vertical = 3
+visible = false
+
+[node name="NavBar" parent="Layout" instance=ExtResource("2_navbar")]
+layout_mode = 2

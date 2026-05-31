@@ -37,14 +37,11 @@ func on_enter() -> void:
 	_refresh_data()
 
 func _refresh_data() -> void:
-	if not SaveSystem:
-		return
-	var data = SaveSystem.get_all_data()
-	var max_asc = data.get("max_ascension", 0)
+	var max_asc = Economia.numero_ascension
 
 	lbl_ascension.text  = _fmt(max_asc)
-	lbl_partidas.text   = str(data.get("partidas", 0))
-	lbl_commanders.text = str(data.get("commanders_eliminados", 0))
+	lbl_partidas.text   = "0"   # TODO: implementar contador de partidas
+	lbl_commanders.text = "0"   # TODO: implementar contador de commanders eliminados
 
 	var tier_info = _get_tier_info(max_asc)
 	lbl_nombre.text = tier_info.nombre
@@ -55,7 +52,8 @@ func _refresh_data() -> void:
 	tier_bar.value = clamp((progreso / rango) * 100.0, 0.0, 100.0)
 	lbl_tier_prog.text = "Siguiente tier: asc. %s" % _fmt(tier_info.siguiente)
 
-	_build_logros(data.get("logros", {}))
+	# TODO: implementar sistema de logros persistente
+	_build_logros({})
 
 func _get_tier_info(max_asc: int) -> Dictionary:
 	for t in TIER_DATA:
@@ -94,15 +92,15 @@ func _make_logro_card(nombre: String, desc: String, desbloqueado: bool) -> Panel
 
 	var icon_box = PanelContainer.new()
 	icon_box.custom_minimum_size = Vector2(32, 32)
-	var is = StyleBoxFlat.new()
-	is.bg_color     = Color(0.118, 0.353, 0.118) if desbloqueado else Color(0.067, 0.067, 0.067)
-	is.border_color = Color(0.165, 0.541, 0.165) if desbloqueado else Color(0.102, 0.102, 0.18)
-	is.set_border_width_all(1)
-	is.corner_radius_top_left = 8
-	is.corner_radius_top_right = 8
-	is.corner_radius_bottom_left = 8
-	is.corner_radius_bottom_right = 8
-	icon_box.add_theme_stylebox_override("panel", is)
+	var icon_style = StyleBoxFlat.new()
+	icon_style.bg_color     = Color(0.118, 0.353, 0.118) if desbloqueado else Color(0.067, 0.067, 0.067)
+	icon_style.border_color = Color(0.165, 0.541, 0.165) if desbloqueado else Color(0.102, 0.102, 0.18)
+	icon_style.set_border_width_all(1)
+	icon_style.corner_radius_top_left = 8
+	icon_style.corner_radius_top_right = 8
+	icon_style.corner_radius_bottom_left = 8
+	icon_style.corner_radius_bottom_right = 8
+	icon_box.add_theme_stylebox_override("panel", icon_style)
 	var icon_lbl = Label.new()
 	icon_lbl.text = "✓" if desbloqueado else "🔒"
 	icon_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER

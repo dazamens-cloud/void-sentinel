@@ -19,10 +19,11 @@ var current_tab: Tab = Tab.HOME
 @onready var navbar = $Layout/NavBar
 
 func _ready():
-	# Conectar señal de la NavBar
+	# Asegurar datos frescos al entrar al menú
+	Economia._cargar_datos()
+	MejoraManager.cargar_mejoras_nexo()
+
 	navbar.tab_pressed.connect(_on_tab_pressed)
-	
-	# Mostrar Home por defecto
 	switch_to(Tab.HOME)
 
 func switch_to(tab: Tab) -> void:

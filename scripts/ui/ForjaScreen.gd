@@ -107,12 +107,21 @@ func _init_purchased() -> void:
 			purchased[h.id] = false
 
 func _load_from_save() -> void:
-	if not SaveSystem:
+	ascension_actual = Economia.numero_ascension
+	_cargar_forja()
+
+func _cargar_forja() -> void:
+	if not FileAccess.file_exists("user://forja.save"):
 		return
-	var data = SaveSystem.get_all_data()
-	ascension_actual = data.get("max_ascension", 0)
-	var saved_purchased = data.get("forja_purchased", {})
-	var saved_params    = data.get("forja_params", {})
+	var file = FileAccess.open("user://forja.save", FileAccess.READ)
+	if not file:
+		return
+	var data = file.get_var()
+	file.close()
+	if not data is Dictionary:
+		return
+	var saved_purchased = data.get("purchased", {})
+	var saved_params    = data.get("params", {})
 	for id in saved_purchased:
 		purchased[id] = saved_purchased[id]
 	for side in habilidades:
@@ -120,6 +129,18 @@ func _load_from_save() -> void:
 			for p in h.params:
 				if saved_params.has(p.id):
 					p.nivel = saved_params[p.id]
+
+func _guardar_forja() -> void:
+	var saved_params: Dictionary = {}
+	for side in habilidades:
+		for h in habilidades[side]:
+			for p in h.params:
+				if p.nivel > 0:
+					saved_params[p.id] = p.nivel
+	var file = FileAccess.open("user://forja.save", FileAccess.WRITE)
+	if file:
+		file.store_var({"purchased": purchased, "params": saved_params})
+		file.close()
 
 func _get_state(h: Dictionary) -> String:
 	if purchased.get(h.id, false):
@@ -129,7 +150,7 @@ func _get_state(h: Dictionary) -> String:
 		return "bloqueada_req"
 	if ascension_actual < h.umbral:
 		return "bloqueada_asc"
-	var frags = SaveSystem.get_fragmentos() if SaveSystem else 0
+	var frags = Economia.fragmentos
 	if frags < h.coste:
 		return "sin_fondos"
 	return "disponible"
@@ -268,7 +289,7 @@ func _make_hab_card(h: Dictionary, idx: int, color: Color) -> PanelContainer:
 		btn.pressed.connect(func(): _open_detalle(h.id))
 		right.add_child(btn)
 	elif is_avail:
-		var frags = SaveSystem.get_fragmentos() if SaveSystem else 0
+		var frags = Economia.fragmentos
 		var afford = frags >= h.coste
 		var btn = Button.new()
 		btn.text = "DESBLOQUEAR"
@@ -319,11 +340,10 @@ func _on_card_click(ev: InputEvent, hab_id: String) -> void:
 		_open_detalle(hab_id)
 
 func _comprar_habilidad(h: Dictionary) -> void:
-	if not SaveSystem: return
-	if SaveSystem.get_fragmentos() < h.coste: return
-	SaveSystem.spend_fragmentos(h.coste)
+	if not Economia.gastar_fragmentos(h.coste):
+		return
 	purchased[h.id] = true
-	SaveSystem.set_forja_purchased(h.id, true)
+	_guardar_forja()
 	_render_lista()
 
 func _open_detalle(hab_id: String) -> void:
@@ -346,7 +366,7 @@ func _render_params() -> void:
 		child.queue_free()
 	var h = _find_hab(detalle_id)
 	if not h: return
-	var frags = SaveSystem.get_fragmentos() if SaveSystem else 0
+	var frags = Economia.fragmentos
 	lbl_frag_det.text = _fmt(frags)
 	var color = COLOR_OFENSIVA if current_side == "ofensiva" else COLOR_DEFENSIVA
 	var lbl_section = Label.new()
@@ -443,12 +463,11 @@ func _make_param_card(p: Dictionary, frags: int, color: Color) -> PanelContainer
 	return card
 
 func _comprar_param(p: Dictionary) -> void:
-	if not SaveSystem: return
 	var coste = _param_cost(p)
-	if SaveSystem.get_fragmentos() < coste: return
-	SaveSystem.spend_fragmentos(coste)
+	if not Economia.gastar_fragmentos(coste):
+		return
 	p.nivel += 1
-	SaveSystem.set_forja_param(p.id, p.nivel)
+	_guardar_forja()
 	_render_params()
 
 func _param_cost(p: Dictionary) -> int:

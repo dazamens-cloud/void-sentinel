@@ -1,4 +1,4 @@
-[gd_scene format=3 uid="uid://perfil_screen"]
+[gd_scene format=3]
 
 [ext_resource type="Script" path="res://scripts/ui/PerfilScreen.gd" id="1_perfil"]
 
@@ -36,7 +36,7 @@ custom_minimum_size = Vector2(52, 52)
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-text = "👤"
+text = ""
 horizontal_alignment = 1
 vertical_alignment = 1
 theme_override_font_sizes/font_size = 22
@@ -54,7 +54,7 @@ theme_override_colors/font_color = Color(0.8, 0.8, 0.8)
 
 [node name="LblSub" type="Label" parent="VBox/PlayerCard/InfoVBox"]
 layout_mode = 2
-text = "Tier I · Jugador desde v1.0"
+text = "Tier I . Jugador desde v1.0"
 theme_override_font_sizes/font_size = 10
 theme_override_colors/font_color = Color(0.267, 0.267, 0.267)
 
@@ -85,7 +85,7 @@ alignment = 1
 
 [node name="LblKey" type="Label" parent="VBox/StatsRow/StatAscension/VBox"]
 layout_mode = 2
-text = "ASCENSIÓN MÁX"
+text = "ASCENSION MAX"
 horizontal_alignment = 1
 theme_override_colors/font_color = Color(0.267, 0.267, 0.267)
 theme_override_font_sizes/font_size = 8

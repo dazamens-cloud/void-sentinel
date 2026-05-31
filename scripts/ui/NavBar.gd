@@ -57,11 +57,8 @@ func set_active_tab(tab: int) -> void:
 		# Aquí se cambiaría también el color del icono cuando tengamos assets
 
 func _check_forja_unlock() -> void:
-	# Leer del SaveSystem si la Forja está desbloqueada
-	if SaveSystem and SaveSystem.has_method("get_max_ascension"):
-		var max_asc = SaveSystem.get_max_ascension()
-		forja_unlocked = max_asc >= 2000
-	
+	var max_asc = Economia.numero_ascension
+	forja_unlocked = max_asc >= 2000
 	lock_icon.visible = not forja_unlocked
 
 func unlock_forja() -> void:

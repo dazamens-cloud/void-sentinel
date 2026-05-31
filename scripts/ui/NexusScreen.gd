@@ -25,38 +25,36 @@ const TAB_COLORS = {
 const COLOR_INACTIVE = Color(0.2, 0.2, 0.251)
 const COLOR_GOLD     = Color(0.961, 0.651, 0.137)
 
-# Datos de mejoras — se sincronizan con SaveSystem
 var mejoras_data = {
 	Categoria.ATAQUE: [
-		{ "id": "danio",          "nombre": "Daño base",          "nivel": 0, "coste_base": 1840, "desc": "+2.5% daño por nivel"      },
-		{ "id": "velocidad_ataque","nombre": "Velocidad de ataque","nivel": 0, "coste_base": 2100, "desc": "+1 disparo/seg por nivel"   },
-		{ "id": "disparo_critico","nombre": "Disparo crítico",     "nivel": 0, "coste_base": 3200, "desc": "+5% probabilidad crítico"   },
-		{ "id": "multidisparo",   "nombre": "Multidisparo",        "nivel": 0, "coste_base": 5800, "desc": "+1 proyectil adicional"     },
-		{ "id": "rebote",         "nombre": "Rebote",              "nivel": 0, "coste_base": 8400, "desc": "+1 rebote por proyectil"    },
-		{ "id": "alcance_rebote", "nombre": "Alcance de rebote",   "nivel": 0, "coste_base": 9200, "desc": "+20% distancia de rebote"   },
+		{ "id": "danio",          "nombre": "Daño base",          "coste_base": 1840, "desc": "+2.5% daño por nivel"      },
+		{ "id": "velocidad_ataque","nombre": "Velocidad de ataque","coste_base": 2100, "desc": "+1 disparo/seg por nivel"   },
+		{ "id": "disparo_critico","nombre": "Disparo crítico",     "coste_base": 3200, "desc": "+5% probabilidad crítico"   },
+		{ "id": "multidisparo",   "nombre": "Multidisparo",        "coste_base": 5800, "desc": "+1 proyectil adicional"     },
+		{ "id": "rebote",         "nombre": "Rebote",              "coste_base": 8400, "desc": "+1 rebote por proyectil"    },
+		{ "id": "alcance_rebote", "nombre": "Alcance de rebote",   "coste_base": 9200, "desc": "+20% distancia de rebote"   },
 	],
 	Categoria.DEFENSA: [
-		{ "id": "salud",          "nombre": "Salud máxima",        "nivel": 0, "coste_base": 1600, "desc": "+500 HP por nivel"          },
-		{ "id": "recuperacion",   "nombre": "Recuperación",        "nivel": 0, "coste_base": 2400, "desc": "+0.5% regen/seg"            },
-		{ "id": "escudo",         "nombre": "Escudo",              "nivel": 0, "coste_base": 4200, "desc": "+10% absorción de escudo"   },
-		{ "id": "dureza_escudo",  "nombre": "Dureza de escudo",    "nivel": 0, "coste_base": 5600, "desc": "-5% daño con escudo"        },
-		{ "id": "pulso_quartz",   "nombre": "Pulso Quartz",        "nivel": 0, "coste_base": 7800, "desc": "+15% daño del pulso"        },
-		{ "id": "poder_pulso",    "nombre": "Poder del pulso",     "nivel": 0, "coste_base": 10200,"desc": "+25% radio del pulso"       },
+		{ "id": "salud",          "nombre": "Salud máxima",        "coste_base": 1600, "desc": "+500 HP por nivel"          },
+		{ "id": "recuperacion",   "nombre": "Recuperación",        "coste_base": 2400, "desc": "+0.5% regen/seg"            },
+		{ "id": "escudo",         "nombre": "Escudo",              "coste_base": 4200, "desc": "+10% absorción de escudo"   },
+		{ "id": "dureza_escudo",  "nombre": "Dureza de escudo",    "coste_base": 5600, "desc": "-5% daño con escudo"        },
+		{ "id": "pulso_quartz",   "nombre": "Pulso Quartz",        "coste_base": 7800, "desc": "+15% daño del pulso"        },
+		{ "id": "poder_pulso",    "nombre": "Poder del pulso",     "coste_base": 10200,"desc": "+25% radio del pulso"       },
 	],
 	Categoria.BONUS: [
-		{ "id": "energia_ascension","nombre": "Energía por ascensión","nivel": 0,"coste_base": 2200, "desc": "+5% monedas al subir"     },
-		{ "id": "energia_espectro","nombre": "Energía por espectro", "nivel": 0,"coste_base": 2600, "desc": "+3% drop por enemigo"      },
-		{ "id": "ecos_ascension", "nombre": "Ecos de ascensión",    "nivel": 0, "coste_base": 3400, "desc": "+2% fragmentos/ascensión"  },
-		{ "id": "ecos_rapido",    "nombre": "Ecos rápidos",         "nivel": 0, "coste_base": 4800, "desc": "-10% tiempo entre drops"   },
-		{ "id": "mejora_X_gratis","nombre": "Mejora gratuita I",    "nivel": 0, "coste_base": 12000,"desc": "1 mejora gratis/10 asc."   },
-		{ "id": "mejora_X_gratis2","nombre": "Mejora gratuita II",  "nivel": 0, "coste_base": 18000,"desc": "2 mejoras gratis/15 asc."  },
-		{ "id": "interes_tasa",   "nombre": "Tasa de interés",      "nivel": 0, "coste_base": 6000, "desc": "+2.5% interés monedas"     },
+		{ "id": "energia_ascension","nombre": "Energía por ascensión","coste_base": 2200, "desc": "+5% monedas al subir"     },
+		{ "id": "energia_espectro","nombre": "Energía por espectro", "coste_base": 2600, "desc": "+3% drop por enemigo"      },
+		{ "id": "ecos_ascension", "nombre": "Ecos de ascensión",    "coste_base": 3400, "desc": "+2% fragmentos/ascensión"  },
+		{ "id": "ecos_rapido",    "nombre": "Ecos rápidos",         "coste_base": 4800, "desc": "-10% tiempo entre drops"   },
+		{ "id": "mejora_ataque_gratis","nombre": "Mejora gratuita I","coste_base": 12000,"desc": "1 mejora gratis/10 asc."  },
+		{ "id": "mejora_defensa_gratis","nombre": "Mejora gratuita II","coste_base": 18000,"desc": "2 mejoras gratis/15 asc."},
 	],
 	Categoria.COMMANDER: [
-		{ "id": "blindaje",           "nombre": "Blindaje Commander",   "nivel": 0, "coste_base": 4400,  "desc": "-8% daño del Commander"  },
-		{ "id": "precision_comandante","nombre": "Precisión Commander",  "nivel": 0, "coste_base": 7200,  "desc": "+10% crítico al Cmd."    },
-		{ "id": "aura_comandante",    "nombre": "Aura Commander",       "nivel": 0, "coste_base": 9800,  "desc": "-5% vel. spawn Cmd."     },
-		{ "id": "cadencia_comandante","nombre": "Cadencia Commander",   "nivel": 0, "coste_base": 14000, "desc": "+15% daño zona Cmd."     },
+		{ "id": "blindaje",       "nombre": "Blindaje Commander",   "coste_base": 4400,  "desc": "-8% daño del Commander"  },
+		{ "id": "disparos_iniciales","nombre": "Precisión Commander","coste_base": 7200, "desc": "+10% crítico al Cmd."    },
+		{ "id": "recarga_rapida", "nombre": "Recarga Rápida",       "coste_base": 9800,  "desc": "-5% vel. spawn Cmd."     },
+		{ "id": "lock_on",        "nombre": "Lock-On",              "coste_base": 14000, "desc": "+15% daño zona Cmd."     },
 	],
 }
 
@@ -66,24 +64,16 @@ func _ready():
 		var c = cat
 		tabs[c].pressed.connect(func(): _switch_cat(c))
 	_switch_cat(Categoria.ATAQUE)
+	Economia.recursos_actualizados.connect(_on_recursos_actualizados)
 
 func on_enter() -> void:
-	_load_niveles_from_save()
 	_render_mejoras()
 
-func _load_niveles_from_save() -> void:
-	if not SaveSystem:
-		return
-	var saved = SaveSystem.get_mejoras_nexus()
-	if not saved:
-		return
-	for cat in mejoras_data:
-		for m in mejoras_data[cat]:
-			if saved.has(m.id):
-				m.nivel = saved[m.id]
+func _on_recursos_actualizados() -> void:
+	_render_mejoras()
 
 func _get_coste(m: Dictionary) -> int:
-	return int(m.coste_base * pow(1.09, m.nivel))
+	return int(m.coste_base * pow(1.09, MejoraManager.get_nivel(m.id)))
 
 func _switch_cat(cat: Categoria) -> void:
 	current_cat = cat
@@ -96,15 +86,16 @@ func _render_mejoras() -> void:
 	for child in mejoras_list.get_children():
 		child.queue_free()
 
-	var gold = SaveSystem.get_gold() if SaveSystem else 0
+	var ecos_actuales = Economia.ecos
 	var color = TAB_COLORS[current_cat]
 
 	for m in mejoras_data[current_cat]:
-		mejoras_list.add_child(_make_mejora_card(m, gold, color))
+		mejoras_list.add_child(_make_mejora_card(m, ecos_actuales, color))
 
-func _make_mejora_card(m: Dictionary, gold: int, color: Color) -> PanelContainer:
+func _make_mejora_card(m: Dictionary, ecos_actuales: int, color: Color) -> PanelContainer:
+	var nivel_actual = MejoraManager.get_nivel(m.id)
 	var coste = _get_coste(m)
-	var afford = gold >= coste
+	var afford = ecos_actuales >= coste
 
 	var card = PanelContainer.new()
 	var s = StyleBoxFlat.new()
@@ -152,7 +143,7 @@ func _make_mejora_card(m: Dictionary, gold: int, color: Color) -> PanelContainer
 	lbl_nv_key.add_theme_font_size_override("font_size", 9)
 	lbl_nv_key.add_theme_color_override("font_color", Color(0.333, 0.333, 0.333))
 	var lbl_nv_val = Label.new()
-	lbl_nv_val.text = str(m.nivel)
+	lbl_nv_val.text = str(nivel_actual)
 	lbl_nv_val.add_theme_font_size_override("font_size", 11)
 	lbl_nv_val.add_theme_color_override("font_color", color)
 	nivel_hbox.add_child(lbl_nv_key)
@@ -188,7 +179,7 @@ func _make_mejora_card(m: Dictionary, gold: int, color: Color) -> PanelContainer
 	var coste_hbox = HBoxContainer.new()
 	coste_hbox.alignment = BoxContainer.ALIGNMENT_CENTER
 	var sym = Label.new()
-	sym.text = "©"
+	sym.text = "💫"
 	sym.add_theme_font_size_override("font_size", 9)
 	sym.add_theme_color_override("font_color", COLOR_GOLD if afford else Color(0.165, 0.165, 0.165))
 	var lbl_coste = Label.new()
@@ -209,21 +200,14 @@ func _make_mejora_card(m: Dictionary, gold: int, color: Color) -> PanelContainer
 
 func _comprar_mejora(m: Dictionary) -> void:
 	var coste = _get_coste(m)
-	if not SaveSystem:
+	if not Economia.gastar_ecos(coste):
 		return
-	if SaveSystem.get_gold() < coste:
-		return
-	SaveSystem.spend_gold(coste)
-	m.nivel += 1
-	SaveSystem.set_mejora_nexus(m.id, m.nivel)
+	MejoraManager.subir_nivel_nexo(m.id)
+	MejoraManager.guardar_mejoras_nexo()
 	_render_mejoras()
 
 func _apply_tab_styles() -> void:
-	var bar_style = StyleBoxFlat.new()
-	bar_style.bg_color     = Color(0.043, 0.043, 0.094)
-	bar_style.border_color = Color(0.078, 0.078, 0.157)
-	bar_style.border_width_top = 1
-	# No se puede aplicar directamente a HBoxContainer, se hace via theme
+	pass
 
 func _fmt(n: int) -> String:
 	if n >= 1_000_000: return "%.1fM" % (n / 1_000_000.0)

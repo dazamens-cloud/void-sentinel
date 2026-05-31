@@ -38,28 +38,21 @@ func _ready():
 	_apply_styles()
 	btn_jugar.pressed.connect(_on_play_pressed)
 	_start_breath_animation()
+	Economia.recursos_actualizados.connect(_refresh_data)
 
 func on_enter() -> void:
 	_refresh_data()
 
 func _refresh_data() -> void:
-	if not SaveSystem:
-		return
-	
-	var data = SaveSystem.get_all_data()
-	
-	# Monedas
-	lbl_gold.text = _format_number(data.get("gold", 0))
-	lbl_frag.text = _format_number(data.get("fragmentos", 0))
-	lbl_plat.text = str(data.get("platinum", 0))
-	
-	# Stats
-	var max_asc = data.get("max_ascension", 0)
+	lbl_gold.text = _format_number(Economia.ecos)
+	lbl_frag.text = _format_number(Economia.fragmentos)
+	lbl_plat.text = "0"  # TODO: añadir moneda platino cuando esté implementada
+
+	var max_asc = Economia.numero_ascension
 	lbl_ascension.text  = _format_number(max_asc)
-	lbl_partidas.text   = str(data.get("partidas", 0))
-	lbl_commanders.text = str(data.get("commanders_eliminados", 0))
-	
-	# Tier
+	lbl_partidas.text   = "0"       # TODO: contador de partidas
+	lbl_commanders.text = "0"       # TODO: contador de commanders eliminados
+
 	var tier = _get_tier(max_asc)
 	lbl_tier_name.text = TIER_NAMES.get(tier, "I — Void Initiate")
 	_update_tier_dots(tier)
@@ -168,5 +161,4 @@ func _format_number(n: int) -> String:
 
 func _on_play_pressed() -> void:
 	play_pressed.emit()
-	# Cambiar a la escena de juego
-	get_tree().change_scene_to_file("res://escenas/mundo.tscn")
+	get_tree().change_scene_to_file("res://escenas/ui/LoadingScreen.tscn")

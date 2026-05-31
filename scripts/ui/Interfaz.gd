@@ -137,80 +137,112 @@ func _actualizar_salud(actual: float, maxima: float) -> void:
 func _on_juego_terminado(causa: String) -> void:
 	mostrar_game_over(causa)
 
+func _formatear_causa(causa: String) -> String:
+	match causa:
+		"kamikaze":  return "Has muerto aplastado por un Kamikaze"
+		"tanque":    return "Un Tanque ha acabado contigo"
+		"sniper":    return "Un Sniper te ha disparado desde la distancia"
+		"commander": return "El Commander ha enviado demasiados refuerzos"
+		"basico":    return "Los Espectros básicos te han superado"
+		_:           return "Has caído en combate"
+
 func mostrar_game_over(causa: String) -> void:
 	print("🖥️ Interfaz: GAME OVER - ", causa)
-	
-	# ✅ FIX: Ocultar el PanelMejoras para que no bloquee el input
+
+	# Guardar progreso antes de mostrar pantalla
+	Economia.guardar_datos()
+	MejoraManager.guardar_mejoras_nexo()
+
 	if is_instance_valid(panel_mejoras):
 		panel_mejoras.visible = false
-	
+
 	# ── Fondo oscuro ──────────────────────────────────────────
 	var fondo = ColorRect.new()
 	fondo.color = Color(0.0, 0.0, 0.0, 0.75)
 	fondo.set_anchors_preset(Control.PRESET_FULL_RECT)
-	# ✅ FIX: IGNORE para que no bloquee el botón
 	fondo.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	fondo.z_index = 200
 	add_child(fondo)
-	
+
 	# ── "GAME OVER" ───────────────────────────────────────────
 	var lbl_go = Label.new()
 	lbl_go.text = "GAME OVER"
 	lbl_go.add_theme_font_size_override("font_size", 52)
 	lbl_go.add_theme_color_override("font_color", Color.RED)
 	lbl_go.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	# ✅ FIX: tamaño justo, no cubre toda la pantalla
 	lbl_go.set_anchors_preset(Control.PRESET_CENTER_TOP)
 	lbl_go.size = Vector2(440, 80)
-	lbl_go.position = Vector2(0, 480)
-	# ✅ FIX: IGNORE para que no bloquee el botón
+	lbl_go.position = Vector2(0, 420)
 	lbl_go.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	lbl_go.z_index = 201
 	add_child(lbl_go)
-	
+
 	# ── Causa de muerte ───────────────────────────────────────
 	var lbl_causa = Label.new()
-	lbl_causa.text = "Has muerto por: " + causa
-	lbl_causa.add_theme_font_size_override("font_size", 22)
+	lbl_causa.text = _formatear_causa(causa)
+	lbl_causa.add_theme_font_size_override("font_size", 20)
 	lbl_causa.add_theme_color_override("font_color", Color.WHITE)
 	lbl_causa.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	lbl_causa.size = Vector2(440, 60)
-	lbl_causa.position = Vector2(0, 570)
+	lbl_causa.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	lbl_causa.size = Vector2(440, 70)
+	lbl_causa.position = Vector2(0, 510)
 	lbl_causa.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	lbl_causa.z_index = 201
 	add_child(lbl_causa)
-	
+
 	# ── Ascensión alcanzada ───────────────────────────────────
 	var lbl_asc = Label.new()
 	lbl_asc.text = "Ascensión alcanzada: %d" % Economia.numero_ascension
-	lbl_asc.add_theme_font_size_override("font_size", 20)
+	lbl_asc.add_theme_font_size_override("font_size", 18)
 	lbl_asc.add_theme_color_override("font_color", Color.YELLOW)
 	lbl_asc.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	lbl_asc.size = Vector2(440, 60)
-	lbl_asc.position = Vector2(0, 635)
+	lbl_asc.size = Vector2(440, 50)
+	lbl_asc.position = Vector2(0, 590)
 	lbl_asc.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	lbl_asc.z_index = 201
 	add_child(lbl_asc)
-	
-	# ── Botón REINICIAR ───────────────────────────────────────
-	# ✅ FIX: centrado relativo al ancho de pantalla (720/2 - 100 = 260)
+
+	# ── Espectros destruidos ──────────────────────────────────
+	var lbl_espectros = Label.new()
+	lbl_espectros.text = "Espectros destruidos: %d" % Economia.espectros_eliminados
+	lbl_espectros.add_theme_font_size_override("font_size", 18)
+	lbl_espectros.add_theme_color_override("font_color", Color(0.8, 0.8, 0.8))
+	lbl_espectros.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	lbl_espectros.size = Vector2(440, 50)
+	lbl_espectros.position = Vector2(0, 640)
+	lbl_espectros.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	lbl_espectros.z_index = 201
+	add_child(lbl_espectros)
+
+	# ── Energía total conseguida ──────────────────────────────
+	var lbl_energia_total = Label.new()
+	lbl_energia_total.text = "Energía conseguida: %d ⚡" % int(Economia.energia_total_partida)
+	lbl_energia_total.add_theme_font_size_override("font_size", 16)
+	lbl_energia_total.add_theme_color_override("font_color", Color(0.6, 0.9, 1.0))
+	lbl_energia_total.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	lbl_energia_total.size = Vector2(440, 45)
+	lbl_energia_total.position = Vector2(0, 690)
+	lbl_energia_total.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	lbl_energia_total.z_index = 201
+	add_child(lbl_energia_total)
+
+	# ── Botón REINTENTAR ─────────────────────────────────────
 	var btn_reiniciar = Button.new()
-	btn_reiniciar.text = "REINICIAR"
+	btn_reiniciar.text = "REINTENTAR"
 	btn_reiniciar.size = Vector2(220, 60)
-	btn_reiniciar.position = Vector2(250, 730)
-	# ✅ FIX: z_index MUY alto para estar por encima de todo
+	btn_reiniciar.position = Vector2(250, 760)
 	btn_reiniciar.z_index = 210
 	btn_reiniciar.pressed.connect(func():
 		get_tree().paused = false
-		get_tree().reload_current_scene()
+		get_tree().change_scene_to_file("res://escenas/ui/LoadingScreen.tscn")
 	)
 	add_child(btn_reiniciar)
-	
-	# ── Botón MENÚ PRINCIPAL ──────────────────────────────────
+
+	# ── Botón MENÚ ───────────────────────────────────────────
 	var btn_menu = Button.new()
-	btn_menu.text = "MENÚ PRINCIPAL"
+	btn_menu.text = "MENÚ"
 	btn_menu.size = Vector2(220, 60)
-	btn_menu.position = Vector2(250, 810)
+	btn_menu.position = Vector2(250, 840)
 	btn_menu.z_index = 210
 	btn_menu.pressed.connect(func():
 		get_tree().paused = false

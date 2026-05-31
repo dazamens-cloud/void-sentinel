@@ -199,7 +199,9 @@ func _depositar() -> void:
 	var ganancia: int = fragmentos_en_dron * 10
 	Economia.añadir_energia(ganancia)
 	print("🤖 Dron: DEPOSITANDO ", fragmentos_en_dron, " fragmentos → +", ganancia, " ⚡")
+	var cantidad_depositada = fragmentos_en_dron
 	fragmentos_en_dron = 0
+	Economia.añadir_fragmentos(cantidad_depositada)
 	_tiempo_recarga = TIEMPO_RECARGA
 	estado = Estado.EN_RECARGA
 	fragmentos_actualizados.emit(0, capacidad_actual)

@@ -11,8 +11,10 @@ signal energia_cambiada(nueva_energia: float)
 
 var energia: float = 50.0
 var ecos: int = 0
+var fragmentos: int = 0
 var numero_ascension: int = 0
 var espectros_eliminados: int = 0
+var energia_total_partida: float = 0.0
 
 # ═══════════════════════════════════════════════════
 # SISTEMA DE INTERÉS (DOC_B)
@@ -27,7 +29,8 @@ func iniciar_partida() -> void:
 	energia = 50.0
 	numero_ascension = 0
 	espectros_eliminados = 0
-	# ✅ Resetear interés al reiniciar
+	energia_total_partida = 0.0
+	# ✅ Resetear interés al reiniciar (ecos y fragmentos NO se resetean)
 	tasa_interes = 0.025
 	cap_interes = 3000.0
 	recursos_actualizados.emit()
@@ -35,6 +38,7 @@ func iniciar_partida() -> void:
 
 func añadir_energia(cantidad: float) -> void:
 	energia += cantidad
+	energia_total_partida += cantidad
 	recursos_actualizados.emit()
 	energia_cambiada.emit(energia)
 
@@ -100,6 +104,27 @@ func procesar_drop_espectro(datos: Dictionary) -> void:
 		recursos_actualizados.emit()
 		ecos_obtenidos.emit(ecos_ganados, posicion)
 
+func añadir_fragmentos(cantidad: int) -> void:
+	fragmentos += cantidad
+	guardar_datos()
+	recursos_actualizados.emit()
+
+func gastar_ecos(cantidad: int) -> bool:
+	if ecos >= cantidad:
+		ecos -= cantidad
+		guardar_datos()
+		recursos_actualizados.emit()
+		return true
+	return false
+
+func gastar_fragmentos(cantidad: int) -> bool:
+	if fragmentos >= cantidad:
+		fragmentos -= cantidad
+		guardar_datos()
+		recursos_actualizados.emit()
+		return true
+	return false
+
 # ── Funciones para el Nexus ──────────────────────────
 func get_rango_escaneo() -> float:
 	return 200.0
@@ -120,7 +145,7 @@ func get_defensa() -> float:
 func guardar_datos() -> void:
 	var file = FileAccess.open("user://economia.save", FileAccess.WRITE)
 	if file:
-		file.store_var({"ecos": ecos})
+		file.store_var({"ecos": ecos, "fragmentos": fragmentos})
 		file.close()
 
 func _cargar_datos() -> void:
@@ -130,4 +155,5 @@ func _cargar_datos() -> void:
 			var data = file.get_var()
 			if data is Dictionary:
 				ecos = data.get("ecos", 0)
+				fragmentos = data.get("fragmentos", 0)
 			file.close()

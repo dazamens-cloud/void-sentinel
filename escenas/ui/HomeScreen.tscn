@@ -1,4 +1,4 @@
-[gd_scene format=3 uid="uid://home_screen"]
+[gd_scene format=3]
 
 [ext_resource type="Script" path="res://scripts/ui/HomeScreen.gd" id="1_home"]
 
@@ -8,14 +8,12 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 script = ExtResource("1_home")
 
-# ── Fondo ──────────────────────────────────────────────────────────────────
 [node name="Background" type="ColorRect" parent="."]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 color = Color(0.031, 0.031, 0.071, 1)
 
-# ── Layout principal ───────────────────────────────────────────────────────
 [node name="VBox" type="VBoxContainer" parent="."]
 anchors_preset = 15
 anchor_right = 1.0
@@ -27,7 +25,6 @@ offset_bottom = -12.0
 alignment = 1
 theme_override_constants/separation = 16
 
-# ── Monedas (cabecera) ─────────────────────────────────────────────────────
 [node name="CoinsBar" type="HBoxContainer" parent="VBox"]
 layout_mode = 2
 alignment = 0
@@ -42,7 +39,7 @@ theme_override_constants/separation = 4
 
 [node name="Symbol" type="Label" parent="VBox/CoinsBar/GoldBadge/HBox"]
 layout_mode = 2
-text = "©"
+text = "e"
 theme_override_colors/font_color = Color(0.961, 0.651, 0.137)
 theme_override_font_sizes/font_size = 12
 
@@ -60,7 +57,7 @@ theme_override_constants/separation = 4
 
 [node name="Symbol" type="Label" parent="VBox/CoinsBar/FragBadge/HBox"]
 layout_mode = 2
-text = "⬡"
+text = "F"
 theme_override_colors/font_color = Color(1.0, 0.42, 0.0)
 theme_override_font_sizes/font_size = 12
 
@@ -78,7 +75,7 @@ theme_override_constants/separation = 4
 
 [node name="Symbol" type="Label" parent="VBox/CoinsBar/PlatBadge/HBox"]
 layout_mode = 2
-text = "◆"
+text = "*"
 theme_override_colors/font_color = Color(0.494, 0.784, 0.89)
 theme_override_font_sizes/font_size = 12
 
@@ -87,7 +84,6 @@ layout_mode = 2
 text = "0"
 theme_override_font_sizes/font_size = 11
 
-# ── Núcleo animado ─────────────────────────────────────────────────────────
 [node name="NucleoCentro" type="Control" parent="VBox"]
 layout_mode = 2
 size_flags_horizontal = 4
@@ -153,7 +149,6 @@ offset_right = 14.0
 offset_bottom = 14.0
 color = Color(0.0, 0.898, 1.0, 0.9)
 
-# ── Badge Tier ─────────────────────────────────────────────────────────────
 [node name="TierBadge" type="HBoxContainer" parent="VBox"]
 layout_mode = 2
 size_flags_horizontal = 4
@@ -186,11 +181,10 @@ color = Color(0.102, 0.102, 0.18)
 
 [node name="LblTierName" type="Label" parent="VBox/TierBadge"]
 layout_mode = 2
-text = "I — Void Initiate"
+text = "I - Void Initiate"
 theme_override_colors/font_color = Color(0.0, 0.898, 1.0)
 theme_override_font_sizes/font_size = 11
 
-# ── Stats ──────────────────────────────────────────────────────────────────
 [node name="StatsRow" type="HBoxContainer" parent="VBox"]
 layout_mode = 2
 theme_override_constants/separation = 8
@@ -205,7 +199,7 @@ alignment = 1
 
 [node name="LblKey" type="Label" parent="VBox/StatsRow/StatAscension/VBox"]
 layout_mode = 2
-text = "ASCENSIÓN MÁX"
+text = "ASCENSION MAX"
 horizontal_alignment = 1
 theme_override_colors/font_color = Color(0.267, 0.267, 0.267)
 theme_override_font_sizes/font_size = 8
@@ -261,7 +255,6 @@ horizontal_alignment = 1
 theme_override_colors/font_color = Color(0.961, 0.651, 0.137)
 theme_override_font_sizes/font_size = 15
 
-# ── Botón JUGAR ────────────────────────────────────────────────────────────
 [node name="BtnJugar" type="Button" parent="VBox"]
 layout_mode = 2
 size_flags_horizontal = 3
@@ -284,7 +277,7 @@ theme_override_font_sizes/font_size = 18
 
 [node name="LblSub" type="Label" parent="VBox/BtnJugar/VBox"]
 layout_mode = 2
-text = "CONTINUAR ASCENSIÓN"
+text = "CONTINUAR ASCENSION"
 horizontal_alignment = 1
 theme_override_colors/font_color = Color(0.333, 0.6, 1.0)
 theme_override_font_sizes/font_size = 9

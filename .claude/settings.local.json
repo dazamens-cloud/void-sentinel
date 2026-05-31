@@ -3,7 +3,11 @@
     "allow": [
       "Bash(Get-ChildItem -Path \"D:\\\\proyectos godot\\\\void-sentinel\" -Recurse -Include \"*.gd\", \"*.tscn\")",
       "Bash(Select-Object -ExpandProperty FullName)",
-      "Bash(Sort-Object)"
+      "Bash(Sort-Object)",
+      "PowerShell(& \"C:\\\\Users\\\\andre\\\\Downloads\\\\Godot_v4.6.2-stable_win64.exe\" --headless --path \"D:\\\\proyectos godot\\\\void-sentinel\" --check-only 2>&1)",
+      "Bash(ls \"C:/Users/andre/Downloads/Godot\"* 2>/dev/null || echo \"no encontrado\")",
+      "Bash(\"C:/Users/andre/Downloads/Godot_v4.6.2-stable_win64.exe/Godot_v4.6.2-stable_win64_console.exe\" --headless --path \"D:/proyectos godot/void-sentinel\" --check-only)",
+      "Bash(git checkout *)"
     ]
   }
 }

@@ -239,8 +239,8 @@ var mejoras: Dictionary = {
 
 # ═══════════════════════════════════════════════════
 func _ready() -> void:
-	# ✅ FIX: eliminada llamada a test_costos() que no existía
 	Economia.energia_cambiada.connect(_on_energia_cambiada)
+	cargar_mejoras_nexo()
 
 # ═══════════════════════════════════════════════════
 # GETTERS
@@ -383,9 +383,49 @@ func _aplicar_mejora(mejora_id: String) -> void:
 		"blindaje", "disparos_iniciales", "recarga_rapida", "lock_on":
 			pass  # Bloqueadas — se implementarán al desbloquear Commander
 
-func reiniciar_mejoras() -> void:
+func subir_nivel_nexo(mejora_id: String) -> void:
+	# Para compras del Nexo (el pago en ecos ya fue procesado por Economia)
+	if not mejoras.has(mejora_id):
+		return
+	mejoras[mejora_id]["nivel"] += 1
+	_aplicar_mejora(mejora_id)
+	mejora_comprada.emit(mejora_id, mejoras[mejora_id]["nivel"])
+	mejoras_actualizadas.emit()
+
+func reiniciar_mejoras_inrun() -> void:
+	var categorias_inrun = ["ataque", "defensa", "bonificacion"]
 	for id in mejoras.keys():
-		mejoras[id]["nivel"] = 0
+		if mejoras[id].get("categoria", "") in categorias_inrun:
+			mejoras[id]["nivel"] = 0
+	mejoras_actualizadas.emit()
+
+func reiniciar_mejoras() -> void:
+	reiniciar_mejoras_inrun()
+
+func guardar_mejoras_nexo() -> void:
+	var datos: Dictionary = {}
+	for id in mejoras.keys():
+		if mejoras[id]["nivel"] > 0:
+			datos[id] = mejoras[id]["nivel"]
+	var file = FileAccess.open("user://nexo.save", FileAccess.WRITE)
+	if file:
+		file.store_var(datos)
+		file.close()
+
+func cargar_mejoras_nexo() -> void:
+	if not FileAccess.file_exists("user://nexo.save"):
+		return
+	var file = FileAccess.open("user://nexo.save", FileAccess.READ)
+	if not file:
+		return
+	var datos = file.get_var()
+	file.close()
+	if not datos is Dictionary:
+		return
+	for id in datos.keys():
+		if mejoras.has(id):
+			mejoras[id]["nivel"] = datos[id]
+			_aplicar_mejora(id)
 	mejoras_actualizadas.emit()
 
 func _on_energia_cambiada(_nueva_energia: float) -> void:

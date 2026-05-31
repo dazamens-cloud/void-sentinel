@@ -66,15 +66,15 @@ func _make_pack_card(pack: Dictionary) -> PanelContainer:
 	# Icono
 	var icon_box = PanelContainer.new()
 	icon_box.custom_minimum_size = Vector2(36, 36)
-	var is = StyleBoxFlat.new()
-	is.bg_color     = Color(0.165, 0.082, 0.0) if pack.highlight else Color(0.067, 0.067, 0.067)
-	is.border_color = COLOR_ORANGE if pack.highlight else Color(0.102, 0.102, 0.18)
-	is.set_border_width_all(1)
-	is.corner_radius_top_left = 8
-	is.corner_radius_top_right = 8
-	is.corner_radius_bottom_left = 8
-	is.corner_radius_bottom_right = 8
-	icon_box.add_theme_stylebox_override("panel", is)
+	var icon_style = StyleBoxFlat.new()
+	icon_style.bg_color     = Color(0.165, 0.082, 0.0) if pack.highlight else Color(0.067, 0.067, 0.067)
+	icon_style.border_color = COLOR_ORANGE if pack.highlight else Color(0.102, 0.102, 0.18)
+	icon_style.set_border_width_all(1)
+	icon_style.corner_radius_top_left = 8
+	icon_style.corner_radius_top_right = 8
+	icon_style.corner_radius_bottom_left = 8
+	icon_style.corner_radius_bottom_right = 8
+	icon_box.add_theme_stylebox_override("panel", icon_style)
 	var icon_lbl = Label.new()
 	icon_lbl.text = "◆"
 	icon_lbl.add_theme_color_override("font_color", COLOR_PLAT)
@@ -152,15 +152,15 @@ func _make_otro_card(item: Dictionary) -> PanelContainer:
 
 	var icon_box = PanelContainer.new()
 	icon_box.custom_minimum_size = Vector2(36, 36)
-	var is = StyleBoxFlat.new()
-	is.bg_color     = Color(0.067, 0.067, 0.067)
-	is.border_color = Color(0.102, 0.102, 0.18)
-	is.set_border_width_all(1)
-	is.corner_radius_top_left = 8
-	is.corner_radius_top_right = 8
-	is.corner_radius_bottom_left = 8
-	is.corner_radius_bottom_right = 8
-	icon_box.add_theme_stylebox_override("panel", is)
+	var icon_style = StyleBoxFlat.new()
+	icon_style.bg_color     = Color(0.067, 0.067, 0.067)
+	icon_style.border_color = Color(0.102, 0.102, 0.18)
+	icon_style.set_border_width_all(1)
+	icon_style.corner_radius_top_left = 8
+	icon_style.corner_radius_top_right = 8
+	icon_style.corner_radius_bottom_left = 8
+	icon_style.corner_radius_bottom_right = 8
+	icon_box.add_theme_stylebox_override("panel", icon_style)
 	var icon_lbl = Label.new()
 	icon_lbl.text = "★"
 	icon_lbl.add_theme_color_override("font_color", Color(0.333, 0.333, 0.333))
