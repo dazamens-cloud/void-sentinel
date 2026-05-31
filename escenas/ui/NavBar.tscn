@@ -1,11 +1,10 @@
-[gd_scene format=3 uid="uid://navbar"]
+[gd_scene format=3 uid="uid://chywd2a26jgcw"]
 
-[ext_resource type="Script" path="res://scripts/ui/NavBar.gd" id="1_navbar"]
+[ext_resource type="Script" uid="uid://qad8gvuktvq6" path="res://scripts/ui/NavBar.gd" id="1_navbar"]
 
-[node name="NavBar" type="PanelContainer"]
+[node name="NavBar" type="PanelContainer" unique_id=1620141537]
 custom_minimum_size = Vector2(0, 72)
 anchors_preset = 12
-anchor_left = 0.0
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -13,149 +12,145 @@ offset_top = -72.0
 grow_vertical = 0
 script = ExtResource("1_navbar")
 
-[node name="StyleBox" type="StyleBoxFlat" parent="."]
+[node name="StyleBox" type="StyleBoxFlat" parent="." unique_id=154317604]
 
-[node name="HBox" type="HBoxContainer" parent="."]
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
+[node name="HBox" type="HBoxContainer" parent="." unique_id=593274810]
+layout_mode = 2
 alignment = 1
 
-[node name="BtnHome" type="Button" parent="HBox"]
+[node name="BtnHome" type="Button" parent="HBox" unique_id=581330172]
+custom_minimum_size = Vector2(0, 72)
 layout_mode = 2
 size_flags_horizontal = 3
-name = "BtnHome"
 flat = true
-custom_minimum_size = Vector2(0, 72)
 
-[node name="VBox" type="VBoxContainer" parent="HBox/BtnHome"]
-anchors_preset = 15
+[node name="VBox" type="VBoxContainer" parent="HBox/BtnHome" unique_id=1017607910]
+layout_mode = 0
 anchor_right = 1.0
 anchor_bottom = 1.0
 alignment = 1
 
-[node name="Icon" type="TextureRect" parent="HBox/BtnHome/VBox"]
+[node name="Icon" type="TextureRect" parent="HBox/BtnHome/VBox" unique_id=1437929798]
+custom_minimum_size = Vector2(24, 24)
 layout_mode = 2
 size_flags_horizontal = 4
-custom_minimum_size = Vector2(24, 24)
 expand_mode = 1
 stretch_mode = 5
 
-[node name="Label" type="Label" parent="HBox/BtnHome/VBox"]
+[node name="Label" type="Label" parent="HBox/BtnHome/VBox" unique_id=788197767]
 layout_mode = 2
 size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 10
 text = "Home"
 horizontal_alignment = 1
-theme_override_font_sizes/font_size = 10
 
-[node name="BtnNexus" type="Button" parent="HBox"]
+[node name="BtnNexus" type="Button" parent="HBox" unique_id=1655478990]
+custom_minimum_size = Vector2(0, 72)
 layout_mode = 2
 size_flags_horizontal = 3
 flat = true
-custom_minimum_size = Vector2(0, 72)
 
-[node name="VBox" type="VBoxContainer" parent="HBox/BtnNexus"]
-anchors_preset = 15
+[node name="VBox" type="VBoxContainer" parent="HBox/BtnNexus" unique_id=819512100]
+layout_mode = 0
 anchor_right = 1.0
 anchor_bottom = 1.0
 alignment = 1
 
-[node name="Icon" type="TextureRect" parent="HBox/BtnNexus/VBox"]
+[node name="Icon" type="TextureRect" parent="HBox/BtnNexus/VBox" unique_id=1188170594]
+custom_minimum_size = Vector2(24, 24)
 layout_mode = 2
 size_flags_horizontal = 4
-custom_minimum_size = Vector2(24, 24)
 expand_mode = 1
 stretch_mode = 5
 
-[node name="Label" type="Label" parent="HBox/BtnNexus/VBox"]
+[node name="Label" type="Label" parent="HBox/BtnNexus/VBox" unique_id=1059353369]
 layout_mode = 2
 size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 10
 text = "Nexus"
 horizontal_alignment = 1
-theme_override_font_sizes/font_size = 10
 
-[node name="BtnForja" type="Button" parent="HBox"]
+[node name="BtnForja" type="Button" parent="HBox" unique_id=1442057749]
+custom_minimum_size = Vector2(0, 72)
 layout_mode = 2
 size_flags_horizontal = 3
 flat = true
-custom_minimum_size = Vector2(0, 72)
 
-[node name="VBox" type="VBoxContainer" parent="HBox/BtnForja"]
-anchors_preset = 15
+[node name="VBox" type="VBoxContainer" parent="HBox/BtnForja" unique_id=770647897]
+layout_mode = 0
 anchor_right = 1.0
 anchor_bottom = 1.0
 alignment = 1
 
-[node name="Icon" type="TextureRect" parent="HBox/BtnForja/VBox"]
-layout_mode = 2
-size_flags_horizontal = 4
+[node name="Icon" type="TextureRect" parent="HBox/BtnForja/VBox" unique_id=1810956540]
 custom_minimum_size = Vector2(24, 24)
+layout_mode = 2
+size_flags_horizontal = 4
 expand_mode = 1
 stretch_mode = 5
 
-[node name="LockIcon" type="TextureRect" parent="HBox/BtnForja/VBox"]
-layout_mode = 2
-size_flags_horizontal = 4
+[node name="LockIcon" type="TextureRect" parent="HBox/BtnForja/VBox" unique_id=972415354]
 custom_minimum_size = Vector2(12, 12)
-expand_mode = 1
-stretch_mode = 5
-visible = true
-
-[node name="Label" type="Label" parent="HBox/BtnForja/VBox"]
 layout_mode = 2
 size_flags_horizontal = 4
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Label" type="Label" parent="HBox/BtnForja/VBox" unique_id=685081036]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 10
 text = "Forja"
 horizontal_alignment = 1
-theme_override_font_sizes/font_size = 10
 
-[node name="BtnPerfil" type="Button" parent="HBox"]
+[node name="BtnPerfil" type="Button" parent="HBox" unique_id=2126305140]
+custom_minimum_size = Vector2(0, 72)
 layout_mode = 2
 size_flags_horizontal = 3
 flat = true
-custom_minimum_size = Vector2(0, 72)
 
-[node name="VBox" type="VBoxContainer" parent="HBox/BtnPerfil"]
-anchors_preset = 15
+[node name="VBox" type="VBoxContainer" parent="HBox/BtnPerfil" unique_id=1944952984]
+layout_mode = 0
 anchor_right = 1.0
 anchor_bottom = 1.0
 alignment = 1
 
-[node name="Icon" type="TextureRect" parent="HBox/BtnPerfil/VBox"]
+[node name="Icon" type="TextureRect" parent="HBox/BtnPerfil/VBox" unique_id=2088007309]
+custom_minimum_size = Vector2(24, 24)
 layout_mode = 2
 size_flags_horizontal = 4
-custom_minimum_size = Vector2(24, 24)
 expand_mode = 1
 stretch_mode = 5
 
-[node name="Label" type="Label" parent="HBox/BtnPerfil/VBox"]
+[node name="Label" type="Label" parent="HBox/BtnPerfil/VBox" unique_id=1916927650]
 layout_mode = 2
 size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 10
 text = "Perfil"
 horizontal_alignment = 1
-theme_override_font_sizes/font_size = 10
 
-[node name="BtnTienda" type="Button" parent="HBox"]
+[node name="BtnTienda" type="Button" parent="HBox" unique_id=35542105]
+custom_minimum_size = Vector2(0, 72)
 layout_mode = 2
 size_flags_horizontal = 3
 flat = true
-custom_minimum_size = Vector2(0, 72)
 
-[node name="VBox" type="VBoxContainer" parent="HBox/BtnTienda"]
-anchors_preset = 15
+[node name="VBox" type="VBoxContainer" parent="HBox/BtnTienda" unique_id=1810971362]
+layout_mode = 0
 anchor_right = 1.0
 anchor_bottom = 1.0
 alignment = 1
 
-[node name="Icon" type="TextureRect" parent="HBox/BtnTienda/VBox"]
+[node name="Icon" type="TextureRect" parent="HBox/BtnTienda/VBox" unique_id=979843978]
+custom_minimum_size = Vector2(24, 24)
 layout_mode = 2
 size_flags_horizontal = 4
-custom_minimum_size = Vector2(24, 24)
 expand_mode = 1
 stretch_mode = 5
 
-[node name="Label" type="Label" parent="HBox/BtnTienda/VBox"]
+[node name="Label" type="Label" parent="HBox/BtnTienda/VBox" unique_id=1375254456]
 layout_mode = 2
 size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 10
 text = "Tienda"
 horizontal_alignment = 1
-theme_override_font_sizes/font_size = 10

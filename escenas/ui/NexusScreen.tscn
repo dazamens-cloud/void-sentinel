@@ -1,66 +1,34 @@
-[gd_scene format=3 uid="uid://dnxy2ghjbernx"]
+[gd_scene format=3 uid="uid://m0hhbx0cdsjt"]
 
 [ext_resource type="Script" uid="uid://lqp3tfvwhloh" path="res://scripts/ui/NexusScreen.gd" id="1_nexus"]
 
-[node name="NexusScreen" type="Control" unique_id=182563486]
+[node name="NexusScreen" type="Control" unique_id=1208567152]
 layout_mode = 3
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
+anchors_preset = 0
 script = ExtResource("1_nexus")
 
-[node name="Background" type="ColorRect" parent="." unique_id=104545101]
+[node name="VBox" type="VBoxContainer" parent="." unique_id=627552662]
 layout_mode = 0
-anchor_right = 1.0
-anchor_bottom = 1.0
-color = Color(0.031, 0.031, 0.071, 1)
+offset_right = 40.0
+offset_bottom = 40.0
 
-[node name="VBox" type="VBoxContainer" parent="." unique_id=1124648627]
-layout_mode = 0
-anchor_right = 1.0
-anchor_bottom = 1.0
-theme_override_constants/separation = 0
-
-[node name="MejorasScroll" type="ScrollContainer" parent="VBox" unique_id=9986833]
+[node name="TabsBar" type="HBoxContainer" parent="VBox" unique_id=810693092]
 layout_mode = 2
-size_flags_vertical = 3
 
-[node name="MejorasList" type="VBoxContainer" parent="VBox/MejorasScroll" unique_id=1360242378]
+[node name="BtnAtaque" type="Button" parent="VBox/TabsBar" unique_id=1512581900]
 layout_mode = 2
-size_flags_horizontal = 3
-theme_override_constants/separation = 0
 
-[node name="TabsBar" type="HBoxContainer" parent="VBox" unique_id=2070199539]
-custom_minimum_size = Vector2(0, 46)
+[node name="BtnDefensa" type="Button" parent="VBox/TabsBar" unique_id=1531315328]
 layout_mode = 2
-theme_override_constants/separation = 0
 
-[node name="BtnAtaque" type="Button" parent="VBox/TabsBar" unique_id=2019941151]
+[node name="BtnBonus" type="Button" parent="VBox/TabsBar" unique_id=98767545]
 layout_mode = 2
-size_flags_horizontal = 3
-theme_override_font_sizes/font_size = 10
-text = "⚔ Ataque"
-flat = true
 
-[node name="BtnDefensa" type="Button" parent="VBox/TabsBar" unique_id=751612990]
+[node name="BtnCommander" type="Button" parent="VBox/TabsBar" unique_id=186846608]
 layout_mode = 2
-size_flags_horizontal = 3
-theme_override_font_sizes/font_size = 10
-text = "🛡 Defensa"
-flat = true
 
-[node name="BtnBonus" type="Button" parent="VBox/TabsBar" unique_id=387547838]
+[node name="MejorasScroll" type="ScrollContainer" parent="VBox" unique_id=802688133]
 layout_mode = 2
-size_flags_horizontal = 3
-theme_override_font_sizes/font_size = 10
-text = "✦ Bonific."
-flat = true
 
-[node name="BtnCommander" type="Button" parent="VBox/TabsBar" unique_id=1204001846]
+[node name="MejorasList" type="VBoxContainer" parent="VBox/MejorasScroll" unique_id=1188288638]
 layout_mode = 2
-size_flags_horizontal = 3
-theme_override_font_sizes/font_size = 10
-text = "♛ Cmd."
-flat = true
