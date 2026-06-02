@@ -98,29 +98,25 @@ func _destruir() -> void:
 	esta_destruido = true
 	set_physics_process(false)
 	remove_from_group("espectros")
-
 	var texto_energia = ESCENA_TEXTO.instantiate()
 	texto_energia.set_energia(recompensa_energia)
 	texto_energia.global_position = global_position
-	get_tree().current_scene.add_child(texto_energia)
-
+	get_tree().current_scene.call_deferred("add_child", texto_energia)
 	var explosion = ESCENA_EXPLOSION.instantiate()
 	explosion.global_position = global_position
-	get_tree().current_scene.add_child(explosion)
-
+	explosion.scale = Vector2(0.8, 0.8)
+	get_tree().current_scene.call_deferred("add_child", explosion)
 	var fragmento = ESCENA_FRAGMENTO.instantiate()
 	fragmento.global_position = global_position
-	get_tree().current_scene.add_child(fragmento)
-
+	get_tree().current_scene.call_deferred("add_child", fragmento)
 	Economia.procesar_drop_espectro({
 		"recompensa": recompensa_energia,
 		"tipo": tipo_espectro,
 		"posicion": global_position
 	})
 	espectro_destruido.emit(global_position, recompensa_energia)
-
 	var tw = create_tween()
 	if sprite:
-		tw.parallel().tween_property(sprite, "scale", Vector2.ZERO, 0.22)
-		tw.parallel().tween_property(sprite, "self_modulate", Color(1.0, 0.5, 0.1, 0.0), 0.28)
+		tw.parallel().tween_property(sprite, "scale", Vector2.ZERO, 0.15)
+		tw.parallel().tween_property(sprite, "self_modulate", Color(1.0, 0.3, 0.0, 0.0), 0.20)
 	tw.tween_callback(queue_free)

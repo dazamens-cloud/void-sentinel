@@ -1,4 +1,4 @@
-class_name ForjaScreen
+class_name ForjaScreenUI
 extends Control
 # ============================================================
 # ForjaScreen.gd
@@ -461,8 +461,8 @@ class ForgeArena extends Control:
 
 		var col := Color(MenuTheme.FRAG.r, MenuTheme.FRAG.g, MenuTheme.FRAG.b, 0.25)
 		var rareza: String = data["rareza"]
-		if rareza in ForjaScreen.RAREZA_COLOR:
-			col = ForjaScreen.RAREZA_COLOR[rareza]
+		if rareza in ForjaScreenUI.RAREZA_COLOR:
+			col = ForjaScreenUI.RAREZA_COLOR[rareza]
 
 		var style := StyleBoxFlat.new()
 		style.bg_color = Color(0.06, 0.04, 0.14, 0.9)
@@ -509,3 +509,4 @@ class ForgeArena extends Control:
 			for child in get_children():
 				if child.has_meta("pos"):
 					_position_slot(child, child.get_meta("pos"))
+			

@@ -75,7 +75,7 @@ func _build_screens() -> void:
 	# Crear cada pantalla. Cada *Screen.gd expone build() -> Control.
 	screens["home"]   = HomeScreen.new()
 	screens["nexo"]   = NexoScreen.new()
-	screens["forja"]  = ForjaScreen.new()
+	screens["forja"]  = ForjaScreenUI.new()
 	screens["perfil"] = PerfilScreen.new()
 	screens["tienda"] = TiendaScreen.new()
 
