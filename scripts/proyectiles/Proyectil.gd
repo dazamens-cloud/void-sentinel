@@ -8,6 +8,11 @@ var velocidad: float = 600.0
 var danio: float = 10.0
 var es_critico: bool = false
 
+# Rebote (mejora "rebote" / "alcance_rebote")
+var rebotes_restantes: int = 0
+var alcance_rebote: float = 0.0
+var _ya_golpeados: Array = []
+
 # ✨ NUEVO: Sistema de disparos especiales
 var es_especial: bool = false
 var color_especial: Color = Color.GOLDENROD
@@ -45,26 +50,44 @@ func _physics_process(delta: float) -> void:
 
 func _on_body_entered(body: Node) -> void:
 	if not is_instance_valid(body): return
-	if body.is_in_group("espectros"):
-		# ✨ NUEVO: Disparos especiales NO atraviesan, solo dañan Commander
-		if es_especial:
-			# Solo daña si es Commander
-			if body.tipo_espectro == "commander":
-				var dano_final = danio
-				if es_critico:
-					dano_final *= 1.5
-				if body.has_method("recibir_dano"):
-					body.recibir_dano(dano_final, es_critico)
-				_destruir()
-			# Si no es Commander, lo atraviesa
-		else:
-			# Disparo normal: daña y se destruye
-			var dano_final = danio
-			if es_critico:
-				dano_final *= 1.5
+	if not body.is_in_group("espectros"): return
+
+	# El daño ya incluye el factor crítico (lo aplica el Nexus al disparar)
+	if es_especial:
+		# Disparo especial: solo daña al Commander, atraviesa al resto
+		if body.get("tipo_espectro") == "commander":
 			if body.has_method("recibir_dano"):
-				body.recibir_dano(dano_final, es_critico)
+				body.recibir_dano(danio, es_critico)
 			_destruir()
+		return
+
+	# Disparo normal: daña al objetivo
+	if body.has_method("recibir_dano"):
+		body.recibir_dano(danio, es_critico)
+	_ya_golpeados.append(body)
+
+	# ✅ Rebote: salta al enemigo más cercano que no haya sido golpeado
+	if rebotes_restantes > 0:
+		var siguiente := _buscar_objetivo_rebote(body)
+		if siguiente:
+			rebotes_restantes -= 1
+			direccion = (siguiente.global_position - global_position).normalized()
+			rotation = direccion.angle()
+			return
+	_destruir()
+
+func _buscar_objetivo_rebote(actual: Node) -> Node2D:
+	var mejor: Node2D = null
+	var dist_min := alcance_rebote
+	for e in get_tree().get_nodes_in_group("espectros"):
+		if not is_instance_valid(e) or e == actual: continue
+		if e in _ya_golpeados: continue
+		if e.get("tipo_espectro") == "commander": continue
+		var d := global_position.distance_to(e.global_position)
+		if d < dist_min:
+			dist_min = d
+			mejor = e
+	return mejor
 
 func _destruir() -> void:
 	"""Destruye el proyectil con efecto."""

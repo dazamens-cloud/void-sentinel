@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="void-sentinel"
-run/main_scene="uid://chnjkkwjgbb6j"
+run/main_scene="uid://gcl42bnmc8n6"
 config/features=PackedStringArray("4.6", "GL Compatibility")
 config/icon="res://icon.svg"
 
@@ -20,7 +20,6 @@ config/icon="res://icon.svg"
 Economia="*uid://8lf43xep6q0x"
 NexusStats="*uid://hhuldtka10uo"
 MejoraManager="*uid://cvxf7onkdmu4r"
-CommanderManager="*uid://bxvom83aidhxj"
 Sistemadisparosespeciales="*uid://dhk5yhskeov7a"
 
 [display]

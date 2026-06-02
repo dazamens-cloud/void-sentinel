@@ -60,7 +60,24 @@ func _physics_process(delta: float) -> void:
 				nexus.recibir_ataque(danio_ataque)
 			temporizador_ataque = INTERVALO_ATAQUE
 			
+	velocity *= _mult_lentitud(delta)
 	move_and_slide()
+
+var _lentitud_factor: float = 0.0
+var _lentitud_timer: float = 0.0
+
+func aplicar_lentitud(factor: float, duracion: float) -> void:
+	_lentitud_factor = maxf(_lentitud_factor, factor)
+	_lentitud_timer = maxf(_lentitud_timer, duracion)
+
+func _mult_lentitud(delta: float) -> float:
+	if _lentitud_timer > 0.0:
+		_lentitud_timer -= delta
+		if _lentitud_timer <= 0.0:
+			_lentitud_factor = 0.0
+			return 1.0
+		return 1.0 - _lentitud_factor
+	return 1.0
 
 func recibir_dano(cantidad: float, es_critico: bool = false) -> void:
 	if esta_destruido: return

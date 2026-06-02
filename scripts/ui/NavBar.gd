@@ -1,72 +1,146 @@
-extends PanelContainer
+class_name NavBar
+extends Control
+# ============================================================
+# NavBar.gd
+# Barra de navegacion inferior.
+# Orden: Nexo - Forja - [HOME central] - Perfil - Tienda
+#
+# Emite la senal "screen_requested(nombre)" cuando se pulsa un
+# boton. MainMenu la escucha y cambia de pantalla.
+#
+# Es un Control puro construido por codigo (sin .tscn propio).
+# MainMenu lo instancia con NavBar.new().
+# ============================================================
 
-# ============================================================================
-# NAVBAR - Barra de navegación inferior
-# ============================================================================
+signal screen_requested(screen_name: String)
 
-signal tab_pressed(tab)
+# Guardamos referencias a cada boton para poder marcar el activo.
+var _buttons: Dictionary = {}
+var _active: String = "home"
 
-# Colores activo / inactivo por pestaña
-const COLOR_ACTIVE = {
-	0: Color(0.0, 0.898, 1.0),    # Home    → Cian
-	1: Color(0.961, 0.651, 0.137), # Nexus   → Gold
-	2: Color(1.0, 0.42, 0.0),     # Forja   → Naranja
-	3: Color(0.482, 0.188, 1.0),  # Perfil  → Morado
-	4: Color(1.0, 0.42, 0.0),     # Tienda  → Naranja
-}
-const COLOR_INACTIVE = Color(0.165, 0.165, 0.251)
-
-var forja_unlocked: bool = false
-
-@onready var buttons = [
-	$HBox/BtnHome,
-	$HBox/BtnNexus,
-	$HBox/BtnForja,
-	$HBox/BtnPerfil,
-	$HBox/BtnTienda,
+# Definicion de los items: [clave, simbolo, etiqueta, es_central]
+const ITEMS := [
+	["nexo",   MenuTheme.SYM_ECOS,   "NEXO",   false],
+	["forja",  MenuTheme.SYM_FRAG,   "FORJA",  false],
+	["home",   MenuTheme.SYM_HOME,   "INICIO", true],
+	["perfil", MenuTheme.SYM_PERFIL, "PERFIL", false],
+	["tienda", MenuTheme.SYM_TIENDA, "TIENDA", false],
 ]
 
-@onready var lock_icon = $HBox/BtnForja/VBox/LockIcon
 
-func _ready():
-	# Fondo de la navbar
-	var style = StyleBoxFlat.new()
-	style.bg_color = Color(0.043, 0.043, 0.094)
-	style.border_color = Color(0.078, 0.078, 0.157)
-	style.border_width_top = 1
-	add_theme_stylebox_override("panel", style)
-	
-	# Conectar botones
-	$HBox/BtnHome.pressed.connect(func(): _emit_tab(0))
-	$HBox/BtnNexus.pressed.connect(func(): _emit_tab(1))
-	$HBox/BtnForja.pressed.connect(func(): _emit_tab(2))
-	$HBox/BtnPerfil.pressed.connect(func(): _emit_tab(3))
-	$HBox/BtnTienda.pressed.connect(func(): _emit_tab(4))
-	
-	# Comprobar si la Forja está desbloqueada
-	_check_forja_unlock()
+func _ready() -> void:
+	custom_minimum_size = Vector2(0, 86)
+	_build()
 
-func _emit_tab(index: int) -> void:
-	tab_pressed.emit(index)
 
-func set_active_tab(tab: int) -> void:
-	for i in buttons.size():
-		var label = buttons[i].get_node("VBox/Label")
-		var color = COLOR_ACTIVE[i] if i == tab else COLOR_INACTIVE
-		label.add_theme_color_override("font_color", color)
-		# Aquí se cambiaría también el color del icono cuando tengamos assets
+func _build() -> void:
+	# Fondo de la barra.
+	var bg := PanelContainer.new()
+	bg.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	var bg_style := StyleBoxFlat.new()
+	bg_style.bg_color = Color(0.016, 0.035, 0.063, 0.97)
+	bg_style.border_color = MenuTheme.BORDER_GLOW
+	bg_style.border_width_top = 1
+	bg.add_theme_stylebox_override("panel", bg_style)
+	add_child(bg)
 
-func _check_forja_unlock() -> void:
-	var max_asc = Economia.numero_ascension
-	forja_unlocked = max_asc >= 2000
-	lock_icon.visible = not forja_unlocked
+	# Contenedor horizontal de los 5 items.
+	var row := HBoxContainer.new()
+	row.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	row.alignment = BoxContainer.ALIGNMENT_CENTER
+	row.add_theme_constant_override("separation", 4)
+	# Margen interior: empuja un poco hacia arriba (deja hueco a la barra
+	# de gestos del movil abajo).
+	var margin := MarginContainer.new()
+	margin.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	margin.add_theme_constant_override("margin_top", 8)
+	margin.add_theme_constant_override("margin_bottom", 20)
+	margin.add_theme_constant_override("margin_left", 6)
+	margin.add_theme_constant_override("margin_right", 6)
+	margin.add_child(row)
+	add_child(margin)
 
-func unlock_forja() -> void:
-	forja_unlocked = true
-	lock_icon.visible = false
-	# Animación de desbloqueo (pulso)
-	var tween = create_tween()
-	tween.tween_property(
-		$HBox/BtnForja, "modulate",
-		Color(1.0, 0.42, 0.0), 0.3
-	)
+	# Crear cada boton.
+	for item in ITEMS:
+		var key: String = item[0]
+		var sym: String = item[1]
+		var lbl: String = item[2]
+		var central: bool = item[3]
+		var btn := _make_nav_button(key, sym, lbl, central)
+		row.add_child(btn)
+		_buttons[key] = btn
+
+	set_active("home")
+
+
+# Crea un boton de navegacion (icono arriba, etiqueta abajo).
+func _make_nav_button(key: String, sym: String, lbl: String, central: bool) -> Button:
+	var btn := Button.new()
+	btn.flat = true
+	btn.focus_mode = Control.FOCUS_NONE
+	btn.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	btn.custom_minimum_size = Vector2(0, 58)
+
+	# El boton central (Home) lleva un fondo destacado.
+	if central:
+		var style := StyleBoxFlat.new()
+		style.bg_color = Color(MenuTheme.CYAN.r, MenuTheme.CYAN.g, MenuTheme.CYAN.b, 0.08)
+		style.border_color = Color(MenuTheme.CYAN.r, MenuTheme.CYAN.g, MenuTheme.CYAN.b, 0.35)
+		style.set_border_width_all(1)
+		style.set_corner_radius_all(12)
+		btn.add_theme_stylebox_override("normal", style)
+		btn.add_theme_stylebox_override("hover", style)
+		btn.add_theme_stylebox_override("pressed", style)
+
+	# Contenido vertical: icono + etiqueta.
+	var vbox := VBoxContainer.new()
+	vbox.alignment = BoxContainer.ALIGNMENT_CENTER
+	vbox.add_theme_constant_override("separation", 4)
+	vbox.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	vbox.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+
+	var icon := Label.new()
+	icon.text = sym
+	icon.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	icon.add_theme_font_size_override("font_size", 18)
+	icon.add_theme_color_override("font_color", MenuTheme.TEXT_MUTED)
+	icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var hud_font := MenuTheme.get_font_hud()
+	if hud_font:
+		icon.add_theme_font_override("font", hud_font)
+
+	var label := Label.new()
+	label.text = lbl
+	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	label.add_theme_font_size_override("font_size", 7)
+	label.add_theme_color_override("font_color", MenuTheme.TEXT_MUTED)
+	label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	if hud_font:
+		label.add_theme_font_override("font", hud_font)
+
+	vbox.add_child(icon)
+	vbox.add_child(label)
+	btn.add_child(vbox)
+
+	# Guardamos refs internas para recolorear al activar.
+	btn.set_meta("icon", icon)
+	btn.set_meta("label", label)
+	btn.set_meta("central", central)
+
+	# Al pulsar, emitimos la senal con la clave de la pantalla.
+	btn.pressed.connect(func(): screen_requested.emit(key))
+
+	return btn
+
+
+# Marca visualmente el boton de la pantalla activa.
+func set_active(screen_name: String) -> void:
+	_active = screen_name
+	for key in _buttons.keys():
+		var btn: Button = _buttons[key]
+		var icon: Label = btn.get_meta("icon")
+		var label: Label = btn.get_meta("label")
+		var is_active: bool = (key == screen_name)
+		var col: Color = MenuTheme.CYAN if is_active else MenuTheme.TEXT_MUTED
+		icon.add_theme_color_override("font_color", col)
+		label.add_theme_color_override("font_color", col)

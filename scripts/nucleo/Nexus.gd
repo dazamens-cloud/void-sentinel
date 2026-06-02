@@ -14,10 +14,13 @@ var disparando_especial: bool = false
 var punto_inicio_drag: Vector2 = Vector2.ZERO
 var objetivo_especial: Node2D = null
 
-# Referencia segura al CommanderManager
-var _commander_manager: Node = null
-
 const ESCENA_TEXTO = preload("res://escenas/Objetos/TextoFlotante.tscn")
+
+# Pulso de Quartz (onda defensiva periódica)
+const PULSO_INTERVALO: float = 50.0
+const PULSO_EMPUJE_BASE: float = 250.0
+const PULSO_LENTITUD_DURACION: float = 2.0
+var _pulso_cooldown: float = PULSO_INTERVALO
 
 func _ready() -> void:
 	add_to_group("nexus")
@@ -30,18 +33,6 @@ func _ready() -> void:
 	NexusStats.stats_actualizadas.connect(_on_stats_actualizadas)
 	timer_disparo.wait_time = NexusStats.get_cadencia_timer()
 	timer_disparo.start()
-
-	# Buscar CommanderManager por ruta segura
-	_commander_manager = get_node_or_null("/root/CommaderManager")
-	if _commander_manager == null:
-		_commander_manager = get_node_or_null("/root/CommanderManager")
-
-	if _commander_manager:
-		print("✅ Nexus conectado a CommanderManager")
-	else:
-		print("⚠️ Nexus: CommanderManager no encontrado, disparos especiales desactivados")
-
-	
 
 	print("✅ Nexus iniciado. Cadencia: ", timer_disparo.wait_time, "s")
 
@@ -56,7 +47,51 @@ func _process(delta: float) -> void:
 	if regen > 0.0:
 		NexusStats.curar(regen * delta)
 
+	# ✅ Pulso de Quartz (solo si la mejora está activa)
+	if NexusStats.get_pulso_radio() > 0.0:
+		_pulso_cooldown -= delta
+		if _pulso_cooldown <= 0.0:
+			_pulso_cooldown = PULSO_INTERVALO
+			_emitir_pulso()
+
 	_actualizar_color()
+
+func _emitir_pulso() -> void:
+	var radio := NexusStats.get_pulso_radio()
+	if radio <= 0.0: return
+	var lentitud := NexusStats.get_pulso_lentitud()
+	var empuje_px := NexusStats.get_pulso_empuje() * PULSO_EMPUJE_BASE
+
+	_efecto_visual_pulso(radio)
+
+	for e in get_tree().get_nodes_in_group("espectros"):
+		if not is_instance_valid(e): continue
+		var dir: Vector2 = e.global_position - global_position
+		if dir.length() > radio: continue
+		# Empuje radial (aleja del Nexus)
+		if empuje_px > 0.0 and dir.length() > 0.01:
+			e.global_position += dir.normalized() * empuje_px
+		# Lentitud temporal
+		if lentitud > 0.0 and e.has_method("aplicar_lentitud"):
+			e.aplicar_lentitud(lentitud, PULSO_LENTITUD_DURACION)
+	print("🌀 Pulso de Quartz emitido (r=", int(radio), ")")
+
+func _efecto_visual_pulso(radio: float) -> void:
+	var poligono := Polygon2D.new()
+	poligono.color = Color(0.3, 0.8, 1.0, 0.35)
+	poligono.z_index = -1
+	var puntos: PackedVector2Array = []
+	for i in range(32):
+		var ang := (float(i) / 32.0) * TAU
+		puntos.append(Vector2(cos(ang), sin(ang)) * radio)
+	poligono.polygon = puntos
+	poligono.global_position = global_position
+	poligono.scale = Vector2(0.1, 0.1)
+	get_tree().current_scene.add_child(poligono)
+	var tw := create_tween()
+	tw.tween_property(poligono, "scale", Vector2.ONE, 0.4)
+	tw.parallel().tween_property(poligono, "color", Color(0.3, 0.8, 1.0, 0.0), 0.4)
+	tw.tween_callback(poligono.queue_free)
 
 func _actualizar_color() -> void:
 	if NexusStats.salud_actual <= 0:
@@ -89,18 +124,41 @@ func _disparar() -> void:
 			objetivo = e
 
 	if objetivo:
-		var proyectil = escena_proyectil.instantiate()
-		get_tree().root.add_child(proyectil)
-		proyectil.global_position = global_position
-		proyectil.direccion = (objetivo.global_position - global_position).normalized()
-		proyectil.rotation = proyectil.direccion.angle()
-		proyectil.danio = NexusStats.get_danio()
+		# ✅ Crítico: se tira una vez por disparo
+		var critico := randf() < NexusStats.get_critico_chance()
+		var danio_base := NexusStats.get_danio()
+		if critico:
+			danio_base *= NexusStats.get_critico_factor()
+
+		var dir_base: Vector2 = (objetivo.global_position - global_position).normalized()
+		# ✅ Multidisparo: proyectil principal + extras en abanico
+		var total := 1 + NexusStats.get_multidisparo()
+		for i in range(total):
+			var dir := dir_base
+			if total > 1:
+				var paso := deg_to_rad(12.0)
+				var offset := (float(i) - float(total - 1) / 2.0) * paso
+				dir = dir_base.rotated(offset)
+			_crear_proyectil(dir, danio_base, critico)
+
+func _crear_proyectil(direccion: Vector2, danio_val: float, critico: bool) -> void:
+	var proyectil = escena_proyectil.instantiate()
+	get_tree().root.add_child(proyectil)
+	proyectil.global_position = global_position
+	proyectil.direccion = direccion
+	proyectil.rotation = direccion.angle()
+	proyectil.danio = danio_val
+	proyectil.es_critico = critico
+	# ✅ Rebote (si la mejora está activa y el proyectil lo soporta)
+	if proyectil.get("rebotes_restantes") != null:
+		proyectil.rebotes_restantes = NexusStats.get_rebote_cantidad()
+		proyectil.alcance_rebote = NexusStats.get_rebote_alcance()
 
 func recibir_ataque(cantidad: float) -> void:
 	if esta_destruido: return
 
 	var dano_final = cantidad
-	var def_pct = Economia.get_defensa()
+	var def_pct = NexusStats.get_defensa()
 	if def_pct > 0.0:
 		dano_final = max(1.0, cantidad * (1.0 - def_pct))
 
@@ -148,9 +206,7 @@ func _input(event: InputEvent) -> void:
 	if esta_destruido: return
 
 	# Solo si hay Commander activo
-	if _commander_manager == null: return
-	if not _commander_manager.has_method("get_commander_activo"): return
-	if not _commander_manager.get_commander_activo(): return
+	if not Sistemadisparosespeciales.get_commander_activo(): return
 
 	if event is InputEventMouseButton:
 		if event.pressed:
@@ -179,8 +235,7 @@ func _finalizar_drag_especial() -> void:
 	if not disparando_especial: return
 	disparando_especial = false
 
-	var sistema = get_node_or_null("/root/SistemaDisparosEspeciales")
-	if sistema == null or not sistema.hay_disparos_disponibles():
+	if not Sistemadisparosespeciales.hay_disparos_disponibles():
 		print("❌ Sin disparos especiales")
 		objetivo_especial = null
 		return
@@ -208,6 +263,4 @@ func _disparar_especial(objetivo: Node2D) -> void:
 
 	print("💥 DISPARO ESPECIAL lanzado")
 
-	var sistema = get_node_or_null("/root/SistemaDisparosEspeciales")
-	if sistema:
-		sistema.usar_disparo_especial()
+	Sistemadisparosespeciales.usar_disparo_especial()

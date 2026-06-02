@@ -7,7 +7,7 @@ signal salud_cambiada(actual: float, maxima: float)
 signal stats_actualizadas
 
 # ── Stats base ──────────────────────────────────────────
-var salud_base: float = 200.0
+var salud_base: float = 100.0
 var danio_base: float = 200.0
 var cadencia_base: float = 1.0
 var regeneracion_base: float = 0.5
@@ -26,6 +26,16 @@ var mejora_critico_factor: float = 0.0
 var mejora_salud_extra: float = 0.0
 var mejora_regeneracion: float = 0.0
 var mejora_defensa: float = 0.0
+var mejora_multidisparo: int = 0
+var mejora_rebote_cantidad: int = 0
+var mejora_rebote_alcance: float = 0.0
+var mejora_escudo_max: float = 0.0
+var mejora_pulso_radio: float = 0.0
+var mejora_pulso_lentitud: float = 0.0
+var mejora_pulso_empuje: float = 0.0
+
+# ── Escudo (absorbe daño antes que la salud) ────────────
+var escudo_actual: float = 0.0
 
 # ── Control interno ─────────────────────────────────────
 var _ultimo_salud_emitida: float = -1.0  # Para evitar spam de señal
@@ -63,13 +73,36 @@ func get_critico_factor() -> float:
 	return critico_factor_base + mejora_critico_factor
 
 func get_defensa() -> float:
-	return mejora_defensa
+	# mejora_defensa llega como delta negativo (incremento -0.005/nivel).
+	# Lo convertimos en reducción positiva de daño, máx 75% ("dureza_escudo").
+	return clampf(-mejora_defensa, 0.0, 0.75)
+
+func get_multidisparo() -> int:
+	return mejora_multidisparo
+
+func get_rebote_cantidad() -> int:
+	return mejora_rebote_cantidad
+
+func get_rebote_alcance() -> float:
+	return mejora_rebote_alcance
+
+func get_escudo_max() -> float:
+	return mejora_escudo_max
+
+func get_escudo_actual() -> float:
+	return escudo_actual
 
 # ═══════════════════════════════════════════════════════
 # SALUD Y DAÑO
 # ═══════════════════════════════════════════════════════
 func recibir_ataque(cantidad: float) -> bool:
-	salud_actual = max(0.0, salud_actual - cantidad)
+	var restante := cantidad
+	# El escudo absorbe primero
+	if escudo_actual > 0.0:
+		var absorbido := minf(escudo_actual, restante)
+		escudo_actual -= absorbido
+		restante -= absorbido
+	salud_actual = max(0.0, salud_actual - restante)
 	_emitir_salud_si_cambio()
 	return salud_actual > 0.0
 
@@ -92,6 +125,14 @@ func reiniciar_partida() -> void:
 	mejora_critico_chance = 0.0
 	mejora_critico_factor = 0.0
 	mejora_defensa = 0.0
+	mejora_multidisparo = 0
+	mejora_rebote_cantidad = 0
+	mejora_rebote_alcance = 0.0
+	mejora_escudo_max = 0.0
+	mejora_pulso_radio = 0.0
+	mejora_pulso_lentitud = 0.0
+	mejora_pulso_empuje = 0.0
+	escudo_actual = 0.0
 	salud_actual = salud_base
 	_ultimo_salud_emitida = -1.0
 	salud_cambiada.emit(salud_actual, salud_base)
@@ -129,4 +170,33 @@ func set_mejora_salud(extra: float, regen: float) -> void:
 
 func set_mejora_defensa(valor: float) -> void:
 	mejora_defensa = valor
+
+func set_mejora_multidisparo(cantidad: int) -> void:
+	mejora_multidisparo = max(0, cantidad)
+
+func set_mejora_rebote(cantidad: int, alcance: float) -> void:
+	mejora_rebote_cantidad = max(0, cantidad)
+	mejora_rebote_alcance = max(0.0, alcance)
+
+func set_mejora_escudo(valor: float) -> void:
+	# valor = escudo máximo total. Al subir el máximo, recarga la diferencia.
+	var anterior := mejora_escudo_max
+	mejora_escudo_max = max(0.0, valor)
+	escudo_actual += maxf(0.0, mejora_escudo_max - anterior)
+	escudo_actual = minf(escudo_actual, mejora_escudo_max)
+
+func set_mejora_pulso(radio: float, lentitud: float, empuje: float) -> void:
+	mejora_pulso_radio = radio
+	mejora_pulso_lentitud = lentitud
+	mejora_pulso_empuje = empuje
+
+func get_pulso_radio() -> float:
+	return mejora_pulso_radio
+
+func get_pulso_lentitud() -> float:
+	# Fracción de ralentización, máx 80%
+	return clampf(mejora_pulso_lentitud, 0.0, 0.8)
+
+func get_pulso_empuje() -> float:
+	return maxf(0.0, mejora_pulso_empuje)
 	

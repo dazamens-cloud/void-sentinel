@@ -4,6 +4,8 @@ extends CharacterBody2D
 # ═══════════════════════════════════════════════════
 
 signal espectro_destruido(posicion: Vector2, recompensa: int)
+signal commander_muerto
+signal commander_escapo
 
 var salud_maxima: float = 200.0
 var salud_actual: float = 200.0
@@ -22,7 +24,6 @@ var en_advertencia: bool = false
 var tipo_spawn_pendiente: String = ""
 var timer_advertencia: float = 0.0
 const COOLDOWN_BASE_SPAWN: float = 3.0
-const MAX_ESPECTROS_VIVOS: int = 20
 
 var esta_destruido: bool = false
 
@@ -37,11 +38,14 @@ const ESCENA_BASICO    = preload("res://escenas/enemigos/Espectro.tscn")
 const ESCENA_TANQUE    = preload("res://escenas/enemigos/EspectroTanque.tscn")
 const ESCENA_KAMIKAZE  = preload("res://escenas/enemigos/EspectroKamikaze.tscn")
 const ESCENA_SNIPER    = preload("res://escenas/enemigos/EspectroSniper.tscn")
+const ESCENA_JEFE      = preload("res://escenas/enemigos/EspectroJefe.tscn")
 const ESCENA_TEXTO     = preload("res://escenas/Objetos/TextoFlotante.tscn")
 const ESCENA_EXPLOSION = preload("res://escenas/Objetos/Explosion.tscn")
 const ESCENA_FRAGMENTO = preload("res://escenas/Objetos/fragmento.tscn")
 
 func _ready() -> void:
+	# El timer de 3 min se congela con el juego en pausa
+	process_mode = Node.PROCESS_MODE_PAUSABLE
 	add_to_group("espectros")
 	add_to_group("commanders")
 	await get_tree().process_frame
@@ -50,6 +54,11 @@ func _ready() -> void:
 	if nexus:
 		angulo_actual = (global_position - nexus.global_position).angle()
 	print("👾 Commander aparecido!")
+
+	# ✅ Auto-registro en el sistema de disparos especiales (ya no hay autoload CommanderManager)
+	var sds = get_node_or_null("/root/Sistemadisparosespeciales")
+	if sds and sds.has_method("registrar_commander"):
+		sds.registrar_commander(self)
 
 func configurar(datos: Dictionary) -> void:
 	salud_maxima = datos.get("hp", 200.0)
@@ -64,12 +73,12 @@ func configurar(datos: Dictionary) -> void:
 
 func _process(delta: float) -> void:
 	if esta_destruido or not is_instance_valid(nexus): return
+	if escapando: return  # mientras huye no genera más enemigos
 
-	if not escapando:
-		timer_escape -= delta
-		if timer_escape <= 0.0:
-			_escapar()
-			return
+	timer_escape -= delta
+	if timer_escape <= 0.0:
+		_escapar()
+		return
 
 	if en_advertencia:
 		_tick_advertencia(delta)
@@ -78,7 +87,7 @@ func _process(delta: float) -> void:
 	if cooldown_spawn > 0.0:
 		cooldown_spawn -= delta
 	elif _puede_spawnear():
-		_preparar_spawn(_analizar_campo())
+		_preparar_spawn(_tipo_aleatorio())
 
 func _physics_process(delta: float) -> void:
 	if esta_destruido or not is_instance_valid(nexus): return
@@ -93,6 +102,7 @@ func _physics_process(delta: float) -> void:
 		var objetivo = nexus.global_position + dir * DISTANCIA_ORBITAL
 		velocity = (objetivo - global_position).normalized() * velocidad
 
+	velocity *= _mult_lentitud(delta)
 	move_and_slide()
 
 # ────────────────────────────────────────────────
@@ -100,36 +110,13 @@ func _physics_process(delta: float) -> void:
 # ────────────────────────────────────────────────
 
 func _puede_spawnear() -> bool:
-	if en_advertencia: return false
-	var vivos = get_tree().get_nodes_in_group("espectros").size()
-	return vivos < MAX_ESPECTROS_VIVOS
+	# Los invocados del Commander IGNORAN el cap de enemigos
+	return not en_advertencia
 
-func _analizar_campo() -> String:
-	var num = {"basico": 0, "tanque": 0, "kamikaze": 0, "sniper": 0}
-	var cerca_nexus: int = 0
-
-	for e in get_tree().get_nodes_in_group("espectros"):
-		if not is_instance_valid(e) or e == self: continue
-		var tipo = e.get("tipo_espectro")
-		if tipo in num:
-			num[tipo] += 1
-		if nexus and e.global_position.distance_to(nexus.global_position) < 300:
-			cerca_nexus += 1
-
-	if cerca_nexus < 2 and num["kamikaze"] < 3:
-		return "kamikaze"
-
-	var total = num["basico"] + num["tanque"] + num["kamikaze"] + num["sniper"]
-	if total == 0:
-		return "basico"
-
-	if float(num["tanque"]) / total < 0.20 and num["tanque"] < 2:
-		return "tanque"
-	if float(num["kamikaze"]) / total < 0.15:
-		return "kamikaze"
-	if float(num["sniper"]) / total < 0.10 and Economia.numero_ascension >= 10:
-		return "sniper"
-	return "basico"
+func _tipo_aleatorio() -> String:
+	# Aleatorio entre los 5 tipos básicos; nunca otro Commander
+	var tipos := ["basico", "tanque", "kamikaze", "sniper", "jefe"]
+	return tipos[randi() % tipos.size()]
 
 # ────────────────────────────────────────────────
 # SPAWN CON ADVERTENCIA VISUAL
@@ -138,7 +125,7 @@ func _analizar_campo() -> String:
 func _preparar_spawn(tipo: String) -> void:
 	tipo_spawn_pendiente = tipo
 	en_advertencia = true
-	timer_advertencia = 2.0
+	timer_advertencia = 0.5
 	match tipo:
 		"basico":   modulate = Color(0.5, 0.5, 2.0)
 		"tanque":   modulate = Color(0.3, 1.5, 0.3)
@@ -194,6 +181,49 @@ func _ejecutar_spawn() -> void:
 				"recompensa": int(8 * pow(1.12, asc)),
 				"tipo": "sniper"
 			}
+		"jefe":
+			escena = ESCENA_JEFE
+			datos = {
+				"hp": 150.0 * pow(1.38, asc),
+				"atk": 6.0 * pow(1.16, asc),
+				"spd_px": 50.0,
+				"recompensa": int(50 * pow(1.12, asc)),
+				"tipo": "jefe"
+			}
+
+	# ✅ Mejora "blindaje": -5% ATK de los invocados por nivel (máx -50%)
+	var nivel_blindaje := 0
+	if MejoraManager and MejoraManager.has_method("get_nivel"):
+		nivel_blindaje = MejoraManager.get_nivel("blindaje")
+	var factor_atk := clampf(1.0 - 0.05 * float(nivel_blindaje), 0.5, 1.0)
+	if datos.has("atk"):
+		datos["atk"] = float(datos["atk"]) * factor_atk
+
+	# ✅ Instanciar el refuerzo (faltaba: solo construía escena/datos)
+	if escena:
+		var invocado = escena.instantiate()
+		get_parent().add_child(invocado)
+		invocado.global_position = global_position + Vector2(randf_range(-50, 50), randf_range(-50, 50))
+		if invocado.has_method("configurar"):
+			invocado.configurar(datos)
+		# Grupo para poder eliminarlos cuando el Commander muera
+		invocado.add_to_group("invocados_commander")
+		if invocado.has_signal("espectro_destruido"):
+			invocado.espectro_destruido.connect(_on_invocado_destruido)
+
+	# ✅ Ritmo de invocación: 20% del intervalo de la oleada actual
+	cooldown_spawn = _intervalo_invocacion()
+	_reiniciar_spawn()
+
+func _intervalo_invocacion() -> float:
+	# 20% del intervalo de generación de la oleada (referencia: AscensionManager)
+	var base := COOLDOWN_BASE_SPAWN
+	var escena_actual := get_tree().current_scene
+	if escena_actual:
+		var asc_mgr = escena_actual.find_child("AscensionManager", true, false)
+		if asc_mgr and asc_mgr.has_method("_obtener_intervalo_spawn"):
+			base = asc_mgr._obtener_intervalo_spawn()
+	return maxf(0.1, base * 0.2)
 
 func _reiniciar_spawn() -> void:
 	en_advertencia = false
@@ -207,6 +237,22 @@ func _on_invocado_destruido(_pos: Vector2, _recompensa: int) -> void:
 # ────────────────────────────────────────────────
 # SISTEMA DE DAÑO
 # ────────────────────────────────────────────────
+
+var _lentitud_factor: float = 0.0
+var _lentitud_timer: float = 0.0
+
+func aplicar_lentitud(factor: float, duracion: float) -> void:
+	_lentitud_factor = maxf(_lentitud_factor, factor)
+	_lentitud_timer = maxf(_lentitud_timer, duracion)
+
+func _mult_lentitud(delta: float) -> float:
+	if _lentitud_timer > 0.0:
+		_lentitud_timer -= delta
+		if _lentitud_timer <= 0.0:
+			_lentitud_factor = 0.0
+			return 1.0
+		return 1.0 - _lentitud_factor
+	return 1.0
 
 func recibir_dano(cantidad: float, es_critico: bool = false) -> void:
 	if esta_destruido: return
@@ -249,7 +295,20 @@ func _destruir() -> void:
 		"tipo": tipo_espectro,
 		"posicion": global_position
 	})
+
+	# ✅ Recompensa grande en Ecos al derrotar al Commander
+	Economia.ecos += 40
+	Economia.guardar_datos()
+	Economia.recursos_actualizados.emit()
+	Economia.ecos_obtenidos.emit(40, global_position)
+
+	# ✅ Los enemigos invocados mueren con el Commander
+	for inv in get_tree().get_nodes_in_group("invocados_commander"):
+		if is_instance_valid(inv) and inv.has_method("recibir_dano"):
+			inv.recibir_dano(999999.0, false)
+
 	espectro_destruido.emit(global_position, recompensa_energia)
+	commander_muerto.emit()
 
 	var tw = create_tween()
 	if sprite:
@@ -266,6 +325,7 @@ func _escapar() -> void:
 
 	print("🚀 COMMANDER ESCAPA!")
 	escapando = true
+	commander_escapo.emit()
 	set_physics_process(false)
 
 	var dir_huida = (global_position - nexus.global_position).normalized()

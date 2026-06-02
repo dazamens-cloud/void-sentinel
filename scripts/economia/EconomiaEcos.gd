@@ -125,22 +125,6 @@ func gastar_fragmentos(cantidad: int) -> bool:
 		return true
 	return false
 
-# ── Funciones para el Nexus ──────────────────────────
-func get_rango_escaneo() -> float:
-	return 200.0
-
-func get_danio() -> float:
-	return 150
-
-func get_cadencia_timer() -> float:
-	return 0.85
-
-func get_regeneracion() -> float:
-	return 0.0
-
-func get_defensa() -> float:
-	return 0.0
-
 # ── Guardado ─────────────────────────────────────────
 func guardar_datos() -> void:
 	var file = FileAccess.open("user://economia.save", FileAccess.WRITE)

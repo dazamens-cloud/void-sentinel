@@ -3,113 +3,106 @@ extends Node
 # SISTEMA DE DISPAROS ESPECIALES
 # ═══════════════════════════════════════════════════
 
-signal disparos_actualizados(disponibles: int, usados: int)
+signal disparos_actualizados(disponibles: int)
 signal disparo_especial_usado
 signal nuevo_disparo_ganado
+signal commander_apareci
+signal commander_finalizado(escapo: bool)
 
 var disparos_disponibles: int = 0
-var disparos_usados: int = 0
-var enemigos_killcount_oleada: int = 0
+var kills_desde_ultimo_disparo: int = 0
+var commander_activo: bool = false
 
 const DISPAROS_INICIALES: int = 3
-const ENEMIGOS_POR_DISPARO: int = 10
-
-# Referencia al CommanderManager — se busca en _ready de forma segura
-var _commander_manager: Node = null
-
-func _ready() -> void:
-	# Conectar economía
-	if Economia.has_signal("ascension_cambiada"):
-		Economia.ascension_cambiada.connect(_on_ascension_cambiada)
-
-	# Buscar CommanderManager por ruta segura
-	_commander_manager = get_node_or_null("/root/CommanderManager")
-
-	if _commander_manager:
-		if _commander_manager.has_signal("commander_spawned"):
-			_commander_manager.commander_spawned.connect(_on_commander_spawned)
-		if _commander_manager.has_signal("commander_reaparec"):
-			_commander_manager.commander_reaparec.connect(_on_commander_reaparec)
-		if _commander_manager.has_signal("commander_died"):
-			_commander_manager.commander_died.connect(_on_commander_died)
-		print("✅ SistemaDisparosEspeciales conectado a CommanderManager")
-	else:
-		print("⚠️ SistemaDisparosEspeciales: CommanderManager no encontrado")
+const KILLS_POR_DISPARO_BASE: int = 10
+const CAP_MAXIMO_DISPAROS: int = 20
 
 # ────────────────────────────────────────────────
-# MANEJO DE ASCENSIONES
+# CONSULTA DE MEJORAS (categoría "commander")
 # ────────────────────────────────────────────────
 
-func _on_ascension_cambiada(_numero_asc: int) -> void:
-	enemigos_killcount_oleada = 0
+func _nivel_disparos_iniciales() -> int:
+	if MejoraManager and MejoraManager.has_method("get_nivel"):
+		return MejoraManager.get_nivel("disparos_iniciales")
+	return 0
 
-func _on_commander_spawned(_numero_asc: int, _commander_id: int) -> void:
-	disparos_disponibles = DISPAROS_INICIALES
-	disparos_usados = 0
-	enemigos_killcount_oleada = 0
-	print("⚔️ DISPAROS INICIALES: ", disparos_disponibles)
-	disparos_actualizados.emit(disparos_disponibles, disparos_usados)
+func _kills_por_disparo() -> int:
+	# Mejora "recarga_rapida": -1 kill por nivel, mínimo 3
+	var nivel := 0
+	if MejoraManager and MejoraManager.has_method("get_nivel"):
+		nivel = MejoraManager.get_nivel("recarga_rapida")
+	return maxi(3, KILLS_POR_DISPARO_BASE - nivel)
 
-func _on_commander_reaparec(_numero_asc: int, _hp_multiplicado: float) -> void:
-	disparos_disponibles += DISPAROS_INICIALES
-	disparos_usados = 0
-	enemigos_killcount_oleada = 0
-	print("⚔️ COMMANDER REAPAREC: +", DISPAROS_INICIALES, " disparos (Total: ", disparos_disponibles, ")")
-	disparos_actualizados.emit(disparos_disponibles, disparos_usados)
+# ────────────────────────────────────────────────
+# REGISTRO DEL COMMANDER (señales directas del EspectroComander)
+# ────────────────────────────────────────────────
 
-func _on_commander_died(_numero_asc: int, _es_penalizado: bool) -> void:
+# El EspectroComander se auto-registra en su _ready() (aparición nueva o reingreso).
+func registrar_commander(commander: Node) -> void:
+	# +3 disparos (+1 por nivel de "disparos_iniciales"), conservando los acumulados.
+	var extra := DISPAROS_INICIALES + _nivel_disparos_iniciales()
+	disparos_disponibles = mini(disparos_disponibles + extra, CAP_MAXIMO_DISPAROS)
+	kills_desde_ultimo_disparo = 0
+	commander_activo = true
+
+	if commander.has_signal("commander_muerto") \
+	and not commander.commander_muerto.is_connected(_on_commander_muerto):
+		commander.commander_muerto.connect(_on_commander_muerto)
+	if commander.has_signal("commander_escapo") \
+	and not commander.commander_escapo.is_connected(_on_commander_escapo):
+		commander.commander_escapo.connect(_on_commander_escapo)
+
+	print("⚔️ Commander activo. Disparos: ", disparos_disponibles)
+	commander_apareci.emit()
+	disparos_actualizados.emit(disparos_disponibles)
+
+func _on_commander_muerto() -> void:
+	commander_activo = false
+	disparos_disponibles = 0
+	kills_desde_ultimo_disparo = 0
 	print("✨ Commander derrotado. Disparos reseteados.")
-	reset_contador()
+	commander_finalizado.emit(false)
+	disparos_actualizados.emit(disparos_disponibles)
+
+func _on_commander_escapo() -> void:
+	commander_activo = false
+	kills_desde_ultimo_disparo = 0
+	# disparos_disponibles se MANTIENE (se conservan hasta la próxima aparición)
+	print("🚀 Commander escapó. Disparos conservados: ", disparos_disponibles)
+	commander_finalizado.emit(true)
+	disparos_actualizados.emit(disparos_disponibles)
 
 # ────────────────────────────────────────────────
 # REGISTRAR KILLS
 # ────────────────────────────────────────────────
 
 func registrar_kill_enemigo() -> void:
-	# Solo contar si hay un Commander activo
-	if _commander_manager == null: return
-	if not _commander_manager.has_method("get_commander_activo"): return
-	if not _commander_manager.get_commander_activo(): return
+	# Solo cuenta mientras hay un Commander activo (con Commander fuera, se pausa)
+	if not commander_activo: return
 
-	enemigos_killcount_oleada += 1
-
-	if enemigos_killcount_oleada % ENEMIGOS_POR_DISPARO == 0:
-		disparos_disponibles += 1
-		print("🎯 +1 DISPARO ESPECIAL por ", ENEMIGOS_POR_DISPARO, " kills! (Total: ", disparos_disponibles, ")")
+	kills_desde_ultimo_disparo += 1
+	if kills_desde_ultimo_disparo % _kills_por_disparo() == 0:
+		disparos_disponibles = mini(disparos_disponibles + 1, CAP_MAXIMO_DISPAROS)
+		print("🎯 +1 DISPARO ESPECIAL (Total: ", disparos_disponibles, ")")
 		nuevo_disparo_ganado.emit()
-		disparos_actualizados.emit(disparos_disponibles, disparos_usados)
+		disparos_actualizados.emit(disparos_disponibles)
 
 # ────────────────────────────────────────────────
 # USAR DISPAROS
 # ────────────────────────────────────────────────
 
 func usar_disparo_especial() -> bool:
-	if disparos_disponibles > disparos_usados:
-		disparos_usados += 1
-		print("💥 DISPARO ESPECIAL USADO! (", disparos_usados, "/", disparos_disponibles, ")")
+	if disparos_disponibles > 0:
+		disparos_disponibles -= 1
+		print("💥 DISPARO ESPECIAL USADO! (Restan: ", disparos_disponibles, ")")
 		disparo_especial_usado.emit()
-		disparos_actualizados.emit(disparos_disponibles, disparos_usados)
+		disparos_actualizados.emit(disparos_disponibles)
 		return true
 	print("❌ Sin disparos especiales disponibles")
 	return false
 
 func hay_disparos_disponibles() -> bool:
-	return disparos_usados < disparos_disponibles
-
-# ────────────────────────────────────────────────
-# RESET Y GESTIÓN
-# ────────────────────────────────────────────────
-
-func reset_contador() -> void:
-	disparos_disponibles = 0
-	disparos_usados = 0
-	enemigos_killcount_oleada = 0
-
-func añadir_disparos_gratuitos(cantidad: int) -> void:
-	disparos_disponibles += cantidad
-	disparos_usados = 0
-	print("➕ +", cantidad, " disparos gratuitos (Total: ", disparos_disponibles, ")")
-	disparos_actualizados.emit(disparos_disponibles, disparos_usados)
+	return disparos_disponibles > 0
 
 # ────────────────────────────────────────────────
 # GETTERS
@@ -118,17 +111,16 @@ func añadir_disparos_gratuitos(cantidad: int) -> void:
 func get_disparos_disponibles() -> int:
 	return disparos_disponibles
 
-func get_disparos_usados() -> int:
-	return disparos_usados
+func get_commander_activo() -> bool:
+	return commander_activo
 
-func get_disparos_restantes() -> int:
-	return disparos_disponibles - disparos_usados
-
-func get_enemigos_para_proximo_disparo() -> int:
-	var modulo = enemigos_killcount_oleada % ENEMIGOS_POR_DISPARO
+func get_kills_para_proximo_disparo() -> int:
+	var kpd := _kills_por_disparo()
+	var modulo := kills_desde_ultimo_disparo % kpd
 	if modulo == 0:
-		return ENEMIGOS_POR_DISPARO
-	return ENEMIGOS_POR_DISPARO - modulo
+		return kpd
+	return kpd - modulo
 
 func get_porcentaje_carga() -> float:
-	return float(enemigos_killcount_oleada % ENEMIGOS_POR_DISPARO) / float(ENEMIGOS_POR_DISPARO)
+	var kpd := _kills_por_disparo()
+	return float(kills_desde_ultimo_disparo % kpd) / float(kpd)

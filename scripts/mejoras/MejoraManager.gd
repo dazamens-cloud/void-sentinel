@@ -196,7 +196,7 @@ var mejoras: Dictionary = {
 		"nombre": "Blindaje",
 		"categoria": "commander",
 		"nivel": 0,
-		"incremento": -0.01,
+		"incremento": -0.05,
 		"coste_base": 50,
 		"max_nivel": 50,
 		"min_valor": 0.5,
@@ -239,7 +239,6 @@ var mejoras: Dictionary = {
 
 # ═══════════════════════════════════════════════════
 func _ready() -> void:
-	Economia.energia_cambiada.connect(_on_energia_cambiada)
 	cargar_mejoras_nexo()
 
 # ═══════════════════════════════════════════════════
@@ -260,11 +259,16 @@ func get_valor(mejora_id: String) -> float:
 		"poder_pulso":
 			return nivel * data.get("incremento_lentitud", 0.0)
 	
-	var valor = nivel * data.get("incremento", 0.0)
-	if data.has("min_valor"):
-		valor = max(valor, data["min_valor"])
+	# Valor = delta acumulado (nivel × incremento).
+	# El "suelo" de los stats con incremento NEGATIVO (velocidad_ataque,
+	# dureza_escudo, blindaje, recarga_rapida) se aplica sobre el VALOR FINAL
+	# en el consumidor (NexusStats / EspectroComander / SistemaDisparos),
+	# NO sobre este delta — antes max(delta, min_valor) lo dejaba clavado
+	# en min_valor para cualquier nivel.
+	var valor: float = nivel * data.get("incremento", 0.0)
+	# max_valor sí es un tope legítimo del propio valor (incrementos positivos).
 	if data.has("max_valor"):
-		valor = min(valor, data["max_valor"])
+		valor = minf(valor, data["max_valor"])
 	return valor
 
 func get_valor_secundario(mejora_id: String) -> float:
@@ -365,11 +369,11 @@ func _aplicar_mejora(mejora_id: String) -> void:
 		
 		"pulso_quartz":
 			if NexusStats.has_method("set_mejora_pulso"):
-				NexusStats.set_mejora_pulso(get_valor(mejora_id), get_valor_secundario("poder_pulso"))
+				NexusStats.set_mejora_pulso(get_valor("pulso_quartz"), get_valor("poder_pulso"), get_valor_secundario("poder_pulso"))
 		
 		"poder_pulso":
 			if NexusStats.has_method("set_mejora_pulso"):
-				NexusStats.set_mejora_pulso(get_valor("pulso_quartz"), get_valor_secundario(mejora_id))
+				NexusStats.set_mejora_pulso(get_valor("pulso_quartz"), get_valor("poder_pulso"), get_valor_secundario("poder_pulso"))
 		
 		# ═══════ BONIFICACIÓN ═══════
 		# Estas se leen bajo demanda por EconomiaEcos y Economia
@@ -426,7 +430,4 @@ func cargar_mejoras_nexo() -> void:
 		if mejoras.has(id):
 			mejoras[id]["nivel"] = datos[id]
 			_aplicar_mejora(id)
-	mejoras_actualizadas.emit()
-
-func _on_energia_cambiada(_nueva_energia: float) -> void:
 	mejoras_actualizadas.emit()

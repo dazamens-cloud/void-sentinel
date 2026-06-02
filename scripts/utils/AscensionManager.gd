@@ -24,8 +24,10 @@ var jefe_generado_esta_ascension: bool = false
 var commander_generado_esta_ascension: bool = false
 var escena_espectro_comander_ref: Node2D = null
 
-# Referencia segura al CommanderManager
-var _commander_manager: Node = null
+# ── Estado del Commander (reingreso si escapó) ──────
+var commander_escapo: bool = false
+var commander_hp_al_escapar: float = 0.0
+var commander_reaparicion_en_ascension: int = -1
 
 const DURACION_ASCENSION: float = 35.0
 const PAUSA_ENTRE_ASCENSIONES: float = 15.0
@@ -34,14 +36,6 @@ const MAX_ENEMIGOS_SIMULTANEOS: int = 15
 
 func _ready() -> void:
 	Economia.juego_terminado.connect(_on_juego_terminado)
-
-	# Buscar CommanderManager por ruta segura
-	_commander_manager = get_node_or_null("/root/CommanderManager")
-
-	if _commander_manager:
-		print("✅ AscensionManager conectado a CommanderManager")
-	else:
-		print("⚠️ AscensionManager: CommanderManager no encontrado")
 
 func _process(delta: float) -> void:
 	if not en_combate:
@@ -65,9 +59,8 @@ func _iniciar_ascension() -> void:
 	temporizador_ascension = DURACION_ASCENSION
 	print("🚀 Ascensión ", Economia.numero_ascension, " iniciada")
 
-	# Notificar a CommanderManager de forma segura
-	if _commander_manager and _commander_manager.has_method("_on_ascension_cambiada"):
-		_commander_manager._on_ascension_cambiada(Economia.numero_ascension)
+	# ✅ Evaluar aparición/reingreso del Commander
+	_evaluar_commander()
 
 	ascension_iniciada.emit(Economia.numero_ascension)
 	await get_tree().create_timer(DURACION_ASCENSION).timeout
@@ -176,12 +169,6 @@ func _generar_espectro() -> void:
 
 	print("📢 Generando espectro. Restantes por spawnear: ", espectros_a_spawnear)
 
-	# Notificar al CommanderManager si es un Commander
-	if tipo_str == "commander" and _commander_manager:
-		if _commander_manager.has_method("registrar_hp_commander"):
-			_commander_manager.registrar_hp_commander(salud_base)
-		escena_espectro_comander_ref = espectro
-
 	if espectro.has_signal("espectro_destruido"):
 		espectro.espectro_destruido.connect(_on_espectro_destruido)
 
@@ -207,6 +194,83 @@ func _elegir_tipo_enemigo() -> PackedScene:
 		return escena_espectro_tanque
 
 	return escena_espectro
+
+# ────────────────────────────────────────────────
+# SISTEMA COMMANDER (aparición nueva + reingreso si escapó)
+# ────────────────────────────────────────────────
+
+func _evaluar_commander() -> void:
+	if escena_espectro_comander == null:
+		return
+	# Solo puede haber 1 Commander activo a la vez
+	if _hay_commander_activo():
+		return
+
+	var asc := Economia.numero_ascension
+
+	# Reingreso del Commander que escapó (10-20 ascensiones después)
+	if commander_escapo and commander_reaparicion_en_ascension > 0 \
+	and asc >= commander_reaparicion_en_ascension:
+		var hp_reingreso := maxf(1.0, commander_hp_al_escapar * 1.2)
+		_spawn_commander(hp_reingreso)
+		commander_escapo = false
+		commander_reaparicion_en_ascension = -1
+		print("👾 COMMANDER REGRESA con HP ", snapped(hp_reingreso, 0.1))
+		return
+
+	# Commander nuevo cada 50 ascensiones
+	if asc > 0 and asc % 50 == 0 and not commander_generado_esta_ascension:
+		var hp_nuevo := 30.0 * pow(1.38, asc)
+		_spawn_commander(hp_nuevo)
+		print("👾 COMMANDER NUEVO (Asc ", asc, ") HP ", snapped(hp_nuevo, 0.1))
+
+func _spawn_commander(hp: float) -> void:
+	var commander = escena_espectro_comander.instantiate()
+	get_tree().root.add_child(commander)
+
+	var nexus_node = get_tree().get_first_node_in_group("nexus")
+	var centro: Vector2 = nexus_node.global_position if nexus_node else Vector2(360, 640)
+	var ang := randf() * TAU
+	commander.global_position = centro + Vector2(cos(ang), sin(ang)) * 600.0
+
+	if commander.has_method("configurar"):
+		commander.configurar({
+			"hp": hp,
+			"atk": 0.0,
+			"spd_px": 100.0,
+			"recompensa": 40,
+			"tipo": "commander"
+		})
+
+	# El Commander NO cuenta para espectros_vivos (spawn especial):
+	# por eso NO conectamos su espectro_destruido a _on_espectro_destruido.
+	if commander.has_signal("commander_muerto"):
+		commander.commander_muerto.connect(_on_commander_muerto_real)
+	if commander.has_signal("commander_escapo"):
+		commander.commander_escapo.connect(_on_commander_escapo_real)
+
+	commander_generado_esta_ascension = true
+	escena_espectro_comander_ref = commander
+
+func _on_commander_muerto_real() -> void:
+	commander_escapo = false
+	commander_hp_al_escapar = 0.0
+	commander_reaparicion_en_ascension = -1
+	escena_espectro_comander_ref = null
+
+func _on_commander_escapo_real() -> void:
+	commander_escapo = true
+	if is_instance_valid(escena_espectro_comander_ref):
+		commander_hp_al_escapar = escena_espectro_comander_ref.get("salud_actual")
+	commander_reaparicion_en_ascension = Economia.numero_ascension + randi_range(10, 20)
+	escena_espectro_comander_ref = null
+	print("🚀 Commander escapó. Regresará en Asc ", commander_reaparicion_en_ascension)
+
+func _hay_commander_activo() -> bool:
+	for c in get_tree().get_nodes_in_group("commanders"):
+		if is_instance_valid(c) and not c.get("esta_destruido"):
+			return true
+	return false
 
 func _on_espectro_destruido(_pos: Vector2, _recompensa: int) -> void:
 	espectros_vivos -= 1

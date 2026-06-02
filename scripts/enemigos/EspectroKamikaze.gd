@@ -55,6 +55,7 @@ func _physics_process(delta: float) -> void:
 	var direccion = (nexus.global_position - global_position).normalized()
 	velocity = direccion * velocidad_actual
 	rotation = direccion.angle()
+	velocity *= _mult_lentitud(delta)
 	move_and_slide()
 
 	_actualizar_parpadeo(delta, distancia)
@@ -66,6 +67,22 @@ func _actualizar_parpadeo(delta: float, distancia: float) -> void:
 	parpadeo_timer = fmod(parpadeo_timer + delta * vel_parpadeo, 1.0)
 	var intensidad = sin(parpadeo_timer * TAU) * 0.5 + 0.5
 	sprite.self_modulate = Color.WHITE.lerp(Color(1.0, 0.2, 0.0), intensidad)
+
+var _lentitud_factor: float = 0.0
+var _lentitud_timer: float = 0.0
+
+func aplicar_lentitud(factor: float, duracion: float) -> void:
+	_lentitud_factor = maxf(_lentitud_factor, factor)
+	_lentitud_timer = maxf(_lentitud_timer, duracion)
+
+func _mult_lentitud(delta: float) -> float:
+	if _lentitud_timer > 0.0:
+		_lentitud_timer -= delta
+		if _lentitud_timer <= 0.0:
+			_lentitud_factor = 0.0
+			return 1.0
+		return 1.0 - _lentitud_factor
+	return 1.0
 
 func recibir_dano(cantidad: float, es_critico: bool = false) -> void:
 	if esta_destruido: return

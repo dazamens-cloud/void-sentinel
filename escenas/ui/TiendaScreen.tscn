@@ -1,8 +1,0 @@
-[gd_scene format=3 uid="uid://bktlxb7wtwp35"]
-
-[ext_resource type="Script" uid="uid://g87bdojk5t0a" path="res://scripts/ui/TiendaScreen.gd" id="1_tienda"]
-
-[node name="TiendaScreen" type="Control" unique_id=648552378]
-layout_mode = 3
-anchors_preset = 0
-script = ExtResource("1_tienda")
