@@ -106,7 +106,7 @@ func _explotar_en_nexus() -> void:
 	remove_from_group("espectros")
 
 	if nexus and nexus.has_method("recibir_ataque"):
-		nexus.recibir_ataque(danio_explosion)
+		nexus.recibir_ataque(danio_explosion, tipo_espectro)
 
 	var explosion = ESCENA_EXPLOSION.instantiate()
 	explosion.global_position = global_position

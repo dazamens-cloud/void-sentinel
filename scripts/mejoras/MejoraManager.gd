@@ -345,7 +345,10 @@ func comprar_mejora(mejora_id: String, cantidad: int = 1) -> int:
 		if not puede_comprar(mejora_id):
 			break
 		var coste = get_coste(mejora_id)
-		if not Economia.gastar_energia(coste):
+		# Mejoras "gratis" (por categoría): probabilidad de no pagar el coste.
+		if _es_compra_gratis(mejora_id):
+			coste = 0
+		if coste > 0 and not Economia.gastar_energia(coste):
 			break
 		mejoras[mejora_id]["nivel"] += 1
 		compradas += 1
@@ -354,6 +357,18 @@ func comprar_mejora(mejora_id: String, cantidad: int = 1) -> int:
 	if compradas > 0:
 		mejoras_actualizadas.emit()
 	return compradas
+
+# Tira la probabilidad de "compra gratis" según la categoría de la mejora.
+# Solo se evalúa cuando el jugador YA puede pagar (puede_comprar pasó), así
+# que actúa como reembolso del coste, sin desincronizar la UI.
+func _es_compra_gratis(mejora_id: String) -> bool:
+	var cat: String = mejoras.get(mejora_id, {}).get("categoria", "")
+	var prob: float = 0.0
+	match cat:
+		"ataque":       prob = get_valor("mejora_ataque_gratis")
+		"defensa":      prob = get_valor("mejora_defensa_gratis")
+		"bonificacion": prob = get_valor("mejora_bonificacion_gratis")
+	return prob > 0.0 and randf() < prob
 
 func _aplicar_mejora(mejora_id: String) -> void:
 	# ═══════ ATAQUE ═══════

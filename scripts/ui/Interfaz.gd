@@ -393,6 +393,7 @@ func _formatear_causa(causa: String) -> String:
 		"kamikaze":  return "Has muerto aplastado por un Kamikaze"
 		"tanque":    return "Un Tanque ha acabado contigo"
 		"sniper":    return "Un Sniper te ha disparado desde la distancia"
+		"jefe":      return "Un Jefe ha arrasado tu Nexus"
 		"commander": return "El Commander ha enviado demasiados refuerzos"
 		"basico":    return "Los Espectros básicos te han superado"
 		"abandono":  return "Has abandonado la partida"

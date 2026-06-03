@@ -57,7 +57,7 @@ func _physics_process(delta: float) -> void:
 		temporizador_ataque -= delta
 		if temporizador_ataque <= 0.0:
 			if nexus.has_method("recibir_ataque"):
-				nexus.recibir_ataque(danio_ataque)
+				nexus.recibir_ataque(danio_ataque, tipo_espectro)
 			temporizador_ataque = INTERVALO_ATAQUE
 			
 	velocity *= _mult_lentitud(delta)

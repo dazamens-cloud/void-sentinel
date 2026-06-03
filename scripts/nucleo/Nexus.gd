@@ -159,8 +159,13 @@ func _crear_proyectil(direccion: Vector2, danio_val: float, critico: bool) -> vo
 		proyectil.rebotes_restantes = NexusStats.get_rebote_cantidad()
 		proyectil.alcance_rebote = NexusStats.get_rebote_alcance()
 
-func recibir_ataque(cantidad: float) -> void:
+var _ultimo_atacante: String = ""
+
+func recibir_ataque(cantidad: float, tipo_atacante: String = "") -> void:
 	if esta_destruido: return
+
+	if tipo_atacante != "":
+		_ultimo_atacante = tipo_atacante
 
 	var dano_final = cantidad
 	var def_pct = NexusStats.get_defensa()
@@ -192,7 +197,9 @@ func _destruir() -> void:
 	FX.impacto(global_position, Color(1.0, 0.3, 0.2), 28, 280.0)
 	FX.sacudir(0.9)
 	AudioManager.sfx("game_over", false)
-	Economia.juego_terminado.emit("Nexus Destruido")
+	# Pasa el tipo del último enemigo que golpeó para el mensaje de Game Over.
+	var causa := _ultimo_atacante if _ultimo_atacante != "" else "Nexus Destruido"
+	Economia.juego_terminado.emit(causa)
 
 func _on_stats_actualizadas() -> void:
 	if not esta_destruido:

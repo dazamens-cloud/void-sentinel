@@ -57,7 +57,13 @@ func avanzar_ascension() -> void:
 	numero_ascension += 1
 	aplicar_interes()  # ✅ Interés ANTES de la recompensa base
 	ascension_cambiada.emit(numero_ascension)
-	añadir_energia(10.0 + float(numero_ascension))
+	# Recompensa base + bonus de la mejora "energia_ascension".
+	var bonus_energia := MejoraManager.get_valor("energia_ascension")
+	añadir_energia(10.0 + float(numero_ascension) + bonus_energia)
+	# Mejora "ecos_ascension": ecos al completar cada ascensión.
+	var ecos_asc := int(MejoraManager.get_valor("ecos_ascension"))
+	if ecos_asc > 0:
+		añadir_ecos(ecos_asc)
 
 # ═══════════════════════════════════════════════════
 # SISTEMA DE INTERÉS
@@ -96,11 +102,25 @@ func obtener_ecos_por_5_muertes() -> int:
 func procesar_drop_espectro(datos: Dictionary) -> void:
 	espectros_eliminados += 1
 	espectro_eliminado.emit()
+	# Cuenta el kill para la recarga del disparo especial (si hay Commander activo).
+	Sistemadisparosespeciales.registrar_kill_enemigo()
+
 	var recompensa = float(datos.get("recompensa", 5))
+	# Mejora "energia_espectro": energía extra por cada enemigo destruido.
+	recompensa += MejoraManager.get_valor("energia_espectro")
 	var posicion = datos.get("posicion", Vector2.ZERO)
-	
+
 	añadir_energia(recompensa)
-	
+
+	# Mejora "ecos_rapido": probabilidad de un eco extra por enemigo.
+	var prob_eco := MejoraManager.get_valor("ecos_rapido")
+	if prob_eco > 0.0 and randf() < prob_eco:
+		ecos += 1
+		guardar_datos()
+		ecos_obtenidos.emit(1, posicion)
+		ecos_actualizados.emit()
+		recursos_actualizados.emit()
+
 	if espectros_eliminados % 5 == 0:
 		var ecos_ganados = obtener_ecos_por_5_muertes()
 		ecos += ecos_ganados

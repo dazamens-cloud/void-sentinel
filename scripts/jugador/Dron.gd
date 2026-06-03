@@ -162,7 +162,8 @@ func _activar_laser_360() -> void:
 		if is_instance_valid(espectro) and espectro.has_method("recibir_dano"):
 			espectro.recibir_dano(danio, true)
 	
-	_sacudir_camara(12.0)
+	# 🎥 Sacudida vía FX (el screen shake vive en el autoload FX, no en la cámara).
+	FX.sacudir(0.6)
 
 # ═══════════════════════════════════════════════════════
 func _tick_vagando(delta: float) -> void:
@@ -222,11 +223,6 @@ func _actualizar_capacidad() -> void:
 	capacidad_actual = CAPACIDAD_BASE + (Economia.numero_ascension / 3)
 	fragmentos_actualizados.emit(fragmentos_en_dron, capacidad_actual)
 	print("🤖 Dron: Capacidad actualizada a ", capacidad_actual)
-
-func _sacudir_camara(fuerza: float) -> void:
-	var camara: Node = get_tree().current_scene.find_child("Camera2D", true, false)
-	if camara and camara.has_method("sacudir"):
-		camara.sacudir(fuerza)
 
 func _actualizar_barra_descarga(pct: float) -> void:
 	if barra_descarga:

@@ -51,6 +51,11 @@ func _process(delta: float) -> void:
 		if temporizador_spawn <= 0.0 and espectros_a_spawnear > 0:
 			_generar_espectro()
 			temporizador_spawn = _obtener_intervalo_spawn()
+		# ✅ La ascensión termina por tiempo AQUÍ (no con un await): así no
+		# quedan timers colgados que recorten una ascensión posterior cuando
+		# la actual se limpia antes de tiempo.
+		if temporizador_ascension <= 0.0:
+			_terminar_ascension()
 
 func _iniciar_ascension() -> void:
 	en_combate = true
@@ -66,9 +71,6 @@ func _iniciar_ascension() -> void:
 	_evaluar_commander()
 
 	ascension_iniciada.emit(Economia.numero_ascension)
-	await get_tree().create_timer(DURACION_ASCENSION).timeout
-	if en_combate:
-		_terminar_ascension()
 
 func _terminar_ascension() -> void:
 	en_combate = false
@@ -85,10 +87,11 @@ func get_tiempo_restante() -> float:
 func _generar_espectro() -> void:
 	if not escena_espectro: return
 
+	# _elegir_tipo_enemigo() nunca devuelve el Commander (se gestiona aparte en
+	# _evaluar_commander), por eso aquí solo aplicamos el cap normal de enemigos.
 	var escena_elegida = _elegir_tipo_enemigo()
-	var es_commander = (escena_elegida == escena_espectro_comander)
 
-	if not es_commander and espectros_vivos >= MAX_ENEMIGOS_SIMULTANEOS:
+	if espectros_vivos >= MAX_ENEMIGOS_SIMULTANEOS:
 		return
 
 	var espectro = escena_elegida.instantiate()

@@ -93,7 +93,7 @@ func _physics_process(delta: float) -> void:
 func _disparar() -> void:
 	if not nexus: return
 	if nexus.has_method("recibir_ataque"):
-		nexus.recibir_ataque(danio_ataque)
+		nexus.recibir_ataque(danio_ataque, tipo_espectro)
 	_efecto_disparo()
 
 func _efecto_disparo() -> void:
