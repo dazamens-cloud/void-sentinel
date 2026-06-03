@@ -50,6 +50,6 @@ escena_espectro_comander = ExtResource("12_cmd")
 [node name="PanelMejoras" parent="." unique_id=2106992869 instance=ExtResource("9_mb57o")]
 anchors_preset = -1
 offset_left = -3.0
-offset_top = 931.0
+offset_top = 928.0
 offset_right = 717.0
-offset_bottom = 1276.0
+offset_bottom = 1273.0

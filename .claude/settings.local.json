@@ -13,7 +13,15 @@
       "PowerShell($exe = \"C:\\\\Users\\\\andre\\\\Downloads\\\\Godot_v4.6.2-stable_win64.exe\\\\Godot_v4.6.2-stable_win64_console.exe\"; $proj = \"D:\\\\proyectos godot\\\\void-sentinel\"; foreach \\($s in @\\(\"res://scripts/utils/AscensionManager.gd\",\"res://scripts/enemigos/EspectroComander.gd\"\\)\\) { \"=== $s ===\"; $o = & $exe --headless --path $proj --check-only --script $s 2>&1 | Out-String; if \\($o.Trim\\(\\) -eq \"\"\\) { \"OK \\(sin errores de parseo\\)\" } else { $o } })",
       "PowerShell($exe = \"C:\\\\Users\\\\andre\\\\Downloads\\\\Godot_v4.6.2-stable_win64.exe\\\\Godot_v4.6.2-stable_win64_console.exe\"; $proj = \"D:\\\\proyectos godot\\\\void-sentinel\"; $out = & $exe --headless --path $proj --editor --quit 2>&1 | Out-String; $lines = $out -split \"`r?`n\"; $errs = $lines | Where-Object { $_ -match \"SCRIPT ERROR|Parse Error|Compile Error|not found|not declared|Failed to load script|Cannot\" }; \"=== TODAS LAS LINEAS DE ERROR \\($\\($errs.Count\\)\\) ===\"; $errs | Select-Object -First 100)",
       "PowerShell($exe = \"C:\\\\Users\\\\andre\\\\Downloads\\\\Godot_v4.6.2-stable_win64.exe\\\\Godot_v4.6.2-stable_win64_console.exe\"; $proj = \"D:\\\\proyectos godot\\\\void-sentinel\"; $out = & $exe --headless --path $proj --editor --quit 2>&1 | Out-String; $lines = $out -split \"`r?`n\"; $errs = $lines | Where-Object { $_ -match \"SCRIPT ERROR|Parse Error|Compile Error|not found|not declared|Failed to load script|Cannot infer|Invalid\" }; \"=== LINEAS DE ERROR \\($\\($errs.Count\\)\\) ===\"; $errs | Select-Object -First 100)",
-      "PowerShell($exe = \"C:\\\\Users\\\\andre\\\\Downloads\\\\Godot_v4.6.2-stable_win64.exe\\\\Godot_v4.6.2-stable_win64_console.exe\"; $proj = \"D:\\\\proyectos godot\\\\void-sentinel\"; $out = & $exe --headless --path $proj --editor --quit 2>&1 | Out-String; $lines = $out -split \"`r?`n\"; $errs = $lines | Where-Object { $_ -match \"SCRIPT ERROR|Parse Error|Compile Error|not found|not declared|Failed to load script|Cannot infer|Invalid\" }; \"=== LINEAS DE ERROR \\($\\($errs.Count\\)\\) ===\"; if \\($errs.Count -eq 0\\) { \"SIN ERRORES DE SCRIPT\" } else { $errs | Select-Object -First 100 })"
+      "PowerShell($exe = \"C:\\\\Users\\\\andre\\\\Downloads\\\\Godot_v4.6.2-stable_win64.exe\\\\Godot_v4.6.2-stable_win64_console.exe\"; $proj = \"D:\\\\proyectos godot\\\\void-sentinel\"; $out = & $exe --headless --path $proj --editor --quit 2>&1 | Out-String; $lines = $out -split \"`r?`n\"; $errs = $lines | Where-Object { $_ -match \"SCRIPT ERROR|Parse Error|Compile Error|not found|not declared|Failed to load script|Cannot infer|Invalid\" }; \"=== LINEAS DE ERROR \\($\\($errs.Count\\)\\) ===\"; if \\($errs.Count -eq 0\\) { \"SIN ERRORES DE SCRIPT\" } else { $errs | Select-Object -First 100 })",
+      "Bash(findstr /i \"Mejora\")",
+      "Bash(findstr /i \"project.godot\")",
+      "Bash(findstr /i \"manager\")",
+      "PowerShell($g = Get-Command godot -ErrorAction SilentlyContinue; if \\($g\\) { $g.Source } else { \"godot no esta en PATH\" })",
+      "Bash(git add *)",
+      "Bash(git reset *)",
+      "Bash(git commit *)",
+      "Bash(findstr /n /i \"autoload \\\\[ Economia NexusStats MejoraManager Forja Sistemadisparos\")"
     ]
   }
 }
