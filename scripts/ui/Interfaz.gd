@@ -24,6 +24,9 @@ var _timer_alerta: Timer
 # Evita mostrar el overlay de Game Over más de una vez
 var _game_over_mostrado: bool = false
 
+# Overlay del menú de pausa (null cuando está cerrado)
+var _menu_pausa: Control = null
+
 @onready var lbl_ascension: Label = $PanelSuperior/LblOleada
 @onready var lbl_energia: Label   = $PanelSuperior/VBoxContainer/LblDinero
 @onready var lbl_salud: Label     = $PanelSuperior/LblVida
@@ -177,6 +180,92 @@ func _construir_interfaz() -> void:
 	else:
 		print("⚠️ Interfaz: PanelMejoras no encontrado")
 
+	_crear_boton_pausa()
+
+# ═══════════════════════════════════════════════════
+# MENÚ DE PAUSA
+# ═══════════════════════════════════════════════════
+# Botón ⏸ arriba a la derecha. La pantalla mide 720×1280.
+func _crear_boton_pausa() -> void:
+	var btn = Button.new()
+	btn.text = "⏸"
+	btn.add_theme_font_size_override("font_size", 30)
+	btn.size = Vector2(56, 56)
+	btn.position = Vector2(720 - 56 - 16, 16)
+	btn.z_index = 150
+	btn.pressed.connect(_abrir_menu_pausa)
+	add_child(btn)
+
+func _abrir_menu_pausa() -> void:
+	# No abrir sobre el game over ni dos veces.
+	if _game_over_mostrado or is_instance_valid(_menu_pausa):
+		return
+	get_tree().paused = true
+	_menu_pausa = _construir_menu_pausa()
+	add_child(_menu_pausa)
+
+func _cerrar_menu_pausa() -> void:
+	get_tree().paused = false
+	if is_instance_valid(_menu_pausa):
+		_menu_pausa.queue_free()
+	_menu_pausa = null
+
+func _construir_menu_pausa() -> Control:
+	# Contenedor raíz: ALWAYS para responder con el árbol pausado; los hijos
+	# heredan este process_mode.
+	var cont = Control.new()
+	cont.set_anchors_preset(Control.PRESET_FULL_RECT)
+	cont.process_mode = Node.PROCESS_MODE_ALWAYS
+	cont.z_index = 250
+
+	# Fondo oscuro que captura el input para no tocar el juego de fondo.
+	var fondo = ColorRect.new()
+	fondo.color = Color(0.0, 0.0, 0.0, 0.78)
+	fondo.set_anchors_preset(Control.PRESET_FULL_RECT)
+	fondo.mouse_filter = Control.MOUSE_FILTER_STOP
+	cont.add_child(fondo)
+
+	# Título
+	var titulo = Label.new()
+	titulo.text = "PAUSA"
+	titulo.add_theme_font_size_override("font_size", 48)
+	titulo.add_theme_color_override("font_color", Color(0.3, 0.85, 1.0))
+	titulo.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	titulo.size = Vector2(440, 70)
+	titulo.position = Vector2(140, 430)
+	cont.add_child(titulo)
+
+	# Botones (centrados, 360 px de ancho)
+	cont.add_child(_boton_pausa("VOLVER AL JUEGO", 560, Color(0.2, 0.7, 0.4), _cerrar_menu_pausa))
+	cont.add_child(_boton_pausa("SALIR AL MENÚ", 650, Color(0.3, 0.5, 0.9), _salir_al_menu))
+	cont.add_child(_boton_pausa("ABANDONAR PARTIDA", 740, Color(0.8, 0.25, 0.25), _abandonar_partida))
+	return cont
+
+func _boton_pausa(texto: String, y: float, color: Color, accion: Callable) -> Button:
+	var btn = Button.new()
+	btn.text = texto
+	btn.add_theme_font_size_override("font_size", 22)
+	btn.add_theme_color_override("font_color", color)
+	btn.size = Vector2(360, 64)
+	btn.position = Vector2((720 - 360) / 2.0, y)
+	btn.pressed.connect(accion)
+	return btn
+
+func _salir_al_menu() -> void:
+	# Guardar progreso permanente y volver al menú (descarta la run actual).
+	Economia.guardar_datos()
+	MejoraManager.guardar_mejoras_nexo()
+	_cerrar_menu_pausa()
+	get_tree().change_scene_to_file("res://escenas/ui/MainMenu.tscn")
+
+func _abandonar_partida() -> void:
+	# Game over voluntario: cierra el menú y dispara el flujo de fin de partida
+	# (mundo.gd captará la señal y mostrará la pantalla de estadísticas).
+	if is_instance_valid(_menu_pausa):
+		_menu_pausa.queue_free()
+	_menu_pausa = null
+	Economia.juego_terminado.emit("abandono")
+
 # ═══════════════════════════════════════════════════
 # SEÑALES DE ASCENSIÓN
 # ═══════════════════════════════════════════════════
@@ -192,11 +281,11 @@ func _on_pausa_iniciada(_segundos: float) -> void:
 # ═══════════════════════════════════════════════════
 func _actualizar_ecos() -> void:
 	if lbl_ecos:
-		lbl_ecos.text = "🔷 %d" % int(Economia.ecos)
+		lbl_ecos.text = "🔷 %s" % Formato.abreviar(Economia.ecos)
 
 func _actualizar_fragmentos() -> void:
 	if lbl_fragmentos:
-		lbl_fragmentos.text = "💎 %d" % int(Economia.fragmentos)
+		lbl_fragmentos.text = "💎 %s" % Formato.abreviar(Economia.fragmentos)
 
 func actualizar_barra_dron(actual: int, maximo: int) -> void:
 	if barra_dron:
@@ -206,13 +295,13 @@ func actualizar_barra_dron(actual: int, maximo: int) -> void:
 			label_dron.text = "🔋 %d/%d" % [actual, maximo]
 
 func _actualizar_energia() -> void:
-	lbl_energia.text = "⚡ %d" % int(Economia.energia)
+	lbl_energia.text = "⚡ %s" % Formato.abreviar(Economia.energia)
 
 func _actualizar_ascension(numero: int) -> void:
 	lbl_ascension.text = "Ascensión: %d" % numero
 
 func _actualizar_salud(actual: float, maxima: float) -> void:
-	lbl_salud.text = "❤️ %d / %d" % [int(actual), int(maxima)]
+	lbl_salud.text = "❤️ %s / %s" % [Formato.abreviar(actual), Formato.abreviar(maxima)]
 
 # ═══════════════════════════════════════════════════
 # UI DEL COMMANDER
@@ -278,6 +367,7 @@ func _formatear_causa(causa: String) -> String:
 		"sniper":    return "Un Sniper te ha disparado desde la distancia"
 		"commander": return "El Commander ha enviado demasiados refuerzos"
 		"basico":    return "Los Espectros básicos te han superado"
+		"abandono":  return "Has abandonado la partida"
 		_:           return "Has caído en combate"
 
 func mostrar_game_over(causa: String) -> void:

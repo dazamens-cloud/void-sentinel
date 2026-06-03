@@ -66,6 +66,13 @@ func _on_body_entered(body: Node) -> void:
 		body.recibir_dano(danio, es_critico)
 	_ya_golpeados.append(body)
 
+	# 🎇 Juice de impacto: destello de partículas; crítico pega más y sacude.
+	if es_critico:
+		FX.impacto(global_position, Color(2.0, 1.5, 0.1), 14, 200.0)
+		FX.sacudir(0.10)
+	else:
+		FX.impacto(global_position, Color(0.4, 0.85, 1.0), 6, 110.0)
+
 	# ✅ Rebote: salta al enemigo más cercano que no haya sido golpeado
 	if rebotes_restantes > 0:
 		var siguiente := _buscar_objetivo_rebote(body)

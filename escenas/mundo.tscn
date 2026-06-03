@@ -48,7 +48,8 @@ escena_espectro_comander = ExtResource("12_cmd")
 [node name="Interfaz" parent="." unique_id=1199303299 instance=ExtResource("2_glrvs")]
 
 [node name="PanelMejoras" parent="." unique_id=2106992869 instance=ExtResource("9_mb57o")]
-offset_left = 6.0
-offset_top = 902.0
-offset_right = 726.0
-offset_bottom = 1393.0
+anchors_preset = -1
+offset_left = -3.0
+offset_top = 931.0
+offset_right = 717.0
+offset_bottom = 1276.0

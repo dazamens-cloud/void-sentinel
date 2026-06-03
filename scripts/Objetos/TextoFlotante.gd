@@ -12,11 +12,11 @@ func _ready() -> void:
 	tween.parallel().tween_property(self, "modulate", Color.TRANSPARENT, 0.8)
 
 func set_energia(valor: int) -> void:
-	text = "⚡ %d" % valor
+	text = "⚡ %s" % Formato.abreviar(valor)
 	add_theme_color_override("font_color", Color(0.0, 0.9, 0.5, 1.0))
 
 func set_ecos(valor: int) -> void:
-	text = "◉ %d" % valor
+	text = "◉ %s" % Formato.abreviar(valor)
 	add_theme_color_override("font_color", Color(1.0, 0.8, 0.2, 1.0))
 
 func set_valor(valor: float, tipo: String = "energia") -> void:
@@ -25,5 +25,5 @@ func set_valor(valor: float, tipo: String = "energia") -> void:
 	elif tipo == "ecos":
 		set_ecos(int(valor))
 	else:
-		text = str(valor)
+		text = Formato.abreviar(valor)
 		add_theme_color_override("font_color", Color(1.0, 0.3, 0.3, 1.0))

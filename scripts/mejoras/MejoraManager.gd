@@ -9,6 +9,13 @@ extends Node
 signal mejora_comprada(mejora_id: String, nuevo_nivel: int)
 signal mejoras_actualizadas
 
+# Fase 2 del balance: daño y vida escalan MULTIPLICATIVAMENTE.
+#   stat = base × FACTOR^nivel   (compuesto)
+# Esto permite que el techo de ascensión suba con la meta-progresión del
+# Nexo. El resto de mejoras siguen siendo aditivas/acotadas.
+const FACTOR_MULTIPLICATIVO: float = 1.03
+const MEJORAS_MULTIPLICATIVAS: Array = ["danio", "salud"]
+
 var mejoras: Dictionary = {
 	# ========== ATAQUE ==========
 	"danio": {
@@ -286,6 +293,10 @@ func get_valor_secundario(mejora_id: String) -> float:
 			return data.get("nivel", 0) * data.get("incremento_empuje", 0.0)
 	return 0.0
 
+# Multiplicador compuesto de una mejora multiplicativa (danio/salud).
+func get_multiplicador(mejora_id: String) -> float:
+	return pow(FACTOR_MULTIPLICATIVO, get_nivel(mejora_id))
+
 func get_coste(mejora_id: String) -> int:
 	var data = mejoras.get(mejora_id, {})
 	if data.is_empty():
@@ -348,8 +359,8 @@ func _aplicar_mejora(mejora_id: String) -> void:
 	# ═══════ ATAQUE ═══════
 	match mejora_id:
 		"danio":
-			NexusStats.set_mejora_danio(get_valor(mejora_id))
-		
+			NexusStats.set_mult_danio(get_multiplicador(mejora_id))
+
 		"velocidad_ataque":
 			NexusStats.set_mejora_cadencia(get_valor(mejora_id))
 		
@@ -375,10 +386,10 @@ func _aplicar_mejora(mejora_id: String) -> void:
 		
 		# ═══════ DEFENSA ═══════
 		"salud":
-			NexusStats.set_mejora_salud(get_valor(mejora_id), NexusStats.mejora_regeneracion)
+			NexusStats.set_mult_salud(get_multiplicador(mejora_id))
 		
 		"recuperacion":
-			NexusStats.set_mejora_salud(NexusStats.mejora_salud_extra, get_valor(mejora_id))
+			NexusStats.set_mejora_regen(get_valor(mejora_id))
 		
 		"escudo":
 			if NexusStats.has_method("set_mejora_escudo"):

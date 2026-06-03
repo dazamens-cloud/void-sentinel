@@ -106,6 +106,9 @@ func _destruir() -> void:
 	var explosion = ESCENA_EXPLOSION.instantiate()
 	explosion.global_position = global_position
 	get_tree().current_scene.call_deferred("add_child", explosion)
+	# 🎇 Juice: burst de partículas + sacudida suave al morir.
+	FX.impacto(global_position, Color(1.0, 0.5, 0.15), 12, 160.0)
+	FX.sacudir(0.12)
 	var fragmento = ESCENA_FRAGMENTO.instantiate()
 	fragmento.global_position = global_position
 	get_tree().current_scene.call_deferred("add_child", fragmento)

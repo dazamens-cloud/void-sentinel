@@ -194,6 +194,19 @@ func _evaluar_commander() -> void:
 		_spawn_commander(hp_nuevo)
 		print("👾 COMMANDER NUEVO (Asc ", asc, ") HP ", snapped(hp_nuevo, 0.1))
 
+## 🧪 Fuerza la aparición del Commander al instante (modo prueba).
+func forzar_commander() -> void:
+	if escena_espectro_comander == null:
+		print("🧪 forzar_commander: no hay escena de Commander asignada")
+		return
+	if _hay_commander_activo():
+		print("🧪 forzar_commander: ya hay un Commander activo")
+		return
+	var asc: int = max(Economia.numero_ascension, 1)
+	var hp := EscaladoEnemigos.vida("commander", asc)
+	_spawn_commander(hp)
+	print("🧪 forzar_commander: Commander invocado (Asc ", asc, ") HP ", snapped(hp, 0.1))
+
 func _spawn_commander(hp: float) -> void:
 	var commander = escena_espectro_comander.instantiate()
 	get_tree().root.add_child(commander)

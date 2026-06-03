@@ -296,12 +296,73 @@ func _make_quick_grid() -> Control:
 	grid.add_theme_constant_override("h_separation", 10)
 	grid.add_theme_constant_override("v_separation", 10)
 
-	grid.add_child(_make_soon_card("LABORATORIO", "Investigaciones pasivas"))
+	grid.add_child(_make_test_card())
 	grid.add_child(_make_soon_card("TORNEOS", "Eventos y clasificatorias"))
 	grid.add_child(_make_soon_card("MISIONES", "Objetivos diarios y semanales"))
 	grid.add_child(_make_soon_card("ALIANZAS", "Juega con otros Centinelas"))
 
 	return grid
+
+
+# 🧪 Card clicable que lanza la partida en MODO PRUEBA (testing endgame).
+func _make_test_card() -> Control:
+	var panel := PanelContainer.new()
+	panel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+
+	var style := StyleBoxFlat.new()
+	style.bg_color = Color(MenuTheme.GOLD.r, MenuTheme.GOLD.g, MenuTheme.GOLD.b, 0.10)
+	style.border_color = Color(MenuTheme.GOLD.r, MenuTheme.GOLD.g, MenuTheme.GOLD.b, 0.5)
+	style.set_border_width_all(1)
+	style.set_corner_radius_all(12)
+	style.content_margin_left = 12
+	style.content_margin_right = 12
+	style.content_margin_top = 12
+	style.content_margin_bottom = 12
+	panel.add_theme_stylebox_override("panel", style)
+
+	var btn := Button.new()
+	btn.flat = true
+	btn.focus_mode = Control.FOCUS_NONE
+	btn.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	panel.add_child(btn)
+
+	var v := VBoxContainer.new()
+	v.add_theme_constant_override("separation", 6)
+	v.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	v.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+
+	var t := Label.new()
+	t.text = "JUGAR PRUEBA"
+	t.add_theme_font_size_override("font_size", 12)
+	t.add_theme_color_override("font_color", MenuTheme.GOLD)
+	_apply_hud_font(t)
+
+	var d := Label.new()
+	d.text = "Asc avanzada + recursos. Tecla C: Commander."
+	d.add_theme_font_size_override("font_size", 10)
+	d.add_theme_color_override("font_color", MenuTheme.TEXT_MUTED)
+	d.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+
+	var badge := Label.new()
+	badge.text = "TESTING"
+	badge.add_theme_font_size_override("font_size", 7)
+	badge.add_theme_color_override("font_color", MenuTheme.GOLD)
+	_apply_hud_font(badge)
+
+	v.add_child(t)
+	v.add_child(d)
+	v.add_child(badge)
+	btn.add_child(v)
+
+	btn.pressed.connect(_on_test_pressed)
+	return panel
+
+
+func _on_test_pressed() -> void:
+	var mp := get_node_or_null("/root/ModoPrueba")
+	if mp:
+		mp.activo = true
+	start_game()
 
 
 func _make_soon_card(title: String, desc: String) -> Control:

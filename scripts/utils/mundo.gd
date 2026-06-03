@@ -15,12 +15,24 @@ func _ready() -> void:
 	NexusStats.reiniciar_partida()
 	Economia.iniciar_partida()
 	MejoraManager.reiniciar_mejoras()
-	
+
+	# 🧪 Modo prueba: si se lanzó desde "JUGAR PRUEBA", inyecta estado avanzado.
+	if ModoPrueba.activo:
+		ModoPrueba.aplicar()
+
 	_conectar_economia()
 	_conectar_gestor_oleadas()
 	_conectar_nucleo()
 	_conectar_dron()
 	_configurar_camara()
+
+# 🧪 Atajo de prueba: tecla C invoca al Commander (solo en partidas de prueba).
+func _unhandled_input(event: InputEvent) -> void:
+	if not ModoPrueba.partida_es_prueba:
+		return
+	if event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_C:
+		if is_instance_valid(gestor_oleadas) and gestor_oleadas.has_method("forzar_commander"):
+			gestor_oleadas.forzar_commander()
 
 # ═══════════════════════════════════════════════════
 func _conectar_economia() -> void:
@@ -51,6 +63,8 @@ func _configurar_camara() -> void:
 	if is_instance_valid(nucleo):
 		camara.global_position = nucleo.global_position
 	camara.make_current()
+	# 🎥 Registrar la cámara en FX para el screen shake de esta partida.
+	FX.registrar_camara(camara)
 
 # ═══════════════════════════════════════════════════
 # HANDLERS

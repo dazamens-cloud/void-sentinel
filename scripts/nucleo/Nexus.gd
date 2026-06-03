@@ -164,6 +164,8 @@ func recibir_ataque(cantidad: float) -> void:
 
 	NexusStats.recibir_ataque(dano_final)
 	_parpadeo_dano()
+	# 🎇 Juice: sacudida media cuando el Nexus encaja un golpe.
+	FX.sacudir(0.30)
 
 	var texto_dano = ESCENA_TEXTO.instantiate()
 	texto_dano.set_valor(dano_final, "dano")
@@ -180,6 +182,9 @@ func _destruir() -> void:
 	esta_destruido = true
 	timer_disparo.stop()
 	sprite.modulate = Color(0.2, 0.2, 0.2)
+	# 🎇 Juice: sacudida fuerte + estallido al caer el Nexus.
+	FX.impacto(global_position, Color(1.0, 0.3, 0.2), 28, 280.0)
+	FX.sacudir(0.9)
 	Economia.juego_terminado.emit("Nexus Destruido")
 
 func _on_stats_actualizadas() -> void:

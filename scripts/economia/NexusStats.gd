@@ -19,11 +19,14 @@ var critico_factor_base: float = 1.5
 var salud_actual: float = 100.0
 
 # ── Mejoras ────────────────────────────────────────────
-var mejora_danio_extra: float = 0.0
+# Daño y vida son MULTIPLICATIVOS (fase 2): valor = base × multiplicador,
+# donde el multiplicador = FACTOR^nivel lo calcula MejoraManager. Esto deja
+# que el poder escale lo suficiente para techos de miles de ascensiones.
+var mult_danio: float = 1.0
+var mult_salud: float = 1.0
 var mejora_cadencia: float = 0.0
 var mejora_critico_chance: float = 0.0
 var mejora_critico_factor: float = 0.0
-var mejora_salud_extra: float = 0.0
 var mejora_regeneracion: float = 0.0
 var mejora_defensa: float = 0.0
 var mejora_multidisparo: int = 0
@@ -53,7 +56,7 @@ func get_salud() -> float:
 	return salud_base
 
 func get_danio() -> float:
-	return danio_base + mejora_danio_extra
+	return danio_base * mult_danio
 
 func get_cadencia_timer() -> float:
 	var base = 1.0 / max(cadencia_base, 0.01)
@@ -118,9 +121,9 @@ func reiniciar_partida() -> void:
 	danio_base = 200.0        # ← añadir
 	rango_escaneo_base = 280.0  # ← añadir
 	regeneracion_base = 0.5   # ← añadir
-	mejora_salud_extra = 0.0
+	mult_salud = 1.0
 	mejora_regeneracion = 0.0
-	mejora_danio_extra = 0.0
+	mult_danio = 1.0
 	mejora_cadencia = 0.0
 	mejora_critico_chance = 0.0
 	mejora_critico_factor = 0.0
@@ -148,8 +151,8 @@ func _emitir_salud_si_cambio() -> void:
 # ═══════════════════════════════════════════════════════
 # SETTERS DE MEJORAS
 # ═══════════════════════════════════════════════════════
-func set_mejora_danio(extra: float) -> void:
-	mejora_danio_extra = extra
+func set_mult_danio(m: float) -> void:
+	mult_danio = maxf(1.0, m)
 
 func set_mejora_cadencia(valor: float) -> void:
 	mejora_cadencia = valor
@@ -159,14 +162,20 @@ func set_mejora_critico(chance: float, factor: float) -> void:
 	mejora_critico_chance = chance
 	mejora_critico_factor = factor
 
-func set_mejora_salud(extra: float, regen: float) -> void:
-	mejora_salud_extra = extra
-	mejora_regeneracion = regen
-	salud_base = 100.0 + mejora_salud_extra
-	if salud_actual > salud_base:
-		salud_actual = salud_base
+func set_mult_salud(m: float) -> void:
+	var salud_base_anterior := salud_base
+	mult_salud = maxf(1.0, m)
+	salud_base = 100.0 * mult_salud
+	# Al subir el máximo, cura la diferencia (no al bajar).
+	var delta := salud_base - salud_base_anterior
+	if delta > 0.0:
+		salud_actual += delta
+	salud_actual = minf(salud_actual, salud_base)
 	salud_cambiada.emit(salud_actual, salud_base)
 	_ultimo_salud_emitida = salud_actual
+
+func set_mejora_regen(valor: float) -> void:
+	mejora_regeneracion = valor
 
 func set_mejora_defensa(valor: float) -> void:
 	mejora_defensa = valor
