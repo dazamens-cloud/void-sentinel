@@ -2,32 +2,40 @@ class_name ForjaScreenUI
 extends Control
 # ============================================================
 # ForjaScreen.gd
-# Pantalla de la Forja (Armeria contra Commander).
-# Usa Fragmentos. 3 tabs: Equipado, Inventario, Forjar.
+# Pantalla de la Forja: las 8 HABILIDADES manuales.
+# Ref. de diseño: VoidSentinel_Habilidades_Manuales.docx.
 #
-# CONEXION CON EL JUEGO:
-#   - Saldo de Fragmentos del autoload Economia.
-#   - Forjar/mejorar modulos: aqui logica de demo. Conecta con
-#     tu sistema real cuando lo tengas (TODO marcado).
+# 2 tabs (OFENSIVAS / DEFENSIVAS). Por cada habilidad:
+#   - Bloqueada:   botón DESBLOQUEAR (gasta fragmentos).
+#   - Desbloqueada: toggle ACTIVA/INACTIVA + líneas de mejora.
+# Toda la lógica/persistencia vive en el autoload HabilidadManager.
+# El efecto in-run de cada habilidad se implementa aparte (gameplay).
 # ============================================================
 
-var _frag: int = 384
 var _lbl_frag: Label
-var _current_tab: String = "equipamiento"
-var _sections: Dictionary = {}
+var _lista: VBoxContainer
+var _current_cat: String = "ofensiva"
 var _tab_buttons: Dictionary = {}
 
-# Rarezas -> color.
-const RAREZA_COLOR := {
-	"comun": MenuTheme.R_COMUN,
-	"raro": MenuTheme.R_RARO,
-	"epico": MenuTheme.R_EPICO,
-	"legendario": MenuTheme.R_LEGENDARIO,
+const CAT_COLOR := {
+	"ofensiva": MenuTheme.CAT_ATAQUE,
+	"defensiva": MenuTheme.CAT_DEFENSA,
+}
+const CAT_LABEL := {
+	"ofensiva": "OFENSIVAS",
+	"defensiva": "DEFENSIVAS",
 }
 
 
 func _ready() -> void:
 	_build()
+	if HabilidadManager.has_signal("habilidad_cambiada"):
+		HabilidadManager.habilidad_cambiada.connect(_refrescar)
+	if HabilidadManager.has_signal("seleccion_cambiada"):
+		HabilidadManager.seleccion_cambiada.connect(_refrescar)
+	var eco := get_node_or_null("/root/Economia")
+	if eco and eco.has_signal("fragmentos_actualizados"):
+		eco.fragmentos_actualizados.connect(_refrescar)
 
 
 func _build() -> void:
@@ -50,20 +58,12 @@ func _build() -> void:
 	margin.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	scroll.add_child(margin)
 
-	var lists := Control.new()
-	lists.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	lists.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	margin.add_child(lists)
+	_lista = VBoxContainer.new()
+	_lista.add_theme_constant_override("separation", 10)
+	_lista.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	margin.add_child(_lista)
 
-	_sections["equipamiento"] = _make_equip_section()
-	_sections["inventario"] = _make_inventory_section()
-	_sections["forjar"] = _make_craft_section()
-
-	for key in _sections.keys():
-		var s: Control = _sections[key]
-		s.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-		s.visible = (key == _current_tab)
-		lists.add_child(s)
+	_refrescar()
 
 
 # ------------------------------------------------------------
@@ -82,7 +82,7 @@ func _make_header() -> Control:
 	tb.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	tb.add_theme_constant_override("separation", 2)
 	var eyebrow := Label.new()
-	eyebrow.text = "ARMERIA CONTRA COMMANDER"
+	eyebrow.text = "HABILIDADES MANUALES"
 	eyebrow.add_theme_font_size_override("font_size", 8)
 	eyebrow.add_theme_color_override("font_color", MenuTheme.TEXT_MUTED)
 	_apply_hud_font(eyebrow)
@@ -128,7 +128,7 @@ func _make_frag_pill() -> Control:
 	icon.add_theme_font_size_override("font_size", 13)
 	icon.add_theme_color_override("font_color", MenuTheme.FRAG)
 	_lbl_frag = Label.new()
-	_lbl_frag.text = _format_number(_frag)
+	_lbl_frag.text = _format_number(_leer_frag())
 	_lbl_frag.add_theme_font_size_override("font_size", 14)
 	_lbl_frag.add_theme_color_override("font_color", MenuTheme.FRAG)
 	_apply_hud_font(_lbl_frag)
@@ -153,245 +153,254 @@ func _make_tabs() -> Control:
 	margin.add_child(panel)
 	var h := HBoxContainer.new()
 	panel.add_child(h)
-	h.add_child(_make_tab_button("equipamiento", "EQUIPADO"))
-	h.add_child(_make_tab_button("inventario", "INVENTARIO"))
-	h.add_child(_make_tab_button("forjar", "FORJAR"))
+	h.add_child(_make_tab_button("ofensiva"))
+	h.add_child(_make_tab_button("defensiva"))
 	return margin
 
 
-func _make_tab_button(tab: String, label: String) -> Button:
+func _make_tab_button(cat: String) -> Button:
 	var btn := Button.new()
 	btn.flat = true
 	btn.focus_mode = Control.FOCUS_NONE
 	btn.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	btn.custom_minimum_size = Vector2(0, 40)
 	var lbl := Label.new()
-	lbl.text = label
+	lbl.text = CAT_LABEL[cat]
 	lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	lbl.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	lbl.add_theme_font_size_override("font_size", 8)
+	lbl.add_theme_font_size_override("font_size", 9)
 	lbl.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	lbl.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	_apply_hud_font(lbl)
 	btn.add_child(lbl)
 	btn.set_meta("label", lbl)
-	btn.pressed.connect(func(): _switch_tab(tab))
-	_tab_buttons[tab] = btn
+	btn.pressed.connect(func(): _switch_cat(cat))
+	_tab_buttons[cat] = btn
 	return btn
 
 
-func _switch_tab(tab: String) -> void:
-	_current_tab = tab
-	for key in _sections.keys():
-		_sections[key].visible = (key == tab)
-	_update_tab_colors()
+func _switch_cat(cat: String) -> void:
+	_current_cat = cat
+	_refrescar()
 
 
 func _update_tab_colors() -> void:
-	for tab in _tab_buttons.keys():
-		var btn: Button = _tab_buttons[tab]
-		var lbl: Label = btn.get_meta("label")
-		var col: Color = MenuTheme.FRAG if tab == _current_tab else MenuTheme.TEXT_MUTED
+	for cat in _tab_buttons.keys():
+		var lbl: Label = _tab_buttons[cat].get_meta("label")
+		var col: Color = CAT_COLOR[cat] if cat == _current_cat else MenuTheme.TEXT_MUTED
 		lbl.add_theme_color_override("font_color", col)
 
 
 # ------------------------------------------------------------
-# SECCION EQUIPADO: orbe con slots + strip de stats.
+# REFRESCO: reconstruye la lista de la categoría actual.
 # ------------------------------------------------------------
-func _make_equip_section() -> Control:
-	var v := VBoxContainer.new()
-	v.add_theme_constant_override("separation", 14)
-	v.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-
-	# Arena del Sentinel con slots (clase interna que dibuja).
-	var arena := ForgeArena.new()
-	arena.custom_minimum_size = Vector2(0, 240)
-	v.add_child(arena)
-
-	# Strip de stats agregadas.
-	var strip := HBoxContainer.new()
-	strip.add_theme_constant_override("separation", 8)
-	strip.add_child(_make_stat_pill("+340", "DANO"))
-	strip.add_child(_make_stat_pill("+18%", "DEF."))
-	strip.add_child(_make_stat_pill("x1.6", "ECOS"))
-	strip.add_child(_make_stat_pill("3/5", "SLOTS"))
-	v.add_child(strip)
-
-	return v
+func _refrescar(_a = null) -> void:
+	if _lista == null:
+		return
+	_refresh_frag()
+	_update_tab_colors()
+	for c in _lista.get_children():
+		c.queue_free()
+	for id in HabilidadManager.ids_por_tipo(_current_cat):
+		_lista.add_child(_make_card(id))
 
 
-func _make_stat_pill(value: String, label: String) -> Control:
+# ------------------------------------------------------------
+# CARD de una habilidad.
+# ------------------------------------------------------------
+func _make_card(id: String) -> Control:
+	var hab: Dictionary = HabilidadManager.get_hab(id)
+	var accent: Color = CAT_COLOR.get(hab.get("tipo", "ofensiva"), MenuTheme.CYAN)
+	var desbloqueada: bool = HabilidadManager.esta_desbloqueada(id)
+
 	var panel := PanelContainer.new()
-	panel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	panel.add_theme_stylebox_override("panel", MenuTheme.make_card_style(MenuTheme.BORDER_DIM, 0.8))
-	var v := VBoxContainer.new()
-	v.alignment = BoxContainer.ALIGNMENT_CENTER
-	v.add_theme_constant_override("separation", 2)
-	panel.add_child(v)
-	var val := Label.new()
-	val.text = value
-	val.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	val.add_theme_font_size_override("font_size", 12)
-	val.add_theme_color_override("font_color", MenuTheme.FRAG)
-	_apply_hud_font(val)
-	var lbl := Label.new()
-	lbl.text = label
-	lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	lbl.add_theme_font_size_override("font_size", 8)
-	lbl.add_theme_color_override("font_color", MenuTheme.TEXT_MUTED)
-	_apply_hud_font(lbl)
-	v.add_child(val)
-	v.add_child(lbl)
-	return panel
-
-
-# ------------------------------------------------------------
-# SECCION INVENTARIO: grid 3 columnas de modulos.
-# ------------------------------------------------------------
-func _make_inventory_section() -> Control:
-	var grid := GridContainer.new()
-	grid.columns = 3
-	grid.add_theme_constant_override("h_separation", 8)
-	grid.add_theme_constant_override("v_separation", 8)
-
-	var modulos := [
-		{"nombre": "Canon",    "rareza": "epico",      "lv": "Lv.4 EQ"},
-		{"nombre": "Nucleo+",  "rareza": "legendario", "lv": "Lv.7 EQ"},
-		{"nombre": "Escudo",   "rareza": "raro",       "lv": "Lv.2 EQ"},
-		{"nombre": "Iones",    "rareza": "epico",      "lv": "Lv.1"},
-		{"nombre": "Blindaje", "rareza": "comun",      "lv": "Lv.3"},
-		{"nombre": "P.Vacio",  "rareza": "legendario", "lv": "Lv.1"},
-	]
-	for m in modulos:
-		grid.add_child(_make_inventory_item(m))
-	return grid
-
-
-func _make_inventory_item(m: Dictionary) -> Control:
-	var col: Color = RAREZA_COLOR[m["rareza"]]
-	var panel := PanelContainer.new()
-	panel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	var style := StyleBoxFlat.new()
-	style.bg_color = Color(MenuTheme.BG_MID.r, MenuTheme.BG_MID.g, MenuTheme.BG_MID.b, 0.85)
-	style.border_color = Color(col.r, col.g, col.b, 0.25)
-	style.set_border_width_all(1)
-	style.set_corner_radius_all(10)
-	style.content_margin_left = 8
-	style.content_margin_right = 8
-	style.content_margin_top = 10
-	style.content_margin_bottom = 10
-	panel.add_theme_stylebox_override("panel", style)
-
-	var v := VBoxContainer.new()
-	v.alignment = BoxContainer.ALIGNMENT_CENTER
-	v.add_theme_constant_override("separation", 3)
-	panel.add_child(v)
-
-	var name_lbl := Label.new()
-	name_lbl.text = m["nombre"]
-	name_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	name_lbl.add_theme_font_size_override("font_size", 8)
-	name_lbl.add_theme_color_override("font_color", MenuTheme.TEXT_MUTED)
-	_apply_hud_font(name_lbl)
-
-	var lv_lbl := Label.new()
-	lv_lbl.text = m["lv"]
-	lv_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	lv_lbl.add_theme_font_size_override("font_size", 7)
-	lv_lbl.add_theme_color_override("font_color", col)
-	_apply_hud_font(lv_lbl)
-
-	v.add_child(name_lbl)
-	v.add_child(lv_lbl)
-	return panel
-
-
-# ------------------------------------------------------------
-# SECCION FORJAR: 4 capsulas con coste y probabilidades.
-# ------------------------------------------------------------
-func _make_craft_section() -> Control:
-	var grid := GridContainer.new()
-	grid.columns = 2
-	grid.add_theme_constant_override("h_separation", 10)
-	grid.add_theme_constant_override("v_separation", 10)
-
-	grid.add_child(_make_capsule("Capsula Basica", "Alta prob. comun/raro", 40))
-	grid.add_child(_make_capsule("Capsula Avanz.", "Mayor prob. epico", 100))
-	grid.add_child(_make_capsule("Capsula Nexo", "Garantizado epico+", 200))
-	grid.add_child(_make_capsule("Capsula Void", "Legendario garantizado", 500))
-	return grid
-
-
-func _make_capsule(nombre: String, desc: String, coste: int) -> Control:
-	var panel := PanelContainer.new()
-	panel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	panel.add_theme_stylebox_override("panel", MenuTheme.make_card_style(MenuTheme.BORDER_DIM))
+	if not desbloqueada:
+		panel.modulate.a = 0.85
+
+	var v := VBoxContainer.new()
+	v.add_theme_constant_override("separation", 6)
+	panel.add_child(v)
+
+	# Cabecera: nombre + cooldown.
+	var head := HBoxContainer.new()
+	head.add_theme_constant_override("separation", 8)
+	var name_lbl := Label.new()
+	name_lbl.text = hab.get("nombre", id)
+	name_lbl.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	name_lbl.add_theme_font_size_override("font_size", 12)
+	name_lbl.add_theme_color_override("font_color", accent)
+	_apply_hud_font(name_lbl)
+	var cd_lbl := Label.new()
+	cd_lbl.text = "CD %ss" % _fmt_num(HabilidadManager.get_cooldown(id))
+	cd_lbl.add_theme_font_size_override("font_size", 9)
+	cd_lbl.add_theme_color_override("font_color", MenuTheme.TEXT_MUTED)
+	_apply_hud_font(cd_lbl)
+	head.add_child(name_lbl)
+	head.add_child(cd_lbl)
+	v.add_child(head)
+
+	# Descripción.
+	var desc := Label.new()
+	desc.text = hab.get("descripcion", "")
+	desc.add_theme_font_size_override("font_size", 9)
+	desc.add_theme_color_override("font_color", MenuTheme.TEXT_MUTED)
+	desc.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	v.add_child(desc)
+
+	if not desbloqueada:
+		v.add_child(_make_unlock_button(id, accent))
+	else:
+		v.add_child(_make_toggle_button(id, accent))
+		v.add_child(_make_sep(accent))
+		for mid in hab.get("mejoras", {}).keys():
+			v.add_child(_make_mejora_row(id, mid, accent))
+
+	return panel
+
+
+func _make_unlock_button(id: String, accent: Color) -> Control:
+	var coste: int = HabilidadManager.get_hab(id).get("coste_desbloqueo", 0)
+	var btn := Button.new()
+	btn.flat = true
+	btn.focus_mode = Control.FOCUS_NONE
+	btn.custom_minimum_size = Vector2(0, 34)
+	btn.text = "DESBLOQUEAR  %s %s" % [MenuTheme.SYM_FRAG, _format_number(coste)]
+	btn.add_theme_font_size_override("font_size", 10)
+	btn.add_theme_color_override("font_color", accent)
+	btn.add_theme_stylebox_override("normal", MenuTheme.make_button_style(accent))
+	btn.add_theme_stylebox_override("hover", MenuTheme.make_button_style(accent, true))
+	btn.add_theme_stylebox_override("pressed", MenuTheme.make_button_style(accent, true))
+	_apply_hud_font(btn)
+	btn.modulate.a = 1.0 if _leer_frag() >= coste else 0.4
+	btn.pressed.connect(func(): _on_desbloquear(id))
+	return btn
+
+
+func _make_toggle_button(id: String, accent: Color) -> Control:
+	var activa: bool = HabilidadManager.esta_activa(id)
+	var btn := Button.new()
+	btn.flat = true
+	btn.focus_mode = Control.FOCUS_NONE
+	btn.custom_minimum_size = Vector2(0, 30)
+	btn.text = "✓ ACTIVA  (en partida)" if activa else "INACTIVA  (toca para activar)"
+	btn.add_theme_font_size_override("font_size", 9)
+	var col: Color = accent if activa else MenuTheme.TEXT_MUTED
+	btn.add_theme_color_override("font_color", col)
+	btn.add_theme_stylebox_override("normal", MenuTheme.make_button_style(col, activa))
+	btn.add_theme_stylebox_override("hover", MenuTheme.make_button_style(col, true))
+	btn.add_theme_stylebox_override("pressed", MenuTheme.make_button_style(col, true))
+	_apply_hud_font(btn)
+	btn.pressed.connect(func(): HabilidadManager.toggle_activa(id))
+	return btn
+
+
+# Fila de una línea de mejora: nombre + nivel/max + botón coste/MAX.
+func _make_mejora_row(id: String, mid: String, accent: Color) -> Control:
+	var hab := HabilidadManager.get_hab(id)
+	var m: Dictionary = hab.get("mejoras", {}).get(mid, {})
+	var es_toggle: bool = m.get("max_nivel", 1) == 1 and m.get("afecta", "") == ""
+	var nivel: int = HabilidadManager.get_nivel(id, mid)
+	var es_max: bool = HabilidadManager.es_max_mejora(id, mid)
+
+	var h := HBoxContainer.new()
+	h.add_theme_constant_override("separation", 8)
+
+	var info := VBoxContainer.new()
+	info.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	info.add_theme_constant_override("separation", 1)
+	var nom := Label.new()
+	nom.text = m.get("nombre", mid)
+	nom.add_theme_font_size_override("font_size", 9)
+	nom.add_theme_color_override("font_color", MenuTheme.TEXT_PRIMARY)
+	_apply_hud_font(nom)
+	info.add_child(nom)
+	if not es_toggle:
+		var prog := Label.new()
+		prog.text = "%d/%d" % [nivel, m.get("max_nivel", 0)]
+		prog.add_theme_font_size_override("font_size", 8)
+		prog.add_theme_color_override("font_color", MenuTheme.TEXT_MUTED)
+		_apply_hud_font(prog)
+		info.add_child(prog)
+	h.add_child(info)
 
 	var btn := Button.new()
 	btn.flat = true
 	btn.focus_mode = Control.FOCUS_NONE
-	btn.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	panel.add_child(btn)
-
-	var v := VBoxContainer.new()
-	v.add_theme_constant_override("separation", 4)
-	v.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	v.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-
-	var name_lbl := Label.new()
-	name_lbl.text = nombre
-	name_lbl.add_theme_font_size_override("font_size", 10)
-	name_lbl.add_theme_color_override("font_color", MenuTheme.TEXT_PRIMARY)
-	_apply_hud_font(name_lbl)
-
-	var desc_lbl := Label.new()
-	desc_lbl.text = desc
-	desc_lbl.add_theme_font_size_override("font_size", 9)
-	desc_lbl.add_theme_color_override("font_color", MenuTheme.TEXT_MUTED)
-	desc_lbl.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-
-	var cost_lbl := Label.new()
-	cost_lbl.text = "%s %d" % [MenuTheme.SYM_FRAG, coste]
-	cost_lbl.add_theme_font_size_override("font_size", 10)
-	cost_lbl.add_theme_color_override("font_color", MenuTheme.FRAG)
-	_apply_hud_font(cost_lbl)
-
-	v.add_child(name_lbl)
-	v.add_child(desc_lbl)
-	v.add_child(cost_lbl)
-	btn.add_child(v)
-
-	btn.pressed.connect(func(): _on_craft(nombre, coste))
-	return panel
+	btn.custom_minimum_size = Vector2(96, 28)
+	btn.add_theme_font_size_override("font_size", 9)
+	_apply_hud_font(btn)
+	if es_max:
+		btn.text = "✓" if es_toggle else "MAX"
+		btn.add_theme_color_override("font_color", MenuTheme.GOLD)
+		btn.disabled = true
+	else:
+		var coste := HabilidadManager.get_coste_mejora(id, mid)
+		btn.text = "%s %s" % [MenuTheme.SYM_FRAG, _format_number(coste)]
+		btn.add_theme_color_override("font_color", accent)
+		btn.add_theme_stylebox_override("normal", MenuTheme.make_button_style(accent))
+		btn.add_theme_stylebox_override("hover", MenuTheme.make_button_style(accent, true))
+		btn.add_theme_stylebox_override("pressed", MenuTheme.make_button_style(accent, true))
+		btn.modulate.a = 1.0 if _leer_frag() >= coste else 0.4
+		btn.pressed.connect(func(): _on_mejorar(id, mid))
+	h.add_child(btn)
+	return h
 
 
-func _on_craft(nombre: String, coste: int) -> void:
-	if _frag < coste:
+func _make_sep(accent: Color) -> Control:
+	var line := ColorRect.new()
+	line.color = Color(accent.r, accent.g, accent.b, 0.18)
+	line.custom_minimum_size = Vector2(0, 1)
+	return line
+
+
+# ------------------------------------------------------------
+# ACCIONES.
+# ------------------------------------------------------------
+func _on_desbloquear(id: String) -> void:
+	var coste: int = HabilidadManager.get_hab(id).get("coste_desbloqueo", 0)
+	if _leer_frag() < coste:
 		_toast("Fragmentos insuficientes")
 		return
-	_frag -= coste
-	var eco := get_node_or_null("/root/Economia")
-	if eco and "fragmentos" in eco:
-		# TODO: descontar en el sistema real cuando exista forja.
-		_frag = eco.fragmentos
-	_lbl_frag.text = _format_number(_frag)
-	# TODO: aqui generas el modulo aleatorio segun probabilidades.
-	_toast("Forjado: " + nombre)
+	if HabilidadManager.desbloquear(id):
+		_toast("Desbloqueada: " + HabilidadManager.get_hab(id).get("nombre", id))
+
+
+func _on_mejorar(id: String, mid: String) -> void:
+	if _leer_frag() < HabilidadManager.get_coste_mejora(id, mid):
+		_toast("Fragmentos insuficientes")
+		return
+	HabilidadManager.mejorar(id, mid)
 
 
 # ------------------------------------------------------------
-# Refresco.
+# Refresco / helpers.
 # ------------------------------------------------------------
 func on_show() -> void:
+	_refrescar()
+
+
+func _refresh_frag() -> void:
+	if _lbl_frag:
+		_lbl_frag.text = _format_number(_leer_frag())
+
+
+func _leer_frag() -> int:
 	var eco := get_node_or_null("/root/Economia")
 	if eco and "fragmentos" in eco:
-		_frag = eco.fragmentos
-		_lbl_frag.text = _format_number(_frag)
-	_update_tab_colors()
+		return eco.fragmentos
+	return 0
 
 
 func _toast(msg: String) -> void:
 	print("[Forja] ", msg)
+
+
+# Formatea un float quitando decimales innecesarios (18.0 -> "18", 1.5 -> "1.5").
+func _fmt_num(n: float) -> String:
+	if absf(n - round(n)) < 0.001:
+		return str(int(round(n)))
+	return str(snappedf(n, 0.1))
 
 
 func _format_number(n: int) -> String:
@@ -410,103 +419,3 @@ func _apply_hud_font(node) -> void:
 	var f := MenuTheme.get_font_hud()
 	if f and node.has_method("add_theme_font_override"):
 		node.add_theme_font_override("font", f)
-
-
-# ============================================================
-# ForgeArena: clase interna que dibuja el Sentinel con anillos
-# y posiciona los 5 slots de equipamiento alrededor.
-# ============================================================
-class ForgeArena extends Control:
-	var _t: float = 0.0
-
-	func _ready() -> void:
-		_create_slots()
-
-	func _process(delta: float) -> void:
-		_t += delta
-		queue_redraw()
-
-	func _draw() -> void:
-		var center := size / 2.0
-		var r := 32.0
-		# Glow del nucleo.
-		for i in range(5, 0, -1):
-			draw_circle(center, r + i * 5.0, Color(0.59, 0.31, 0.86, 0.04))
-		# Nucleo violeta.
-		draw_circle(center, r, Color("32064b"))
-		draw_circle(center - Vector2(r*0.2, r*0.2), r*0.7, Color("783cdc"))
-		draw_circle(center - Vector2(r*0.3, r*0.3), r*0.35, Color("c8aaff"))
-		# Anillo.
-		draw_arc(center, 55, 0, TAU, 48, Color(0.70, 0.53, 1.0, 0.3), 1.0, true)
-		var ang := _t * 0.7
-		draw_circle(center + Vector2(cos(ang), sin(ang)) * 55.0, 3.0, MenuTheme.FRAG)
-
-	# Coloca los 5 slots como labels alrededor del centro.
-	func _create_slots() -> void:
-		var slots := [
-			{"sym": "C", "pos": "top",    "rareza": "epico",      "lv": "Lv.4"},
-			{"sym": "E", "pos": "left",   "rareza": "raro",       "lv": "Lv.2"},
-			{"sym": "N", "pos": "right",  "rareza": "legendario", "lv": "Lv.7"},
-			{"sym": "+", "pos": "bottom", "rareza": "empty",      "lv": ""},
-			{"sym": "L", "pos": "topr",   "rareza": "locked",     "lv": ""},
-		]
-		for s in slots:
-			var slot := _make_slot(s)
-			add_child(slot)
-
-	func _make_slot(data: Dictionary) -> Control:
-		var panel := PanelContainer.new()
-		panel.custom_minimum_size = Vector2(52, 52)
-		panel.size = Vector2(52, 52)
-
-		var col := Color(MenuTheme.FRAG.r, MenuTheme.FRAG.g, MenuTheme.FRAG.b, 0.25)
-		var rareza: String = data["rareza"]
-		if rareza in ForjaScreenUI.RAREZA_COLOR:
-			col = ForjaScreenUI.RAREZA_COLOR[rareza]
-
-		var style := StyleBoxFlat.new()
-		style.bg_color = Color(0.06, 0.04, 0.14, 0.9)
-		style.border_color = col
-		style.set_border_width_all(1)
-		style.set_corner_radius_all(10)
-		panel.add_theme_stylebox_override("panel", style)
-
-		var v := VBoxContainer.new()
-		v.alignment = BoxContainer.ALIGNMENT_CENTER
-		v.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-		var lbl := Label.new()
-		lbl.text = data["sym"]
-		lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		lbl.add_theme_font_size_override("font_size", 18)
-		lbl.add_theme_color_override("font_color", col)
-		v.add_child(lbl)
-		if data["lv"] != "":
-			var lv := Label.new()
-			lv.text = data["lv"]
-			lv.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-			lv.add_theme_font_size_override("font_size", 7)
-			lv.add_theme_color_override("font_color", col)
-			v.add_child(lv)
-		panel.add_child(v)
-
-		# Posicionar tras el layout (usamos call_deferred para tener size).
-		panel.set_meta("pos", data["pos"])
-		call_deferred("_position_slot", panel, data["pos"])
-		return panel
-
-	func _position_slot(panel: Control, pos: String) -> void:
-		var c := size / 2.0
-		var off := Vector2(26, 26)  # mitad del slot
-		match pos:
-			"top":    panel.position = Vector2(c.x - off.x, 14)
-			"bottom": panel.position = Vector2(c.x - off.x, size.y - 66)
-			"left":   panel.position = Vector2(14, c.y - off.y)
-			"right":  panel.position = Vector2(size.x - 66, c.y - off.y)
-			"topr":   panel.position = Vector2(size.x - 80, 36)
-
-	func _notification(what: int) -> void:
-		if what == NOTIFICATION_RESIZED:
-			for child in get_children():
-				if child.has_meta("pos"):
-					_position_slot(child, child.get_meta("pos"))
-			
