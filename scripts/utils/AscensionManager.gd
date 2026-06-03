@@ -34,6 +34,9 @@ const PAUSA_ENTRE_ASCENSIONES: float = 15.0
 const ESPECTROS_BASE: int = 8
 const MAX_ENEMIGOS_SIMULTANEOS: int = 15
 
+# El escalado de stats de enemigos vive centralizado en EscaladoEnemigos.gd
+# (clase estática). Tunea la dificultad ahí, no aquí.
+
 func _ready() -> void:
 	Economia.juego_terminado.connect(_on_juego_terminado)
 
@@ -117,55 +120,22 @@ func _generar_espectro() -> void:
 			intentos += 1
 
 	var ascension = Economia.numero_ascension
-	var multiplicador_salud  = pow(1.38, ascension)
-	var multiplicador_ataque = pow(1.16, ascension)
-
-	var salud_base    = 15.0 * multiplicador_salud
-	var ataque_base   = 3.0  * multiplicador_ataque
-	var velocidad_base = 100.0
-	var recompensa_base = 5
 	var tipo_str = "basico"
-
 	if escena_elegida == escena_espectro_jefe:
-		salud_base     = 150.0 * multiplicador_salud
-		ataque_base    = 6.0   * multiplicador_ataque
-		velocidad_base = 50.0
-		recompensa_base = 50
 		tipo_str = "jefe"
 	elif escena_elegida == escena_espectro_tanque:
-		salud_base     = 75.0 * multiplicador_salud
-		ataque_base    = 3.0  * multiplicador_ataque
-		velocidad_base = 60.0
-		recompensa_base = 15
 		tipo_str = "tanque"
 	elif escena_elegida == escena_espectro_kamikaze:
-		salud_base     = 10.0 * multiplicador_salud
-		ataque_base    = 6.0  * multiplicador_ataque
-		velocidad_base = 200.0
-		recompensa_base = 8
 		tipo_str = "kamikaze"
 	elif escena_elegida == escena_espectro_sniper:
-		salud_base     = 12.0 * multiplicador_salud
-		ataque_base    = 4.5  * multiplicador_ataque
-		velocidad_base = 80.0
-		recompensa_base = 8
 		tipo_str = "sniper"
 	elif escena_elegida == escena_espectro_comander:
-		salud_base     = 30.0 * multiplicador_salud
-		ataque_base    = 0.0
-		velocidad_base = 100.0
-		recompensa_base = 40
 		tipo_str = "commander"
 
-	print("📊 Stats: ", tipo_str, " | HP: ", snapped(salud_base, 0.1), " | ATK: ", snapped(ataque_base, 0.1))
-
-	espectro.configurar({
-		"hp": salud_base,
-		"atk": ataque_base,
-		"spd_px": velocidad_base,
-		"recompensa": int(recompensa_base * pow(1.12, ascension)),
-		"tipo": tipo_str
-	})
+	# Escalado centralizado (EscaladoEnemigos).
+	var datos := EscaladoEnemigos.stats(tipo_str, ascension)
+	print("📊 Stats: ", tipo_str, " | HP: ", snapped(datos["hp"], 0.1), " | ATK: ", snapped(datos["atk"], 0.1))
+	espectro.configurar(datos)
 
 	print("📢 Generando espectro. Restantes por spawnear: ", espectros_a_spawnear)
 
@@ -220,7 +190,7 @@ func _evaluar_commander() -> void:
 
 	# Commander nuevo cada 50 ascensiones
 	if asc > 0 and asc % 50 == 0 and not commander_generado_esta_ascension:
-		var hp_nuevo := 30.0 * pow(1.38, asc)
+		var hp_nuevo := EscaladoEnemigos.vida("commander", asc)
 		_spawn_commander(hp_nuevo)
 		print("👾 COMMANDER NUEVO (Asc ", asc, ") HP ", snapped(hp_nuevo, 0.1))
 

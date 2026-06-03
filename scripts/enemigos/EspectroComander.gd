@@ -141,55 +141,17 @@ func _tick_advertencia(delta: float) -> void:
 
 func _ejecutar_spawn() -> void:
 	var escena: PackedScene
-	var datos: Dictionary
 	var asc = Economia.numero_ascension
 
+	# Escalado centralizado (mismo que las oleadas normales).
+	var datos := EscaladoEnemigos.stats(tipo_spawn_pendiente, asc)
+
 	match tipo_spawn_pendiente:
-		"basico":
-			escena = ESCENA_BASICO
-			datos = {
-				"hp": 15.0 * pow(1.38, asc),
-				"atk": 3.0 * pow(1.16, asc),
-				"spd_px": 80.0,
-				"recompensa": int(5 * pow(1.12, asc)),
-				"tipo": "basico"
-			}
-		"tanque":
-			escena = ESCENA_TANQUE
-			datos = {
-				"hp": 75.0 * pow(1.38, asc),
-				"atk": 3.0 * pow(1.16, asc),
-				"spd_px": 48.0,
-				"recompensa": int(15 * pow(1.12, asc)),
-				"tipo": "tanque"
-			}
-		"kamikaze":
-			escena = ESCENA_KAMIKAZE
-			datos = {
-				"hp": 10.0 * pow(1.38, asc),
-				"atk": 6.0 * pow(1.16, asc),
-				"spd_px": 200.0,
-				"recompensa": int(8 * pow(1.12, asc)),
-				"tipo": "kamikaze"
-			}
-		"sniper":
-			escena = ESCENA_SNIPER
-			datos = {
-				"hp": 12.0 * pow(1.38, asc),
-				"atk": 4.5 * pow(1.16, asc),
-				"spd_px": 100.0,
-				"recompensa": int(8 * pow(1.12, asc)),
-				"tipo": "sniper"
-			}
-		"jefe":
-			escena = ESCENA_JEFE
-			datos = {
-				"hp": 150.0 * pow(1.38, asc),
-				"atk": 6.0 * pow(1.16, asc),
-				"spd_px": 50.0,
-				"recompensa": int(50 * pow(1.12, asc)),
-				"tipo": "jefe"
-			}
+		"basico":   escena = ESCENA_BASICO
+		"tanque":   escena = ESCENA_TANQUE
+		"kamikaze": escena = ESCENA_KAMIKAZE
+		"sniper":   escena = ESCENA_SNIPER
+		"jefe":     escena = ESCENA_JEFE
 
 	# ✅ Mejora "blindaje": -5% ATK de los invocados por nivel (máx -50%)
 	var nivel_blindaje := 0
