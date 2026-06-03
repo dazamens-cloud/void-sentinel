@@ -24,6 +24,10 @@ var _lbl_frag: Label
 
 func _ready() -> void:
 	_build()
+	# 🎵 Música del menú (loop). Si no hay archivo, no suena.
+	var am := get_node_or_null("/root/AudioManager")
+	if am:
+		am.musica("menu")
 
 
 func _build() -> void:

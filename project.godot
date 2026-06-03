@@ -26,6 +26,7 @@ EstadisticasManager="*res://scripts/perfil/EstadisticasManager.gd"
 ModoPrueba="*res://scripts/utils/ModoPrueba.gd"
 FX="*res://scripts/utils/FX.gd"
 ReanudarPartida="*res://scripts/utils/ReanudarPartida.gd"
+AudioManager="*res://scripts/utils/AudioManager.gd"
 
 [display]
 

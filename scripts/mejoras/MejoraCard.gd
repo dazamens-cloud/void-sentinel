@@ -122,6 +122,7 @@ func _on_comprar() -> void:
 	if cantidad <= 0: return
 	var compradas: int = mejora_manager.comprar_mejora(mejora_id, cantidad)
 	if compradas > 0:
+		AudioManager.sfx("compra")
 		refrescar()
 
 func _calcular_cantidad(nivel: int, max_nivel: int, bloqueada: bool) -> int:

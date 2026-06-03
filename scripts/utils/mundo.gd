@@ -32,6 +32,9 @@ func _ready() -> void:
 	_conectar_dron()
 	_configurar_camara()
 
+	# 🎵 Música de combate (loop). Si no hay archivo, no suena.
+	AudioManager.musica("combate")
+
 # 🧪 Atajo de prueba: tecla C invoca al Commander (solo en partidas de prueba).
 func _unhandled_input(event: InputEvent) -> void:
 	if not ModoPrueba.partida_es_prueba:

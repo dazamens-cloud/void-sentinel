@@ -24,10 +24,11 @@ endgame.
 ## BLOQUE A — Cerrar la Beta v1.0
 Lo que falta para una beta "viva" y completa.
 
-- [ ] **A1 · Audio (prioridad #1)** — el mayor agujero: hoy hay **cero** sonido.
-  - [ ] Autoload `AudioManager` (buses música/SFX, volumen)
-  - [ ] SFX: disparo, impacto, muerte de espectro, explosión, daño al Nexus, compra de mejora, game over
-  - [ ] 1–2 músicas en loop (menú / combate)
+- [~] **A1 · Audio (prioridad #1)** — infraestructura lista; faltan los archivos.
+  - [x] Autoload `AudioManager` (carga perezosa, pool de canales, volumen, loop)
+  - [x] SFX enganchados: disparo, muerte, crítico, daño al Nexus, compra, game over
+  - [x] Música cableada: `combate` (en partida) y `menu` (en Home)
+  - [ ] **Conseguir y soltar los archivos** en `res://audio/sfx/` y `/music/` (ver `audio/README.md`)
 - [ ] **A2 · Tutorial básico** (3 pantallas o tooltips de primera partida)
 - [ ] **A3 · Arte** — reemplazar placeholders clave (incremental, no bloqueante)
 - [ ] **A4 · Juice extra (opcional)** — hit-pause al crítico/muerte, más partículas

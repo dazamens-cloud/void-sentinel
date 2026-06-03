@@ -130,6 +130,7 @@ func _disparar() -> void:
 		if critico:
 			danio_base *= NexusStats.get_critico_factor()
 
+		AudioManager.sfx("disparo")
 		var dir_base: Vector2 = (objetivo.global_position - global_position).normalized()
 		# ✅ Multidisparo: proyectil principal + extras en abanico
 		var total := 1 + NexusStats.get_multidisparo()
@@ -168,8 +169,9 @@ func recibir_ataque(cantidad: float) -> void:
 
 	NexusStats.recibir_ataque(dano_final)
 	_parpadeo_dano()
-	# 🎇 Juice: sacudida media cuando el Nexus encaja un golpe.
+	# 🎇 Juice: sacudida media + sonido cuando el Nexus encaja un golpe.
 	FX.sacudir(0.30)
+	AudioManager.sfx("dano_nexus")
 
 	var texto_dano = ESCENA_TEXTO.instantiate()
 	texto_dano.set_valor(dano_final, "dano")
@@ -186,9 +188,10 @@ func _destruir() -> void:
 	esta_destruido = true
 	timer_disparo.stop()
 	sprite.modulate = Color(0.2, 0.2, 0.2)
-	# 🎇 Juice: sacudida fuerte + estallido al caer el Nexus.
+	# 🎇 Juice: sacudida fuerte + estallido + sonido al caer el Nexus.
 	FX.impacto(global_position, Color(1.0, 0.3, 0.2), 28, 280.0)
 	FX.sacudir(0.9)
+	AudioManager.sfx("game_over", false)
 	Economia.juego_terminado.emit("Nexus Destruido")
 
 func _on_stats_actualizadas() -> void:
