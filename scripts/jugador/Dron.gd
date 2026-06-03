@@ -89,7 +89,9 @@ func _buscar_y_atraer_fragmentos(delta: float) -> void:
 			dist_min = d
 			fragmento_mas_cercano = frag
 	
-	if fragmento_mas_cercano and dist_min < 250:
+	# Si existe CUALQUIER fragmento en el mapa, el dron va siempre a por el más
+	# cercano (sin importar la distancia). Solo vaga cuando no hay ninguno.
+	if fragmento_mas_cercano:
 		var direccion = (fragmento_mas_cercano.global_position - global_position).normalized()
 		velocity = velocity.lerp(direccion * VELOCIDAD_NORMAL, 3.0 * delta)
 		rotation = lerp_angle(rotation, direccion.angle(), 6.0 * delta)
