@@ -22,6 +22,7 @@ NexusStats="*uid://hhuldtka10uo"
 MejoraManager="*uid://cvxf7onkdmu4r"
 Sistemadisparosespeciales="*uid://dhk5yhskeov7a"
 HabilidadManager="*res://scripts/habilidades/HabilidadManager.gd"
+EstadisticasManager="*res://scripts/perfil/EstadisticasManager.gd"
 
 [display]
 

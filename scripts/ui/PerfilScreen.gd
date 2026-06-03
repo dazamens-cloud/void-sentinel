@@ -14,10 +14,15 @@ extends Control
 var _current_tab: String = "stats"
 var _sections: Dictionary = {}
 var _tab_buttons: Dictionary = {}
+var _logros_box: VBoxContainer
+var _stats_box: VBoxContainer
 
 
 func _ready() -> void:
 	_build()
+	if EstadisticasManager.has_signal("logros_actualizados"):
+		EstadisticasManager.logros_actualizados.connect(_refresh_logros)
+		EstadisticasManager.logros_actualizados.connect(_refresh_stats)
 
 
 func _build() -> void:
@@ -203,28 +208,49 @@ func _update_tab_colors() -> void:
 # SECCION STATS.
 # ------------------------------------------------------------
 func _make_stats_section() -> Control:
-	var v := VBoxContainer.new()
-	v.add_theme_constant_override("separation", 14)
-	v.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_stats_box = VBoxContainer.new()
+	_stats_box.add_theme_constant_override("separation", 14)
+	_stats_box.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_refresh_stats()
+	return _stats_box
+
+
+# Rellena el resumen con los datos reales actuales (refrescable en on_show).
+func _refresh_stats() -> void:
+	if _stats_box == null:
+		return
+	for c in _stats_box.get_children():
+		c.queue_free()
+	var v := _stats_box
 
 	# 4 big stats en grid 2x2.
 	var grid := GridContainer.new()
 	grid.columns = 2
 	grid.add_theme_constant_override("h_separation", 10)
 	grid.add_theme_constant_override("v_separation", 10)
-	grid.add_child(_make_big_stat("89", "RECORD ASCENSION", "Ultima: Asc. 47", MenuTheme.GOLD))
-	grid.add_child(_make_big_stat("23", "PARTIDAS TOTALES", "Ult. 7 dias: 5", MenuTheme.CYAN))
-	grid.add_child(_make_big_stat("12.4K", "ENEMIGOS DESTRUIDOS", "Record: 1,204", MenuTheme.RED))
-	grid.add_child(_make_big_stat("14h", "TIEMPO TOTAL", "Media: 36min", MenuTheme.VIOLET))
+	var em := EstadisticasManager
+	grid.add_child(_make_big_stat(_miles(em.mejor_ascension), "RECORD ASCENSION", "Tu mejor marca", MenuTheme.GOLD))
+	grid.add_child(_make_big_stat(_miles(em.partidas_jugadas), "PARTIDAS TOTALES", "Completadas", MenuTheme.CYAN))
+	grid.add_child(_make_big_stat(_miles(em.kills_total), "ENEMIGOS DESTRUIDOS", "Acumulado", MenuTheme.RED))
+	grid.add_child(_make_big_stat("%d/%d" % [_logros_completos(), em.ids_logros().size()], "LOGROS NIVEL MAX", "Al máximo", MenuTheme.VIOLET))
 	v.add_child(grid)
 
-	# Stats de economia.
+	# Stats de economia (saldo actual real).
+	var eco := get_node_or_null("/root/Economia")
+	var ecos_val := _miles(eco.ecos) if eco else "0"
+	var frag_val := _miles(eco.fragmentos) if eco else "0"
 	v.add_child(_make_section_title("ECONOMIA"))
-	v.add_child(_make_stat_row(MenuTheme.SYM_ENERGIA, "Energia total generada", "2.84M", MenuTheme.GOLD))
-	v.add_child(_make_stat_row(MenuTheme.SYM_ECOS, "Ecos acumulados", "8,430", MenuTheme.CYAN))
-	v.add_child(_make_stat_row(MenuTheme.SYM_FRAG, "Fragmentos forjados", "1,920", MenuTheme.VIOLET))
+	v.add_child(_make_stat_row(MenuTheme.SYM_ECOS, "Ecos disponibles", ecos_val, MenuTheme.CYAN))
+	v.add_child(_make_stat_row(MenuTheme.SYM_FRAG, "Fragmentos disponibles", frag_val, MenuTheme.VIOLET))
 
-	return v
+
+# Cuántos logros están en su nivel máximo (todos los tiers reclamados).
+func _logros_completos() -> int:
+	var n := 0
+	for id in EstadisticasManager.ids_logros():
+		if EstadisticasManager.todos_reclamados(id):
+			n += 1
+	return n
 
 
 func _make_big_stat(value: String, label: String, sub: String, color: Color) -> Control:
@@ -291,36 +317,43 @@ func _make_stat_row(symbol: String, name: String, value: String, color: Color) -
 # SECCION LOGROS.
 # ------------------------------------------------------------
 func _make_achievements_section() -> Control:
-	var v := VBoxContainer.new()
-	v.add_theme_constant_override("separation", 8)
-	v.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-
-	var logros := [
-		{"nombre": "Veterano",      "desc": "Alcanza Ascension 25",      "estado": "unlocked",    "prog": 1.0,  "reward": "1,000", "prog_txt": "Completado"},
-		{"nombre": "Cazador",       "desc": "Elimina 1,000 enemigos",    "estado": "unlocked",    "prog": 1.0,  "reward": "500",   "prog_txt": "Completado"},
-		{"nombre": "Elite",         "desc": "Alcanza Ascension 50",      "estado": "in_progress", "prog": 0.94, "reward": "5,000", "prog_txt": "47 / 50"},
-		{"nombre": "Exterminador",  "desc": "Elimina 10,000 enemigos",   "estado": "in_progress", "prog": 0.62, "reward": "2,000", "prog_txt": "6,200 / 10,000"},
-		{"nombre": "Primera Sangre","desc": "Alcanza Ascension 5",       "estado": "claimed",     "prog": 1.0,  "reward": "100",   "prog_txt": "Reclamado"},
-	]
-	for l in logros:
-		v.add_child(_make_achievement_card(l))
-	return v
+	_logros_box = VBoxContainer.new()
+	_logros_box.add_theme_constant_override("separation", 8)
+	_logros_box.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_refresh_logros()
+	return _logros_box
 
 
-func _make_achievement_card(l: Dictionary) -> Control:
-	var estado: String = l["estado"]
-	var accent := MenuTheme.GOLD
-	if estado == "claimed":
+# Reconstruye las cards de logros desde EstadisticasManager.
+func _refresh_logros(_a = null) -> void:
+	if _logros_box == null:
+		return
+	for c in _logros_box.get_children():
+		c.queue_free()
+	for id in EstadisticasManager.ids_logros():
+		_logros_box.add_child(_make_achievement_card(id))
+
+
+func _make_achievement_card(id: String) -> Control:
+	var em := EstadisticasManager
+	var completo: bool = em.todos_reclamados(id)
+	var reclamable: bool = em.es_reclamable(id)
+	var nivel: int = em.nivel_reclamado(id)          # tiers ya reclamados
+	var total: int = em.num_tiers(id)
+
+	# Color: dorado si reclamable, verde si completo, cian si en progreso.
+	var accent := MenuTheme.CYAN
+	if completo:
 		accent = MenuTheme.GREEN
-	elif estado == "in_progress":
-		accent = MenuTheme.CYAN
+	elif reclamable:
+		accent = MenuTheme.GOLD
 
 	var panel := PanelContainer.new()
 	var style := MenuTheme.make_card_style(MenuTheme.BORDER_DIM)
-	if estado == "unlocked":
-		style.border_color = Color(MenuTheme.GOLD.r, MenuTheme.GOLD.g, MenuTheme.GOLD.b, 0.2)
+	if reclamable:
+		style.border_color = Color(MenuTheme.GOLD.r, MenuTheme.GOLD.g, MenuTheme.GOLD.b, 0.35)
 	panel.add_theme_stylebox_override("panel", style)
-	if estado == "claimed":
+	if completo:
 		panel.modulate.a = 0.65
 
 	var h := HBoxContainer.new()
@@ -330,15 +363,29 @@ func _make_achievement_card(l: Dictionary) -> Control:
 	var info := VBoxContainer.new()
 	info.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	info.add_theme_constant_override("separation", 3)
+
+	# Nombre + indicador de nivel (Nv. 2/4).
+	var name_row := HBoxContainer.new()
+	name_row.add_theme_constant_override("separation", 6)
 	var name_lbl := Label.new()
-	name_lbl.text = l["nombre"]
+	name_lbl.text = em.get_logro(id).get("nombre", id)
+	name_lbl.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	name_lbl.add_theme_font_size_override("font_size", 11)
 	name_lbl.add_theme_color_override("font_color", MenuTheme.TEXT_PRIMARY)
 	_apply_hud_font(name_lbl)
+	var nivel_lbl := Label.new()
+	nivel_lbl.text = "Nv. %d/%d" % [nivel, total]
+	nivel_lbl.add_theme_font_size_override("font_size", 8)
+	nivel_lbl.add_theme_color_override("font_color", accent)
+	_apply_hud_font(nivel_lbl)
+	name_row.add_child(name_lbl)
+	name_row.add_child(nivel_lbl)
+
 	var desc_lbl := Label.new()
-	desc_lbl.text = l["desc"]
+	desc_lbl.text = "Completado — máximo nivel" if completo else em.descripcion_actual(id)
 	desc_lbl.add_theme_font_size_override("font_size", 10)
 	desc_lbl.add_theme_color_override("font_color", MenuTheme.TEXT_MUTED)
+
 	var prog_row := HBoxContainer.new()
 	prog_row.add_theme_constant_override("separation", 6)
 	var track := ProgressBar.new()
@@ -346,18 +393,23 @@ func _make_achievement_card(l: Dictionary) -> Control:
 	track.custom_minimum_size = Vector2(0, 2)
 	track.min_value = 0
 	track.max_value = 1.0
-	track.value = l["prog"]
+	track.value = em.progreso_actual(id)
 	track.show_percentage = false
 	track.add_theme_stylebox_override("background", MenuTheme.make_progress_track())
 	track.add_theme_stylebox_override("fill", MenuTheme.make_progress_fill(accent))
 	var prog_lbl := Label.new()
-	prog_lbl.text = l["prog_txt"]
+	if completo:
+		prog_lbl.text = "MAX"
+	else:
+		var stat_val: int = em.get_stat(em.get_logro(id).get("stat", ""))
+		prog_lbl.text = "%s / %s" % [_miles(stat_val), _miles(em.objetivo_actual(id))]
 	prog_lbl.add_theme_font_size_override("font_size", 8)
 	prog_lbl.add_theme_color_override("font_color", MenuTheme.TEXT_MUTED)
 	_apply_hud_font(prog_lbl)
 	prog_row.add_child(track)
 	prog_row.add_child(prog_lbl)
-	info.add_child(name_lbl)
+
+	info.add_child(name_row)
 	info.add_child(desc_lbl)
 	info.add_child(prog_row)
 	h.add_child(info)
@@ -366,7 +418,7 @@ func _make_achievement_card(l: Dictionary) -> Control:
 	right.alignment = BoxContainer.ALIGNMENT_CENTER
 	right.add_theme_constant_override("separation", 4)
 	var reward := Label.new()
-	reward.text = "%s %s" % [MenuTheme.SYM_ECOS, l["reward"]]
+	reward.text = "—" if completo else "%s %s" % [MenuTheme.SYM_ECOS, _miles(em.reward_actual(id))]
 	reward.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	reward.add_theme_font_size_override("font_size", 9)
 	reward.add_theme_color_override("font_color", MenuTheme.GOLD)
@@ -375,24 +427,24 @@ func _make_achievement_card(l: Dictionary) -> Control:
 	var btn := Button.new()
 	btn.flat = true
 	btn.focus_mode = Control.FOCUS_NONE
+	btn.custom_minimum_size = Vector2(80, 26)
 	btn.add_theme_font_size_override("font_size", 8)
 	_apply_hud_font(btn)
-	match estado:
-		"unlocked":
-			btn.text = "Reclamar"
-			btn.add_theme_color_override("font_color", MenuTheme.GOLD)
-			btn.add_theme_stylebox_override("normal", MenuTheme.make_button_style(MenuTheme.GOLD, true))
-			btn.add_theme_stylebox_override("hover", MenuTheme.make_button_style(MenuTheme.GOLD, true))
-			btn.add_theme_stylebox_override("pressed", MenuTheme.make_button_style(MenuTheme.GOLD, true))
-			btn.pressed.connect(func(): _on_claim(btn, panel, l["reward"]))
-		"claimed":
-			btn.text = "OK"
-			btn.disabled = true
-			btn.add_theme_color_override("font_color", MenuTheme.GREEN)
-		"in_progress":
-			btn.text = "Pendiente"
-			btn.disabled = true
-			btn.add_theme_color_override("font_color", MenuTheme.TEXT_MUTED)
+	if completo:
+		btn.text = "✓ MAX"
+		btn.disabled = true
+		btn.add_theme_color_override("font_color", MenuTheme.GREEN)
+	elif reclamable:
+		btn.text = "Reclamar"
+		btn.add_theme_color_override("font_color", MenuTheme.GOLD)
+		btn.add_theme_stylebox_override("normal", MenuTheme.make_button_style(MenuTheme.GOLD, true))
+		btn.add_theme_stylebox_override("hover", MenuTheme.make_button_style(MenuTheme.GOLD, true))
+		btn.add_theme_stylebox_override("pressed", MenuTheme.make_button_style(MenuTheme.GOLD, true))
+		btn.pressed.connect(func(): EstadisticasManager.reclamar(id))
+	else:
+		btn.text = "Pendiente"
+		btn.disabled = true
+		btn.add_theme_color_override("font_color", MenuTheme.TEXT_MUTED)
 
 	right.add_child(reward)
 	right.add_child(btn)
@@ -401,13 +453,16 @@ func _make_achievement_card(l: Dictionary) -> Control:
 	return panel
 
 
-func _on_claim(btn: Button, panel: PanelContainer, reward: String) -> void:
-	btn.text = "OK"
-	btn.disabled = true
-	btn.add_theme_color_override("font_color", MenuTheme.GREEN)
-	panel.modulate.a = 0.65
-	# TODO: sumar la recompensa real al saldo de Ecos via Economia.
-	_toast("Recompensa: " + reward)
+func _miles(n: int) -> String:
+	var s := str(n)
+	var result := ""
+	var count := 0
+	for i in range(s.length() - 1, -1, -1):
+		result = s[i] + result
+		count += 1
+		if count % 3 == 0 and i > 0:
+			result = "," + result
+	return result
 
 
 # ------------------------------------------------------------
@@ -512,6 +567,8 @@ func _make_run_stat(value: String, label: String, color: Color) -> Control:
 # Helpers.
 # ------------------------------------------------------------
 func on_show() -> void:
+	_refresh_stats()
+	_refresh_logros()
 	_update_tab_colors()
 
 

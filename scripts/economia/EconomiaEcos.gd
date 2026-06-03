@@ -10,6 +10,7 @@ signal ecos_obtenidos(cantidad: int, posicion: Vector2)
 signal energia_cambiada(nueva_energia: float)
 signal ecos_actualizados
 signal fragmentos_actualizados
+signal espectro_eliminado   # se emite por cada espectro derrotado (para estadísticas/logros)
 
 var energia: float = 50.0
 var ecos: int = 0
@@ -94,6 +95,7 @@ func obtener_ecos_por_5_muertes() -> int:
 
 func procesar_drop_espectro(datos: Dictionary) -> void:
 	espectros_eliminados += 1
+	espectro_eliminado.emit()
 	var recompensa = float(datos.get("recompensa", 5))
 	var posicion = datos.get("posicion", Vector2.ZERO)
 	
@@ -106,6 +108,13 @@ func procesar_drop_espectro(datos: Dictionary) -> void:
 		recursos_actualizados.emit()
 		ecos_actualizados.emit()
 		ecos_obtenidos.emit(ecos_ganados, posicion)
+
+func añadir_ecos(cantidad: int) -> void:
+	# Suma ecos directamente (recompensas de logros, Commander, etc.).
+	ecos += cantidad
+	guardar_datos()
+	recursos_actualizados.emit()
+	ecos_actualizados.emit()
 
 func añadir_fragmentos(cantidad: int) -> void:
 	fragmentos += cantidad
