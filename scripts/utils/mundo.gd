@@ -17,8 +17,14 @@ func _ready() -> void:
 	MejoraManager.reiniciar_mejoras()
 
 	# 🧪 Modo prueba: si se lanzó desde "JUGAR PRUEBA", inyecta estado avanzado.
+	# ▶️ Reanudar: restaura el checkpoint guardado al salir al menú.
+	# (else) Partida nueva: descarta cualquier run guardada previa.
 	if ModoPrueba.activo:
 		ModoPrueba.aplicar()
+	elif ReanudarPartida.debe_reanudar:
+		ReanudarPartida.aplicar()
+	else:
+		ReanudarPartida.borrar()
 
 	_conectar_economia()
 	_conectar_gestor_oleadas()

@@ -41,10 +41,15 @@ func inicializar(manager, color: Color) -> void:
 		lbl_info_nombre.autowrap_mode        = TextServer.AUTOWRAP_WORD
 		lbl_info_nombre.size_flags_horizontal = Control.SIZE_FILL
 		lbl_info_nombre.size_flags_vertical   = Control.SIZE_FILL
-		lbl_info_nombre.add_theme_font_size_override("font_size", 13)
+		lbl_info_nombre.add_theme_font_size_override("font_size", 18)
 		# La label no debe capturar input — el botón padre lo hace
 		lbl_info_nombre.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		btn_info.add_child(lbl_info_nombre)
+	# Agrandar las etiquetas del lado de compra (override sobre la escena).
+	lbl_valor.add_theme_font_size_override("font_size", 17)
+	lbl_coste.add_theme_font_size_override("font_size", 16)
+	lbl_accion.add_theme_font_size_override("font_size", 16)
+	lbl_bloqueada.add_theme_font_size_override("font_size", 15)
 	refrescar()
 
 func set_multiplicador(valor: int) -> void:
@@ -81,7 +86,12 @@ func refrescar() -> void:
 	btn_comprar.add_theme_stylebox_override("pressed", _hacer_stylebox(color_oscuro, 1.0))
 	btn_comprar.add_theme_stylebox_override("disabled",_hacer_stylebox(Color(0.15, 0.15, 0.15), 0.5))
 
-	btn_comprar.disabled    = not puede or cantidad == 0
+	# Solo deshabilitar si no quedan niveles (max alcanzado o bloqueada). La
+	# falta de energía NO deshabilita el botón: solo lo atenúa. Así evitamos
+	# que en táctil quede "pillado" al drenarse la energía bajo el dedo, y
+	# comprar_mejora ya ignora el toque si no alcanza para ningún nivel.
+	btn_comprar.disabled    = (cantidad == 0)
+	btn_comprar.modulate    = Color.WHITE if puede else Color(0.55, 0.55, 0.55)
 	lbl_bloqueada.visible   = bloqueada
 	lbl_valor.visible       = not bloqueada
 	lbl_coste.visible       = not bloqueada

@@ -143,7 +143,11 @@ func _disparar() -> void:
 
 func _crear_proyectil(direccion: Vector2, danio_val: float, critico: bool) -> void:
 	var proyectil = escena_proyectil.instantiate()
-	get_tree().root.add_child(proyectil)
+	# Hijo de la escena del mundo (no de root) para que se libere al salir.
+	var padre := get_tree().current_scene
+	if padre == null:
+		padre = get_tree().root
+	padre.add_child(proyectil)
 	proyectil.global_position = global_position
 	proyectil.direccion = direccion
 	proyectil.rotation = direccion.angle()
@@ -257,7 +261,10 @@ func _disparar_especial(objetivo: Node2D) -> void:
 		return
 
 	var proyectil = escena_proyectil.instantiate()
-	get_tree().root.add_child(proyectil)
+	var padre := get_tree().current_scene
+	if padre == null:
+		padre = get_tree().root
+	padre.add_child(proyectil)
 	proyectil.global_position = global_position
 	proyectil.direccion = (objetivo.global_position - global_position).normalized()
 	proyectil.rotation = proyectil.direccion.angle()

@@ -92,7 +92,12 @@ func _generar_espectro() -> void:
 		return
 
 	var espectro = escena_elegida.instantiate()
-	get_tree().root.add_child(espectro)
+	# Hijo de la escena del mundo (no de root) para que se libere al cambiar
+	# de escena; si no, quedan huérfanos congelados entre partidas.
+	var _padre := get_tree().current_scene
+	if _padre == null:
+		_padre = get_tree().root
+	_padre.add_child(espectro)
 
 	var viewport = get_viewport()
 	if not viewport:
@@ -209,7 +214,10 @@ func forzar_commander() -> void:
 
 func _spawn_commander(hp: float) -> void:
 	var commander = escena_espectro_comander.instantiate()
-	get_tree().root.add_child(commander)
+	var _padre := get_tree().current_scene
+	if _padre == null:
+		_padre = get_tree().root
+	_padre.add_child(commander)
 
 	var nexus_node = get_tree().get_first_node_in_group("nexus")
 	var centro: Vector2 = nexus_node.global_position if nexus_node else Vector2(360, 640)

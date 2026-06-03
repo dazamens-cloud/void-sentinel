@@ -4,6 +4,13 @@ extends CanvasLayer
 # FASE 1: Bugfixes críticos
 # ═══════════════════════════════════════════════════
 
+# ── Escala móvil ────────────────────────────────────
+# Margen superior para no chocar con el notch/cámara del móvil, y tamaños
+# de fuente del HUD (se veían muy pequeños en pantalla real). Ajustables.
+const MARGEN_SUPERIOR: float = 100.0
+const HUD_FONT_PRINCIPAL: int = 30   # oleada, vida
+const HUD_FONT_RECURSOS: int = 34    # energía, ecos, fragmentos
+
 var barra_dron: ProgressBar
 var barra_ascension: ProgressBar
 var raiz: Control
@@ -40,6 +47,7 @@ func _ready() -> void:
 	# PROCESS_MODE_ALWAYS para seguir respondiendo con el árbol en pausa.
 	process_mode = Node.PROCESS_MODE_PAUSABLE
 	_construir_interfaz()
+	_ajustar_escala_movil()
 
 	Economia.recursos_actualizados.connect(_actualizar_energia)
 	Economia.ecos_actualizados.connect(_actualizar_ecos)
@@ -182,6 +190,22 @@ func _construir_interfaz() -> void:
 
 	_crear_boton_pausa()
 
+# Agranda las fuentes del HUD y baja el PanelSuperior para esquivar el notch.
+func _ajustar_escala_movil() -> void:
+	# Bajar la barra superior por debajo de la cámara/notch del móvil.
+	var panel_sup := get_node_or_null("PanelSuperior") as Control
+	if panel_sup:
+		panel_sup.offset_top = MARGEN_SUPERIOR
+		panel_sup.offset_bottom = MARGEN_SUPERIOR + 145.0
+
+	# Agrandar las etiquetas del HUD (override sobre los tamaños de la escena).
+	for lbl in [lbl_ascension, lbl_salud]:
+		if lbl:
+			lbl.add_theme_font_size_override("font_size", HUD_FONT_PRINCIPAL)
+	for lbl in [lbl_energia, lbl_ecos, lbl_fragmentos]:
+		if lbl:
+			lbl.add_theme_font_size_override("font_size", HUD_FONT_RECURSOS)
+
 # ═══════════════════════════════════════════════════
 # MENÚ DE PAUSA
 # ═══════════════════════════════════════════════════
@@ -189,9 +213,10 @@ func _construir_interfaz() -> void:
 func _crear_boton_pausa() -> void:
 	var btn = Button.new()
 	btn.text = "⏸"
-	btn.add_theme_font_size_override("font_size", 30)
-	btn.size = Vector2(56, 56)
-	btn.position = Vector2(720 - 56 - 16, 16)
+	btn.add_theme_font_size_override("font_size", 34)
+	btn.size = Vector2(64, 64)
+	# Esquina superior derecha, por debajo del notch (igual margen que el HUD).
+	btn.position = Vector2(720 - 64 - 16, MARGEN_SUPERIOR)
 	btn.z_index = 150
 	btn.pressed.connect(_abrir_menu_pausa)
 	add_child(btn)
@@ -252,9 +277,12 @@ func _boton_pausa(texto: String, y: float, color: Color, accion: Callable) -> Bu
 	return btn
 
 func _salir_al_menu() -> void:
-	# Guardar progreso permanente y volver al menú (descarta la run actual).
+	# Guardar progreso permanente + checkpoint de la run para poder reanudar.
 	Economia.guardar_datos()
 	MejoraManager.guardar_mejoras_nexo()
+	# No guardar checkpoint si es una partida de prueba.
+	if not ModoPrueba.partida_es_prueba:
+		ReanudarPartida.guardar()
 	_cerrar_menu_pausa()
 	get_tree().change_scene_to_file("res://escenas/ui/MainMenu.tscn")
 
@@ -380,6 +408,8 @@ func mostrar_game_over(causa: String) -> void:
 	# Guardar progreso antes de mostrar pantalla
 	Economia.guardar_datos()
 	MejoraManager.guardar_mejoras_nexo()
+	# La run terminó: descartar el checkpoint de reanudar.
+	ReanudarPartida.borrar()
 
 	if is_instance_valid(panel_mejoras):
 		panel_mejoras.visible = false

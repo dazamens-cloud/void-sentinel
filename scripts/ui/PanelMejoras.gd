@@ -35,6 +35,9 @@ var multiplicador:    int    = 1
 
 const ALTURA_BARRA: float = 50.0
 const ALTURA_PANEL: float = 500.0
+# Margen inferior para que la barra (sobre todo colapsada) no quede pegada al
+# borde y la tape la barra de gestos del móvil.
+const MARGEN_INFERIOR: float = 48.0
 
 const COLOR_ACTIVO   := Color(1.0, 1.0, 1.0, 1.0)
 const COLOR_INACTIVO := Color(0.5, 0.5, 0.5, 1.0)
@@ -75,14 +78,15 @@ func _ready() -> void:
 
 func _reposicionar() -> void:
 	var vp := get_viewport_rect().size
+	var base := vp.y - MARGEN_INFERIOR
 	offset_left   = 0.0
 	offset_right  = vp.x
 	if expandido:
-		offset_top    = vp.y - ALTURA_PANEL - ALTURA_BARRA
-		offset_bottom = vp.y
+		offset_top    = base - ALTURA_PANEL - ALTURA_BARRA
+		offset_bottom = base
 	else:
-		offset_top    = vp.y - ALTURA_BARRA
-		offset_bottom = vp.y
+		offset_top    = base - ALTURA_BARRA
+		offset_bottom = base
 	print("📐 PanelMejoras reposicionado: vp=", vp, " top=", offset_top, " expandido=", expandido)
 
 func _inicializar_cards() -> void:
