@@ -300,6 +300,7 @@ func _destruir() -> void:
 	Economia.ecos += 40
 	Economia.guardar_datos()
 	Economia.recursos_actualizados.emit()
+	Economia.ecos_actualizados.emit()
 	Economia.ecos_obtenidos.emit(40, global_position)
 
 	# ✅ Los enemigos invocados mueren con el Commander

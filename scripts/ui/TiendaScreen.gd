@@ -1,4 +1,4 @@
-class_name TiendaScreen
+class_name TiendaScreenUI
 extends Control
 # ============================================================
 # TiendaScreen.gd

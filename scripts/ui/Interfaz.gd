@@ -25,8 +25,10 @@ var _timer_alerta: Timer
 var _game_over_mostrado: bool = false
 
 @onready var lbl_ascension: Label = $PanelSuperior/LblOleada
-@onready var lbl_energia: Label   = $PanelSuperior/LblDinero
+@onready var lbl_energia: Label   = $PanelSuperior/VBoxContainer/LblDinero
 @onready var lbl_salud: Label     = $PanelSuperior/LblVida
+@onready var lbl_ecos: Label      = $PanelSuperior/VBoxContainer/LblEcos
+@onready var lbl_fragmentos: Label = $PanelSuperior/VBoxContainer/LblFragmentos
 
 func _ready() -> void:
 	print("🖥️ Interfaz: _ready() iniciado")
@@ -37,6 +39,12 @@ func _ready() -> void:
 	_construir_interfaz()
 
 	Economia.recursos_actualizados.connect(_actualizar_energia)
+	Economia.ecos_actualizados.connect(_actualizar_ecos)
+	Economia.fragmentos_actualizados.connect(_actualizar_fragmentos)
+	# Red de seguridad: cualquier cambio de recursos refresca todo el HUD,
+	# aunque la fuente no emita las señales específicas (p. ej. el Commander).
+	Economia.recursos_actualizados.connect(_actualizar_ecos)
+	Economia.recursos_actualizados.connect(_actualizar_fragmentos)
 	Economia.ascension_cambiada.connect(_actualizar_ascension)
 	NexusStats.salud_cambiada.connect(_actualizar_salud)
 	# ✅ #5: el Game Over lo dispara mundo.gd (que además pausa el árbol).
@@ -50,6 +58,8 @@ func _ready() -> void:
 	_actualizar_energia()
 	_actualizar_ascension(0)
 	_actualizar_salud(NexusStats.salud_actual, NexusStats.get_salud())
+	_actualizar_ecos()
+	_actualizar_fragmentos()
 	
 	await get_tree().process_frame
 	
@@ -180,6 +190,14 @@ func _on_pausa_iniciada(_segundos: float) -> void:
 # ═══════════════════════════════════════════════════
 # ACTUALIZAR HUD
 # ═══════════════════════════════════════════════════
+func _actualizar_ecos() -> void:
+	if lbl_ecos:
+		lbl_ecos.text = "🔷 %d" % int(Economia.ecos)
+
+func _actualizar_fragmentos() -> void:
+	if lbl_fragmentos:
+		lbl_fragmentos.text = "💎 %d" % int(Economia.fragmentos)
+
 func actualizar_barra_dron(actual: int, maximo: int) -> void:
 	if barra_dron:
 		barra_dron.max_value = maximo

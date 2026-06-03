@@ -1,10 +1,12 @@
 [gd_scene format=3 uid="uid://d2brhhyhcljg3"]
 
-[ext_resource type="Script" uid="uid://v2yf6yfba784" path="res://scripts/objetos/TextoFlotante.gd" id="1_texto"]
+[ext_resource type="Script" uid="uid://v2yf6yfba784" path="res://scripts/Objetos/TextoFlotante.gd" id="1_texto"]
 
 [node name="TextoFlotante" type="Label" unique_id=1495590714]
-offset_top = -20.0
-offset_bottom = -20.0
+offset_left = 1.0
+offset_top = 12.0
+offset_right = 52.0
+offset_bottom = 38.0
 theme_override_font_sizes/font_size = 18
 script = ExtResource("1_texto")
 

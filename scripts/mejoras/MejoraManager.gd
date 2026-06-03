@@ -239,6 +239,12 @@ var mejoras: Dictionary = {
 
 # ═══════════════════════════════════════════════════
 func _ready() -> void:
+	# Cada mejora lleva dos contadores:
+	#   - "nivel_nexo": nivel PERMANENTE comprado en el Nexo con ecos (suelo).
+	#   - "nivel":      nivel EFECTIVO de la partida actual (suelo + compras
+	#                   in-run con energía). Se resetea al suelo cada partida.
+	for id in mejoras.keys():
+		mejoras[id]["nivel_nexo"] = 0
 	cargar_mejoras_nexo()
 
 # ═══════════════════════════════════════════════════
@@ -291,6 +297,20 @@ func get_coste(mejora_id: String) -> int:
 		"bonificacion": factor = 1.11
 		"commander":    factor = 1.12
 	return int(data["coste_base"] * pow(factor, data["nivel"]))
+
+# Coste en ECOS de la siguiente compra en el Nexo. Escala con el nivel
+# PERMANENTE (nivel_nexo), no con el efectivo de la partida.
+func get_coste_nexo(mejora_id: String) -> int:
+	var data = mejoras.get(mejora_id, {})
+	if data.is_empty():
+		return 0
+	var factor: float = 1.09
+	match data.get("categoria", ""):
+		"ataque":       factor = 1.09
+		"defensa":      factor = 1.08
+		"bonificacion": factor = 1.11
+		"commander":    factor = 1.12
+	return int(data["coste_base"] * pow(factor, data.get("nivel_nexo", 0)))
 
 func get_max_nivel(mejora_id: String) -> int:
 	return mejoras.get(mejora_id, {}).get("max_nivel", 0)
@@ -388,19 +408,25 @@ func _aplicar_mejora(mejora_id: String) -> void:
 			pass  # Bloqueadas — se implementarán al desbloquear Commander
 
 func subir_nivel_nexo(mejora_id: String) -> void:
-	# Para compras del Nexo (el pago en ecos ya fue procesado por Economia)
+	# Compra PERMANENTE del Nexo (el pago en ecos ya lo procesó Economia).
+	# Sube el suelo permanente y, de paso, el nivel efectivo actual.
 	if not mejoras.has(mejora_id):
 		return
+	mejoras[mejora_id]["nivel_nexo"] = mejoras[mejora_id].get("nivel_nexo", 0) + 1
 	mejoras[mejora_id]["nivel"] += 1
 	_aplicar_mejora(mejora_id)
+	guardar_mejoras_nexo()  # ✅ persistir inmediatamente (antes solo se guardaba en game over)
 	mejora_comprada.emit(mejora_id, mejoras[mejora_id]["nivel"])
 	mejoras_actualizadas.emit()
 
 func reiniciar_mejoras_inrun() -> void:
-	var categorias_inrun = ["ataque", "defensa", "bonificacion"]
+	# Al empezar una partida el nivel efectivo NO vuelve a 0, sino al SUELO
+	# permanente comprado en el Nexo. Así las mejoras del Nexo "ya están
+	# compradas" al entrar al juego. Re-aplicamos cada una a NexusStats
+	# (que mundo.gd acaba de resetear vía NexusStats.reiniciar_partida()).
 	for id in mejoras.keys():
-		if mejoras[id].get("categoria", "") in categorias_inrun:
-			mejoras[id]["nivel"] = 0
+		mejoras[id]["nivel"] = mejoras[id].get("nivel_nexo", 0)
+		_aplicar_mejora(id)
 	mejoras_actualizadas.emit()
 
 func reiniciar_mejoras() -> void:
@@ -409,8 +435,9 @@ func reiniciar_mejoras() -> void:
 func guardar_mejoras_nexo() -> void:
 	var datos: Dictionary = {}
 	for id in mejoras.keys():
-		if mejoras[id]["nivel"] > 0:
-			datos[id] = mejoras[id]["nivel"]
+		var nn: int = mejoras[id].get("nivel_nexo", 0)
+		if nn > 0:
+			datos[id] = nn
 	var file = FileAccess.open("user://nexo.save", FileAccess.WRITE)
 	if file:
 		file.store_var(datos)
@@ -428,6 +455,7 @@ func cargar_mejoras_nexo() -> void:
 		return
 	for id in datos.keys():
 		if mejoras.has(id):
+			mejoras[id]["nivel_nexo"] = datos[id]
 			mejoras[id]["nivel"] = datos[id]
 			_aplicar_mejora(id)
 	mejoras_actualizadas.emit()

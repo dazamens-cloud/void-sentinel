@@ -1,4 +1,4 @@
-class_name NavBar
+class_name NavBarUI
 extends Control
 # ============================================================
 # NavBar.gd

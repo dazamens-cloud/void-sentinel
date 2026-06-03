@@ -8,6 +8,8 @@ signal ascension_cambiada(numero: int)
 signal juego_terminado(causa: String)
 signal ecos_obtenidos(cantidad: int, posicion: Vector2)
 signal energia_cambiada(nueva_energia: float)
+signal ecos_actualizados
+signal fragmentos_actualizados
 
 var energia: float = 50.0
 var ecos: int = 0
@@ -102,18 +104,21 @@ func procesar_drop_espectro(datos: Dictionary) -> void:
 		ecos += ecos_ganados
 		guardar_datos()
 		recursos_actualizados.emit()
+		ecos_actualizados.emit()
 		ecos_obtenidos.emit(ecos_ganados, posicion)
 
 func añadir_fragmentos(cantidad: int) -> void:
 	fragmentos += cantidad
 	guardar_datos()
 	recursos_actualizados.emit()
+	fragmentos_actualizados.emit()
 
 func gastar_ecos(cantidad: int) -> bool:
 	if ecos >= cantidad:
 		ecos -= cantidad
 		guardar_datos()
 		recursos_actualizados.emit()
+		ecos_actualizados.emit()
 		return true
 	return false
 
@@ -122,6 +127,7 @@ func gastar_fragmentos(cantidad: int) -> bool:
 		fragmentos -= cantidad
 		guardar_datos()
 		recursos_actualizados.emit()
+		fragmentos_actualizados.emit()
 		return true
 	return false
 

@@ -1,4 +1,4 @@
-class_name PerfilScreen
+class_name PerfilScreenUI
 extends Control
 # ============================================================
 # PerfilScreen.gd

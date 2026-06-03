@@ -427,7 +427,8 @@ func _refresh_card(id: String) -> void:
 	var lvl_lbl: Label = refs["lvl_lbl"]
 	var buy_btn: Button = refs["buy_btn"]
 
-	var nivel: int = data.get("nivel", 0)
+	# El Nexo refleja el nivel PERMANENTE (suelo), no el efectivo de partida.
+	var nivel: int = data.get("nivel_nexo", 0)
 	var maxn: int = data.get("max_nivel", 1)
 	var es_max: bool = (nivel >= maxn)
 
@@ -443,7 +444,7 @@ func _refresh_card(id: String) -> void:
 	else:
 		lvl_lbl.text = "%d/%d" % [nivel, maxn]
 		lvl_lbl.add_theme_color_override("font_color", MenuTheme.TEXT_MUTED)
-		var coste: int = _mm.get_coste(id)
+		var coste: int = _mm.get_coste_nexo(id)
 		buy_btn.text = "%s %s" % [MenuTheme.SYM_ECOS, _format_number(coste)]
 		buy_btn.disabled = false
 		panel.modulate.a = 1.0
@@ -462,7 +463,7 @@ func _on_buy(id: String) -> void:
 		return
 
 	var data: Dictionary = _mm.mejoras[id]
-	var nivel: int = data.get("nivel", 0)
+	var nivel: int = data.get("nivel_nexo", 0)
 	var maxn: int = data.get("max_nivel", 1)
 	if nivel >= maxn:
 		return
@@ -470,7 +471,7 @@ func _on_buy(id: String) -> void:
 		print("[Nexo] Mejora bloqueada: ", id)
 		return
 
-	var coste: int = _mm.get_coste(id)
+	var coste: int = _mm.get_coste_nexo(id)
 	if _eco.ecos < coste:
 		print("[Nexo] Ecos insuficientes (necesarios ", coste, ", tienes ", _eco.ecos, ")")
 		return

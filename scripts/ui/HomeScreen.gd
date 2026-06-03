@@ -1,4 +1,4 @@
-class_name HomeScreen
+class_name HomeScreenUI
 extends Control
 # ============================================================
 # HomeScreen.gd

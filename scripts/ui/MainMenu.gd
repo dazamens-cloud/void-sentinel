@@ -73,11 +73,11 @@ func _build_screens() -> void:
 	add_child(screen_container)
 
 	# Crear cada pantalla. Cada *Screen.gd expone build() -> Control.
-	screens["home"]   = HomeScreen.new()
+	screens["home"]   = HomeScreenUI.new()
 	screens["nexo"]   = NexoScreen.new()
 	screens["forja"]  = ForjaScreenUI.new()
-	screens["perfil"] = PerfilScreen.new()
-	screens["tienda"] = TiendaScreen.new()
+	screens["perfil"] = PerfilScreenUI.new()
+	screens["tienda"] = TiendaScreenUI.new()
 
 	for key in screens.keys():
 		var scr: Control = screens[key]
@@ -90,7 +90,7 @@ func _build_screens() -> void:
 # NAVBAR: barra inferior. Orden Nexo - Forja - Home - Perfil - Tienda.
 # ------------------------------------------------------------
 func _build_navbar() -> void:
-	navbar = NavBar.new()
+	navbar = NavBarUI.new()
 	navbar.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_WIDE)
 	navbar.offset_top = -86
 	# Conectar la senal de navegacion de la NavBar a este orquestador.

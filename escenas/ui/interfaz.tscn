@@ -1,4 +1,4 @@
-[gd_scene format=3 uid="uid://cpjq2dkjcufnf"]
+[gd_scene format=3 uid="uid://dtud7gkfxm1m1"]
 
 [ext_resource type="Script" uid="uid://cisv2r3w5ijoy" path="res://scripts/ui/Interfaz.gd" id="1_qcxk7"]
 
@@ -9,10 +9,9 @@ script = ExtResource("1_qcxk7")
 [node name="PanelSuperior" type="VBoxContainer" parent="." unique_id=1439065326]
 anchors_preset = 10
 anchor_right = 1.0
-offset_top = 20.0
-offset_bottom = 100.0
+offset_top = 56.0
+offset_bottom = 201.0
 grow_horizontal = 2
-grow_vertical = 0
 alignment = 1
 
 [node name="LblOleada" type="Label" parent="PanelSuperior" unique_id=1013926726]
@@ -21,11 +20,27 @@ theme_override_font_sizes/font_size = 18
 text = "Oleada: 0"
 horizontal_alignment = 1
 
-[node name="LblDinero" type="Label" parent="PanelSuperior" unique_id=1809509759]
+[node name="VBoxContainer" type="HBoxContainer" parent="PanelSuperior" unique_id=406063060]
+layout_mode = 2
+alignment = 1
+
+[node name="LblDinero" type="Label" parent="PanelSuperior/VBoxContainer" unique_id=1809509759]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.9, 0.9, 0.2, 1)
 theme_override_font_sizes/font_size = 22
 text = "$ 50"
+horizontal_alignment = 1
+
+[node name="LblEcos" type="Label" parent="PanelSuperior/VBoxContainer" unique_id=25430538]
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+text = "🔷 0"
+horizontal_alignment = 1
+
+[node name="LblFragmentos" type="Label" parent="PanelSuperior/VBoxContainer" unique_id=367097267]
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+text = "💎 0"
 horizontal_alignment = 1
 
 [node name="LblVida" type="Label" parent="PanelSuperior" unique_id=1465356183]
