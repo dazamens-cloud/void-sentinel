@@ -60,7 +60,9 @@ func get_danio() -> float:
 
 func get_cadencia_timer() -> float:
 	var base = 1.0 / max(cadencia_base, 0.01)
-	var mejora = max(0.2, 1.0 - abs(mejora_cadencia))
+	# Suelo 0.05 = cadencia mínima 0.05s (20 disparos/s). El tope de nivel de
+	# 'velocidad_ataque' (95 × -0.01 = -0.95) deja el factor justo en 0.05.
+	var mejora = max(0.05, 1.0 - abs(mejora_cadencia))
 	return base * mejora
 
 func get_regeneracion() -> float:

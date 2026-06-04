@@ -78,7 +78,9 @@ func _ready() -> void:
 
 func _reposicionar() -> void:
 	var vp := get_viewport_rect().size
-	var base := vp.y - MARGEN_INFERIOR
+	# Reserva, además del margen fijo, la barra de navegación del sistema (móvil).
+	var safe_bottom: float = SafeArea.margenes(vp)["bottom"]
+	var base := vp.y - MARGEN_INFERIOR - safe_bottom
 	offset_left   = 0.0
 	offset_right  = vp.x
 	if expandido:
@@ -87,7 +89,6 @@ func _reposicionar() -> void:
 	else:
 		offset_top    = base - ALTURA_BARRA
 		offset_bottom = base
-	print("📐 PanelMejoras reposicionado: vp=", vp, " top=", offset_top, " expandido=", expandido)
 
 func _inicializar_cards() -> void:
 	for container in [ataque_container, defensa_container, bonificacion_container, commander_container]:

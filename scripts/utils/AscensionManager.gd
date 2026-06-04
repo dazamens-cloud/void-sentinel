@@ -30,9 +30,15 @@ var commander_hp_al_escapar: float = 0.0
 var commander_reaparicion_en_ascension: int = -1
 
 const DURACION_ASCENSION: float = 35.0
-const PAUSA_ENTRE_ASCENSIONES: float = 15.0
+const PAUSA_ENTRE_ASCENSIONES: float = 8.0
 const ESPECTROS_BASE: int = 8
 const MAX_ENEMIGOS_SIMULTANEOS: int = 15
+# Tope de enemigos por oleada. La cantidad crece (8 + asc) hasta este techo y
+# se aplana: en asc altas la dificultad la lleva el HP, no más enemigos.
+const TOPE_ESPECTROS_OLEADA: int = 30
+
+# Total de enemigos de la oleada actual (para repartir el spawn en la ventana).
+var _total_oleada: int = 0
 
 # El escalado de stats de enemigos vive centralizado en EscaladoEnemigos.gd
 # (clase estática). Tunea la dificultad ahí, no aquí.
@@ -51,10 +57,11 @@ func _process(delta: float) -> void:
 		if temporizador_spawn <= 0.0 and espectros_a_spawnear > 0:
 			_generar_espectro()
 			temporizador_spawn = _obtener_intervalo_spawn()
-		# ✅ La ascensión termina por tiempo AQUÍ (no con un await): así no
-		# quedan timers colgados que recorten una ascensión posterior cuando
-		# la actual se limpia antes de tiempo.
-		if temporizador_ascension <= 0.0:
+		# La ascensión termina cuando vence el tiempo PERO solo si ya se
+		# soltaron todos los enemigos estipulados. Si el cap de simultáneos
+		# retrasó algún spawn, esperamos a soltarlos (no se descartan); el otro
+		# criterio (_on_espectro_destruido) cierra cuando además mueren.
+		if temporizador_ascension <= 0.0 and espectros_a_spawnear <= 0:
 			_terminar_ascension()
 
 func _iniciar_ascension() -> void:
@@ -62,7 +69,10 @@ func _iniciar_ascension() -> void:
 	jefe_generado_esta_ascension = false
 	commander_generado_esta_ascension = false
 	Economia.avanzar_ascension()
-	espectros_a_spawnear = ESPECTROS_BASE + Economia.numero_ascension * 2
+	# Cantidad acotada: crece 8+asc hasta el tope y se aplana (antes era 8+asc*2
+	# sin techo → miles de enemigos imposibles en asc altas).
+	espectros_a_spawnear = min(TOPE_ESPECTROS_OLEADA, ESPECTROS_BASE + Economia.numero_ascension)
+	_total_oleada = espectros_a_spawnear
 	temporizador_spawn = 0.0
 	temporizador_ascension = DURACION_ASCENSION
 	print("🚀 Ascensión ", Economia.numero_ascension, " iniciada")
@@ -83,6 +93,9 @@ func _terminar_ascension() -> void:
 
 func get_tiempo_restante() -> float:
 	return temporizador_ascension if en_combate else 0.0
+
+func get_duracion_ascension() -> float:
+	return DURACION_ASCENSION
 
 func _generar_espectro() -> void:
 	if not escena_espectro: return
@@ -142,10 +155,7 @@ func _generar_espectro() -> void:
 
 	# Escalado centralizado (EscaladoEnemigos).
 	var datos := EscaladoEnemigos.stats(tipo_str, ascension)
-	print("📊 Stats: ", tipo_str, " | HP: ", snapped(datos["hp"], 0.1), " | ATK: ", snapped(datos["atk"], 0.1))
 	espectro.configurar(datos)
-
-	print("📢 Generando espectro. Restantes por spawnear: ", espectros_a_spawnear)
 
 	if espectro.has_signal("espectro_destruido"):
 		espectro.espectro_destruido.connect(_on_espectro_destruido)
@@ -271,12 +281,17 @@ func _on_espectro_destruido(_pos: Vector2, _recompensa: int) -> void:
 	if not en_combate:
 		espectros_vivos = 0
 		return
-	print("💀 Espectro destruido. Vivos: ", espectros_vivos, " | Por spawnear: ", espectros_a_spawnear)
 	if espectros_a_spawnear == 0 and espectros_vivos <= 0 and en_combate:
 		_terminar_ascension()
 
 func _obtener_intervalo_spawn() -> float:
-	return randf_range(1.0, 2.0)
+	# Reparte la oleada completa a lo largo de la ventana de la ascensión, así
+	# SIEMPRE da tiempo a soltar a todos (nada se descarta). Con tope 30 y 35s
+	# sale uno cada ~1.2s; se acota entre 0.5s y 2.5s y se varía un poco para
+	# que no suene robótico.
+	var base := DURACION_ASCENSION / float(max(_total_oleada, 1))
+	base = clampf(base, 0.5, 2.5)
+	return base * randf_range(0.85, 1.15)
 
 func _on_juego_terminado(_causa: String) -> void:
 	print("🛑 GAME OVER - Deteniendo todo...")

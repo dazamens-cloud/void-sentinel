@@ -17,7 +17,12 @@ extends RefCounted
 # 👉 Tunea SOLO aquí. Sube EXP_VIDA para endurecer, bájalo para suavizar.
 # ═══════════════════════════════════════════════════
 
-const EXP_VIDA: float = 2.0
+# EXP_VIDA bajado 2.0→1.5: con la cantidad de enemigos ahora acotada (tope por
+# oleada en AscensionManager), el HP es el eje de dificultad SOSTENIDO. 1.5
+# crece sin techo pero mucho más suave, haciendo viable subir a asc altas
+# (asc 1000 ≈ 475k HP en vez de 15M). La cantidad manda en asc bajas; el HP
+# manda en las altas, de forma gradual y sin "efecto sierra".
+const EXP_VIDA: float = 1.5
 const EXP_ATAQUE: float = 1.25
 const EXP_RECOMPENSA: float = 1.15
 

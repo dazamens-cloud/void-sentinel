@@ -29,7 +29,6 @@ func _ready() -> void:
 	await get_tree().process_frame
 	nexus = get_tree().get_first_node_in_group("nexus")
 	salud_actual = salud_maxima
-	print("👾 Espectro creado. Tipo: ", tipo_espectro, " | Salud: ", salud_actual)
 
 func configurar(datos: Dictionary) -> void:
 	salud_maxima = datos.get("hp", 100.0)
@@ -81,7 +80,6 @@ func _mult_lentitud(delta: float) -> float:
 func recibir_dano(cantidad: float, es_critico: bool = false) -> void:
 	if esta_destruido: return
 	salud_actual -= cantidad
-	print("⚔️ Espectro recibe daño: ", cantidad, " | Salud restante: ", salud_actual)
 	_efecto_dano(es_critico)
 	if salud_actual <= 0.0:
 		_destruir()
@@ -98,7 +96,6 @@ func _destruir() -> void:
 	esta_destruido = true
 	set_physics_process(false)
 	remove_from_group("espectros")
-	print("💀 Espectro muere")
 	var texto_energia = ESCENA_TEXTO.instantiate()
 	texto_energia.set_energia(recompensa_energia)
 	texto_energia.global_position = global_position

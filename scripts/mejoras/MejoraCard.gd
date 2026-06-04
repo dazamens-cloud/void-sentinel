@@ -142,23 +142,31 @@ func _valor_en_nivel(nivel: int) -> String:
 	var data = mejora_manager.mejoras[mejora_id]
 	match mejora_id:
 		"danio":
-			return str(int(nivel * data.get("incremento", 0.0))) + " atk"
+			# Daño es MULTIPLICATIVO: daño real = base × 1.03^nivel (no aditivo).
+			var d: float = NexusStats.danio_base * pow(mejora_manager.FACTOR_MULTIPLICATIVO, nivel)
+			return str(int(d)) + " atk"
 		"velocidad_ataque":
-			var v: float = nivel * data.get("incremento", 0.0)
-			if data.has("min_valor"): v = max(v, data["min_valor"])
-			return "%.2fs" % abs(v)
+			# Cadencia REAL = max(0.05, 1 - |nivel×0.01|) × base. Antes hacía
+			# max(delta_negativo, min_valor) → mostraba siempre el mínimo (0.05s).
+			var factor: float = max(0.05, 1.0 - abs(nivel * data.get("incremento", -0.01)))
+			return "%.2fs" % factor
 		"disparo_critico":
-			var prob: float  = nivel * data.get("incremento_prob", 0.005) * 100.0
-			var danio: float = nivel * data.get("incremento_danio", 0.25) + 1.5
+			# Incluye la base del Nexus (5% prob, ×1.5 factor) para que el número
+			# coincida con el crítico real que ves en combate.
+			var prob: float  = min(0.75, NexusStats.critico_chance_base + nivel * data.get("incremento_prob", 0.005)) * 100.0
+			var danio: float = NexusStats.critico_factor_base + nivel * data.get("incremento_danio", 0.25)
 			return "%d%% / %.1fx" % [int(prob), danio]
 		"multidisparo":
-			return "+" + str(int(nivel * data.get("incremento", 1.0))) + " proj"
+			# Ahora es nº de objetivos distintos atacados a la vez, no proyectiles.
+			return "+" + str(int(nivel * data.get("incremento", 1.0))) + " obj"
 		"rebote":
 			return str(int(nivel * data.get("incremento", 1.0))) + " reb"
 		"alcance_rebote":
 			return str(int(nivel * data.get("incremento", 30.0))) + "px"
 		"salud":
-			return "+" + str(int(nivel * data.get("incremento", 5.0))) + " HP"
+			# Salud es MULTIPLICATIVA: HP real = 100 × 1.03^nivel (no aditivo).
+			var hp: float = 100.0 * pow(mejora_manager.FACTOR_MULTIPLICATIVO, nivel)
+			return str(int(hp)) + " HP"
 		"recuperacion":
 			return "+%.1f HP/s" % (nivel * data.get("incremento", 0.1))
 		"escudo":

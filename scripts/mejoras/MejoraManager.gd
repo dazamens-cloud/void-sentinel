@@ -33,9 +33,9 @@ var mejoras: Dictionary = {
 		"nivel": 0,
 		"incremento": -0.01,
 		"coste_base": 8,
-		"max_nivel": 65,
-		"min_valor": 0.2,
-		"descripcion": "Reduce el tiempo entre disparos. Mínimo 0.2s."
+		"max_nivel": 95,
+		"min_valor": 0.05,
+		"descripcion": "Reduce el tiempo entre disparos. Mínimo 0.05s."
 	},
 	"disparo_critico": {
 		"nombre": "Disparo Crítico",
@@ -54,7 +54,7 @@ var mejoras: Dictionary = {
 		"incremento": 1,
 		"coste_base": 20,
 		"max_nivel": 9,
-		"descripcion": "Dispara proyectiles adicionales por nivel."
+		"descripcion": "Ataca a un enemigo cercano adicional al mismo tiempo por nivel."
 	},
 	"rebote": {
 		"nombre": "Rebote",
@@ -382,7 +382,7 @@ func _aplicar_mejora(mejora_id: String) -> void:
 		"disparo_critico":
 			NexusStats.set_mejora_critico(
 				get_valor(mejora_id),
-				get_valor_secundario(mejora_id) + 1.5
+				get_valor_secundario(mejora_id)  # factor base 1.5 ya en NexusStats; +1.5 lo duplicaba
 			)
 		
 		"multidisparo":

@@ -32,7 +32,6 @@ func _ready() -> void:
 	if salud_actual == 100.0:  # valor por defecto = no fue configurado
 		salud_actual = salud_maxima
 	scale = Vector2.ONE * 1.2
-	print("👾 Espectro creado. Tipo: tanque | Salud: ", salud_actual)
 
 func configurar(datos: Dictionary) -> void:
 	salud_maxima = datos.get("hp", 100.0)

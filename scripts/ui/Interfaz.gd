@@ -11,10 +11,19 @@ const MARGEN_SUPERIOR: float = 100.0
 const HUD_FONT_PRINCIPAL: int = 30   # oleada, vida
 const HUD_FONT_RECURSOS: int = 34    # energía, ecos, fragmentos
 
+# Márgenes seguros calculados del dispositivo (notch arriba, barra de
+# navegación abajo). En PC valen el mínimo/0; en móvil, el área segura real.
+var _margen_top: float = MARGEN_SUPERIOR
+var _margen_bottom: float = 0.0
+
 var barra_dron: ProgressBar
 var barra_ascension: ProgressBar
 var raiz: Control
 var label_dron: Label
+
+# Referencia cacheada al AscensionManager (antes se buscaba con find_child
+# recursivo CADA frame en _process — costoso en móvil).
+var _asc_manager: Node = null
 
 # Referencia al panel de mejoras para ocultarlo en game over
 var panel_mejoras: Control = null
@@ -46,6 +55,7 @@ func _ready() -> void:
 	# de ascensión avance. El overlay de Game Over usa su propio contenedor
 	# PROCESS_MODE_ALWAYS para seguir respondiendo con el árbol en pausa.
 	process_mode = Node.PROCESS_MODE_PAUSABLE
+	_calcular_safe_area()
 	_construir_interfaz()
 	_ajustar_escala_movil()
 
@@ -79,20 +89,20 @@ func _ready() -> void:
 		dron.fragmentos_actualizados.connect(actualizar_barra_dron)
 		print("🖥️ Interfaz: Conectada señal del Dron")
 	
-	var asc = get_tree().current_scene.find_child("AscensionManager", true, false)
-	if asc:
-		if asc.has_signal("ascension_iniciada"):
-			asc.ascension_iniciada.connect(_on_ascension_iniciada)
-		if asc.has_signal("pausa_entre_ascensiones"):
-			asc.pausa_entre_ascensiones.connect(_on_pausa_iniciada)
+	_asc_manager = get_tree().current_scene.find_child("AscensionManager", true, false)
+	if _asc_manager:
+		if _asc_manager.has_signal("ascension_iniciada"):
+			_asc_manager.ascension_iniciada.connect(_on_ascension_iniciada)
+		if _asc_manager.has_signal("pausa_entre_ascensiones"):
+			_asc_manager.pausa_entre_ascensiones.connect(_on_pausa_iniciada)
 		print("🖥️ Interfaz: Conectadas señales de AscensionManager")
 
 func _process(_delta: float) -> void:
 	if barra_ascension and barra_ascension.visible:
-		var asc = get_tree().current_scene.find_child("AscensionManager", true, false)
-		if asc and asc.has_method("get_tiempo_restante"):
-			var tiempo_restante = asc.get_tiempo_restante()
-			var progreso = (tiempo_restante / 35.0) * 100
+		if is_instance_valid(_asc_manager) and _asc_manager.has_method("get_tiempo_restante"):
+			var tiempo_restante = _asc_manager.get_tiempo_restante()
+			var duracion = _asc_manager.get_duracion_ascension() if _asc_manager.has_method("get_duracion_ascension") else 35.0
+			var progreso = (tiempo_restante / duracion) * 100
 			barra_ascension.value = clamp(progreso, 0, 100)
 
 func _construir_interfaz() -> void:
@@ -104,9 +114,9 @@ func _construir_interfaz() -> void:
 	raiz.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(raiz)
 	
-	# Barra del dron
+	# Barra del dron (subida por encima de la barra de navegación del sistema)
 	barra_dron = ProgressBar.new()
-	barra_dron.position = Vector2(20, 1220)
+	barra_dron.position = Vector2(20, 1220 - _margen_bottom)
 	barra_dron.size = Vector2(200, 20)
 	barra_dron.max_value = 50
 	barra_dron.value = 0
@@ -116,7 +126,7 @@ func _construir_interfaz() -> void:
 	
 	# Label texto barra dron
 	label_dron = Label.new()
-	label_dron.position = Vector2(20, 1215)
+	label_dron.position = Vector2(20, 1215 - _margen_bottom)
 	label_dron.add_theme_font_size_override("font_size", 10)
 	label_dron.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	label_dron.text = "🔋 0/50"
@@ -124,7 +134,7 @@ func _construir_interfaz() -> void:
 	
 	# Barra de ascensión
 	barra_ascension = ProgressBar.new()
-	barra_ascension.position = Vector2(400, 20)
+	barra_ascension.position = Vector2(400, _margen_top)
 	barra_ascension.size = Vector2(300, 20)
 	barra_ascension.max_value = 100
 	barra_ascension.value = 100
@@ -136,14 +146,14 @@ func _construir_interfaz() -> void:
 
 	# ── UI del Commander ────────────────────────────────
 	lbl_commander_disparos = Label.new()
-	lbl_commander_disparos.position = Vector2(20, 70)
+	lbl_commander_disparos.position = Vector2(20, _margen_top + 30)
 	lbl_commander_disparos.add_theme_font_size_override("font_size", 24)
 	lbl_commander_disparos.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	lbl_commander_disparos.visible = false
 	raiz.add_child(lbl_commander_disparos)
 
 	lbl_commander_timer = Label.new()
-	lbl_commander_timer.position = Vector2(250, 70)
+	lbl_commander_timer.position = Vector2(250, _margen_top + 30)
 	lbl_commander_timer.add_theme_font_size_override("font_size", 26)
 	lbl_commander_timer.add_theme_color_override("font_color", Color(1.0, 0.5, 0.0))
 	lbl_commander_timer.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -151,7 +161,7 @@ func _construir_interfaz() -> void:
 	raiz.add_child(lbl_commander_timer)
 
 	lbl_commander_alerta = Label.new()
-	lbl_commander_alerta.position = Vector2(140, 220)
+	lbl_commander_alerta.position = Vector2(140, _margen_top + 120)
 	lbl_commander_alerta.size = Vector2(440, 80)
 	lbl_commander_alerta.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	lbl_commander_alerta.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -190,13 +200,22 @@ func _construir_interfaz() -> void:
 
 	_crear_boton_pausa()
 
+# Lee el área segura real del dispositivo. En PC mantiene el margen mínimo
+# (MARGEN_SUPERIOR) arriba y 0 abajo; en móvil usa el notch y la barra del
+# sistema reales.
+func _calcular_safe_area() -> void:
+	var vp := get_viewport().get_visible_rect().size
+	var m := SafeArea.margenes(vp)
+	_margen_top = max(MARGEN_SUPERIOR, m["top"])
+	_margen_bottom = m["bottom"]
+
 # Agranda las fuentes del HUD y baja el PanelSuperior para esquivar el notch.
 func _ajustar_escala_movil() -> void:
 	# Bajar la barra superior por debajo de la cámara/notch del móvil.
 	var panel_sup := get_node_or_null("PanelSuperior") as Control
 	if panel_sup:
-		panel_sup.offset_top = MARGEN_SUPERIOR
-		panel_sup.offset_bottom = MARGEN_SUPERIOR + 145.0
+		panel_sup.offset_top = _margen_top + 60
+		panel_sup.offset_bottom = _margen_top + 60 + 145.0
 
 	# Agrandar las etiquetas del HUD (override sobre los tamaños de la escena).
 	for lbl in [lbl_ascension, lbl_salud]:
@@ -216,7 +235,7 @@ func _crear_boton_pausa() -> void:
 	btn.add_theme_font_size_override("font_size", 34)
 	btn.size = Vector2(64, 64)
 	# Esquina superior derecha, por debajo del notch (igual margen que el HUD).
-	btn.position = Vector2(720 - 64 - 16, MARGEN_SUPERIOR)
+	btn.position = Vector2(720 - 64 - 16, _margen_top + 60)
 	btn.z_index = 150
 	btn.pressed.connect(_abrir_menu_pausa)
 	add_child(btn)
@@ -323,7 +342,8 @@ func actualizar_barra_dron(actual: int, maximo: int) -> void:
 			label_dron.text = "🔋 %d/%d" % [actual, maximo]
 
 func _actualizar_energia() -> void:
-	lbl_energia.text = "⚡ %s" % Formato.abreviar(Economia.energia)
+	if lbl_energia:
+		lbl_energia.text = "⚡ %s" % Formato.abreviar(Economia.energia)
 
 func _actualizar_ascension(numero: int) -> void:
 	lbl_ascension.text = "Ascensión: %d" % numero

@@ -111,36 +111,34 @@ func _disparar() -> void:
 	var espectros = get_tree().get_nodes_in_group("espectros")
 	if espectros.size() == 0: return
 
-	var objetivo = null
-	var dist_min = NexusStats.get_rango_escaneo()
-
+	# Recoge los espectros en rango (excluye Commanders) con su distancia.
+	var rango := NexusStats.get_rango_escaneo()
+	var candidatos: Array = []
 	for e in espectros:
 		if not is_instance_valid(e): continue
-		# Ignorar Commanders en disparo automático
 		if e.get("tipo_espectro") == "commander": continue
-		var d = global_position.distance_to(e.global_position)
-		if d < dist_min:
-			dist_min = d
-			objetivo = e
+		var d: float = global_position.distance_to(e.global_position)
+		if d <= rango:
+			candidatos.append({"e": e, "d": d})
 
-	if objetivo:
-		# ✅ Crítico: se tira una vez por disparo
+	if candidatos.is_empty(): return
+
+	# Más cercanos primero.
+	candidatos.sort_custom(func(a, b): return a["d"] < b["d"])
+
+	# ✅ Multidisparo = nº de OBJETIVOS distintos atacados a la vez (el más
+	# cercano + uno extra por nivel), no proyectiles al mismo enemigo.
+	var num_objetivos: int = min(1 + NexusStats.get_multidisparo(), candidatos.size())
+
+	AudioManager.sfx("disparo")
+	var danio: float = NexusStats.get_danio()
+	for i in range(num_objetivos):
+		var objetivo: Node2D = candidatos[i]["e"]
+		# Crítico se tira por cada objetivo (cada proyectil su tirada).
 		var critico := randf() < NexusStats.get_critico_chance()
-		var danio_base := NexusStats.get_danio()
-		if critico:
-			danio_base *= NexusStats.get_critico_factor()
-
-		AudioManager.sfx("disparo")
-		var dir_base: Vector2 = (objetivo.global_position - global_position).normalized()
-		# ✅ Multidisparo: proyectil principal + extras en abanico
-		var total := 1 + NexusStats.get_multidisparo()
-		for i in range(total):
-			var dir := dir_base
-			if total > 1:
-				var paso := deg_to_rad(12.0)
-				var offset := (float(i) - float(total - 1) / 2.0) * paso
-				dir = dir_base.rotated(offset)
-			_crear_proyectil(dir, danio_base, critico)
+		var danio_obj := danio * NexusStats.get_critico_factor() if critico else danio
+		var dir: Vector2 = (objetivo.global_position - global_position).normalized()
+		_crear_proyectil(dir, danio_obj, critico)
 
 func _crear_proyectil(direccion: Vector2, danio_val: float, critico: bool) -> void:
 	var proyectil = escena_proyectil.instantiate()

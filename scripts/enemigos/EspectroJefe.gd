@@ -81,7 +81,6 @@ func _mult_lentitud(delta: float) -> float:
 func recibir_dano(cantidad: float, es_critico: bool = false) -> void:
 	if esta_destruido: return
 	salud_actual -= cantidad
-	print("💥 JEFE recibe daño: ", cantidad, " | Salud restante: ", salud_actual)
 	_efecto_dano(es_critico)
 	if salud_actual <= 0.0:
 		_destruir()
