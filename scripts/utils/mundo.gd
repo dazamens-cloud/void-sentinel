@@ -25,6 +25,9 @@ func _ready() -> void:
 		ReanudarPartida.aplicar()
 	else:
 		ReanudarPartida.borrar()
+		# 🎓 Tutorial de primera partida: solo en partidas nuevas reales
+		# (no en prueba ni al reanudar) y si nunca se ha visto antes.
+		_mostrar_tutorial_si_procede()
 
 	_conectar_economia()
 	_conectar_gestor_oleadas()
@@ -34,6 +37,13 @@ func _ready() -> void:
 
 	# 🎵 Música de combate (loop). Si no hay archivo, no suena.
 	AudioManager.musica("combate")
+
+# 🎓 Muestra el tutorial modal de primera partida si aún no se ha visto.
+# El overlay se autogestiona: pausa el árbol, guarda el flag y se libera.
+func _mostrar_tutorial_si_procede() -> void:
+	const TutorialOverlay := preload("res://scripts/ui/TutorialOverlay.gd")
+	if TutorialOverlay.debe_mostrar():
+		add_child(TutorialOverlay.new())
 
 # 🧪 Atajo de prueba: tecla C invoca al Commander (solo en partidas de prueba).
 func _unhandled_input(event: InputEvent) -> void:
