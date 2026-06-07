@@ -21,7 +21,17 @@
       "Bash(git add *)",
       "Bash(git reset *)",
       "Bash(git commit *)",
-      "Bash(findstr /n /i \"autoload \\\\[ Economia NexusStats MejoraManager Forja Sistemadisparos\")"
+      "Bash(findstr /n /i \"autoload \\\\[ Economia NexusStats MejoraManager Forja Sistemadisparos\")",
+      "PowerShell(& \"C:\\\\Users\\\\andre\\\\bin\\\\godot.exe\" --headless --path \"D:\\\\proyectos godot\\\\void-sentinel\" --check-only --script \"res://scripts/ui/TutorialOverlay.gd\"; \"exit: $LASTEXITCODE\")",
+      "PowerShell(& \"C:\\\\Users\\\\andre\\\\bin\\\\godot.exe\" --headless --path \"D:\\\\proyectos godot\\\\void-sentinel\" --check-only --script \"res://scripts/utils/mundo.gd\" 2>&1 | Out-String; \"exit: $LASTEXITCODE\")",
+      "PowerShell(& \"C:\\\\Users\\\\andre\\\\bin\\\\godot.exe\" --headless --path \"D:\\\\proyectos godot\\\\void-sentinel\" --editor --quit 2>&1 | Select-String -Pattern \"SCRIPT ERROR|Parse Error|TutorialOverlay|mundo.gd|Compile Error\" | Select-Object -First 30 | Out-String; \"exit: $LASTEXITCODE\")",
+      "PowerShell(& \"C:\\\\Users\\\\andre\\\\bin\\\\godot.exe\" --headless --path \"D:\\\\proyectos godot\\\\void-sentinel\" --editor --quit 2>&1 | Select-String -Pattern \"SCRIPT ERROR|Parse Error|PanelMejoras|Compile Error\" | Select-Object -First 30 | Out-String; \"exit: $LASTEXITCODE\")",
+      "WebSearch",
+      "Bash(npx -y skills add vercel-labs/skills@find-skills -g -y)",
+      "Bash(npx -y skills add jame581/GodotPrompter -g -y)",
+      "Bash(grep -avE '◐|◓|◑|◒|Fetching skills$')",
+      "Bash(\"C:\\\\Users\\\\andre\\\\bin\\\\godot.exe\" --headless --check-only --script scripts/ui/PanelMejoras.gd)",
+      "Bash(echo \"EXIT: $?\")"
     ]
   }
 }

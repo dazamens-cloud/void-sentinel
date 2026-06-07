@@ -33,6 +33,22 @@ Lo que falta para una beta "viva" y completa.
 - [ ] **A3 · Arte** — reemplazar placeholders clave (incremental, no bloqueante)
 - [ ] **A4 · Juice extra (opcional)** — hit-pause al crítico/muerte, más partículas
 - [ ] **A5 · Testing de beta** — jugar largo, balance, 0 crashes; regenerar APK
+- [x] **A2 hecho** — Tutorial de primera partida (3 pantallas: Nexus / energía-mejoras-dron /
+  ascensiones-Commander). `scripts/ui/TutorialOverlay.gd`, enganchado en `mundo.gd`. Solo en
+  partidas nuevas, pausa el juego y persiste flag en `user://tutorial.save`. (commit 8e5cdc4)
+- [ ] **A6 · Arreglar Panel de Mejoras** (BUG pendiente — para retomar)
+  - Síntomas al intentar "arranca colapsado + altura ajustada al contenido":
+    1. Colapsado aparecía **flotando en medio**, no abajo.
+    2. Al cambiar a la pestaña **Defensa el panel desaparecía**.
+    3. El **scroll de Ataque no funciona** (ya pasaba antes).
+  - Causa identificada: `_reposicionar()` lee la altura del grid con
+    `get_combined_minimum_size()` pero los contenedores internos (`Contenido`,
+    `ScrollContainer`) tienen **offsets fijos en el `.tscn`** que chocan con el ajuste
+    dinámico; además el minimum-size del grid recién hecho visible no está listo en el
+    mismo frame (hace falta `await` o `call_deferred`). El cambio se **revirtió**; el
+    panel sigue como estaba (expandido, altura fija 500px, con hueco negro).
+  - Decisión pendiente: probablemente toque editar el `.tscn` (anchors del Contenido/
+    Scroll en vez de offsets fijos) — pedir confirmación antes.
 
 ## BLOQUE B — Profundidad: Laboratorio (Fase 6 del post-beta)
 Encaja perfecto con el género idle; ya estaba como placeholder en el Home.
