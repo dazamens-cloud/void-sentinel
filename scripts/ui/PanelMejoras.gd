@@ -32,9 +32,17 @@ var mejora_manager    = null
 var categoria_actual: String = "ataque"
 var expandido:        bool   = true
 var multiplicador:    int    = 1
+# Altura del panel (sin la barra) ajustada al contenido de la pestaña activa.
+# Se recalcula en _recalcular_altura(); arranca en el máximo por seguridad.
+var altura_panel:     float  = 500.0
 
 const ALTURA_BARRA: float = 50.0
-const ALTURA_PANEL: float = 500.0
+# Tope: si el grid excede esta altura, el ScrollContainer toma el relevo.
+const ALTURA_PANEL_MAX: float = 500.0
+# Alto de la franja de pestañas + su separación (offset_top del Scroll en la escena).
+const ALTURA_TABS: float = 44.0
+# Margen inferior dentro del panel para que las cards no queden pegadas al borde.
+const PAD_CONTENIDO: float = 8.0
 # Margen inferior para que la barra (sobre todo colapsada) no quede pegada al
 # borde y la tape la barra de gestos del móvil.
 const MARGEN_INFERIOR: float = 48.0
@@ -73,7 +81,7 @@ func _ready() -> void:
 	_inicializar_cards()
 	_conectar_senales()
 	cambiar_categoria("ataque")
-	_expandir(true)
+	_expandir(false)
 	_actualizar_botones_mult()
 
 func _reposicionar() -> void:
@@ -84,11 +92,35 @@ func _reposicionar() -> void:
 	offset_left   = 0.0
 	offset_right  = vp.x
 	if expandido:
-		offset_top    = base - ALTURA_PANEL - ALTURA_BARRA
+		offset_top    = base - altura_panel - ALTURA_BARRA
 		offset_bottom = base
 	else:
 		offset_top    = base - ALTURA_BARRA
 		offset_bottom = base
+
+func _container_activo() -> GridContainer:
+	match categoria_actual:
+		"ataque":       return ataque_container
+		"defensa":      return defensa_container
+		"bonificacion": return bonificacion_container
+		"commander":    return commander_container
+	return ataque_container
+
+# Ajusta la altura del panel al contenido de la pestaña activa (con tope).
+# Se difiere un frame porque el grid recién hecho visible aún no tiene
+# calculado su get_combined_minimum_size() en el mismo frame.
+func _recalcular_altura() -> void:
+	if not expandido:
+		return
+	await get_tree().process_frame
+	if not expandido or not is_inside_tree():
+		return
+	var container := _container_activo()
+	var h_grid: float = 0.0
+	if container:
+		h_grid = container.get_combined_minimum_size().y
+	altura_panel = minf(ALTURA_TABS + h_grid + PAD_CONTENIDO, ALTURA_PANEL_MAX)
+	_reposicionar()
 
 func _inicializar_cards() -> void:
 	for container in [ataque_container, defensa_container, bonificacion_container, commander_container]:
@@ -201,7 +233,10 @@ func _expandir(estado: bool) -> void:
 	expandido = estado
 	contenido.visible = estado
 	btn_toggle.text = "▲" if estado else "▼"
-	_reposicionar()
+	if estado:
+		_recalcular_altura()
+	else:
+		_reposicionar()
 
 # ═══════════════════════════════════════════════════
 # PESTAÑAS
@@ -213,6 +248,7 @@ func cambiar_categoria(categoria: String) -> void:
 	defensa_container.visible      = (categoria == "defensa")
 	bonificacion_container.visible = (categoria == "bonificacion")
 	commander_container.visible    = (categoria == "commander")
+	_recalcular_altura()
 
 func _actualizar_visual_pestanas() -> void:
 	var tabs := {
@@ -267,12 +303,7 @@ func _actualizar_ui() -> void:
 	_refrescar_container_activo()
 
 func _refrescar_container_activo() -> void:
-	var container_activo: GridContainer
-	match categoria_actual:
-		"ataque":       container_activo = ataque_container
-		"defensa":      container_activo = defensa_container
-		"bonificacion": container_activo = bonificacion_container
-		"commander":    container_activo = commander_container
+	var container_activo := _container_activo()
 	if container_activo:
 		for card in container_activo.get_children():
 			if card.has_method("refrescar"):

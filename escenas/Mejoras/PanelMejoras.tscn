@@ -68,15 +68,20 @@ layout_mode = 2
 text = "▲"
 
 [node name="Contenido" type="Control" parent="." unique_id=1661847998]
-anchors_preset = 0
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
 offset_top = 50.0
-offset_right = 720.0
-offset_bottom = 550.0
+grow_horizontal = 2
+grow_vertical = 2
 
 [node name="Tabs" type="HBoxContainer" parent="Contenido" unique_id=357871334]
-layout_mode = 0
-offset_right = 720.0
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
 offset_bottom = 42.0
+grow_horizontal = 2
 
 [node name="BtnAtaque" type="Button" parent="Contenido/Tabs" unique_id=1058277556]
 layout_mode = 2
@@ -100,10 +105,14 @@ disabled = true
 text = "CMD"
 
 [node name="ScrollContainer" type="ScrollContainer" parent="Contenido" unique_id=767490467]
-layout_mode = 0
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
 offset_top = 44.0
-offset_right = 720.0
-offset_bottom = 500.0
+grow_horizontal = 2
+grow_vertical = 2
+horizontal_scroll_mode = 0
 
 [node name="MejorasContainer" type="VBoxContainer" parent="Contenido/ScrollContainer" unique_id=1884305272]
 layout_mode = 2
