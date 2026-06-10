@@ -31,7 +31,10 @@
       "Bash(npx -y skills add jame581/GodotPrompter -g -y)",
       "Bash(grep -avE '◐|◓|◑|◒|Fetching skills$')",
       "Bash(\"C:\\\\Users\\\\andre\\\\bin\\\\godot.exe\" --headless --check-only --script scripts/ui/PanelMejoras.gd)",
-      "Bash(echo \"EXIT: $?\")"
+      "Bash(echo \"EXIT: $?\")",
+      "PowerShell(& \"C:\\\\Users\\\\andre\\\\bin\\\\godot.exe\" --headless --check-only --script \"scripts/ui/PanelMejoras.gd\" --path \".\" 2>&1; \"EXIT: $LASTEXITCODE\")",
+      "PowerShell(& \"C:\\\\Users\\\\andre\\\\bin\\\\godot.exe\" --headless --check-only --script \"scripts/ui/Interfaz.gd\" --path \".\" 2>&1; \"EXIT: $LASTEXITCODE\")",
+      "PowerShell(git *)"
     ]
   }
 }

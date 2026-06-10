@@ -197,6 +197,24 @@ var mejoras: Dictionary = {
 		"max_nivel": 25,
 		"descripcion": "Probabilidad de que una mejora de bonificación sea gratuita."
 	},
+	"interes_tasa": {
+		"nombre": "Tasa de Interés",
+		"categoria": "bonificacion",
+		"nivel": 0,
+		"incremento": 0.003,
+		"coste_base": 20,
+		"max_nivel": 50,
+		"descripcion": "Aumenta el porcentaje de interés ganado al finalizar cada ascensión."
+	},
+	"interes_cap": {
+		"nombre": "Cap de Interés",
+		"categoria": "bonificacion",
+		"nivel": 0,
+		"incremento": 300,
+		"coste_base": 30,
+		"max_nivel": 20,
+		"descripcion": "Aumenta el límite máximo de interés que puedes acumular por ascensión."
+	},
 	
 	# ========== COMMANDER (bloqueado hasta desbloqueo) ==========
 	"blindaje": {
@@ -428,6 +446,12 @@ func _aplicar_mejora(mejora_id: String) -> void:
 		"ecos_ascension", "ecos_rapido", \
 		"mejora_ataque_gratis", "mejora_defensa_gratis", "mejora_bonificacion_gratis":
 			pass  # El sistema de Economía las consulta directamente con get_valor()
+		
+		"interes_tasa":
+			Economia.mejorar_tasa_interes(0.025 + get_valor(mejora_id))
+		
+		"interes_cap":
+			Economia.mejorar_cap_interes(3000.0 + get_valor(mejora_id))
 		
 		# ═══════ COMMANDER ═══════
 		"blindaje", "disparos_iniciales", "recarga_rapida", "lock_on":
