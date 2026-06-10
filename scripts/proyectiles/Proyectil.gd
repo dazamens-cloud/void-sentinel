@@ -70,6 +70,7 @@ func _on_body_entered(body: Node) -> void:
 	if es_critico:
 		FX.impacto(global_position, Color(2.0, 1.5, 0.1), 14, 200.0)
 		FX.sacudir(0.10)
+		FX.hit_pause(0.04)  # micro-congelado (con cooldown interno en FX)
 		AudioManager.sfx("critico")
 	else:
 		FX.impacto(global_position, Color(0.4, 0.85, 1.0), 6, 110.0)

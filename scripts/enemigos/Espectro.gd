@@ -104,8 +104,15 @@ func _destruir() -> void:
 	explosion.global_position = global_position
 	get_tree().current_scene.call_deferred("add_child", explosion)
 	# 🎇 Juice: burst de partículas + sacudida suave + sonido al morir.
-	FX.impacto(global_position, Color(1.0, 0.5, 0.15), 12, 160.0)
-	FX.sacudir(0.12)
+	# Jefes y Commander mueren "a lo grande": doble burst, hit-pause y más sacudida.
+	if tipo_espectro == "jefe" or tipo_espectro == "commander":
+		FX.impacto(global_position, Color(1.0, 0.5, 0.15), 30, 320.0)
+		FX.impacto(global_position, Color(1.0, 0.9, 0.3), 18, 180.0)
+		FX.sacudir(0.45)
+		FX.hit_pause(0.12, 0.05, true)
+	else:
+		FX.impacto(global_position, Color(1.0, 0.5, 0.15), 12, 160.0)
+		FX.sacudir(0.12)
 	AudioManager.sfx("muerte")
 	var fragmento = ESCENA_FRAGMENTO.instantiate()
 	fragmento.global_position = global_position

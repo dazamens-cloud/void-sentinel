@@ -22,6 +22,14 @@ const DECAY: float = 1.6         # cuánto trauma se pierde por segundo
 var _camara: Camera2D = null
 var _trauma: float = 0.0
 
+# ── Hit-pause ─────────────────────────────────────
+# Cooldown en segundos REALES entre congelados, para que con cadencias
+# altas (muchos críticos seguidos) no se encadenen y entorpezcan.
+const HIT_PAUSE_COOLDOWN: float = 0.8
+
+var _hit_pause_activo: bool = false
+var _hit_pause_listo_en: float = 0.0   # Time.get_ticks_msec() del próximo permitido
+
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
@@ -58,6 +66,25 @@ func _process(delta: float) -> void:
 	)
 	_camara.rotation = randf_range(-1.0, 1.0) * MAX_ROLL * shake
 	_trauma = maxf(0.0, _trauma - DECAY * delta)
+
+
+# ── Hit-pause: congela el juego un instante (críticos, muertes gordas) ──
+# `duracion` en segundos reales; `escala` es el time_scale durante el congelado.
+# Respeta un cooldown interno salvo `forzar` (muertes de jefe/Commander).
+func hit_pause(duracion: float = 0.05, escala: float = 0.05, forzar: bool = false) -> void:
+	if _hit_pause_activo:
+		return
+	var ahora := Time.get_ticks_msec() / 1000.0
+	if not forzar and ahora < _hit_pause_listo_en:
+		return
+	_hit_pause_activo = true
+	_hit_pause_listo_en = ahora + HIT_PAUSE_COOLDOWN
+	Engine.time_scale = escala
+	# Timer en tiempo real (ignora time_scale) y que corre aunque el árbol se pause.
+	var t := get_tree().create_timer(duracion, true, false, true)
+	await t.timeout
+	Engine.time_scale = 1.0
+	_hit_pause_activo = false
 
 
 # ── Partículas de impacto/muerte (burst one-shot, auto-libera) ──
