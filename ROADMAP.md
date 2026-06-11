@@ -47,6 +47,9 @@ Lo que falta para una beta "viva" y completa.
   - [ ] Regenerar APK (`/exportar-apk`) cuando el balance convenza
 - [x] **A6 · Panel de Mejoras arreglado** — colapsable + altura dinámica al contenido,
   y visible en móvil (CanvasLayer). Cards nuevas de BONUS: interés ×2 y compras gratis ×3.
+  QoL (commit dda438c): compra en ráfaga al mantener pulsado, MAX según energía
+  disponible, coste dorado/rojizo, modal de info con valor → siguiente y coste,
+  animaciones de panel/modal/pestañas, barra del dron reposicionada.
 
 ## BLOQUE B — Profundidad: Laboratorio (Fase 6 del post-beta) ✅ CÓDIGO HECHO
 Implementado completo (commit cd7b0c0). Pendiente solo testing in-game y balance fino.
