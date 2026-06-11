@@ -49,6 +49,14 @@ func _ready() -> void:
 	_ultimo_salud_emitida = salud_actual
 	salud_cambiada.emit(salud_actual, salud_base)
 
+# ── Bonus pasivos del Laboratorio (investigaciones completadas) ──
+# Consulta defensiva: si el autoload no existe aún, bonus 0.
+func _lab(id: String) -> float:
+	var lab := get_node_or_null("/root/Laboratorio")
+	if lab:
+		return lab.get_bonus(id)
+	return 0.0
+
 # ═══════════════════════════════════════════════════════
 # GETTERS PRINCIPALES
 # ═══════════════════════════════════════════════════════
@@ -56,31 +64,32 @@ func get_salud() -> float:
 	return salud_base
 
 func get_danio() -> float:
-	return danio_base * mult_danio
+	return danio_base * mult_danio * (1.0 + _lab("nucleo_sincronizado"))
 
 func get_cadencia_timer() -> float:
 	var base = 1.0 / max(cadencia_base, 0.01)
 	# Suelo 0.05 = cadencia mínima 0.05s (20 disparos/s). El tope de nivel de
 	# 'velocidad_ataque' (95 × -0.01 = -0.95) deja el factor justo en 0.05.
 	var mejora = max(0.05, 1.0 - abs(mejora_cadencia))
-	return base * mejora
+	# Lab "condensadores_rapidos": reduce el timer un % extra (mismo suelo).
+	return base * mejora * maxf(0.05, 1.0 - _lab("condensadores_rapidos"))
 
 func get_regeneracion() -> float:
-	return regeneracion_base + mejora_regeneracion
+	return regeneracion_base + mejora_regeneracion + _lab("regeneracion_celular")
 
 func get_rango_escaneo() -> float:
-	return rango_escaneo_base
+	return rango_escaneo_base * (1.0 + _lab("sensores_largo_alcance"))
 
 func get_critico_chance() -> float:
-	return min(0.75, critico_chance_base + mejora_critico_chance)
+	return min(0.75, critico_chance_base + mejora_critico_chance + _lab("balistica_avanzada"))
 
 func get_critico_factor() -> float:
-	return critico_factor_base + mejora_critico_factor
+	return critico_factor_base + mejora_critico_factor + _lab("nucleos_perforantes")
 
 func get_defensa() -> float:
 	# mejora_defensa llega como delta negativo (incremento -0.005/nivel).
 	# Lo convertimos en reducción positiva de daño, máx 75% ("dureza_escudo").
-	return clampf(-mejora_defensa, 0.0, 0.75)
+	return clampf(-mejora_defensa + _lab("aleacion_reforzada"), 0.0, 0.75)
 
 func get_multidisparo() -> int:
 	return mejora_multidisparo
@@ -92,7 +101,7 @@ func get_rebote_alcance() -> float:
 	return mejora_rebote_alcance
 
 func get_escudo_max() -> float:
-	return mejora_escudo_max
+	return mejora_escudo_max + _lab("condensador_escudo")
 
 func get_escudo_actual() -> float:
 	return escudo_actual
@@ -167,7 +176,8 @@ func set_mejora_critico(chance: float, factor: float) -> void:
 func set_mult_salud(m: float) -> void:
 	var salud_base_anterior := salud_base
 	mult_salud = maxf(1.0, m)
-	salud_base = 100.0 * mult_salud
+	# Lab "matriz_vital": % de vida extra sobre el total.
+	salud_base = 100.0 * mult_salud * (1.0 + _lab("matriz_vital"))
 	# Al subir el máximo, cura la diferencia (no al bajar).
 	var delta := salud_base - salud_base_anterior
 	if delta > 0.0:

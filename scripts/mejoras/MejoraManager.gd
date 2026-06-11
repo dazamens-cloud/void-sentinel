@@ -325,7 +325,12 @@ func get_coste(mejora_id: String) -> int:
 		"defensa":      factor = 1.08
 		"bonificacion": factor = 1.11
 		"commander":    factor = 1.12
-	return int(data["coste_base"] * pow(factor, data["nivel"]))
+	var coste: float = data["coste_base"] * pow(factor, data["nivel"])
+	# Lab "protocolo_eficiencia": descuento % sobre las mejoras in-run.
+	var lab := get_node_or_null("/root/Laboratorio")
+	if lab:
+		coste *= 1.0 - lab.get_bonus("protocolo_eficiencia")
+	return int(coste)
 
 # Coste en ECOS de la siguiente compra en el Nexo. Escala con el nivel
 # PERMANENTE (nivel_nexo), no con el efectivo de la partida.

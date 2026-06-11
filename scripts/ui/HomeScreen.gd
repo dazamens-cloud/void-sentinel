@@ -16,6 +16,8 @@ extends Control
 # ============================================================
 
 signal play_pressed
+# Pide a MainMenu navegar a una pantalla sin botón en la NavBar ("lab", ...).
+signal nav_requested(screen_name: String)
 
 # Labels que se refrescan con datos del juego.
 var _lbl_ecos: Label
@@ -344,11 +346,65 @@ func _make_quick_grid() -> Control:
 	grid.add_theme_constant_override("v_separation", 10)
 
 	grid.add_child(_make_test_card())
-	grid.add_child(_make_soon_card("TORNEOS", "Eventos y clasificatorias"))
+	grid.add_child(_make_nav_card("LABORATORIO", "Investigaciones pasivas con timers reales", MenuTheme.VIOLET, "lab"))
 	grid.add_child(_make_soon_card("MISIONES", "Objetivos diarios y semanales"))
-	grid.add_child(_make_soon_card("ALIANZAS", "Juega con otros Centinelas"))
+	grid.add_child(_make_soon_card("TORNEOS", "Eventos y clasificatorias"))
 
 	return grid
+
+
+# Card clicable que navega a otra pantalla del menú (Lab, Misiones...).
+func _make_nav_card(title: String, desc: String, accent: Color, screen_name: String) -> Control:
+	var panel := PanelContainer.new()
+	panel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+
+	var style := StyleBoxFlat.new()
+	style.bg_color = Color(accent.r, accent.g, accent.b, 0.10)
+	style.border_color = Color(accent.r, accent.g, accent.b, 0.5)
+	style.set_border_width_all(1)
+	style.set_corner_radius_all(12)
+	style.content_margin_left = 12
+	style.content_margin_right = 12
+	style.content_margin_top = 12
+	style.content_margin_bottom = 12
+	panel.add_theme_stylebox_override("panel", style)
+
+	var btn := Button.new()
+	btn.flat = true
+	btn.focus_mode = Control.FOCUS_NONE
+	btn.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	panel.add_child(btn)
+
+	var v := VBoxContainer.new()
+	v.add_theme_constant_override("separation", 6)
+	v.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	v.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+
+	var t := Label.new()
+	t.text = title
+	t.add_theme_font_size_override("font_size", 16)
+	t.add_theme_color_override("font_color", accent)
+	_apply_hud_font(t)
+
+	var d := Label.new()
+	d.text = desc
+	d.add_theme_font_size_override("font_size", 14)
+	d.add_theme_color_override("font_color", MenuTheme.TEXT_MUTED)
+	d.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+
+	var badge := Label.new()
+	badge.text = "ABRIR " + MenuTheme.SYM_ARROW_R
+	badge.add_theme_font_size_override("font_size", 10)
+	badge.add_theme_color_override("font_color", accent)
+	_apply_hud_font(badge)
+
+	v.add_child(t)
+	v.add_child(d)
+	v.add_child(badge)
+	btn.add_child(v)
+
+	btn.pressed.connect(func(): nav_requested.emit(screen_name))
+	return panel
 
 
 # 🧪 Card clicable que lanza la partida en MODO PRUEBA (testing endgame).

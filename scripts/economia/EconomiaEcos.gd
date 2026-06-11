@@ -28,8 +28,16 @@ var cap_interes: float = 3000.0   # Cap $3,000 (mejorable hasta $10,000)
 func _ready() -> void:
 	_cargar_datos()
 
+# ── Bonus pasivos del Laboratorio (investigaciones completadas) ──
+func _lab(id: String) -> float:
+	var lab := get_node_or_null("/root/Laboratorio")
+	if lab:
+		return lab.get_bonus(id)
+	return 0.0
+
 func iniciar_partida() -> void:
-	energia = 50.0
+	# Lab "arranque_energizado": energía inicial extra.
+	energia = 50.0 + _lab("arranque_energizado")
 	numero_ascension = 0
 	espectros_eliminados = 0
 	energia_total_partida = 0.0
@@ -69,7 +77,8 @@ func avanzar_ascension() -> void:
 # SISTEMA DE INTERÉS
 # ═══════════════════════════════════════════════════
 func calcular_interes() -> float:
-	var interes = energia * tasa_interes
+	# Lab "interes_compuesto": tasa extra permanente.
+	var interes = energia * (tasa_interes + _lab("interes_compuesto"))
 	return min(interes, cap_interes)
 
 func aplicar_interes() -> void:
@@ -108,12 +117,15 @@ func procesar_drop_espectro(datos: Dictionary) -> void:
 	var recompensa = float(datos.get("recompensa", 5))
 	# Mejora "energia_espectro": energía extra por cada enemigo destruido.
 	recompensa += MejoraManager.get_valor("energia_espectro")
+	# Lab "extraccion_optimizada": % de energía extra por enemigo.
+	recompensa *= 1.0 + _lab("extraccion_optimizada")
 	var posicion = datos.get("posicion", Vector2.ZERO)
 
 	añadir_energia(recompensa)
 
 	# Mejora "ecos_rapido": probabilidad de un eco extra por enemigo.
-	var prob_eco := MejoraManager.get_valor("ecos_rapido")
+	# Lab "resonancia_ecos": probabilidad extra permanente.
+	var prob_eco := MejoraManager.get_valor("ecos_rapido") + _lab("resonancia_ecos")
 	if prob_eco > 0.0 and randf() < prob_eco:
 		ecos += 1
 		guardar_datos()
