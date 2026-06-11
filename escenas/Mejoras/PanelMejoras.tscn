@@ -1015,6 +1015,281 @@ theme_override_font_sizes/font_size = 12
 text = "BLOQUEADA"
 horizontal_alignment = 1
 
+[node name="CardInteresTasa" type="PanelContainer" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer"]
+custom_minimum_size = Vector2(0, 86)
+layout_mode = 2
+size_flags_horizontal = 3
+script = ExtResource("2_card")
+mejora_id = "interes_tasa"
+
+[node name="HBoxMain" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardInteresTasa"]
+layout_mode = 2
+
+[node name="BtnInfo" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardInteresTasa/HBoxMain"]
+custom_minimum_size = Vector2(100, 86)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="BtnComprar" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardInteresTasa/HBoxMain"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="VBox" type="VBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardInteresTasa/HBoxMain/BtnComprar"]
+layout_mode = 0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+alignment = 1
+
+[node name="LblValor" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardInteresTasa/HBoxMain/BtnComprar/VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+text = "2.00%"
+horizontal_alignment = 1
+
+[node name="LblCoste" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardInteresTasa/HBoxMain/BtnComprar/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.85, 0, 1)
+theme_override_font_sizes/font_size = 14
+text = "40 E"
+horizontal_alignment = 1
+
+[node name="LblAccion" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardInteresTasa/HBoxMain/BtnComprar/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 0.6)
+theme_override_font_sizes/font_size = 12
+text = "COMPRAR"
+horizontal_alignment = 1
+
+[node name="LblBloqueada" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardInteresTasa/HBoxMain/BtnComprar/VBox"]
+visible = false
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.3, 0.3, 1)
+theme_override_font_sizes/font_size = 12
+text = "BLOQUEADA"
+horizontal_alignment = 1
+
+[node name="CardInteresCap" type="PanelContainer" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer"]
+custom_minimum_size = Vector2(0, 86)
+layout_mode = 2
+size_flags_horizontal = 3
+script = ExtResource("2_card")
+mejora_id = "interes_cap"
+
+[node name="HBoxMain" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardInteresCap"]
+layout_mode = 2
+
+[node name="BtnInfo" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardInteresCap/HBoxMain"]
+custom_minimum_size = Vector2(100, 86)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="BtnComprar" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardInteresCap/HBoxMain"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="VBox" type="VBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardInteresCap/HBoxMain/BtnComprar"]
+layout_mode = 0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+alignment = 1
+
+[node name="LblValor" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardInteresCap/HBoxMain/BtnComprar/VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+text = "1000⚡ cap"
+horizontal_alignment = 1
+
+[node name="LblCoste" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardInteresCap/HBoxMain/BtnComprar/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.85, 0, 1)
+theme_override_font_sizes/font_size = 14
+text = "50 E"
+horizontal_alignment = 1
+
+[node name="LblAccion" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardInteresCap/HBoxMain/BtnComprar/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 0.6)
+theme_override_font_sizes/font_size = 12
+text = "COMPRAR"
+horizontal_alignment = 1
+
+[node name="LblBloqueada" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardInteresCap/HBoxMain/BtnComprar/VBox"]
+visible = false
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.3, 0.3, 1)
+theme_override_font_sizes/font_size = 12
+text = "BLOQUEADA"
+horizontal_alignment = 1
+
+[node name="CardMejoraAtaqueGratis" type="PanelContainer" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer"]
+custom_minimum_size = Vector2(0, 86)
+layout_mode = 2
+size_flags_horizontal = 3
+script = ExtResource("2_card")
+mejora_id = "mejora_ataque_gratis"
+
+[node name="HBoxMain" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardMejoraAtaqueGratis"]
+layout_mode = 2
+
+[node name="BtnInfo" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardMejoraAtaqueGratis/HBoxMain"]
+custom_minimum_size = Vector2(100, 86)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="BtnComprar" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardMejoraAtaqueGratis/HBoxMain"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="VBox" type="VBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardMejoraAtaqueGratis/HBoxMain/BtnComprar"]
+layout_mode = 0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+alignment = 1
+
+[node name="LblValor" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardMejoraAtaqueGratis/HBoxMain/BtnComprar/VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+text = "+0%"
+horizontal_alignment = 1
+
+[node name="LblCoste" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardMejoraAtaqueGratis/HBoxMain/BtnComprar/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.85, 0, 1)
+theme_override_font_sizes/font_size = 14
+text = "25 E"
+horizontal_alignment = 1
+
+[node name="LblAccion" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardMejoraAtaqueGratis/HBoxMain/BtnComprar/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 0.6)
+theme_override_font_sizes/font_size = 12
+text = "COMPRAR"
+horizontal_alignment = 1
+
+[node name="LblBloqueada" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardMejoraAtaqueGratis/HBoxMain/BtnComprar/VBox"]
+visible = false
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.3, 0.3, 1)
+theme_override_font_sizes/font_size = 12
+text = "BLOQUEADA"
+horizontal_alignment = 1
+
+[node name="CardMejoraDefensaGratis" type="PanelContainer" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer"]
+custom_minimum_size = Vector2(0, 86)
+layout_mode = 2
+size_flags_horizontal = 3
+script = ExtResource("2_card")
+mejora_id = "mejora_defensa_gratis"
+
+[node name="HBoxMain" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardMejoraDefensaGratis"]
+layout_mode = 2
+
+[node name="BtnInfo" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardMejoraDefensaGratis/HBoxMain"]
+custom_minimum_size = Vector2(100, 86)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="BtnComprar" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardMejoraDefensaGratis/HBoxMain"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="VBox" type="VBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardMejoraDefensaGratis/HBoxMain/BtnComprar"]
+layout_mode = 0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+alignment = 1
+
+[node name="LblValor" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardMejoraDefensaGratis/HBoxMain/BtnComprar/VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+text = "+0%"
+horizontal_alignment = 1
+
+[node name="LblCoste" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardMejoraDefensaGratis/HBoxMain/BtnComprar/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.85, 0, 1)
+theme_override_font_sizes/font_size = 14
+text = "25 E"
+horizontal_alignment = 1
+
+[node name="LblAccion" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardMejoraDefensaGratis/HBoxMain/BtnComprar/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 0.6)
+theme_override_font_sizes/font_size = 12
+text = "COMPRAR"
+horizontal_alignment = 1
+
+[node name="LblBloqueada" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardMejoraDefensaGratis/HBoxMain/BtnComprar/VBox"]
+visible = false
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.3, 0.3, 1)
+theme_override_font_sizes/font_size = 12
+text = "BLOQUEADA"
+horizontal_alignment = 1
+
+[node name="CardMejoraBonificacionGratis" type="PanelContainer" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer"]
+custom_minimum_size = Vector2(0, 86)
+layout_mode = 2
+size_flags_horizontal = 3
+script = ExtResource("2_card")
+mejora_id = "mejora_bonificacion_gratis"
+
+[node name="HBoxMain" type="HBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardMejoraBonificacionGratis"]
+layout_mode = 2
+
+[node name="BtnInfo" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardMejoraBonificacionGratis/HBoxMain"]
+custom_minimum_size = Vector2(100, 86)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="BtnComprar" type="Button" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardMejoraBonificacionGratis/HBoxMain"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="VBox" type="VBoxContainer" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardMejoraBonificacionGratis/HBoxMain/BtnComprar"]
+layout_mode = 0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+alignment = 1
+
+[node name="LblValor" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardMejoraBonificacionGratis/HBoxMain/BtnComprar/VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+text = "+0%"
+horizontal_alignment = 1
+
+[node name="LblCoste" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardMejoraBonificacionGratis/HBoxMain/BtnComprar/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.85, 0, 1)
+theme_override_font_sizes/font_size = 14
+text = "25 E"
+horizontal_alignment = 1
+
+[node name="LblAccion" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardMejoraBonificacionGratis/HBoxMain/BtnComprar/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 0.6)
+theme_override_font_sizes/font_size = 12
+text = "COMPRAR"
+horizontal_alignment = 1
+
+[node name="LblBloqueada" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardMejoraBonificacionGratis/HBoxMain/BtnComprar/VBox"]
+visible = false
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.3, 0.3, 1)
+theme_override_font_sizes/font_size = 12
+text = "BLOQUEADA"
+horizontal_alignment = 1
+
 [node name="CommanderContainer" type="GridContainer" parent="Contenido/ScrollContainer/MejorasContainer" unique_id=573077627]
 visible = false
 layout_mode = 2

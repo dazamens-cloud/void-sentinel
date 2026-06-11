@@ -39,6 +39,14 @@ func _run() -> void:
 		await _esperar(0.3)
 
 	# ── 2. Partida (mundo) ──
+	# Marca el tutorial como visto para que no tape las capturas
+	# (si no existía, se restaura al final para no quitárselo al jugador).
+	var habia_tutorial := FileAccess.file_exists("user://tutorial.save")
+	if not habia_tutorial:
+		var ft := FileAccess.open("user://tutorial.save", FileAccess.WRITE)
+		if ft:
+			ft.store_var({"visto": true})
+			ft.close()
 	var eco := get_node_or_null("/root/Economia")
 	if eco and eco.has_method("iniciar_partida"):
 		eco.iniciar_partida()
@@ -70,6 +78,11 @@ func _run() -> void:
 
 	mundo.queue_free()
 	await _esperar(0.2)
+	# Restaura el estado del tutorial (lo marcamos visto solo para capturar).
+	if not habia_tutorial:
+		var d := DirAccess.open("user://")
+		if d and d.file_exists("tutorial.save"):
+			d.remove("tutorial.save")
 	print("UiTester: capturas listas en ", ProjectSettings.globalize_path(DIR_CAPS))
 
 

@@ -189,6 +189,12 @@ func _valor_en_nivel(nivel: int) -> String:
 			# Muestra el cap TOTAL (base + mejora)
 			var cap_total: int = int(Economia.CAP_INTERES_BASE + nivel * data.get("incremento", 150.0))
 			return str(cap_total) + "⚡ cap"
+		"mejora_ataque_gratis", "mejora_defensa_gratis", "mejora_bonificacion_gratis":
+			# Probabilidad de compra gratis, como porcentaje.
+			var prob_g: float = nivel * data.get("incremento", 0.01)
+			if data.has("max_valor"):
+				prob_g = minf(prob_g, data["max_valor"])
+			return "%d%% gratis" % int(prob_g * 100.0)
 		_:
 			return str(nivel * data.get("incremento", 1.0))
 
