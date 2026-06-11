@@ -29,43 +29,38 @@ Lo que falta para una beta "viva" y completa.
   - [x] SFX enganchados: disparo, muerte, crítico, daño al Nexus, compra, game over
   - [x] Música cableada: `combate` (en partida) y `menu` (en Home)
   - [ ] **Conseguir y soltar los archivos** en `res://audio/sfx/` y `/music/` (ver `audio/README.md`)
-- [ ] **A2 · Tutorial básico** (3 pantallas o tooltips de primera partida)
+- [x] **A2 · Tutorial básico** — 3 pantallas (Nexus / energía-mejoras-dron / ascensiones-
+  Commander). `scripts/ui/TutorialOverlay.gd`, enganchado en `mundo.gd`. Solo en partidas
+  nuevas, pausa el juego y persiste flag en `user://tutorial.save`. (commit 8e5cdc4)
 - [ ] **A3 · Arte** — reemplazar placeholders clave (incremental, no bloqueante)
-- [ ] **A4 · Juice extra (opcional)** — hit-pause al crítico/muerte, más partículas
+- [x] **A4 · Juice extra** — `FX.hit_pause()` (congelado breve con cooldown 0.8s):
+  micro-pause en críticos; muertes de jefe/Commander con doble burst de partículas,
+  sacudida fuerte y pause de 0.12s.
 - [ ] **A5 · Testing de beta** — jugar largo, balance, 0 crashes; regenerar APK
-- [x] **A2 hecho** — Tutorial de primera partida (3 pantallas: Nexus / energía-mejoras-dron /
-  ascensiones-Commander). `scripts/ui/TutorialOverlay.gd`, enganchado en `mundo.gd`. Solo en
-  partidas nuevas, pausa el juego y persiste flag en `user://tutorial.save`. (commit 8e5cdc4)
-- [ ] **A6 · Arreglar Panel de Mejoras** (BUG pendiente — para retomar)
-  - Síntomas al intentar "arranca colapsado + altura ajustada al contenido":
-    1. Colapsado aparecía **flotando en medio**, no abajo.
-    2. Al cambiar a la pestaña **Defensa el panel desaparecía**.
-    3. El **scroll de Ataque no funciona** (ya pasaba antes).
-  - Causa identificada: `_reposicionar()` lee la altura del grid con
-    `get_combined_minimum_size()` pero los contenedores internos (`Contenido`,
-    `ScrollContainer`) tienen **offsets fijos en el `.tscn`** que chocan con el ajuste
-    dinámico; además el minimum-size del grid recién hecho visible no está listo en el
-    mismo frame (hace falta `await` o `call_deferred`). El cambio se **revirtió**; el
-    panel sigue como estaba (expandido, altura fija 500px, con hueco negro).
-  - Decisión pendiente: probablemente toque editar el `.tscn` (anchors del Contenido/
-    Scroll en vez de offsets fijos) — pedir confirmación antes.
+  - Incluye probar in-game lo nuevo: Laboratorio, Misiones, hit-pause, mejoras de interés.
+- [x] **A6 · Panel de Mejoras arreglado** — colapsable + altura dinámica al contenido
+  (`_recalcular_altura()` con tope 500px y scroll de relevo). (commit 6b3fab6 + ajuste
+  de offsets en bdc598e)
 
-## BLOQUE B — Profundidad: Laboratorio (Fase 6 del post-beta)
-Encaja perfecto con el género idle; ya estaba como placeholder en el Home.
+## BLOQUE B — Profundidad: Laboratorio (Fase 6 del post-beta) ✅ CÓDIGO HECHO
+Implementado completo (commit cd7b0c0). Pendiente solo testing in-game y balance fino.
 
-- [ ] `Laboratorio.gd` autoload (Dictionary de investigaciones, slots activos)
-- [ ] ~15 investigaciones en categorías (principal / ataque / defensa / utilidad)
-- [ ] **Timers offline** (`Time.get_unix_time_from_system()` para progreso con app cerrada)
-- [ ] Aceleración con gemas + slot extra desbloqueable
-- [ ] UI del Lab (lista, progreso, filtros)
+- [x] `Laboratorio.gd` autoload (`scripts/laboratorio/`, Dictionary de investigaciones, slots)
+- [x] 15 investigaciones en 4 categorías (principal / ataque / defensa / utilidad)
+- [x] **Timers offline** (`Time.get_unix_time_from_system()`; completa al reabrir la app)
+- [x] Aceleración con **fragmentos** (no hay gemas aún; migrar a gemas cuando exista C1)
+      + slot extra vía investigación "Despertar del Centinela"
+- [x] UI del Lab (`scripts/ui/LabScreen.gd`: tabs, progreso, acelerar; card en el Home)
+- [ ] Balance de costes/duraciones tras probarlo (valores iniciales conservadores)
 
 ## BLOQUE C — Negocio (Fases 8–9)
 - [ ] **C1 · Monetización**
   - [ ] IAP (paquetes de gemas / bundles) — plugin Android
   - [ ] Ads (AdMob rewarded: gemas cada X horas)
   - [ ] Analytics (Firebase: ascensión, compras, tiempo jugado)
-- [ ] **C2 · Eventos / retención**
-  - [ ] Misiones diarias (3, reset 24h) — reusar `EstadisticasManager`
+- [~] **C2 · Eventos / retención**
+  - [x] Misiones diarias (3, reset 24h) — `MisionesManager` + `MisionesScreen`, pool de 8,
+        selección determinista por fecha, recompensas en ecos/fragmentos (commit 0e00e04)
   - [ ] Hitos expandidos (hasta ~20) con recompensas
 
 ## BLOQUE D — Lanzamiento (Fase 10)
@@ -81,5 +76,6 @@ Encaja perfecto con el género idle; ya estaba como placeholder en el Home.
 ---
 
 ### Orden recomendado
-**A1 (audio) → A2/A5 (cerrar beta) → B (Laboratorio) → C → D.**
+**A1 (audio) → A5 (testing de TODO lo nuevo + APK) → C1 (monetización) → C2 hitos → D.**
 El audio es lo único grande que ambos documentos daban por hecho y que aún falta.
+B (Laboratorio) y las misiones diarias de C2 ya están implementados a falta de testing.
