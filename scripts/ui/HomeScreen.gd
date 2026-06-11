@@ -347,7 +347,7 @@ func _make_quick_grid() -> Control:
 
 	grid.add_child(_make_test_card())
 	grid.add_child(_make_nav_card("LABORATORIO", "Investigaciones pasivas con timers reales", MenuTheme.VIOLET, "lab"))
-	grid.add_child(_make_soon_card("MISIONES", "Objetivos diarios y semanales"))
+	grid.add_child(_make_nav_card("MISIONES", "3 objetivos diarios con recompensas", MenuTheme.GOLD, "misiones"))
 	grid.add_child(_make_soon_card("TORNEOS", "Eventos y clasificatorias"))
 
 	return grid

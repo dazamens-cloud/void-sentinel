@@ -426,11 +426,11 @@ func formatear_bonus(id: String, niveles_n: int) -> String:
 # Duración legible ("2h 30m", "45m", "30s").
 static func formatear_tiempo(segundos: int) -> String:
 	if segundos >= 3600:
-		var h := segundos / 3600
-		var m := (segundos % 3600) / 60
+		var h := int(segundos / 3600.0)
+		var m := int((segundos % 3600) / 60.0)
 		return "%dh %02dm" % [h, m]
 	if segundos >= 60:
-		var m2 := segundos / 60
+		var m2 := int(segundos / 60.0)
 		var s := segundos % 60
 		return "%dm %02ds" % [m2, s]
 	return "%ds" % segundos

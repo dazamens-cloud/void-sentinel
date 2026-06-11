@@ -78,6 +78,12 @@ func _build_screens() -> void:
 	screens["forja"]  = ForjaScreenUI.new()
 	screens["perfil"] = PerfilScreenUI.new()
 	screens["tienda"] = TiendaScreenUI.new()
+	screens["lab"]      = LabScreenUI.new()
+	screens["misiones"] = MisionesScreenUI.new()
+
+	# El Home puede pedir navegar a pantallas sin botón en la NavBar
+	# (Laboratorio, Misiones...).
+	screens["home"].nav_requested.connect(navigate)
 
 	for key in screens.keys():
 		var scr: Control = screens[key]
