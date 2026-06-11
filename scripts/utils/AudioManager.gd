@@ -85,6 +85,11 @@ func musica(nombre: String) -> void:
 		return
 	if stream is AudioStreamOggVorbis:
 		stream.loop = true
+	elif stream is AudioStreamWAV:
+		# WAV 16-bit: loop de todo el archivo (loop_end en frames).
+		stream.loop_mode = AudioStreamWAV.LOOP_FORWARD
+		stream.loop_begin = 0
+		stream.loop_end = stream.data.size() / 2 if stream.stereo == false else stream.data.size() / 4
 	_player_musica.stream = stream
 	_player_musica.volume_db = musica_volumen_db
 	_player_musica.play()
