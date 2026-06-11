@@ -24,11 +24,14 @@ endgame.
 ## BLOQUE A — Cerrar la Beta v1.0
 Lo que falta para una beta "viva" y completa.
 
-- [~] **A1 · Audio (prioridad #1)** — infraestructura lista; faltan los archivos.
-  - [x] Autoload `AudioManager` (carga perezosa, pool de canales, volumen, loop)
+- [~] **A1 · Audio** — SFX + música **sintetizados como propuesta** (`tools/gen_audio.py`).
+  - [x] Autoload `AudioManager` (carga perezosa, pool de canales, volumen, loop WAV/OGG)
   - [x] SFX enganchados: disparo, muerte, crítico, daño al Nexus, compra, game over
   - [x] Música cableada: `combate` (en partida) y `menu` (en Home)
-  - [ ] **Conseguir y soltar los archivos** en `res://audio/sfx/` y `/music/` (ver `audio/README.md`)
+  - [x] Archivos generados proceduralmente en `res://audio/` (WAV; reemplazables 1:1)
+  - [ ] Escuchar in-game y decidir: quedarse con los sintetizados, regenerarlos con
+        otros parámetros, o sustituirlos por archivos definitivos (mismo nombre)
+  - [ ] Para release: convertir la música a OGG (los WAV pesan ~3 MB cada uno)
 - [x] **A2 · Tutorial básico** — 3 pantallas (Nexus / energía-mejoras-dron / ascensiones-
   Commander). `scripts/ui/TutorialOverlay.gd`, enganchado en `mundo.gd`. Solo en partidas
   nuevas, pausa el juego y persiste flag en `user://tutorial.save`. (commit 8e5cdc4)
@@ -36,11 +39,14 @@ Lo que falta para una beta "viva" y completa.
 - [x] **A4 · Juice extra** — `FX.hit_pause()` (congelado breve con cooldown 0.8s):
   micro-pause en críticos; muertes de jefe/Commander con doble burst de partículas,
   sacudida fuerte y pause de 0.12s.
-- [ ] **A5 · Testing de beta** — jugar largo, balance, 0 crashes; regenerar APK
-  - Incluye probar in-game lo nuevo: Laboratorio, Misiones, hit-pause, mejoras de interés.
-- [x] **A6 · Panel de Mejoras arreglado** — colapsable + altura dinámica al contenido
-  (`_recalcular_altura()` con tope 500px y scroll de relevo). (commit 6b3fab6 + ajuste
-  de offsets en bdc598e)
+- [~] **A5 · Testing de beta** — pase visual completo hecho con `tools/UiTester.tscn`
+  (capturas de todas las pantallas en `tools/caps/`); arreglados: panel de mejoras
+  invisible en móvil (movido a CanvasLayer), cards del Home solapadas, Tienda rota,
+  fuentes pequeñas en todo el menú. **Progreso reseteado** para probar el rebalanceo.
+  - [ ] Jugar largo en el móvil con todo lo nuevo (Lab, Misiones, audio, interés nerfeado)
+  - [ ] Regenerar APK (`/exportar-apk`) cuando el balance convenza
+- [x] **A6 · Panel de Mejoras arreglado** — colapsable + altura dinámica al contenido,
+  y visible en móvil (CanvasLayer). Cards nuevas de BONUS: interés ×2 y compras gratis ×3.
 
 ## BLOQUE B — Profundidad: Laboratorio (Fase 6 del post-beta) ✅ CÓDIGO HECHO
 Implementado completo (commit cd7b0c0). Pendiente solo testing in-game y balance fino.

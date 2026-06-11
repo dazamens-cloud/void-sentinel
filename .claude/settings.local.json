@@ -39,7 +39,8 @@
       "PowerShell($scripts = @\\(\"scripts/laboratorio/Laboratorio.gd\", \"scripts/economia/NexusStats.gd\", \"scripts/economia/EconomiaEcos.gd\", \"scripts/mejoras/MejoraManager.gd\"\\); foreach \\($s in $scripts\\) { $out = & \"C:\\\\Users\\\\andre\\\\bin\\\\godot.exe\" --headless --check-only --script $s --path \".\" 2>&1 | Out-String; if \\($out -match \"ERROR|SCRIPT ERROR|Parse Error\"\\) { \"FALLO ${s}:\"; $out } else { \"OK $s\" } })",
       "PowerShell(Out-File *)",
       "PowerShell(Remove-Item *)",
-      "PowerShell(foreach \\($s in @\\(\"scripts/ui/LabScreen.gd\", \"scripts/ui/HomeScreen.gd\", \"scripts/ui/Mainmenu.gd\"\\)\\) { $out = & \"C:\\\\Users\\\\andre\\\\bin\\\\godot.exe\" --headless --check-only --script $s --path \".\" 2>&1 | Out-String; if \\($out -match \"SCRIPT ERROR|Parse Error\"\\) { \"FALLO ${s}:\"; \\($out -split \"`n\" | Select-String \"ERROR|line|línea|Error\"\\) -join \"`n\" } else { \"OK $s\" } })"
+      "PowerShell(foreach \\($s in @\\(\"scripts/ui/LabScreen.gd\", \"scripts/ui/HomeScreen.gd\", \"scripts/ui/Mainmenu.gd\"\\)\\) { $out = & \"C:\\\\Users\\\\andre\\\\bin\\\\godot.exe\" --headless --check-only --script $s --path \".\" 2>&1 | Out-String; if \\($out -match \"SCRIPT ERROR|Parse Error\"\\) { \"FALLO ${s}:\"; \\($out -split \"`n\" | Select-String \"ERROR|line|línea|Error\"\\) -join \"`n\" } else { \"OK $s\" } })",
+      "PowerShell(Get-Content \"escenas\\\\ui\\\\interfaz.tscn\" -TotalCount 20; \"---\"; Get-Content \"scripts\\\\ui\\\\Interfaz.gd\" -TotalCount 30)"
     ]
   }
 }
