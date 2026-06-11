@@ -40,7 +40,10 @@
       "PowerShell(Out-File *)",
       "PowerShell(Remove-Item *)",
       "PowerShell(foreach \\($s in @\\(\"scripts/ui/LabScreen.gd\", \"scripts/ui/HomeScreen.gd\", \"scripts/ui/Mainmenu.gd\"\\)\\) { $out = & \"C:\\\\Users\\\\andre\\\\bin\\\\godot.exe\" --headless --check-only --script $s --path \".\" 2>&1 | Out-String; if \\($out -match \"SCRIPT ERROR|Parse Error\"\\) { \"FALLO ${s}:\"; \\($out -split \"`n\" | Select-String \"ERROR|line|línea|Error\"\\) -join \"`n\" } else { \"OK $s\" } })",
-      "PowerShell(Get-Content \"escenas\\\\ui\\\\interfaz.tscn\" -TotalCount 20; \"---\"; Get-Content \"scripts\\\\ui\\\\Interfaz.gd\" -TotalCount 30)"
+      "PowerShell(Get-Content \"escenas\\\\ui\\\\interfaz.tscn\" -TotalCount 20; \"---\"; Get-Content \"scripts\\\\ui\\\\Interfaz.gd\" -TotalCount 30)",
+      "PowerShell(& \"C:\\\\Users\\\\andre\\\\bin\\\\godot.exe\" --headless --path \"D:\\\\proyectos godot\\\\void-sentinel\" --check-only --script \"res://scripts/mejoras/MejoraManager.gd\"; \"exit=$LASTEXITCODE\"; & \"C:\\\\Users\\\\andre\\\\bin\\\\godot.exe\" --headless --path \"D:\\\\proyectos godot\\\\void-sentinel\" --check-only --script \"res://scripts/mejoras/MejoraCard.gd\"; \"exit=$LASTEXITCODE\"; & \"C:\\\\Users\\\\andre\\\\bin\\\\godot.exe\" --headless --path \"D:\\\\proyectos godot\\\\void-sentinel\" --check-only --script \"res://scripts/ui/PanelMejoras.gd\"; \"exit=$LASTEXITCODE\")",
+      "PowerShell(& \"C:\\\\Users\\\\andre\\\\bin\\\\godot.exe\" --path \"D:\\\\proyectos godot\\\\void-sentinel\" res://tools/UiTester.tscn --resolution 720x1280 --quit-after 3000)",
+      "PowerShell(& \"C:\\\\Users\\\\andre\\\\bin\\\\godot.exe\" --path \"D:\\\\proyectos godot\\\\void-sentinel\" res://tools/UiTester.tscn --resolution 720x1280; \"EXIT: $LASTEXITCODE\")"
     ]
   }
 }

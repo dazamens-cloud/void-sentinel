@@ -1,8 +1,8 @@
 extends PanelContainer
 # ═══════════════════════════════════════════════════
 # MEJORA CARD — Void Sentinel
-# FASE 3: Lado izquierdo abre modal global
-#         Lado derecho = botón de compra completo
+# Lado izquierdo abre modal global; lado derecho = botón de compra.
+# Mantener pulsado el botón compra en ráfaga (tras un pequeño delay).
 # ═══════════════════════════════════════════════════
 
 signal info_solicitada(mejora_id: String, color_categoria: Color)
@@ -12,6 +12,17 @@ var mejora_manager     = null
 var multiplicador: int = 1
 var color_boton:   Color = Color(0.06, 0.35, 0.54)  # azul por defecto
 var _senales_conectadas: bool = false
+
+# Compra en ráfaga al mantener pulsado
+const HOLD_DELAY:  float = 0.45  # espera antes de empezar la ráfaga
+const HOLD_REPEAT: float = 0.12  # intervalo entre compras de la ráfaga
+var _hold_timer: Timer = null
+var _compras_en_hold: int = 0
+
+var _tween_pulso: Tween = null
+
+const COLOR_COSTE_OK    := Color(1.0, 0.85, 0.0)
+const COLOR_COSTE_CARO  := Color(0.85, 0.4, 0.35)
 
 # Lado izquierdo — área info (Button contenedor)
 @onready var btn_info:     Button = $HBoxMain/BtnInfo
@@ -30,7 +41,14 @@ func inicializar(manager, color: Color) -> void:
 	if not _senales_conectadas:
 		btn_info.pressed.connect(_on_info_presionado)
 		btn_comprar.pressed.connect(_on_comprar)
+		btn_comprar.button_down.connect(_on_comprar_down)
+		btn_comprar.button_up.connect(_on_comprar_up)
 		_senales_conectadas = true
+	if not _hold_timer:
+		_hold_timer = Timer.new()
+		_hold_timer.one_shot = true
+		_hold_timer.timeout.connect(_on_hold_tick)
+		add_child(_hold_timer)
 	# ✅ Crear Label dentro del BtnInfo para tener autowrap real
 	if not lbl_info_nombre:
 		# Limpiar el texto del botón (lo mostrará la label)
@@ -74,7 +92,9 @@ func refrescar() -> void:
 	# Lado derecho: info + acción
 	lbl_valor.text  = _formatear_valor_siguiente(nivel, cantidad)
 	lbl_coste.text  = _formatear_coste(cantidad)
-	lbl_accion.text = "COMPRAR" if not bloqueada else ""
+	lbl_accion.text = _texto_accion(cantidad, bloqueada)
+	# Coste dorado si alcanza, rojizo si no: se ve de un vistazo qué es pagable.
+	lbl_coste.add_theme_color_override("font_color", COLOR_COSTE_OK if puede else COLOR_COSTE_CARO)
 
 	# Color del botón de compra según categoría
 	var color_oscuro = color_boton.darkened(0.3)
@@ -97,6 +117,11 @@ func refrescar() -> void:
 	lbl_coste.visible       = not bloqueada
 	lbl_accion.visible      = not bloqueada
 
+func _texto_accion(cantidad: int, bloqueada: bool) -> String:
+	if bloqueada: return ""
+	if cantidad > 1: return "COMPRAR x%d" % cantidad
+	return "COMPRAR"
+
 func _hacer_stylebox(color: Color, alpha: float) -> StyleBoxFlat:
 	var sb = StyleBoxFlat.new()
 	sb.bg_color          = Color(color.r, color.g, color.b, alpha)
@@ -115,6 +140,26 @@ func _on_info_presionado() -> void:
 	info_solicitada.emit(mejora_id, color_boton)
 
 func _on_comprar() -> void:
+	# `pressed` salta al soltar: si la ráfaga del hold ya compró, no repetir.
+	if _compras_en_hold > 0:
+		return
+	_comprar()
+
+func _on_comprar_down() -> void:
+	_compras_en_hold = 0
+	_hold_timer.start(HOLD_DELAY)
+
+func _on_comprar_up() -> void:
+	_hold_timer.stop()
+
+func _on_hold_tick() -> void:
+	if btn_comprar.disabled:
+		return
+	_compras_en_hold += 1
+	_comprar()
+	_hold_timer.start(HOLD_REPEAT)
+
+func _comprar() -> void:
 	var nivel: int      = mejora_manager.get_nivel(mejora_id)
 	var max_nivel: int  = mejora_manager.get_max_nivel(mejora_id)
 	var bloqueada: bool = mejora_manager.esta_bloqueada(mejora_id)
@@ -123,98 +168,40 @@ func _on_comprar() -> void:
 	var compradas: int = mejora_manager.comprar_mejora(mejora_id, cantidad)
 	if compradas > 0:
 		AudioManager.sfx("compra")
+		_pulso_compra()
 		refrescar()
+
+# Pulso breve del botón al comprar: feedback táctil sin bloquear nada.
+func _pulso_compra() -> void:
+	btn_comprar.pivot_offset = btn_comprar.size / 2.0
+	if _tween_pulso:
+		_tween_pulso.kill()
+	btn_comprar.scale = Vector2.ONE
+	_tween_pulso = create_tween()
+	_tween_pulso.tween_property(btn_comprar, "scale", Vector2(1.07, 1.07), 0.05)
+	_tween_pulso.tween_property(btn_comprar, "scale", Vector2.ONE, 0.09)
 
 func _calcular_cantidad(nivel: int, max_nivel: int, bloqueada: bool) -> int:
 	if bloqueada: return 0
-	if multiplicador == -1: return min(max_nivel - nivel, 50)
-	return min(multiplicador, max_nivel - nivel)
+	var restantes: int = max_nivel - nivel
+	if restantes <= 0: return 0
+	if multiplicador == -1:
+		# MAX = tantos niveles como alcance la energía actual (mínimo 1 para
+		# que el botón siga mostrando el coste del siguiente nivel).
+		return clampi(mejora_manager.get_max_comprables(mejora_id), 1, restantes)
+	return min(multiplicador, restantes)
 
 
 # ═══════════════════════════════════════════════════
-# FORMATEO
+# FORMATEO (delegado en MejoraManager para compartirlo con el modal)
 # ═══════════════════════════════════════════════════
 func _formatear_valor_siguiente(nivel: int, cantidad: int) -> String:
 	if cantidad <= 0: return _valor_en_nivel(nivel)
 	return _valor_en_nivel(nivel) + " → " + _valor_en_nivel(nivel + cantidad)
 
 func _valor_en_nivel(nivel: int) -> String:
-	var data = mejora_manager.mejoras[mejora_id]
-	match mejora_id:
-		"danio":
-			# Daño es MULTIPLICATIVO: daño real = base × 1.03^nivel (no aditivo).
-			var d: float = NexusStats.danio_base * pow(mejora_manager.FACTOR_MULTIPLICATIVO, nivel)
-			return str(int(d)) + " atk"
-		"velocidad_ataque":
-			# Cadencia REAL = max(0.05, 1 - |nivel×0.01|) × base. Antes hacía
-			# max(delta_negativo, min_valor) → mostraba siempre el mínimo (0.05s).
-			var factor: float = max(0.05, 1.0 - abs(nivel * data.get("incremento", -0.01)))
-			return "%.2fs" % factor
-		"disparo_critico":
-			# Incluye la base del Nexus (5% prob, ×1.5 factor) para que el número
-			# coincida con el crítico real que ves en combate.
-			var prob: float  = min(0.75, NexusStats.critico_chance_base + nivel * data.get("incremento_prob", 0.005)) * 100.0
-			var danio: float = NexusStats.critico_factor_base + nivel * data.get("incremento_danio", 0.25)
-			return "%d%% / %.1fx" % [int(prob), danio]
-		"multidisparo":
-			# Ahora es nº de objetivos distintos atacados a la vez, no proyectiles.
-			return "+" + str(int(nivel * data.get("incremento", 1.0))) + " obj"
-		"rebote":
-			return str(int(nivel * data.get("incremento", 1.0))) + " reb"
-		"alcance_rebote":
-			return str(int(nivel * data.get("incremento", 30.0))) + "px"
-		"salud":
-			# Salud es MULTIPLICATIVA: HP real = 100 × 1.03^nivel (no aditivo).
-			var hp: float = 100.0 * pow(mejora_manager.FACTOR_MULTIPLICATIVO, nivel)
-			return str(int(hp)) + " HP"
-		"recuperacion":
-			return "+%.1f HP/s" % (nivel * data.get("incremento", 0.1))
-		"escudo":
-			return "+" + str(int(nivel * data.get("incremento", 5.0))) + " esc"
-		"dureza_escudo":
-			var v2: float = nivel * data.get("incremento", -0.005)
-			if data.has("min_valor"): v2 = max(v2, data["min_valor"])
-			return "-%d%%" % int(abs(v2) * 100.0)
-		"pulso_quartz":
-			return str(int(nivel * data.get("incremento", 40.0))) + "px"
-		"poder_pulso":
-			var lent: float = nivel * data.get("incremento_lentitud", 0.2)
-			var emp: float  = nivel * data.get("incremento_empuje", 0.05) * 100.0
-			return "%.1fs/+%d%%" % [lent, int(emp)]
-		"interes_tasa":
-			# Muestra la tasa TOTAL (base + mejora) como porcentaje
-			var tasa_total: float = (Economia.TASA_INTERES_BASE + nivel * data.get("incremento", 0.0005)) * 100.0
-			return "%.2f%%" % tasa_total
-		"interes_cap":
-			# Muestra el cap TOTAL (base + mejora)
-			var cap_total: int = int(Economia.CAP_INTERES_BASE + nivel * data.get("incremento", 150.0))
-			return str(cap_total) + "⚡ cap"
-		"mejora_ataque_gratis", "mejora_defensa_gratis", "mejora_bonificacion_gratis":
-			# Probabilidad de compra gratis, como porcentaje.
-			var prob_g: float = nivel * data.get("incremento", 0.01)
-			if data.has("max_valor"):
-				prob_g = minf(prob_g, data["max_valor"])
-			return "%d%% gratis" % int(prob_g * 100.0)
-		_:
-			return str(nivel * data.get("incremento", 1.0))
+	return mejora_manager.formatear_valor(mejora_id, nivel)
 
 func _formatear_coste(cantidad: int) -> String:
 	if cantidad <= 0: return ""
-	var data = mejora_manager.mejoras[mejora_id]
-	var coste_base: int = data["coste_base"]
-	var factor: float = 1.09
-	match data.get("categoria", ""):
-		"ataque":       factor = 1.09
-		"defensa":      factor = 1.08
-		"bonificacion": factor = 1.11
-		"commander":    factor = 1.12
-	var nivel_actual: int = mejora_manager.get_nivel(mejora_id)
-	var total: int = 0
-	for i in range(cantidad):
-		total += int(coste_base * pow(factor, nivel_actual + i))
-	return _abreviar(total) + " ⚡"
-
-func _abreviar(n: int) -> String:
-	if n >= 1_000_000: return "%.1fM" % (n / 1_000_000.0)
-	elif n >= 1_000:   return "%.1fK" % (n / 1_000.0)
-	return str(n)
+	return Formato.abreviar(mejora_manager.get_coste_acumulado(mejora_id, cantidad)) + " ⚡"

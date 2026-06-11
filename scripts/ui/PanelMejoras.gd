@@ -26,12 +26,16 @@ var modal_panel:      PanelContainer = null
 var modal_titulo:     Label          = null
 var modal_desc:       Label          = null
 var modal_nivel:      Label          = null
+var modal_stats:      Label          = null  # creada por código (valor y coste)
 var btn_cerrar_modal: Button         = null
+var modal_mejora_id:  String         = ""
 
 var mejora_manager    = null
 var categoria_actual: String = "ataque"
 var expandido:        bool   = true
 var multiplicador:    int    = 1
+var _tween_panel: Tween = null
+var _tween_modal: Tween = null
 # Altura del panel (sin la barra) ajustada al contenido de la pestaña activa.
 # Se recalcula en _recalcular_altura(); arranca en el máximo por seguridad.
 var altura_panel:     float  = 500.0
@@ -72,6 +76,7 @@ func _ready() -> void:
 		modal_desc       = modal_panel.get_node_or_null("VBox/Descripcion")
 		modal_nivel      = modal_panel.get_node_or_null("VBox/FilaNivel/LblNivel")
 		btn_cerrar_modal = modal_panel.get_node_or_null("VBox/FilaCerrar/BtnCerrar")
+		_crear_label_stats_modal()
 
 	if modal_overlay:
 		modal_overlay.visible = false
@@ -81,22 +86,41 @@ func _ready() -> void:
 	_inicializar_cards()
 	_conectar_senales()
 	cambiar_categoria("ataque")
-	_expandir(false)
+	_expandir(false, false)
 	_actualizar_botones_mult()
 
-func _reposicionar() -> void:
+# Línea de "Valor: X → Y · Siguiente: Z ⚡" del modal. Se crea por código
+# para no tocar la escena (.tscn solo se edita desde el editor).
+func _crear_label_stats_modal() -> void:
+	var vbox := modal_panel.get_node_or_null("VBox")
+	if not vbox:
+		return
+	modal_stats = Label.new()
+	modal_stats.add_theme_font_size_override("font_size", 14)
+	modal_stats.add_theme_color_override("font_color", Color(0.85, 0.9, 1.0))
+	modal_stats.autowrap_mode = TextServer.AUTOWRAP_WORD
+	vbox.add_child(modal_stats)
+	# Colocarla entre la descripción y la fila de nivel.
+	var desc_idx: int = modal_desc.get_index() if modal_desc else vbox.get_child_count() - 1
+	vbox.move_child(modal_stats, desc_idx + 1)
+
+func _reposicionar(animar: bool = false) -> void:
 	var vp := get_viewport_rect().size
 	# Reserva, además del margen fijo, la barra de navegación del sistema (móvil).
 	var safe_bottom: float = SafeArea.margenes(vp)["bottom"]
 	var base := vp.y - MARGEN_INFERIOR - safe_bottom
 	offset_left   = 0.0
 	offset_right  = vp.x
-	if expandido:
-		offset_top    = base - altura_panel - ALTURA_BARRA
-		offset_bottom = base
+	offset_bottom = base
+	var top_destino: float = base - ALTURA_BARRA - (altura_panel if expandido else 0.0)
+	if _tween_panel:
+		_tween_panel.kill()
+	if animar:
+		_tween_panel = create_tween()
+		_tween_panel.set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_CUBIC)
+		_tween_panel.tween_property(self, "offset_top", top_destino, 0.2)
 	else:
-		offset_top    = base - ALTURA_BARRA
-		offset_bottom = base
+		offset_top = top_destino
 
 func _container_activo() -> GridContainer:
 	match categoria_actual:
@@ -109,7 +133,7 @@ func _container_activo() -> GridContainer:
 # Ajusta la altura del panel al contenido de la pestaña activa (con tope).
 # Se difiere un frame porque el grid recién hecho visible aún no tiene
 # calculado su get_combined_minimum_size() en el mismo frame.
-func _recalcular_altura() -> void:
+func _recalcular_altura(animar: bool = true) -> void:
 	if not expandido:
 		return
 	await get_tree().process_frame
@@ -120,7 +144,7 @@ func _recalcular_altura() -> void:
 	if container:
 		h_grid = container.get_combined_minimum_size().y
 	altura_panel = minf(ALTURA_TABS + h_grid + PAD_CONTENIDO, ALTURA_PANEL_MAX)
-	_reposicionar()
+	_reposicionar(animar)
 
 func _inicializar_cards() -> void:
 	for container in [ataque_container, defensa_container, bonificacion_container, commander_container]:
@@ -172,9 +196,11 @@ func _mostrar_modal(mejora_id: String, color: Color) -> void:
 	var nivel: int     = mejora_manager.get_nivel(mejora_id)
 	var max_nivel: int = mejora_manager.get_max_nivel(mejora_id)
 
+	modal_mejora_id   = mejora_id
 	modal_titulo.text = data["nombre"]
 	modal_desc.text   = data.get("descripcion", "Sin descripcion.")
 	modal_nivel.text  = "Nv %d / %d" % [nivel, max_nivel]
+	_actualizar_stats_modal()
 
 	# Opción C: tinte sutil con más opacidad para legibilidad
 	var color_borde := Color(color.r, color.g, color.b, 0.7)
@@ -210,6 +236,38 @@ func _mostrar_modal(mejora_id: String, color: Color) -> void:
 	# El ModalOverlay cubre todo el PanelMejoras, pero el juego
 	# ocupa toda la pantalla — centramos el panel dentro del overlay
 	modal_overlay.visible = true
+	_animar_apertura_modal()
+
+# Valor actual → siguiente nivel y su coste, debajo de la descripción.
+func _actualizar_stats_modal() -> void:
+	if not modal_stats or modal_mejora_id.is_empty():
+		return
+	var nivel: int     = mejora_manager.get_nivel(modal_mejora_id)
+	var max_nivel: int = mejora_manager.get_max_nivel(modal_mejora_id)
+	if modal_nivel:
+		modal_nivel.text = "Nv %d / %d" % [nivel, max_nivel]
+	var actual: String = mejora_manager.formatear_valor(modal_mejora_id, nivel)
+	if nivel >= max_nivel:
+		modal_stats.text = "Valor: %s (MAX)" % actual
+	else:
+		var siguiente: String = mejora_manager.formatear_valor(modal_mejora_id, nivel + 1)
+		var coste: int = mejora_manager.get_coste_acumulado(modal_mejora_id, 1)
+		modal_stats.text = "Valor: %s → %s\nSiguiente nivel: %s ⚡" % [
+			actual, siguiente, Formato.abreviar(coste),
+		]
+
+func _animar_apertura_modal() -> void:
+	if not modal_panel:
+		return
+	modal_panel.pivot_offset = modal_panel.size / 2.0
+	if _tween_modal:
+		_tween_modal.kill()
+	modal_panel.scale = Vector2(0.9, 0.9)
+	modal_overlay.modulate.a = 0.0
+	_tween_modal = create_tween().set_parallel(true)
+	_tween_modal.tween_property(modal_overlay, "modulate:a", 1.0, 0.12)
+	_tween_modal.set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_BACK)
+	_tween_modal.tween_property(modal_panel, "scale", Vector2.ONE, 0.18)
 
 func _cerrar_modal() -> void:
 	if modal_overlay:
@@ -229,25 +287,32 @@ func _on_overlay_input(event: InputEvent) -> void:
 func _toggle_panel() -> void:
 	_expandir(not expandido)
 
-func _expandir(estado: bool) -> void:
+func _expandir(estado: bool, animar: bool = true) -> void:
 	expandido = estado
 	contenido.visible = estado
 	btn_toggle.text = "▲" if estado else "▼"
 	if estado:
-		_recalcular_altura()
+		_recalcular_altura(animar)
 	else:
-		_reposicionar()
+		_reposicionar(animar)
 
 # ═══════════════════════════════════════════════════
 # PESTAÑAS
 # ═══════════════════════════════════════════════════
 func cambiar_categoria(categoria: String) -> void:
+	var anterior := categoria_actual
 	categoria_actual = categoria
 	_actualizar_visual_pestanas()
 	ataque_container.visible       = (categoria == "ataque")
 	defensa_container.visible      = (categoria == "defensa")
 	bonificacion_container.visible = (categoria == "bonificacion")
 	commander_container.visible    = (categoria == "commander")
+	# Fundido suave del grid entrante al cambiar de pestaña.
+	if anterior != categoria:
+		var container := _container_activo()
+		container.modulate.a = 0.0
+		var tw := create_tween()
+		tw.tween_property(container, "modulate:a", 1.0, 0.15)
 	_recalcular_altura()
 
 func _actualizar_visual_pestanas() -> void:
@@ -301,6 +366,9 @@ func _on_energia_cambiada(_valor: float = 0.0) -> void:
 
 func _actualizar_ui() -> void:
 	_refrescar_container_activo()
+	# Si el modal está abierto, sus números también deben seguir la partida.
+	if modal_overlay and modal_overlay.visible:
+		_actualizar_stats_modal()
 
 func _refrescar_container_activo() -> void:
 	var container_activo := _container_activo()

@@ -70,6 +70,17 @@ func _run() -> void:
 			panel.cambiar_categoria("bonificacion")
 			await _esperar(0.5)
 			await _capturar("mundo_panel_bonus")
+			# Multiplicador MAX y modal de info (valor → siguiente + coste).
+			panel.cambiar_categoria("ataque")
+			if panel.has_method("_set_multiplicador"):
+				panel._set_multiplicador(-1)
+			await _esperar(0.5)
+			await _capturar("mundo_panel_max")
+			if panel.has_method("_mostrar_modal"):
+				panel._mostrar_modal("danio", Color(0.06, 0.35, 0.54))
+				await _esperar(0.5)
+				await _capturar("mundo_panel_modal")
+				panel._cerrar_modal()
 	else:
 		print("UiTester: PanelMejoras no encontrado en mundo")
 

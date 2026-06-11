@@ -315,22 +315,61 @@ func get_valor_secundario(mejora_id: String) -> float:
 func get_multiplicador(mejora_id: String) -> float:
 	return pow(FACTOR_MULTIPLICATIVO, get_nivel(mejora_id))
 
+func _factor_coste(data: Dictionary) -> float:
+	match data.get("categoria", ""):
+		"ataque":       return 1.09
+		"defensa":      return 1.08
+		"bonificacion": return 1.11
+		"commander":    return 1.12
+	return 1.09
+
+# Descuento del Lab "protocolo_eficiencia" sobre las mejoras in-run,
+# como factor multiplicador (1.0 = sin descuento).
+func _descuento_lab() -> float:
+	var lab := get_node_or_null("/root/Laboratorio")
+	if lab:
+		return 1.0 - lab.get_bonus("protocolo_eficiencia")
+	return 1.0
+
 func get_coste(mejora_id: String) -> int:
 	var data = mejoras.get(mejora_id, {})
 	if data.is_empty():
 		return 0
-	var factor: float = 1.09
-	match data.get("categoria", ""):
-		"ataque":       factor = 1.09
-		"defensa":      factor = 1.08
-		"bonificacion": factor = 1.11
-		"commander":    factor = 1.12
-	var coste: float = data["coste_base"] * pow(factor, data["nivel"])
-	# Lab "protocolo_eficiencia": descuento % sobre las mejoras in-run.
-	var lab := get_node_or_null("/root/Laboratorio")
-	if lab:
-		coste *= 1.0 - lab.get_bonus("protocolo_eficiencia")
-	return int(coste)
+	return int(data["coste_base"] * pow(_factor_coste(data), data["nivel"]) * _descuento_lab())
+
+# Coste total de comprar `cantidad` niveles seguidos desde el nivel actual.
+# Misma fórmula por nivel que get_coste (incluido el descuento del Lab):
+# lo que muestra la card debe coincidir con lo que se cobra.
+func get_coste_acumulado(mejora_id: String, cantidad: int) -> int:
+	var data = mejoras.get(mejora_id, {})
+	if data.is_empty() or cantidad <= 0:
+		return 0
+	var factor := _factor_coste(data)
+	var descuento := _descuento_lab()
+	var nivel: int = data["nivel"]
+	var total: int = 0
+	for i in range(cantidad):
+		total += int(data["coste_base"] * pow(factor, nivel + i) * descuento)
+	return total
+
+# Cuántos niveles seguidos alcanza a pagar el jugador con la energía actual
+# (para el botón MAX). Acotado por los niveles restantes y `tope`.
+func get_max_comprables(mejora_id: String, tope: int = 100) -> int:
+	var data = mejoras.get(mejora_id, {})
+	if data.is_empty() or data.get("bloqueado", false):
+		return 0
+	var restantes: int = data["max_nivel"] - data["nivel"]
+	var factor := _factor_coste(data)
+	var descuento := _descuento_lab()
+	var nivel: int = data["nivel"]
+	var total: int = 0
+	var n: int = 0
+	while n < restantes and n < tope:
+		total += int(data["coste_base"] * pow(factor, nivel + n) * descuento)
+		if total > Economia.energia:
+			break
+		n += 1
+	return n
 
 # Coste en ECOS de la siguiente compra en el Nexo. Escala con el nivel
 # PERMANENTE (nivel_nexo), no con el efectivo de la partida.
@@ -338,16 +377,76 @@ func get_coste_nexo(mejora_id: String) -> int:
 	var data = mejoras.get(mejora_id, {})
 	if data.is_empty():
 		return 0
-	var factor: float = 1.09
-	match data.get("categoria", ""):
-		"ataque":       factor = 1.09
-		"defensa":      factor = 1.08
-		"bonificacion": factor = 1.11
-		"commander":    factor = 1.12
-	return int(data["coste_base"] * pow(factor, data.get("nivel_nexo", 0)))
+	return int(data["coste_base"] * pow(_factor_coste(data), data.get("nivel_nexo", 0)))
 
 func get_max_nivel(mejora_id: String) -> int:
 	return mejoras.get(mejora_id, {}).get("max_nivel", 0)
+
+# Texto legible del valor de una mejora EN un nivel dado ("12 atk", "5% / 1.5x").
+# Lo usan las cards del panel y el modal de info; debe reflejar el valor real
+# que aplica _aplicar_mejora (mismas bases y topes).
+func formatear_valor(mejora_id: String, nivel: int) -> String:
+	var data = mejoras.get(mejora_id, {})
+	if data.is_empty():
+		return ""
+	match mejora_id:
+		"danio":
+			# Daño es MULTIPLICATIVO: daño real = base × 1.03^nivel (no aditivo).
+			var d: float = NexusStats.danio_base * pow(FACTOR_MULTIPLICATIVO, nivel)
+			return Formato.abreviar(d) + " atk"
+		"velocidad_ataque":
+			# Cadencia REAL = max(0.05, 1 - |nivel×0.01|) × base.
+			var factor: float = max(0.05, 1.0 - abs(nivel * data.get("incremento", -0.01)))
+			return "%.2fs" % factor
+		"disparo_critico":
+			# Incluye la base del Nexus (5% prob, ×1.5 factor) para que el número
+			# coincida con el crítico real que ves en combate.
+			var prob: float  = min(0.75, NexusStats.critico_chance_base + nivel * data.get("incremento_prob", 0.005)) * 100.0
+			var danio: float = NexusStats.critico_factor_base + nivel * data.get("incremento_danio", 0.25)
+			return "%d%% / %.1fx" % [int(prob), danio]
+		"multidisparo":
+			# Nº de objetivos distintos atacados a la vez, no proyectiles.
+			return "+" + str(int(nivel * data.get("incremento", 1.0))) + " obj"
+		"rebote":
+			return str(int(nivel * data.get("incremento", 1.0))) + " reb"
+		"alcance_rebote":
+			return str(int(nivel * data.get("incremento", 30.0))) + "px"
+		"salud":
+			# Salud es MULTIPLICATIVA: HP real = 100 × 1.03^nivel (no aditivo).
+			var hp: float = 100.0 * pow(FACTOR_MULTIPLICATIVO, nivel)
+			return Formato.abreviar(hp) + " HP"
+		"recuperacion":
+			return "+%.1f HP/s" % (nivel * data.get("incremento", 0.1))
+		"escudo":
+			return "+" + str(int(nivel * data.get("incremento", 5.0))) + " esc"
+		"dureza_escudo":
+			# Reducción real = clampf(-delta, 0, 0.75) (NexusStats.get_defensa).
+			# El max(delta, min_valor) anterior la clavaba en -25% para todo nivel.
+			var red: float = clampf(absf(nivel * data.get("incremento", -0.005)), 0.0, 0.75)
+			# Un decimal: cada nivel son 0.5% y con int() truncaba a "-0%".
+			return "-" + String.num(red * 100.0, 1).trim_suffix(".0") + "%"
+		"pulso_quartz":
+			return str(int(nivel * data.get("incremento", 40.0))) + "px"
+		"poder_pulso":
+			var lent: float = nivel * data.get("incremento_lentitud", 0.2)
+			var emp: float  = nivel * data.get("incremento_empuje", 0.05) * 100.0
+			return "%.1fs/+%d%%" % [lent, int(emp)]
+		"interes_tasa":
+			# Muestra la tasa TOTAL (base + mejora) como porcentaje
+			var tasa_total: float = (Economia.TASA_INTERES_BASE + nivel * data.get("incremento", 0.0005)) * 100.0
+			return "%.2f%%" % tasa_total
+		"interes_cap":
+			# Muestra el cap TOTAL (base + mejora)
+			var cap_total: int = int(Economia.CAP_INTERES_BASE + nivel * data.get("incremento", 150.0))
+			return str(cap_total) + "⚡ cap"
+		"mejora_ataque_gratis", "mejora_defensa_gratis", "mejora_bonificacion_gratis":
+			# Probabilidad de compra gratis, como porcentaje.
+			var prob_g: float = nivel * data.get("incremento", 0.01)
+			if data.has("max_valor"):
+				prob_g = minf(prob_g, data["max_valor"])
+			return "%d%% gratis" % int(prob_g * 100.0)
+		_:
+			return str(nivel * data.get("incremento", 1.0))
 
 func esta_bloqueada(mejora_id: String) -> bool:
 	return mejoras.get(mejora_id, {}).get("bloqueado", false)

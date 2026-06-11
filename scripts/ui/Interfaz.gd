@@ -114,9 +114,10 @@ func _construir_interfaz() -> void:
 	raiz.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(raiz)
 	
-	# Barra del dron (subida por encima de la barra de navegación del sistema)
+	# Barra del dron. Por encima de la barra colapsada del PanelMejoras
+	# (CanvasLayer, top en ~1182 - safe_bottom): a 1220 quedaba tapada.
 	barra_dron = ProgressBar.new()
-	barra_dron.position = Vector2(20, 1220 - _margen_bottom)
+	barra_dron.position = Vector2(20, 1140 - _margen_bottom)
 	barra_dron.size = Vector2(200, 20)
 	barra_dron.max_value = 50
 	barra_dron.value = 0
@@ -126,7 +127,7 @@ func _construir_interfaz() -> void:
 	
 	# Label texto barra dron
 	label_dron = Label.new()
-	label_dron.position = Vector2(20, 1215 - _margen_bottom)
+	label_dron.position = Vector2(20, 1135 - _margen_bottom)
 	label_dron.add_theme_font_size_override("font_size", 10)
 	label_dron.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	label_dron.text = "🔋 0/50"
