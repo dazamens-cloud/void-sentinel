@@ -21,9 +21,16 @@ var energia_total_partida: float = 0.0
 
 # ═══════════════════════════════════════════════════
 # SISTEMA DE INTERÉS (DOC_B)
+# Bases ÚNICAS del interés — MejoraManager y MejoraCard leen estas
+# constantes (antes estaban duplicadas y desincronizables).
+# Nerf 2026-06: 2.5%→2% y cap 3000→1000; el bucle de bonificación
+# disparaba la energía y trivializaba el mid-game.
 # ═══════════════════════════════════════════════════
-var tasa_interes: float = 0.025   # 2.5% base (mejorable hasta 5%)
-var cap_interes: float = 3000.0   # Cap $3,000 (mejorable hasta $10,000)
+const TASA_INTERES_BASE: float = 0.02
+const CAP_INTERES_BASE: float = 1000.0
+
+var tasa_interes: float = TASA_INTERES_BASE   # mejorable hasta 3.5%
+var cap_interes: float = CAP_INTERES_BASE     # mejorable hasta 4000
 
 func _ready() -> void:
 	_cargar_datos()
@@ -42,8 +49,8 @@ func iniciar_partida() -> void:
 	espectros_eliminados = 0
 	energia_total_partida = 0.0
 	# ✅ Resetear interés al reiniciar (ecos y fragmentos NO se resetean)
-	tasa_interes = 0.025
-	cap_interes = 3000.0
+	tasa_interes = TASA_INTERES_BASE
+	cap_interes = CAP_INTERES_BASE
 	recursos_actualizados.emit()
 	ascension_cambiada.emit(0)
 

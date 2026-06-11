@@ -182,12 +182,12 @@ func _valor_en_nivel(nivel: int) -> String:
 			var emp: float  = nivel * data.get("incremento_empuje", 0.05) * 100.0
 			return "%.1fs/+%d%%" % [lent, int(emp)]
 		"interes_tasa":
-			# Muestra la tasa TOTAL (base 2.5% + mejora) como porcentaje
-			var tasa_total: float = (0.025 + nivel * data.get("incremento", 0.003)) * 100.0
-			return "%.1f%%" % tasa_total
+			# Muestra la tasa TOTAL (base + mejora) como porcentaje
+			var tasa_total: float = (Economia.TASA_INTERES_BASE + nivel * data.get("incremento", 0.0005)) * 100.0
+			return "%.2f%%" % tasa_total
 		"interes_cap":
-			# Muestra el cap TOTAL (base 3,000 + mejora)
-			var cap_total: int = int(3000.0 + nivel * data.get("incremento", 300.0))
+			# Muestra el cap TOTAL (base + mejora)
+			var cap_total: int = int(Economia.CAP_INTERES_BASE + nivel * data.get("incremento", 150.0))
 			return str(cap_total) + "⚡ cap"
 		_:
 			return str(nivel * data.get("incremento", 1.0))

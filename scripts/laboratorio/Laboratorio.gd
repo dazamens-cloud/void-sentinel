@@ -167,12 +167,12 @@ const INVESTIGACIONES := {
 	"interes_compuesto": {
 		"nombre": "Interés Compuesto",
 		"categoria": "utilidad",
-		"incremento": 0.001,
+		"incremento": 0.0005,
 		"max_nivel": 10,
 		"coste_base": 350,
 		"duracion_base": 700.0,
 		"formato": "pct",
-		"descripcion": "Algoritmos financieros: +0.1% de tasa de interés por nivel."
+		"descripcion": "Algoritmos financieros: +0.05% de tasa de interés por nivel."
 	},
 	"arranque_energizado": {
 		"nombre": "Arranque Energizado",
