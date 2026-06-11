@@ -47,9 +47,6 @@ escena_espectro_comander = ExtResource("12_cmd")
 
 [node name="Interfaz" parent="." unique_id=1199303299 instance=ExtResource("2_glrvs")]
 
-[node name="PanelMejoras" parent="." unique_id=2106992869 instance=ExtResource("9_mb57o")]
-anchors_preset = -1
-offset_left = -3.0
-offset_top = 928.0
-offset_right = 717.0
-offset_bottom = 1278.0
+[node name="CapaUI" type="CanvasLayer" parent="." unique_id=2106992870]
+
+[node name="PanelMejoras" parent="CapaUI" unique_id=2106992869 instance=ExtResource("9_mb57o")]

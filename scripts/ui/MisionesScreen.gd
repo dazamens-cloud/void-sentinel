@@ -99,19 +99,19 @@ func _make_header() -> Control:
 
 	var eyebrow := Label.new()
 	eyebrow.text = "OBJETIVOS DEL DÍA"
-	eyebrow.add_theme_font_size_override("font_size", 8)
+	eyebrow.add_theme_font_size_override("font_size", 10)
 	eyebrow.add_theme_color_override("font_color", MenuTheme.TEXT_MUTED)
 	_apply_hud_font(eyebrow)
 
 	var title := Label.new()
 	title.text = "MISIONES"
-	title.add_theme_font_size_override("font_size", 22)
+	title.add_theme_font_size_override("font_size", 26)
 	title.add_theme_color_override("font_color", MenuTheme.GOLD)
 	_apply_hud_font(title)
 
 	_lbl_reset = Label.new()
 	_lbl_reset.text = ""
-	_lbl_reset.add_theme_font_size_override("font_size", 11)
+	_lbl_reset.add_theme_font_size_override("font_size", 13)
 	_lbl_reset.add_theme_color_override("font_color", MenuTheme.TEXT_MUTED)
 	_apply_hud_font(_lbl_reset)
 
@@ -151,7 +151,7 @@ func _make_card(id: String) -> Control:
 	var desc := Label.new()
 	desc.text = data.get("descripcion", id)
 	desc.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	desc.add_theme_font_size_override("font_size", 15)
+	desc.add_theme_font_size_override("font_size", 17)
 	desc.add_theme_color_override("font_color", MenuTheme.TEXT_PRIMARY)
 	desc.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	_apply_hud_font(desc)
@@ -159,7 +159,7 @@ func _make_card(id: String) -> Control:
 	var sym: String = MenuTheme.SYM_FRAG if es_frag else MenuTheme.SYM_ECOS
 	var reward := Label.new()
 	reward.text = "+%d %s" % [data.get("recompensa", 0), sym]
-	reward.add_theme_font_size_override("font_size", 14)
+	reward.add_theme_font_size_override("font_size", 16)
 	reward.add_theme_color_override("font_color", accent)
 	_apply_hud_font(reward)
 
@@ -180,14 +180,14 @@ func _make_card(id: String) -> Control:
 	var fila2 := HBoxContainer.new()
 	var prog := Label.new()
 	prog.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	prog.add_theme_font_size_override("font_size", 12)
+	prog.add_theme_font_size_override("font_size", 14)
 	prog.add_theme_color_override("font_color", MenuTheme.TEXT_MUTED)
 	_apply_hud_font(prog)
 
 	var btn := Button.new()
 	btn.focus_mode = Control.FOCUS_NONE
 	btn.custom_minimum_size = Vector2(140, 34)
-	btn.add_theme_font_size_override("font_size", 12)
+	btn.add_theme_font_size_override("font_size", 14)
 	var f := MenuTheme.get_font_hud()
 	if f:
 		btn.add_theme_font_override("font", f)

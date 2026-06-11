@@ -105,7 +105,7 @@ func _make_currency_item_with_label(symbol: String, value_lbl: Label, label: Str
 	var icon := Label.new()
 	icon.text = symbol
 	icon.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	icon.add_theme_font_size_override("font_size", 22)
+	icon.add_theme_font_size_override("font_size", 26)
 	icon.add_theme_color_override("font_color", color)
 
 	value_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -113,7 +113,7 @@ func _make_currency_item_with_label(symbol: String, value_lbl: Label, label: Str
 	var name_lbl := Label.new()
 	name_lbl.text = label
 	name_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	name_lbl.add_theme_font_size_override("font_size", 12)
+	name_lbl.add_theme_font_size_override("font_size", 14)
 	name_lbl.add_theme_color_override("font_color", MenuTheme.TEXT_MUTED)
 	_apply_hud_font(name_lbl)
 
@@ -126,7 +126,7 @@ func _make_currency_item_with_label(symbol: String, value_lbl: Label, label: Str
 func _make_value_label(text: String, color: Color) -> Label:
 	var lbl := Label.new()
 	lbl.text = text
-	lbl.add_theme_font_size_override("font_size", 15)
+	lbl.add_theme_font_size_override("font_size", 17)
 	lbl.add_theme_color_override("font_color", color)
 	_apply_hud_font(lbl)
 	return lbl
@@ -164,7 +164,7 @@ func _make_hero() -> Control:
 	var sub := Label.new()
 	sub.text = "NEXO ACTIVO  -  NIVEL 12"
 	sub.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	sub.add_theme_font_size_override("font_size", 15)
+	sub.add_theme_font_size_override("font_size", 17)
 	sub.add_theme_color_override("font_color", MenuTheme.TEXT_MUTED)
 	_apply_hud_font(sub)
 	v.add_child(sub)
@@ -204,14 +204,14 @@ func _make_stat(value: String, label: String, color: Color) -> Control:
 	var val := Label.new()
 	val.text = value
 	val.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	val.add_theme_font_size_override("font_size", 22)
+	val.add_theme_font_size_override("font_size", 26)
 	val.add_theme_color_override("font_color", color)
 	_apply_hud_font(val)
 
 	var lbl := Label.new()
 	lbl.text = label
 	lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	lbl.add_theme_font_size_override("font_size", 12)
+	lbl.add_theme_font_size_override("font_size", 14)
 	lbl.add_theme_color_override("font_color", MenuTheme.TEXT_MUTED)
 	_apply_hud_font(lbl)
 
@@ -225,7 +225,6 @@ func _make_stat(value: String, label: String, color: Color) -> Control:
 # ------------------------------------------------------------
 func _make_play_button() -> Control:
 	var btn := Button.new()
-	btn.flat = true
 	btn.focus_mode = Control.FOCUS_NONE
 	btn.custom_minimum_size = Vector2(0, 72)
 
@@ -262,7 +261,7 @@ func _make_play_button() -> Control:
 
 	var sub := Label.new()
 	sub.text = "INICIAR DEFENSA"
-	sub.add_theme_font_size_override("font_size", 14)
+	sub.add_theme_font_size_override("font_size", 16)
 	sub.add_theme_color_override("font_color", MenuTheme.CYAN)
 	_apply_hud_font(sub)
 
@@ -300,7 +299,7 @@ func _make_resume_button() -> Control:
 
 	var txt := Label.new()
 	txt.text = "REANUDAR PARTIDA"
-	txt.add_theme_font_size_override("font_size", 22)
+	txt.add_theme_font_size_override("font_size", 26)
 	txt.add_theme_color_override("font_color", MenuTheme.GREEN)
 	txt.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	txt.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
@@ -345,15 +344,18 @@ func _make_quick_grid() -> Control:
 	grid.add_theme_constant_override("h_separation", 10)
 	grid.add_theme_constant_override("v_separation", 10)
 
-	grid.add_child(_make_test_card())
 	grid.add_child(_make_nav_card("LABORATORIO", "Investigaciones pasivas con timers reales", MenuTheme.VIOLET, "lab"))
 	grid.add_child(_make_nav_card("MISIONES", "3 objetivos diarios con recompensas", MenuTheme.GOLD, "misiones"))
 	grid.add_child(_make_soon_card("TORNEOS", "Eventos y clasificatorias"))
+	grid.add_child(_make_soon_card("ALIANZAS", "Juega con otros Centinelas"))
 
 	return grid
 
 
 # Card clicable que navega a otra pantalla del menú (Lab, Misiones...).
+# Estructura: PanelContainer con DOS hijos directos — el VBox de contenido
+# (aporta el minimum size de la card) y un Button flat encima (el
+# PanelContainer estira ambos a su rect, así el botón cubre toda la card).
 func _make_nav_card(title: String, desc: String, accent: Color, screen_name: String) -> Control:
 	var panel := PanelContainer.new()
 	panel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -369,103 +371,40 @@ func _make_nav_card(title: String, desc: String, accent: Color, screen_name: Str
 	style.content_margin_bottom = 12
 	panel.add_theme_stylebox_override("panel", style)
 
-	var btn := Button.new()
-	btn.flat = true
-	btn.focus_mode = Control.FOCUS_NONE
-	btn.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	panel.add_child(btn)
-
 	var v := VBoxContainer.new()
 	v.add_theme_constant_override("separation", 6)
 	v.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	v.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 
 	var t := Label.new()
 	t.text = title
-	t.add_theme_font_size_override("font_size", 16)
+	t.add_theme_font_size_override("font_size", 20)
 	t.add_theme_color_override("font_color", accent)
 	_apply_hud_font(t)
 
 	var d := Label.new()
 	d.text = desc
-	d.add_theme_font_size_override("font_size", 14)
+	d.add_theme_font_size_override("font_size", 17)
 	d.add_theme_color_override("font_color", MenuTheme.TEXT_MUTED)
 	d.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 
 	var badge := Label.new()
 	badge.text = "ABRIR " + MenuTheme.SYM_ARROW_R
-	badge.add_theme_font_size_override("font_size", 10)
+	badge.add_theme_font_size_override("font_size", 14)
 	badge.add_theme_color_override("font_color", accent)
 	_apply_hud_font(badge)
 
 	v.add_child(t)
 	v.add_child(d)
 	v.add_child(badge)
-	btn.add_child(v)
-
-	btn.pressed.connect(func(): nav_requested.emit(screen_name))
-	return panel
-
-
-# 🧪 Card clicable que lanza la partida en MODO PRUEBA (testing endgame).
-func _make_test_card() -> Control:
-	var panel := PanelContainer.new()
-	panel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-
-	var style := StyleBoxFlat.new()
-	style.bg_color = Color(MenuTheme.GOLD.r, MenuTheme.GOLD.g, MenuTheme.GOLD.b, 0.10)
-	style.border_color = Color(MenuTheme.GOLD.r, MenuTheme.GOLD.g, MenuTheme.GOLD.b, 0.5)
-	style.set_border_width_all(1)
-	style.set_corner_radius_all(12)
-	style.content_margin_left = 12
-	style.content_margin_right = 12
-	style.content_margin_top = 12
-	style.content_margin_bottom = 12
-	panel.add_theme_stylebox_override("panel", style)
+	panel.add_child(v)
 
 	var btn := Button.new()
 	btn.flat = true
 	btn.focus_mode = Control.FOCUS_NONE
-	btn.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	btn.pressed.connect(func(): nav_requested.emit(screen_name))
 	panel.add_child(btn)
 
-	var v := VBoxContainer.new()
-	v.add_theme_constant_override("separation", 6)
-	v.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	v.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-
-	var t := Label.new()
-	t.text = "JUGAR PRUEBA"
-	t.add_theme_font_size_override("font_size", 16)
-	t.add_theme_color_override("font_color", MenuTheme.GOLD)
-	_apply_hud_font(t)
-
-	var d := Label.new()
-	d.text = "Asc avanzada + recursos. Tecla C: Commander."
-	d.add_theme_font_size_override("font_size", 14)
-	d.add_theme_color_override("font_color", MenuTheme.TEXT_MUTED)
-	d.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-
-	var badge := Label.new()
-	badge.text = "TESTING"
-	badge.add_theme_font_size_override("font_size", 10)
-	badge.add_theme_color_override("font_color", MenuTheme.GOLD)
-	_apply_hud_font(badge)
-
-	v.add_child(t)
-	v.add_child(d)
-	v.add_child(badge)
-	btn.add_child(v)
-
-	btn.pressed.connect(_on_test_pressed)
 	return panel
-
-
-func _on_test_pressed() -> void:
-	var mp := get_node_or_null("/root/ModoPrueba")
-	if mp:
-		mp.activo = true
-	start_game()
 
 
 func _make_soon_card(title: String, desc: String) -> Control:
@@ -489,19 +428,19 @@ func _make_soon_card(title: String, desc: String) -> Control:
 
 	var t := Label.new()
 	t.text = title
-	t.add_theme_font_size_override("font_size", 16)
+	t.add_theme_font_size_override("font_size", 18)
 	t.add_theme_color_override("font_color", MenuTheme.TEXT_MUTED)
 	_apply_hud_font(t)
 
 	var d := Label.new()
 	d.text = desc
-	d.add_theme_font_size_override("font_size", 14)
+	d.add_theme_font_size_override("font_size", 16)
 	d.add_theme_color_override("font_color", MenuTheme.TEXT_MUTED)
 	d.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 
 	var badge := Label.new()
 	badge.text = "PROXIMAMENTE"
-	badge.add_theme_font_size_override("font_size", 10)
+	badge.add_theme_font_size_override("font_size", 12)
 	badge.add_theme_color_override("font_color", MenuTheme.TEXT_MUTED)
 	_apply_hud_font(badge)
 
@@ -528,7 +467,7 @@ func _make_last_run() -> Control:
 
 	var label := Label.new()
 	label.text = "ULTIMA PARTIDA"
-	label.add_theme_font_size_override("font_size", 12)
+	label.add_theme_font_size_override("font_size", 14)
 	label.add_theme_color_override("font_color", MenuTheme.TEXT_MUTED)
 	_apply_hud_font(label)
 
@@ -546,11 +485,11 @@ func _make_last_run() -> Control:
 	cause.alignment = BoxContainer.ALIGNMENT_CENTER
 	var skull := Label.new()
 	skull.text = MenuTheme.SYM_SKULL
-	skull.add_theme_font_size_override("font_size", 22)
+	skull.add_theme_font_size_override("font_size", 26)
 	skull.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	var cause_txt := Label.new()
 	cause_txt.text = "NUCLEO DESTRUIDO"
-	cause_txt.add_theme_font_size_override("font_size", 12)
+	cause_txt.add_theme_font_size_override("font_size", 14)
 	cause_txt.add_theme_color_override("font_color", Color(1, 0.4, 0.4, 0.7))
 	_apply_hud_font(cause_txt)
 	cause.add_child(skull)
@@ -565,12 +504,12 @@ func _make_mini_stat(value: String, label: String) -> Control:
 	v.add_theme_constant_override("separation", 1)
 	var val := Label.new()
 	val.text = value
-	val.add_theme_font_size_override("font_size", 18)
+	val.add_theme_font_size_override("font_size", 20)
 	val.add_theme_color_override("font_color", MenuTheme.TEXT_PRIMARY)
 	_apply_hud_font(val)
 	var lbl := Label.new()
 	lbl.text = label
-	lbl.add_theme_font_size_override("font_size", 12)
+	lbl.add_theme_font_size_override("font_size", 14)
 	lbl.add_theme_color_override("font_color", MenuTheme.TEXT_MUTED)
 	_apply_hud_font(lbl)
 	v.add_child(val)

@@ -138,20 +138,20 @@ func _make_header() -> Control:
 
 	var eyebrow := Label.new()
 	eyebrow.text = "INVESTIGACIÓN PASIVA"
-	eyebrow.add_theme_font_size_override("font_size", 8)
+	eyebrow.add_theme_font_size_override("font_size", 10)
 	eyebrow.add_theme_color_override("font_color", MenuTheme.TEXT_MUTED)
 	_apply_hud_font(eyebrow)
 
 	var title := Label.new()
 	title.text = "LABORATORIO"
-	title.add_theme_font_size_override("font_size", 22)
+	title.add_theme_font_size_override("font_size", 26)
 	title.add_theme_color_override("font_color", MenuTheme.VIOLET)
 	_apply_hud_font(title)
 
 	# Slots ocupados/total bajo el título.
 	_lbl_slots = Label.new()
 	_lbl_slots.text = ""
-	_lbl_slots.add_theme_font_size_override("font_size", 11)
+	_lbl_slots.add_theme_font_size_override("font_size", 13)
 	_lbl_slots.add_theme_color_override("font_color", MenuTheme.TEXT_MUTED)
 	_apply_hud_font(_lbl_slots)
 
@@ -167,14 +167,14 @@ func _make_header() -> Control:
 	var lbl := Label.new()
 	lbl.text = "ECOS"
 	lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-	lbl.add_theme_font_size_override("font_size", 9)
+	lbl.add_theme_font_size_override("font_size", 11)
 	lbl.add_theme_color_override("font_color", MenuTheme.TEXT_MUTED)
 	_apply_hud_font(lbl)
 
 	_lbl_ecos = Label.new()
 	_lbl_ecos.text = "--"
 	_lbl_ecos.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-	_lbl_ecos.add_theme_font_size_override("font_size", 18)
+	_lbl_ecos.add_theme_font_size_override("font_size", 20)
 	_lbl_ecos.add_theme_color_override("font_color", MenuTheme.CYAN)
 	_apply_hud_font(_lbl_ecos)
 
@@ -200,7 +200,7 @@ func _make_tabs() -> Control:
 		btn.flat = true
 		btn.focus_mode = Control.FOCUS_NONE
 		btn.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		btn.add_theme_font_size_override("font_size", 11)
+		btn.add_theme_font_size_override("font_size", 13)
 		var f := MenuTheme.get_font_hud()
 		if f:
 			btn.add_theme_font_override("font", f)
@@ -271,12 +271,12 @@ func _make_card(id: String, data: Dictionary, accent: Color) -> Control:
 	var nombre := Label.new()
 	nombre.text = data["nombre"]
 	nombre.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	nombre.add_theme_font_size_override("font_size", 15)
+	nombre.add_theme_font_size_override("font_size", 17)
 	nombre.add_theme_color_override("font_color", MenuTheme.TEXT_PRIMARY)
 	_apply_hud_font(nombre)
 
 	var nivel := Label.new()
-	nivel.add_theme_font_size_override("font_size", 13)
+	nivel.add_theme_font_size_override("font_size", 15)
 	nivel.add_theme_color_override("font_color", accent)
 	_apply_hud_font(nivel)
 
@@ -287,14 +287,14 @@ func _make_card(id: String, data: Dictionary, accent: Color) -> Control:
 	# Fila 2: descripción.
 	var desc := Label.new()
 	desc.text = data["descripcion"]
-	desc.add_theme_font_size_override("font_size", 12)
+	desc.add_theme_font_size_override("font_size", 14)
 	desc.add_theme_color_override("font_color", MenuTheme.TEXT_MUTED)
 	desc.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	v.add_child(desc)
 
 	# Fila 3: bonus actual → siguiente.
 	var bonus := Label.new()
-	bonus.add_theme_font_size_override("font_size", 12)
+	bonus.add_theme_font_size_override("font_size", 14)
 	bonus.add_theme_color_override("font_color", MenuTheme.GREEN)
 	v.add_child(bonus)
 
@@ -302,7 +302,7 @@ func _make_card(id: String, data: Dictionary, accent: Color) -> Control:
 	var btn := Button.new()
 	btn.focus_mode = Control.FOCUS_NONE
 	btn.custom_minimum_size = Vector2(0, 38)
-	btn.add_theme_font_size_override("font_size", 13)
+	btn.add_theme_font_size_override("font_size", 15)
 	var f := MenuTheme.get_font_hud()
 	if f:
 		btn.add_theme_font_override("font", f)
@@ -327,13 +327,13 @@ func _make_card(id: String, data: Dictionary, accent: Color) -> Control:
 
 	var tiempo := Label.new()
 	tiempo.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	tiempo.add_theme_font_size_override("font_size", 12)
+	tiempo.add_theme_font_size_override("font_size", 14)
 	tiempo.add_theme_color_override("font_color", accent)
 	_apply_hud_font(tiempo)
 
 	var btn_acel := Button.new()
 	btn_acel.focus_mode = Control.FOCUS_NONE
-	btn_acel.add_theme_font_size_override("font_size", 11)
+	btn_acel.add_theme_font_size_override("font_size", 13)
 	if f:
 		btn_acel.add_theme_font_override("font", f)
 	btn_acel.add_theme_stylebox_override("normal", MenuTheme.make_button_style(MenuTheme.VIOLET))

@@ -83,12 +83,12 @@ func _make_header() -> Control:
 	tb.add_theme_constant_override("separation", 2)
 	var eyebrow := Label.new()
 	eyebrow.text = "HABILIDADES MANUALES"
-	eyebrow.add_theme_font_size_override("font_size", 8)
+	eyebrow.add_theme_font_size_override("font_size", 10)
 	eyebrow.add_theme_color_override("font_color", MenuTheme.TEXT_MUTED)
 	_apply_hud_font(eyebrow)
 	var title := Label.new()
 	title.text = "FORJA"
-	title.add_theme_font_size_override("font_size", 22)
+	title.add_theme_font_size_override("font_size", 26)
 	title.add_theme_color_override("font_color", MenuTheme.FRAG)
 	_apply_hud_font(title)
 	tb.add_child(eyebrow)
@@ -105,7 +105,7 @@ func _make_frag_pill() -> Control:
 	var lbl := Label.new()
 	lbl.text = "FRAGMENTOS"
 	lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-	lbl.add_theme_font_size_override("font_size", 8)
+	lbl.add_theme_font_size_override("font_size", 10)
 	lbl.add_theme_color_override("font_color", MenuTheme.TEXT_MUTED)
 	_apply_hud_font(lbl)
 
@@ -125,11 +125,11 @@ func _make_frag_pill() -> Control:
 	ph.add_theme_constant_override("separation", 5)
 	var icon := Label.new()
 	icon.text = MenuTheme.SYM_FRAG
-	icon.add_theme_font_size_override("font_size", 13)
+	icon.add_theme_font_size_override("font_size", 15)
 	icon.add_theme_color_override("font_color", MenuTheme.FRAG)
 	_lbl_frag = Label.new()
 	_lbl_frag.text = _format_number(_leer_frag())
-	_lbl_frag.add_theme_font_size_override("font_size", 14)
+	_lbl_frag.add_theme_font_size_override("font_size", 16)
 	_lbl_frag.add_theme_color_override("font_color", MenuTheme.FRAG)
 	_apply_hud_font(_lbl_frag)
 	ph.add_child(icon)
@@ -168,7 +168,7 @@ func _make_tab_button(cat: String) -> Button:
 	lbl.text = CAT_LABEL[cat]
 	lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	lbl.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	lbl.add_theme_font_size_override("font_size", 9)
+	lbl.add_theme_font_size_override("font_size", 11)
 	lbl.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	lbl.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	_apply_hud_font(lbl)
@@ -228,12 +228,12 @@ func _make_card(id: String) -> Control:
 	var name_lbl := Label.new()
 	name_lbl.text = hab.get("nombre", id)
 	name_lbl.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	name_lbl.add_theme_font_size_override("font_size", 12)
+	name_lbl.add_theme_font_size_override("font_size", 14)
 	name_lbl.add_theme_color_override("font_color", accent)
 	_apply_hud_font(name_lbl)
 	var cd_lbl := Label.new()
 	cd_lbl.text = "CD %ss" % _fmt_num(HabilidadManager.get_cooldown(id))
-	cd_lbl.add_theme_font_size_override("font_size", 9)
+	cd_lbl.add_theme_font_size_override("font_size", 11)
 	cd_lbl.add_theme_color_override("font_color", MenuTheme.TEXT_MUTED)
 	_apply_hud_font(cd_lbl)
 	head.add_child(name_lbl)
@@ -243,7 +243,7 @@ func _make_card(id: String) -> Control:
 	# Descripción.
 	var desc := Label.new()
 	desc.text = hab.get("descripcion", "")
-	desc.add_theme_font_size_override("font_size", 9)
+	desc.add_theme_font_size_override("font_size", 11)
 	desc.add_theme_color_override("font_color", MenuTheme.TEXT_MUTED)
 	desc.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	v.add_child(desc)
@@ -266,7 +266,7 @@ func _make_unlock_button(id: String, accent: Color) -> Control:
 	btn.focus_mode = Control.FOCUS_NONE
 	btn.custom_minimum_size = Vector2(0, 34)
 	btn.text = "DESBLOQUEAR  %s %s" % [MenuTheme.SYM_FRAG, _format_number(coste)]
-	btn.add_theme_font_size_override("font_size", 10)
+	btn.add_theme_font_size_override("font_size", 12)
 	btn.add_theme_color_override("font_color", accent)
 	btn.add_theme_stylebox_override("normal", MenuTheme.make_button_style(accent))
 	btn.add_theme_stylebox_override("hover", MenuTheme.make_button_style(accent, true))
@@ -284,7 +284,7 @@ func _make_toggle_button(id: String, accent: Color) -> Control:
 	btn.focus_mode = Control.FOCUS_NONE
 	btn.custom_minimum_size = Vector2(0, 30)
 	btn.text = "✓ ACTIVA  (en partida)" if activa else "INACTIVA  (toca para activar)"
-	btn.add_theme_font_size_override("font_size", 9)
+	btn.add_theme_font_size_override("font_size", 11)
 	var col: Color = accent if activa else MenuTheme.TEXT_MUTED
 	btn.add_theme_color_override("font_color", col)
 	btn.add_theme_stylebox_override("normal", MenuTheme.make_button_style(col, activa))
@@ -311,14 +311,14 @@ func _make_mejora_row(id: String, mid: String, accent: Color) -> Control:
 	info.add_theme_constant_override("separation", 1)
 	var nom := Label.new()
 	nom.text = m.get("nombre", mid)
-	nom.add_theme_font_size_override("font_size", 9)
+	nom.add_theme_font_size_override("font_size", 11)
 	nom.add_theme_color_override("font_color", MenuTheme.TEXT_PRIMARY)
 	_apply_hud_font(nom)
 	info.add_child(nom)
 	if not es_toggle:
 		var prog := Label.new()
 		prog.text = "%d/%d" % [nivel, m.get("max_nivel", 0)]
-		prog.add_theme_font_size_override("font_size", 8)
+		prog.add_theme_font_size_override("font_size", 10)
 		prog.add_theme_color_override("font_color", MenuTheme.TEXT_MUTED)
 		_apply_hud_font(prog)
 		info.add_child(prog)
@@ -328,7 +328,7 @@ func _make_mejora_row(id: String, mid: String, accent: Color) -> Control:
 	btn.flat = true
 	btn.focus_mode = Control.FOCUS_NONE
 	btn.custom_minimum_size = Vector2(96, 28)
-	btn.add_theme_font_size_override("font_size", 9)
+	btn.add_theme_font_size_override("font_size", 11)
 	_apply_hud_font(btn)
 	if es_max:
 		btn.text = "✓" if es_toggle else "MAX"

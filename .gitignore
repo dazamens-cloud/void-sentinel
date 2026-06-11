@@ -4,3 +4,6 @@
 
 # Temporales del plugin de git (DLL bloqueada renombrada por Windows)
 addons/godot-git-plugin/windows/~*.TMP
+
+# Capturas del tester de UI (regenerables con tools/UiTester.tscn)
+tools/caps/

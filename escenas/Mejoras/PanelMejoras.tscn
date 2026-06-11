@@ -152,21 +152,21 @@ alignment = 1
 
 [node name="LblValor" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardDanio/HBoxMain/BtnComprar/VBox" unique_id=465369051]
 layout_mode = 2
-theme_override_font_sizes/font_size = 11
+theme_override_font_sizes/font_size = 13
 text = "0 atk"
 horizontal_alignment = 1
 
 [node name="LblCoste" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardDanio/HBoxMain/BtnComprar/VBox" unique_id=959323779]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.85, 0, 1)
-theme_override_font_sizes/font_size = 12
+theme_override_font_sizes/font_size = 14
 text = "10 E"
 horizontal_alignment = 1
 
 [node name="LblAccion" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardDanio/HBoxMain/BtnComprar/VBox" unique_id=788205863]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 0.6)
-theme_override_font_sizes/font_size = 10
+theme_override_font_sizes/font_size = 12
 text = "COMPRAR"
 horizontal_alignment = 1
 
@@ -174,7 +174,7 @@ horizontal_alignment = 1
 visible = false
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.3, 0.3, 1)
-theme_override_font_sizes/font_size = 10
+theme_override_font_sizes/font_size = 12
 text = "BLOQUEADA"
 horizontal_alignment = 1
 
@@ -207,21 +207,21 @@ alignment = 1
 
 [node name="LblValor" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardVelocidadAtaque/HBoxMain/BtnComprar/VBox" unique_id=225148909]
 layout_mode = 2
-theme_override_font_sizes/font_size = 11
+theme_override_font_sizes/font_size = 13
 text = "1.00s"
 horizontal_alignment = 1
 
 [node name="LblCoste" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardVelocidadAtaque/HBoxMain/BtnComprar/VBox" unique_id=1285768214]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.85, 0, 1)
-theme_override_font_sizes/font_size = 12
+theme_override_font_sizes/font_size = 14
 text = "8 E"
 horizontal_alignment = 1
 
 [node name="LblAccion" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardVelocidadAtaque/HBoxMain/BtnComprar/VBox" unique_id=1759825804]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 0.6)
-theme_override_font_sizes/font_size = 10
+theme_override_font_sizes/font_size = 12
 text = "COMPRAR"
 horizontal_alignment = 1
 
@@ -229,7 +229,7 @@ horizontal_alignment = 1
 visible = false
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.3, 0.3, 1)
-theme_override_font_sizes/font_size = 10
+theme_override_font_sizes/font_size = 12
 text = "BLOQUEADA"
 horizontal_alignment = 1
 
@@ -262,21 +262,21 @@ alignment = 1
 
 [node name="LblValor" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardDisparoCritico/HBoxMain/BtnComprar/VBox" unique_id=1686669517]
 layout_mode = 2
-theme_override_font_sizes/font_size = 11
+theme_override_font_sizes/font_size = 13
 text = "0% / 1.5x"
 horizontal_alignment = 1
 
 [node name="LblCoste" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardDisparoCritico/HBoxMain/BtnComprar/VBox" unique_id=1800646907]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.85, 0, 1)
-theme_override_font_sizes/font_size = 12
+theme_override_font_sizes/font_size = 14
 text = "12 E"
 horizontal_alignment = 1
 
 [node name="LblAccion" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardDisparoCritico/HBoxMain/BtnComprar/VBox" unique_id=811105102]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 0.6)
-theme_override_font_sizes/font_size = 10
+theme_override_font_sizes/font_size = 12
 text = "COMPRAR"
 horizontal_alignment = 1
 
@@ -284,7 +284,7 @@ horizontal_alignment = 1
 visible = false
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.3, 0.3, 1)
-theme_override_font_sizes/font_size = 10
+theme_override_font_sizes/font_size = 12
 text = "BLOQUEADA"
 horizontal_alignment = 1
 
@@ -317,21 +317,21 @@ alignment = 1
 
 [node name="LblValor" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardMultidisparo/HBoxMain/BtnComprar/VBox" unique_id=137973038]
 layout_mode = 2
-theme_override_font_sizes/font_size = 11
+theme_override_font_sizes/font_size = 13
 text = "+0 proj"
 horizontal_alignment = 1
 
 [node name="LblCoste" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardMultidisparo/HBoxMain/BtnComprar/VBox" unique_id=1231604396]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.85, 0, 1)
-theme_override_font_sizes/font_size = 12
+theme_override_font_sizes/font_size = 14
 text = "20 E"
 horizontal_alignment = 1
 
 [node name="LblAccion" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardMultidisparo/HBoxMain/BtnComprar/VBox" unique_id=1265105589]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 0.6)
-theme_override_font_sizes/font_size = 10
+theme_override_font_sizes/font_size = 12
 text = "COMPRAR"
 horizontal_alignment = 1
 
@@ -339,7 +339,7 @@ horizontal_alignment = 1
 visible = false
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.3, 0.3, 1)
-theme_override_font_sizes/font_size = 10
+theme_override_font_sizes/font_size = 12
 text = "BLOQUEADA"
 horizontal_alignment = 1
 
@@ -372,21 +372,21 @@ alignment = 1
 
 [node name="LblValor" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardRebote/HBoxMain/BtnComprar/VBox" unique_id=80341009]
 layout_mode = 2
-theme_override_font_sizes/font_size = 11
+theme_override_font_sizes/font_size = 13
 text = "0 reb"
 horizontal_alignment = 1
 
 [node name="LblCoste" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardRebote/HBoxMain/BtnComprar/VBox" unique_id=443495508]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.85, 0, 1)
-theme_override_font_sizes/font_size = 12
+theme_override_font_sizes/font_size = 14
 text = "15 E"
 horizontal_alignment = 1
 
 [node name="LblAccion" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardRebote/HBoxMain/BtnComprar/VBox" unique_id=966112718]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 0.6)
-theme_override_font_sizes/font_size = 10
+theme_override_font_sizes/font_size = 12
 text = "COMPRAR"
 horizontal_alignment = 1
 
@@ -394,7 +394,7 @@ horizontal_alignment = 1
 visible = false
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.3, 0.3, 1)
-theme_override_font_sizes/font_size = 10
+theme_override_font_sizes/font_size = 12
 text = "BLOQUEADA"
 horizontal_alignment = 1
 
@@ -427,21 +427,21 @@ alignment = 1
 
 [node name="LblValor" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardAlcanceRebote/HBoxMain/BtnComprar/VBox" unique_id=2085739805]
 layout_mode = 2
-theme_override_font_sizes/font_size = 11
+theme_override_font_sizes/font_size = 13
 text = "0px"
 horizontal_alignment = 1
 
 [node name="LblCoste" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardAlcanceRebote/HBoxMain/BtnComprar/VBox" unique_id=1450463425]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.85, 0, 1)
-theme_override_font_sizes/font_size = 12
+theme_override_font_sizes/font_size = 14
 text = "10 E"
 horizontal_alignment = 1
 
 [node name="LblAccion" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/AtaqueContainer/CardAlcanceRebote/HBoxMain/BtnComprar/VBox" unique_id=1645806507]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 0.6)
-theme_override_font_sizes/font_size = 10
+theme_override_font_sizes/font_size = 12
 text = "COMPRAR"
 horizontal_alignment = 1
 
@@ -449,7 +449,7 @@ horizontal_alignment = 1
 visible = false
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.3, 0.3, 1)
-theme_override_font_sizes/font_size = 10
+theme_override_font_sizes/font_size = 12
 text = "BLOQUEADA"
 horizontal_alignment = 1
 
@@ -488,21 +488,21 @@ alignment = 1
 
 [node name="LblValor" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardSalud/HBoxMain/BtnComprar/VBox" unique_id=1626476521]
 layout_mode = 2
-theme_override_font_sizes/font_size = 11
+theme_override_font_sizes/font_size = 13
 text = "+0 HP"
 horizontal_alignment = 1
 
 [node name="LblCoste" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardSalud/HBoxMain/BtnComprar/VBox" unique_id=1636435451]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.85, 0, 1)
-theme_override_font_sizes/font_size = 12
+theme_override_font_sizes/font_size = 14
 text = "10 E"
 horizontal_alignment = 1
 
 [node name="LblAccion" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardSalud/HBoxMain/BtnComprar/VBox" unique_id=401010293]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 0.6)
-theme_override_font_sizes/font_size = 10
+theme_override_font_sizes/font_size = 12
 text = "COMPRAR"
 horizontal_alignment = 1
 
@@ -510,7 +510,7 @@ horizontal_alignment = 1
 visible = false
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.3, 0.3, 1)
-theme_override_font_sizes/font_size = 10
+theme_override_font_sizes/font_size = 12
 text = "BLOQUEADA"
 horizontal_alignment = 1
 
@@ -543,21 +543,21 @@ alignment = 1
 
 [node name="LblValor" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardRecuperacion/HBoxMain/BtnComprar/VBox" unique_id=146177634]
 layout_mode = 2
-theme_override_font_sizes/font_size = 11
+theme_override_font_sizes/font_size = 13
 text = "+0 HP/s"
 horizontal_alignment = 1
 
 [node name="LblCoste" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardRecuperacion/HBoxMain/BtnComprar/VBox" unique_id=172341122]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.85, 0, 1)
-theme_override_font_sizes/font_size = 12
+theme_override_font_sizes/font_size = 14
 text = "12 E"
 horizontal_alignment = 1
 
 [node name="LblAccion" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardRecuperacion/HBoxMain/BtnComprar/VBox" unique_id=512907433]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 0.6)
-theme_override_font_sizes/font_size = 10
+theme_override_font_sizes/font_size = 12
 text = "COMPRAR"
 horizontal_alignment = 1
 
@@ -565,7 +565,7 @@ horizontal_alignment = 1
 visible = false
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.3, 0.3, 1)
-theme_override_font_sizes/font_size = 10
+theme_override_font_sizes/font_size = 12
 text = "BLOQUEADA"
 horizontal_alignment = 1
 
@@ -598,21 +598,21 @@ alignment = 1
 
 [node name="LblValor" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardEscudo/HBoxMain/BtnComprar/VBox" unique_id=856076081]
 layout_mode = 2
-theme_override_font_sizes/font_size = 11
+theme_override_font_sizes/font_size = 13
 text = "+0 esc"
 horizontal_alignment = 1
 
 [node name="LblCoste" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardEscudo/HBoxMain/BtnComprar/VBox" unique_id=693215811]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.85, 0, 1)
-theme_override_font_sizes/font_size = 12
+theme_override_font_sizes/font_size = 14
 text = "15 E"
 horizontal_alignment = 1
 
 [node name="LblAccion" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardEscudo/HBoxMain/BtnComprar/VBox" unique_id=1451509569]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 0.6)
-theme_override_font_sizes/font_size = 10
+theme_override_font_sizes/font_size = 12
 text = "COMPRAR"
 horizontal_alignment = 1
 
@@ -620,7 +620,7 @@ horizontal_alignment = 1
 visible = false
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.3, 0.3, 1)
-theme_override_font_sizes/font_size = 10
+theme_override_font_sizes/font_size = 12
 text = "BLOQUEADA"
 horizontal_alignment = 1
 
@@ -653,21 +653,21 @@ alignment = 1
 
 [node name="LblValor" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardDurezaEscudo/HBoxMain/BtnComprar/VBox" unique_id=1568187003]
 layout_mode = 2
-theme_override_font_sizes/font_size = 11
+theme_override_font_sizes/font_size = 13
 text = "-0%"
 horizontal_alignment = 1
 
 [node name="LblCoste" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardDurezaEscudo/HBoxMain/BtnComprar/VBox" unique_id=1391569702]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.85, 0, 1)
-theme_override_font_sizes/font_size = 12
+theme_override_font_sizes/font_size = 14
 text = "15 E"
 horizontal_alignment = 1
 
 [node name="LblAccion" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardDurezaEscudo/HBoxMain/BtnComprar/VBox" unique_id=4272157]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 0.6)
-theme_override_font_sizes/font_size = 10
+theme_override_font_sizes/font_size = 12
 text = "COMPRAR"
 horizontal_alignment = 1
 
@@ -675,7 +675,7 @@ horizontal_alignment = 1
 visible = false
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.3, 0.3, 1)
-theme_override_font_sizes/font_size = 10
+theme_override_font_sizes/font_size = 12
 text = "BLOQUEADA"
 horizontal_alignment = 1
 
@@ -708,21 +708,21 @@ alignment = 1
 
 [node name="LblValor" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardPulsoQuartz/HBoxMain/BtnComprar/VBox" unique_id=529677203]
 layout_mode = 2
-theme_override_font_sizes/font_size = 11
+theme_override_font_sizes/font_size = 13
 text = "0px"
 horizontal_alignment = 1
 
 [node name="LblCoste" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardPulsoQuartz/HBoxMain/BtnComprar/VBox" unique_id=456641137]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.85, 0, 1)
-theme_override_font_sizes/font_size = 12
+theme_override_font_sizes/font_size = 14
 text = "20 E"
 horizontal_alignment = 1
 
 [node name="LblAccion" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardPulsoQuartz/HBoxMain/BtnComprar/VBox" unique_id=959900681]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 0.6)
-theme_override_font_sizes/font_size = 10
+theme_override_font_sizes/font_size = 12
 text = "COMPRAR"
 horizontal_alignment = 1
 
@@ -730,7 +730,7 @@ horizontal_alignment = 1
 visible = false
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.3, 0.3, 1)
-theme_override_font_sizes/font_size = 10
+theme_override_font_sizes/font_size = 12
 text = "BLOQUEADA"
 horizontal_alignment = 1
 
@@ -763,21 +763,21 @@ alignment = 1
 
 [node name="LblValor" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardPoderPulso/HBoxMain/BtnComprar/VBox" unique_id=518839137]
 layout_mode = 2
-theme_override_font_sizes/font_size = 11
+theme_override_font_sizes/font_size = 13
 text = "0s/+0%"
 horizontal_alignment = 1
 
 [node name="LblCoste" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardPoderPulso/HBoxMain/BtnComprar/VBox" unique_id=284479225]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.85, 0, 1)
-theme_override_font_sizes/font_size = 12
+theme_override_font_sizes/font_size = 14
 text = "25 E"
 horizontal_alignment = 1
 
 [node name="LblAccion" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/DefensaContainer/CardPoderPulso/HBoxMain/BtnComprar/VBox" unique_id=788178508]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 0.6)
-theme_override_font_sizes/font_size = 10
+theme_override_font_sizes/font_size = 12
 text = "COMPRAR"
 horizontal_alignment = 1
 
@@ -785,7 +785,7 @@ horizontal_alignment = 1
 visible = false
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.3, 0.3, 1)
-theme_override_font_sizes/font_size = 10
+theme_override_font_sizes/font_size = 12
 text = "BLOQUEADA"
 horizontal_alignment = 1
 
@@ -824,21 +824,21 @@ alignment = 1
 
 [node name="LblValor" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEnergiaAscension/HBoxMain/BtnComprar/VBox" unique_id=1984998453]
 layout_mode = 2
-theme_override_font_sizes/font_size = 11
+theme_override_font_sizes/font_size = 13
 text = "+0"
 horizontal_alignment = 1
 
 [node name="LblCoste" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEnergiaAscension/HBoxMain/BtnComprar/VBox" unique_id=1842023647]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.85, 0, 1)
-theme_override_font_sizes/font_size = 12
+theme_override_font_sizes/font_size = 14
 text = "10 E"
 horizontal_alignment = 1
 
 [node name="LblAccion" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEnergiaAscension/HBoxMain/BtnComprar/VBox" unique_id=1151207447]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 0.6)
-theme_override_font_sizes/font_size = 10
+theme_override_font_sizes/font_size = 12
 text = "COMPRAR"
 horizontal_alignment = 1
 
@@ -846,7 +846,7 @@ horizontal_alignment = 1
 visible = false
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.3, 0.3, 1)
-theme_override_font_sizes/font_size = 10
+theme_override_font_sizes/font_size = 12
 text = "BLOQUEADA"
 horizontal_alignment = 1
 
@@ -879,21 +879,21 @@ alignment = 1
 
 [node name="LblValor" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEnergiaEspectro/HBoxMain/BtnComprar/VBox" unique_id=80411683]
 layout_mode = 2
-theme_override_font_sizes/font_size = 11
+theme_override_font_sizes/font_size = 13
 text = "+0"
 horizontal_alignment = 1
 
 [node name="LblCoste" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEnergiaEspectro/HBoxMain/BtnComprar/VBox" unique_id=1437068000]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.85, 0, 1)
-theme_override_font_sizes/font_size = 12
+theme_override_font_sizes/font_size = 14
 text = "8 E"
 horizontal_alignment = 1
 
 [node name="LblAccion" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEnergiaEspectro/HBoxMain/BtnComprar/VBox" unique_id=412286459]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 0.6)
-theme_override_font_sizes/font_size = 10
+theme_override_font_sizes/font_size = 12
 text = "COMPRAR"
 horizontal_alignment = 1
 
@@ -901,7 +901,7 @@ horizontal_alignment = 1
 visible = false
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.3, 0.3, 1)
-theme_override_font_sizes/font_size = 10
+theme_override_font_sizes/font_size = 12
 text = "BLOQUEADA"
 horizontal_alignment = 1
 
@@ -934,21 +934,21 @@ alignment = 1
 
 [node name="LblValor" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEcosAscension/HBoxMain/BtnComprar/VBox" unique_id=488688240]
 layout_mode = 2
-theme_override_font_sizes/font_size = 11
+theme_override_font_sizes/font_size = 13
 text = "+0"
 horizontal_alignment = 1
 
 [node name="LblCoste" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEcosAscension/HBoxMain/BtnComprar/VBox" unique_id=1033551182]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.85, 0, 1)
-theme_override_font_sizes/font_size = 12
+theme_override_font_sizes/font_size = 14
 text = "15 E"
 horizontal_alignment = 1
 
 [node name="LblAccion" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEcosAscension/HBoxMain/BtnComprar/VBox" unique_id=2142889052]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 0.6)
-theme_override_font_sizes/font_size = 10
+theme_override_font_sizes/font_size = 12
 text = "COMPRAR"
 horizontal_alignment = 1
 
@@ -956,7 +956,7 @@ horizontal_alignment = 1
 visible = false
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.3, 0.3, 1)
-theme_override_font_sizes/font_size = 10
+theme_override_font_sizes/font_size = 12
 text = "BLOQUEADA"
 horizontal_alignment = 1
 
@@ -989,21 +989,21 @@ alignment = 1
 
 [node name="LblValor" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEcosRapido/HBoxMain/BtnComprar/VBox" unique_id=598481914]
 layout_mode = 2
-theme_override_font_sizes/font_size = 11
+theme_override_font_sizes/font_size = 13
 text = "+0%"
 horizontal_alignment = 1
 
 [node name="LblCoste" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEcosRapido/HBoxMain/BtnComprar/VBox" unique_id=799372302]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.85, 0, 1)
-theme_override_font_sizes/font_size = 12
+theme_override_font_sizes/font_size = 14
 text = "20 E"
 horizontal_alignment = 1
 
 [node name="LblAccion" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/BonificacionContainer/CardEcosRapido/HBoxMain/BtnComprar/VBox" unique_id=8899294]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 0.6)
-theme_override_font_sizes/font_size = 10
+theme_override_font_sizes/font_size = 12
 text = "COMPRAR"
 horizontal_alignment = 1
 
@@ -1011,7 +1011,7 @@ horizontal_alignment = 1
 visible = false
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.3, 0.3, 1)
-theme_override_font_sizes/font_size = 10
+theme_override_font_sizes/font_size = 12
 text = "BLOQUEADA"
 horizontal_alignment = 1
 
@@ -1050,28 +1050,28 @@ alignment = 1
 
 [node name="LblValor" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardBlindaje/HBoxMain/BtnComprar/VBox" unique_id=382315072]
 layout_mode = 2
-theme_override_font_sizes/font_size = 11
+theme_override_font_sizes/font_size = 13
 text = "+0"
 horizontal_alignment = 1
 
 [node name="LblCoste" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardBlindaje/HBoxMain/BtnComprar/VBox" unique_id=1470203136]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.85, 0, 1)
-theme_override_font_sizes/font_size = 12
+theme_override_font_sizes/font_size = 14
 text = "50 E"
 horizontal_alignment = 1
 
 [node name="LblAccion" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardBlindaje/HBoxMain/BtnComprar/VBox" unique_id=162916142]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 0.6)
-theme_override_font_sizes/font_size = 10
+theme_override_font_sizes/font_size = 12
 text = "COMPRAR"
 horizontal_alignment = 1
 
 [node name="LblBloqueada" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardBlindaje/HBoxMain/BtnComprar/VBox" unique_id=1854327173]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.3, 0.3, 1)
-theme_override_font_sizes/font_size = 10
+theme_override_font_sizes/font_size = 12
 text = "BLOQUEADA"
 horizontal_alignment = 1
 
@@ -1104,28 +1104,28 @@ alignment = 1
 
 [node name="LblValor" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardDisparosIniciales/HBoxMain/BtnComprar/VBox" unique_id=1745030501]
 layout_mode = 2
-theme_override_font_sizes/font_size = 11
+theme_override_font_sizes/font_size = 13
 text = "+0"
 horizontal_alignment = 1
 
 [node name="LblCoste" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardDisparosIniciales/HBoxMain/BtnComprar/VBox" unique_id=630280559]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.85, 0, 1)
-theme_override_font_sizes/font_size = 12
+theme_override_font_sizes/font_size = 14
 text = "40 E"
 horizontal_alignment = 1
 
 [node name="LblAccion" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardDisparosIniciales/HBoxMain/BtnComprar/VBox" unique_id=22937603]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 0.6)
-theme_override_font_sizes/font_size = 10
+theme_override_font_sizes/font_size = 12
 text = "COMPRAR"
 horizontal_alignment = 1
 
 [node name="LblBloqueada" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardDisparosIniciales/HBoxMain/BtnComprar/VBox" unique_id=798014049]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.3, 0.3, 1)
-theme_override_font_sizes/font_size = 10
+theme_override_font_sizes/font_size = 12
 text = "BLOQUEADA"
 horizontal_alignment = 1
 
@@ -1158,28 +1158,28 @@ alignment = 1
 
 [node name="LblValor" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardRecargaRapida/HBoxMain/BtnComprar/VBox" unique_id=1139714025]
 layout_mode = 2
-theme_override_font_sizes/font_size = 11
+theme_override_font_sizes/font_size = 13
 text = "+0"
 horizontal_alignment = 1
 
 [node name="LblCoste" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardRecargaRapida/HBoxMain/BtnComprar/VBox" unique_id=1180386377]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.85, 0, 1)
-theme_override_font_sizes/font_size = 12
+theme_override_font_sizes/font_size = 14
 text = "60 E"
 horizontal_alignment = 1
 
 [node name="LblAccion" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardRecargaRapida/HBoxMain/BtnComprar/VBox" unique_id=1552451787]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 0.6)
-theme_override_font_sizes/font_size = 10
+theme_override_font_sizes/font_size = 12
 text = "COMPRAR"
 horizontal_alignment = 1
 
 [node name="LblBloqueada" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardRecargaRapida/HBoxMain/BtnComprar/VBox" unique_id=774030827]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.3, 0.3, 1)
-theme_override_font_sizes/font_size = 10
+theme_override_font_sizes/font_size = 12
 text = "BLOQUEADA"
 horizontal_alignment = 1
 
@@ -1212,28 +1212,28 @@ alignment = 1
 
 [node name="LblValor" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardLockOn/HBoxMain/BtnComprar/VBox" unique_id=1979438300]
 layout_mode = 2
-theme_override_font_sizes/font_size = 11
+theme_override_font_sizes/font_size = 13
 text = "+0"
 horizontal_alignment = 1
 
 [node name="LblCoste" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardLockOn/HBoxMain/BtnComprar/VBox" unique_id=784919061]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.85, 0, 1)
-theme_override_font_sizes/font_size = 12
+theme_override_font_sizes/font_size = 14
 text = "45 E"
 horizontal_alignment = 1
 
 [node name="LblAccion" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardLockOn/HBoxMain/BtnComprar/VBox" unique_id=1737327816]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 0.6)
-theme_override_font_sizes/font_size = 10
+theme_override_font_sizes/font_size = 12
 text = "COMPRAR"
 horizontal_alignment = 1
 
 [node name="LblBloqueada" type="Label" parent="Contenido/ScrollContainer/MejorasContainer/CommanderContainer/CardLockOn/HBoxMain/BtnComprar/VBox" unique_id=1663663708]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.3, 0.3, 1)
-theme_override_font_sizes/font_size = 10
+theme_override_font_sizes/font_size = 12
 text = "BLOQUEADA"
 horizontal_alignment = 1
 

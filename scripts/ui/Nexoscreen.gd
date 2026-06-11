@@ -132,13 +132,13 @@ func _make_header() -> Control:
 
 	var eyebrow := Label.new()
 	eyebrow.text = "MEJORAS PERMANENTES"
-	eyebrow.add_theme_font_size_override("font_size", 8)
+	eyebrow.add_theme_font_size_override("font_size", 10)
 	eyebrow.add_theme_color_override("font_color", MenuTheme.TEXT_MUTED)
 	_apply_hud_font(eyebrow)
 
 	var title := Label.new()
 	title.text = "NEXO"
-	title.add_theme_font_size_override("font_size", 22)
+	title.add_theme_font_size_override("font_size", 26)
 	title.add_theme_color_override("font_color", MenuTheme.CYAN)
 	_apply_hud_font(title)
 
@@ -158,7 +158,7 @@ func _make_balance_pill() -> Control:
 	var lbl := Label.new()
 	lbl.text = "ECOS"
 	lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-	lbl.add_theme_font_size_override("font_size", 8)
+	lbl.add_theme_font_size_override("font_size", 10)
 	lbl.add_theme_color_override("font_color", MenuTheme.TEXT_MUTED)
 	_apply_hud_font(lbl)
 
@@ -179,12 +179,12 @@ func _make_balance_pill() -> Control:
 
 	var icon := Label.new()
 	icon.text = MenuTheme.SYM_ECOS
-	icon.add_theme_font_size_override("font_size", 13)
+	icon.add_theme_font_size_override("font_size", 15)
 	icon.add_theme_color_override("font_color", MenuTheme.CYAN)
 
 	_lbl_ecos = Label.new()
 	_lbl_ecos.text = _format_number(_get_ecos())
-	_lbl_ecos.add_theme_font_size_override("font_size", 14)
+	_lbl_ecos.add_theme_font_size_override("font_size", 16)
 	_lbl_ecos.add_theme_color_override("font_color", MenuTheme.CYAN)
 	_apply_hud_font(_lbl_ecos)
 
@@ -229,7 +229,7 @@ func _make_tab_button(cat: String, label: String) -> Button:
 	var lbl := Label.new()
 	lbl.text = label
 	lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	lbl.add_theme_font_size_override("font_size", 9)
+	lbl.add_theme_font_size_override("font_size", 11)
 	lbl.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	lbl.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	lbl.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
@@ -306,7 +306,7 @@ func _make_section_heading(cat: String) -> Control:
 
 	var label := Label.new()
 	label.text = CAT_LABELS[cat]
-	label.add_theme_font_size_override("font_size", 9)
+	label.add_theme_font_size_override("font_size", 11)
 	label.add_theme_color_override("font_color", color)
 	_apply_hud_font(label)
 
@@ -340,13 +340,13 @@ func _make_upgrade_card(id: String, data: Dictionary, cat: String) -> Control:
 
 	var name_lbl := Label.new()
 	name_lbl.text = data.get("nombre", id)
-	name_lbl.add_theme_font_size_override("font_size", 11)
+	name_lbl.add_theme_font_size_override("font_size", 13)
 	name_lbl.add_theme_color_override("font_color", MenuTheme.TEXT_PRIMARY)
 	_apply_hud_font(name_lbl)
 
 	var desc_lbl := Label.new()
 	desc_lbl.text = data.get("descripcion", "")
-	desc_lbl.add_theme_font_size_override("font_size", 10)
+	desc_lbl.add_theme_font_size_override("font_size", 12)
 	desc_lbl.add_theme_color_override("font_color", MenuTheme.TEXT_MUTED)
 	desc_lbl.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 
@@ -364,7 +364,7 @@ func _make_upgrade_card(id: String, data: Dictionary, cat: String) -> Control:
 	track.add_theme_stylebox_override("fill", MenuTheme.make_progress_fill(accent))
 
 	var lvl_lbl := Label.new()
-	lvl_lbl.add_theme_font_size_override("font_size", 8)
+	lvl_lbl.add_theme_font_size_override("font_size", 10)
 	_apply_hud_font(lvl_lbl)
 
 	prog_row.add_child(track)
@@ -384,7 +384,7 @@ func _make_upgrade_card(id: String, data: Dictionary, cat: String) -> Control:
 	var buy_btn := Button.new()
 	buy_btn.flat = true
 	buy_btn.focus_mode = Control.FOCUS_NONE
-	buy_btn.add_theme_font_size_override("font_size", 9)
+	buy_btn.add_theme_font_size_override("font_size", 11)
 	buy_btn.add_theme_color_override("font_color", accent)
 	buy_btn.add_theme_stylebox_override("normal", MenuTheme.make_button_style(accent))
 	buy_btn.add_theme_stylebox_override("hover", MenuTheme.make_button_style(accent, true))

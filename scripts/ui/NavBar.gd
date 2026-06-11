@@ -102,7 +102,7 @@ func _make_nav_button(key: String, sym: String, lbl: String, central: bool) -> B
 	var icon := Label.new()
 	icon.text = sym
 	icon.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	icon.add_theme_font_size_override("font_size", 18)
+	icon.add_theme_font_size_override("font_size", 24)
 	icon.add_theme_color_override("font_color", MenuTheme.TEXT_MUTED)
 	icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	var hud_font := MenuTheme.get_font_hud()
@@ -112,7 +112,7 @@ func _make_nav_button(key: String, sym: String, lbl: String, central: bool) -> B
 	var label := Label.new()
 	label.text = lbl
 	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	label.add_theme_font_size_override("font_size", 7)
+	label.add_theme_font_size_override("font_size", 11)
 	label.add_theme_color_override("font_color", MenuTheme.TEXT_MUTED)
 	label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	if hud_font:

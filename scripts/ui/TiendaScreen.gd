@@ -77,12 +77,12 @@ func _make_header() -> Control:
 	tb.add_theme_constant_override("separation", 2)
 	var eyebrow := Label.new()
 	eyebrow.text = "RECURSOS Y MEJORAS"
-	eyebrow.add_theme_font_size_override("font_size", 8)
+	eyebrow.add_theme_font_size_override("font_size", 10)
 	eyebrow.add_theme_color_override("font_color", MenuTheme.TEXT_MUTED)
 	_apply_hud_font(eyebrow)
 	var title := Label.new()
 	title.text = "TIENDA"
-	title.add_theme_font_size_override("font_size", 22)
+	title.add_theme_font_size_override("font_size", 26)
 	title.add_theme_color_override("font_color", MAGENTA)
 	_apply_hud_font(title)
 	tb.add_child(eyebrow)
@@ -95,7 +95,7 @@ func _make_header() -> Control:
 	var lbl := Label.new()
 	lbl.text = "GEMAS"
 	lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-	lbl.add_theme_font_size_override("font_size", 8)
+	lbl.add_theme_font_size_override("font_size", 10)
 	lbl.add_theme_color_override("font_color", MenuTheme.TEXT_MUTED)
 	_apply_hud_font(lbl)
 	var pill := PanelContainer.new()
@@ -113,11 +113,11 @@ func _make_header() -> Control:
 	ph.add_theme_constant_override("separation", 5)
 	var icon := Label.new()
 	icon.text = MenuTheme.SYM_GEM
-	icon.add_theme_font_size_override("font_size", 13)
+	icon.add_theme_font_size_override("font_size", 15)
 	icon.add_theme_color_override("font_color", MAGENTA)
 	_lbl_gems = Label.new()
 	_lbl_gems.text = _format_number(_gems)
-	_lbl_gems.add_theme_font_size_override("font_size", 14)
+	_lbl_gems.add_theme_font_size_override("font_size", 16)
 	_lbl_gems.add_theme_color_override("font_color", MAGENTA)
 	_apply_hud_font(_lbl_gems)
 	ph.add_child(icon)
@@ -157,7 +157,7 @@ func _make_tab_button(tab: String, label: String) -> Button:
 	lbl.text = label
 	lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	lbl.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	lbl.add_theme_font_size_override("font_size", 9)
+	lbl.add_theme_font_size_override("font_size", 11)
 	lbl.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	lbl.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	_apply_hud_font(lbl)
@@ -231,16 +231,16 @@ func _make_daily_banner() -> Control:
 	info.add_theme_constant_override("separation", 3)
 	var lbl := Label.new()
 	lbl.text = "RECOMPENSA DIARIA"
-	lbl.add_theme_font_size_override("font_size", 8)
+	lbl.add_theme_font_size_override("font_size", 10)
 	lbl.add_theme_color_override("font_color", MenuTheme.GREEN)
 	_apply_hud_font(lbl)
 	var t := Label.new()
 	t.text = "Ver un anuncio gratis"
-	t.add_theme_font_size_override("font_size", 14)
+	t.add_theme_font_size_override("font_size", 16)
 	t.add_theme_color_override("font_color", MenuTheme.TEXT_PRIMARY)
 	var timer := Label.new()
 	timer.text = "Siguiente en 17h 24m"
-	timer.add_theme_font_size_override("font_size", 9)
+	timer.add_theme_font_size_override("font_size", 11)
 	timer.add_theme_color_override("font_color", MenuTheme.TEXT_MUTED)
 	_apply_hud_font(timer)
 	info.add_child(lbl)
@@ -252,7 +252,7 @@ func _make_daily_banner() -> Control:
 	btn.flat = true
 	btn.focus_mode = Control.FOCUS_NONE
 	btn.text = "+5 " + MenuTheme.SYM_GEM
-	btn.add_theme_font_size_override("font_size", 13)
+	btn.add_theme_font_size_override("font_size", 15)
 	btn.add_theme_color_override("font_color", MAGENTA)
 	btn.add_theme_stylebox_override("normal", MenuTheme.make_button_style(MenuTheme.GREEN, true))
 	btn.add_theme_stylebox_override("hover", MenuTheme.make_button_style(MenuTheme.GREEN, true))
@@ -281,38 +281,34 @@ func _make_gem_pack(amount: String, bonus: String, price: String, best: bool) ->
 	style.content_margin_bottom = 10
 	panel.add_theme_stylebox_override("panel", style)
 
-	var btn := Button.new()
-	btn.flat = true
-	btn.focus_mode = Control.FOCUS_NONE
-	btn.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	panel.add_child(btn)
-
+	# VBox de contenido como hijo directo (da el minimum size de la card) y
+	# Button flat encima: el PanelContainer estira ambos a su rect.
 	var v := VBoxContainer.new()
 	v.alignment = BoxContainer.ALIGNMENT_CENTER
 	v.add_theme_constant_override("separation", 1)
 	v.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	v.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 
 	var icon := Label.new()
 	icon.text = MenuTheme.SYM_GEM
 	icon.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	icon.add_theme_font_size_override("font_size", 26)
+	icon.add_theme_color_override("font_color", MAGENTA)
 	var amt := Label.new()
 	amt.text = amount
 	amt.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	amt.add_theme_font_size_override("font_size", 15)
+	amt.add_theme_font_size_override("font_size", 17)
 	amt.add_theme_color_override("font_color", MAGENTA)
 	_apply_hud_font(amt)
 	var bon := Label.new()
 	bon.text = bonus if bonus != "" else " "
 	bon.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	bon.add_theme_font_size_override("font_size", 8)
+	bon.add_theme_font_size_override("font_size", 12)
 	bon.add_theme_color_override("font_color", MenuTheme.GREEN)
 	_apply_hud_font(bon)
 	var pr := Label.new()
 	pr.text = price
 	pr.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	pr.add_theme_font_size_override("font_size", 10)
+	pr.add_theme_font_size_override("font_size", 14)
 	pr.add_theme_color_override("font_color", MenuTheme.GOLD)
 	_apply_hud_font(pr)
 
@@ -320,9 +316,14 @@ func _make_gem_pack(amount: String, bonus: String, price: String, best: bool) ->
 	v.add_child(amt)
 	v.add_child(bon)
 	v.add_child(pr)
-	btn.add_child(v)
+	panel.add_child(v)
 
+	var btn := Button.new()
+	btn.flat = true
+	btn.focus_mode = Control.FOCUS_NONE
 	btn.pressed.connect(func(): _on_buy_iap(amount + " gemas", price))
+	panel.add_child(btn)
+
 	return panel
 
 
@@ -366,18 +367,18 @@ func _make_resource_card(nombre: String, sym: String, desc: String, color: Color
 	head.add_theme_constant_override("separation", 8)
 	var icon := Label.new()
 	icon.text = sym
-	icon.add_theme_font_size_override("font_size", 22)
+	icon.add_theme_font_size_override("font_size", 26)
 	icon.add_theme_color_override("font_color", color)
 	var titles := VBoxContainer.new()
 	titles.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	var name_lbl := Label.new()
 	name_lbl.text = nombre
-	name_lbl.add_theme_font_size_override("font_size", 10)
+	name_lbl.add_theme_font_size_override("font_size", 12)
 	name_lbl.add_theme_color_override("font_color", color)
 	_apply_hud_font(name_lbl)
 	var desc_lbl := Label.new()
 	desc_lbl.text = desc
-	desc_lbl.add_theme_font_size_override("font_size", 10)
+	desc_lbl.add_theme_font_size_override("font_size", 12)
 	desc_lbl.add_theme_color_override("font_color", MenuTheme.TEXT_MUTED)
 	titles.add_child(name_lbl)
 	titles.add_child(desc_lbl)
@@ -414,13 +415,13 @@ func _make_tier_button(amount: String, cost: int, color: Color) -> Button:
 	var amt := Label.new()
 	amt.text = amount
 	amt.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	amt.add_theme_font_size_override("font_size", 10)
+	amt.add_theme_font_size_override("font_size", 12)
 	amt.add_theme_color_override("font_color", color)
 	_apply_hud_font(amt)
 	var pr := Label.new()
 	pr.text = "%d %s" % [cost, MenuTheme.SYM_GEM]
 	pr.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	pr.add_theme_font_size_override("font_size", 8)
+	pr.add_theme_font_size_override("font_size", 10)
 	pr.add_theme_color_override("font_color", MenuTheme.TEXT_MUTED)
 	_apply_hud_font(pr)
 	v.add_child(amt)
@@ -493,7 +494,7 @@ func _make_bundle(tier: String, tier_name: String, nombre: String, price: String
 
 	var name_lbl := Label.new()
 	name_lbl.text = nombre
-	name_lbl.add_theme_font_size_override("font_size", 13)
+	name_lbl.add_theme_font_size_override("font_size", 15)
 	name_lbl.add_theme_color_override("font_color", MenuTheme.TEXT_PRIMARY)
 	_apply_hud_font(name_lbl)
 
@@ -503,7 +504,7 @@ func _make_bundle(tier: String, tier_name: String, nombre: String, price: String
 	for c in contents:
 		var cpill := Label.new()
 		cpill.text = c
-		cpill.add_theme_font_size_override("font_size", 8)
+		cpill.add_theme_font_size_override("font_size", 10)
 		cpill.add_theme_color_override("font_color", MenuTheme.TEXT_MUTED)
 		_apply_hud_font(cpill)
 		contents_flow.add_child(cpill)
@@ -521,21 +522,21 @@ func _make_bundle(tier: String, tier_name: String, nombre: String, price: String
 		var old := Label.new()
 		old.text = old_price
 		old.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-		old.add_theme_font_size_override("font_size", 9)
+		old.add_theme_font_size_override("font_size", 11)
 		old.add_theme_color_override("font_color", MenuTheme.TEXT_MUTED)
 		_apply_hud_font(old)
 		right.add_child(old)
 	var pr := Label.new()
 	pr.text = price
 	pr.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-	pr.add_theme_font_size_override("font_size", 16)
+	pr.add_theme_font_size_override("font_size", 18)
 	pr.add_theme_color_override("font_color", accent)
 	_apply_hud_font(pr)
 	var btn := Button.new()
 	btn.flat = true
 	btn.focus_mode = Control.FOCUS_NONE
 	btn.text = "Comprar"
-	btn.add_theme_font_size_override("font_size", 9)
+	btn.add_theme_font_size_override("font_size", 11)
 	btn.add_theme_color_override("font_color", accent)
 	btn.add_theme_stylebox_override("normal", MenuTheme.make_button_style(accent))
 	btn.add_theme_stylebox_override("hover", MenuTheme.make_button_style(accent, true))

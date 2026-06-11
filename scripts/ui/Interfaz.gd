@@ -187,16 +187,11 @@ func _construir_interfaz() -> void:
 	add_child(_timer_alerta)
 	_timer_alerta.timeout.connect(_ocultar_alerta)
 
-	# ✅ Guardar referencia al PanelMejoras y reordenarlo al final
-	# para que reciba inputs por encima de raiz
-	var panel = get_node_or_null("PanelMejoras")
-	if panel:
-		panel_mejoras = panel
-		remove_child(panel)
-		add_child(panel)
-		print("🖥️ Interfaz: PanelMejoras reordenado ✅")
-	else:
-		print("⚠️ Interfaz: PanelMejoras no encontrado")
+	# ✅ Referencia al PanelMejoras (vive en su propio CanvasLayer "CapaUI",
+	# hermano de esta interfaz) para poder ocultarlo en el game over.
+	panel_mejoras = get_parent().get_node_or_null("CapaUI/PanelMejoras")
+	if panel_mejoras == null:
+		print("⚠️ Interfaz: PanelMejoras no encontrado en CapaUI")
 
 	_crear_boton_pausa()
 
