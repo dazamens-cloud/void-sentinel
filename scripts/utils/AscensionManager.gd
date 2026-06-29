@@ -28,6 +28,7 @@ var escena_espectro_comander_ref: Node2D = null
 var commander_escapo: bool = false
 var commander_hp_al_escapar: float = 0.0
 var commander_reaparicion_en_ascension: int = -1
+var _commander_activo: Node2D = null  # ✅ Caché para evitar O(n) get_nodes_in_group()
 
 const DURACION_ASCENSION: float = 35.0
 const PAUSA_ENTRE_ASCENSIONES: float = 8.0
@@ -130,11 +131,12 @@ func _generar_espectro() -> void:
 		2: espectro.global_position = Vector2(-50, randf_range(0, tam_vista.y))
 		3: espectro.global_position = Vector2(tam_vista.x + 50, randf_range(0, tam_vista.y))
 
-# ✅ Garantizar distancia mínima al nexus
+# ✅ Garantizar distancia mínima al nexus (usando distance_squared_to para evitar sqrt)
 	var nexus_node = get_tree().get_first_node_in_group("nexus")
 	if nexus_node:
 		var intentos = 0
-		while espectro.global_position.distance_to(nexus_node.global_position) < 300.0 and intentos < 10:
+		var distancia_minima_sq = 300.0 * 300.0  # 90000 (evita sqrt)
+		while espectro.global_position.distance_squared_to(nexus_node.global_position) < distancia_minima_sq and intentos < 10:
 			lado = randi() % 4
 			match lado:
 				0: espectro.global_position = Vector2(randf_range(0, tam_vista.x), -50)
@@ -259,6 +261,8 @@ func _spawn_commander(hp: float) -> void:
 	if commander.has_signal("commander_escapo"):
 		commander.commander_escapo.connect(_on_commander_escapo_real)
 
+	_commander_activo = commander  # ✅ Cachear referencia
+
 	commander_generado_esta_ascension = true
 	escena_espectro_comander_ref = commander
 
@@ -267,6 +271,7 @@ func _on_commander_muerto_real() -> void:
 	commander_hp_al_escapar = 0.0
 	commander_reaparicion_en_ascension = -1
 	escena_espectro_comander_ref = null
+	_commander_activo = null  # ✅ Limpiar caché
 
 func _on_commander_escapo_real() -> void:
 	commander_escapo = true
@@ -274,13 +279,12 @@ func _on_commander_escapo_real() -> void:
 		commander_hp_al_escapar = escena_espectro_comander_ref.get("salud_actual")
 	commander_reaparicion_en_ascension = Economia.numero_ascension + randi_range(10, 20)
 	escena_espectro_comander_ref = null
+	_commander_activo = null  # ✅ Limpiar caché
 	print("🚀 Commander escapó. Regresará en Asc ", commander_reaparicion_en_ascension)
 
 func _hay_commander_activo() -> bool:
-	for c in get_tree().get_nodes_in_group("commanders"):
-		if is_instance_valid(c) and not c.get("esta_destruido"):
-			return true
-	return false
+	# ✅ Usar caché en lugar de O(n) get_nodes_in_group cada vez
+	return is_instance_valid(_commander_activo) and not _commander_activo.get("esta_destruido")
 
 func _on_espectro_destruido(_pos: Vector2, _recompensa: int) -> void:
 	espectros_vivos -= 1

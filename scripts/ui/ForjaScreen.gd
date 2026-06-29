@@ -38,6 +38,17 @@ func _ready() -> void:
 		eco.fragmentos_actualizados.connect(_refrescar)
 
 
+func _exit_tree() -> void:
+	# ✅ Desconectar signals para prevenir memory leak
+	if HabilidadManager.habilidad_cambiada.is_connected(_refrescar):
+		HabilidadManager.habilidad_cambiada.disconnect(_refrescar)
+	if HabilidadManager.seleccion_cambiada.is_connected(_refrescar):
+		HabilidadManager.seleccion_cambiada.disconnect(_refrescar)
+	var eco := get_node_or_null("/root/Economia")
+	if eco and eco.fragmentos_actualizados.is_connected(_refrescar):
+		eco.fragmentos_actualizados.disconnect(_refrescar)
+
+
 func _build() -> void:
 	var root := VBoxContainer.new()
 	root.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
