@@ -41,6 +41,10 @@ const TOPE_ESPECTROS_OLEADA: int = 30
 # Total de enemigos de la oleada actual (para repartir el spawn en la ventana).
 var _total_oleada: int = 0
 
+# ✅ Batch cleanup para evitar frame drops en game over
+var _enemigos_pendientes_delete: Array = []
+var _deleting_batch: bool = false
+
 # El escalado de stats de enemigos vive centralizado en EscaladoEnemigos.gd
 # (clase estática). Tunea la dificultad ahí, no aquí.
 
@@ -309,7 +313,27 @@ func _on_juego_terminado(_causa: String) -> void:
 	temporizador_pausa = 0.0
 	temporizador_ascension = 0.0
 	espectros_a_spawnear = 0
-	for e in get_tree().get_nodes_in_group("espectros"):
-		if is_instance_valid(e):
-			e.queue_free()
 	temporizador_spawn = 0.0
+	# ✅ Batch queue_free para evitar 30+ queue_free en 1 frame (frame drop 5-15ms)
+	_enemigos_pendientes_delete = get_tree().get_nodes_in_group("espectros")
+	_deleting_batch = true
+	_delete_enemies_batch()
+
+# ✅ Eliminar enemigos en lotes (5 por frame) para evitar frame drops
+func _delete_enemies_batch() -> void:
+	if not _deleting_batch or _enemigos_pendientes_delete.is_empty():
+		_deleting_batch = false
+		return
+
+	const BATCH_SIZE := 5
+	var batch_count := 0
+
+	while batch_count < BATCH_SIZE and _enemigos_pendientes_delete.size() > 0:
+		var enemy = _enemigos_pendientes_delete.pop_front()
+		if is_instance_valid(enemy):
+			enemy.queue_free()
+		batch_count += 1
+
+	if _enemigos_pendientes_delete.size() > 0:
+		await get_tree().process_frame
+		_delete_enemies_batch()

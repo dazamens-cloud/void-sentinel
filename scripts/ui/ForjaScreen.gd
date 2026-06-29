@@ -30,23 +30,23 @@ const CAT_LABEL := {
 func _ready() -> void:
 	_build()
 	if HabilidadManager.has_signal("habilidad_cambiada"):
-		HabilidadManager.habilidad_cambiada.connect(_refrescar)
+		HabilidadManager.habilidad_cambiada.connect(_on_habilidad_cambiada)
 	if HabilidadManager.has_signal("seleccion_cambiada"):
-		HabilidadManager.seleccion_cambiada.connect(_refrescar)
+		HabilidadManager.seleccion_cambiada.connect(_on_seleccion_cambiada)
 	var eco := get_node_or_null("/root/Economia")
 	if eco and eco.has_signal("fragmentos_actualizados"):
-		eco.fragmentos_actualizados.connect(_refrescar)
+		eco.fragmentos_actualizados.connect(_on_fragmentos_actualizados)
 
 
 func _exit_tree() -> void:
 	# ✅ Desconectar signals para prevenir memory leak
-	if HabilidadManager.habilidad_cambiada.is_connected(_refrescar):
-		HabilidadManager.habilidad_cambiada.disconnect(_refrescar)
-	if HabilidadManager.seleccion_cambiada.is_connected(_refrescar):
-		HabilidadManager.seleccion_cambiada.disconnect(_refrescar)
+	if HabilidadManager.habilidad_cambiada.is_connected(_on_habilidad_cambiada):
+		HabilidadManager.habilidad_cambiada.disconnect(_on_habilidad_cambiada)
+	if HabilidadManager.seleccion_cambiada.is_connected(_on_seleccion_cambiada):
+		HabilidadManager.seleccion_cambiada.disconnect(_on_seleccion_cambiada)
 	var eco := get_node_or_null("/root/Economia")
-	if eco and eco.fragmentos_actualizados.is_connected(_refrescar):
-		eco.fragmentos_actualizados.disconnect(_refrescar)
+	if eco and eco.fragmentos_actualizados.is_connected(_on_fragmentos_actualizados):
+		eco.fragmentos_actualizados.disconnect(_on_fragmentos_actualizados)
 
 
 func _build() -> void:
@@ -200,6 +200,17 @@ func _update_tab_colors() -> void:
 		var lbl: Label = _tab_buttons[cat].get_meta("label")
 		var col: Color = CAT_COLOR[cat] if cat == _current_cat else MenuTheme.TEXT_MUTED
 		lbl.add_theme_color_override("font_color", col)
+
+
+# ✅ Optimizaciones: actualizar solo lo que cambió (no rebuild completo)
+func _on_habilidad_cambiada(_id: String, _nivel: int) -> void:
+	_refresh_frag()  # Solo actualizar fragmentos, no recrear lista completa
+
+func _on_seleccion_cambiada(_id: String) -> void:
+	_refrescar()  # Necesita rebuild (cambió categoría visible)
+
+func _on_fragmentos_actualizados() -> void:
+	_refresh_frag()  # Solo actualizar fragmentos, no recrear lista
 
 
 # ------------------------------------------------------------

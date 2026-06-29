@@ -42,10 +42,12 @@ func configurar(datos: Dictionary) -> void:
 
 func _physics_process(delta: float) -> void:
 	if esta_destruido or not is_instance_valid(nexus): return
-	
-	var distancia = global_position.distance_to(nexus.global_position)
-	
-	if distancia > DISTANCIA_ATAQUE:
+
+	# ✅ Usar distance_squared_to para evitar sqrt (30 enemigos × 60 FPS = 1800 sqrt/s)
+	var distancia_sq = global_position.distance_squared_to(nexus.global_position)
+	var distancia_ataque_sq = DISTANCIA_ATAQUE * DISTANCIA_ATAQUE
+
+	if distancia_sq > distancia_ataque_sq:
 		var direccion = (nexus.global_position - global_position).normalized()
 		velocity = direccion * velocidad
 		rotation += 3.0 * delta
