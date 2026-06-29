@@ -25,6 +25,14 @@ func _ready() -> void:
 		EstadisticasManager.logros_actualizados.connect(_refresh_stats)
 
 
+func _exit_tree() -> void:
+	# ✅ Desconectar signals para prevenir memory leak
+	if EstadisticasManager.logros_actualizados.is_connected(_refresh_logros):
+		EstadisticasManager.logros_actualizados.disconnect(_refresh_logros)
+	if EstadisticasManager.logros_actualizados.is_connected(_refresh_stats):
+		EstadisticasManager.logros_actualizados.disconnect(_refresh_stats)
+
+
 func _build() -> void:
 	var root := VBoxContainer.new()
 	root.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)

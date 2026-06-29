@@ -72,6 +72,15 @@ func _ready() -> void:
 	_refresh_all()
 
 
+func _exit_tree() -> void:
+	# ✅ Desconectar signals para prevenir memory leak
+	if _lab and _lab.lab_actualizado.is_connected(_refresh_all):
+		_lab.lab_actualizado.disconnect(_refresh_all)
+	if _eco and _eco.recursos_actualizados.is_connected(_refresh_all):
+		_eco.recursos_actualizados.disconnect(_refresh_all)
+	# Timer se elimina automáticamente con remove_child
+
+
 func on_show() -> void:
 	_refresh_all()
 

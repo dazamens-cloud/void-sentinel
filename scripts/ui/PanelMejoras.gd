@@ -182,6 +182,14 @@ func _conectar_senales() -> void:
 	if Economia.has_signal("energia_cambiada"):
 		Economia.energia_cambiada.connect(_on_energia_cambiada)
 
+
+func _exit_tree() -> void:
+	# ✅ Desconectar signals para prevenir memory leak
+	if mejora_manager and mejora_manager.mejoras_actualizadas.is_connected(_actualizar_ui):
+		mejora_manager.mejoras_actualizadas.disconnect(_actualizar_ui)
+	if Economia.energia_cambiada.is_connected(_on_energia_cambiada):
+		Economia.energia_cambiada.disconnect(_on_energia_cambiada)
+
 # ═══════════════════════════════════════════════════
 # MODAL
 # ═══════════════════════════════════════════════════

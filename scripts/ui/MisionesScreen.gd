@@ -44,6 +44,13 @@ func _ready() -> void:
 	_refresh_all()
 
 
+func _exit_tree() -> void:
+	# ✅ Desconectar signals para prevenir memory leak
+	if _mm and _mm.misiones_actualizadas.is_connected(_refresh_all):
+		_mm.misiones_actualizadas.disconnect(_refresh_all)
+	# Timer se elimina automáticamente con remove_child
+
+
 func on_show() -> void:
 	_refresh_all()
 

@@ -74,6 +74,14 @@ func _ready() -> void:
 			_mm.mejoras_actualizadas.connect(_on_mejoras_actualizadas)
 
 
+func _exit_tree() -> void:
+	# ✅ Desconectar signals para prevenir memory leak
+	if _eco and _eco.recursos_actualizados.is_connected(_on_recursos_actualizados):
+		_eco.recursos_actualizados.disconnect(_on_recursos_actualizados)
+	if _mm and _mm.mejoras_actualizadas.is_connected(_on_mejoras_actualizadas):
+		_mm.mejoras_actualizadas.disconnect(_on_mejoras_actualizadas)
+
+
 # ------------------------------------------------------------
 # CONSTRUCCION DE LA UI.
 # ------------------------------------------------------------
