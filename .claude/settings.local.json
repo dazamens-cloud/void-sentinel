@@ -43,7 +43,11 @@
       "PowerShell(Get-Content \"escenas\\\\ui\\\\interfaz.tscn\" -TotalCount 20; \"---\"; Get-Content \"scripts\\\\ui\\\\Interfaz.gd\" -TotalCount 30)",
       "PowerShell(& \"C:\\\\Users\\\\andre\\\\bin\\\\godot.exe\" --headless --path \"D:\\\\proyectos godot\\\\void-sentinel\" --check-only --script \"res://scripts/mejoras/MejoraManager.gd\"; \"exit=$LASTEXITCODE\"; & \"C:\\\\Users\\\\andre\\\\bin\\\\godot.exe\" --headless --path \"D:\\\\proyectos godot\\\\void-sentinel\" --check-only --script \"res://scripts/mejoras/MejoraCard.gd\"; \"exit=$LASTEXITCODE\"; & \"C:\\\\Users\\\\andre\\\\bin\\\\godot.exe\" --headless --path \"D:\\\\proyectos godot\\\\void-sentinel\" --check-only --script \"res://scripts/ui/PanelMejoras.gd\"; \"exit=$LASTEXITCODE\")",
       "PowerShell(& \"C:\\\\Users\\\\andre\\\\bin\\\\godot.exe\" --path \"D:\\\\proyectos godot\\\\void-sentinel\" res://tools/UiTester.tscn --resolution 720x1280 --quit-after 3000)",
-      "PowerShell(& \"C:\\\\Users\\\\andre\\\\bin\\\\godot.exe\" --path \"D:\\\\proyectos godot\\\\void-sentinel\" res://tools/UiTester.tscn --resolution 720x1280; \"EXIT: $LASTEXITCODE\")"
+      "PowerShell(& \"C:\\\\Users\\\\andre\\\\bin\\\\godot.exe\" --path \"D:\\\\proyectos godot\\\\void-sentinel\" res://tools/UiTester.tscn --resolution 720x1280; \"EXIT: $LASTEXITCODE\")",
+      "PowerShell(& \"C:\\\\Users\\\\andre\\\\AppData\\\\Local\\\\Android\\\\Sdk\\\\platform-tools\\\\adb.exe\" devices -l)",
+      "PowerShell(Test-Path *)",
+      "PowerShell(& \"C:\\\\Users\\\\andre\\\\bin\\\\godot.exe\" --headless --path \"D:\\\\proyectos godot\\\\void-sentinel\" --export-debug \"voidsentinel\" \"..\\\\..\\\\void-sentinelv0.4.apk\"; Start-Sleep -Seconds 20; Get-Item \"D:\\\\void-sentinelv0.4.apk\" | Select-Object Length, LastWriteTime)",
+      "PowerShell(& \"C:\\\\Users\\\\andre\\\\AppData\\\\Local\\\\Android\\\\Sdk\\\\platform-tools\\\\adb.exe\" install -r \"D:\\\\void-sentinelv0.4.apk\")"
     ]
   }
 }

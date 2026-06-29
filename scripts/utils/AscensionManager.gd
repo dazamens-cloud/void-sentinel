@@ -103,6 +103,9 @@ func _generar_espectro() -> void:
 	# _elegir_tipo_enemigo() nunca devuelve el Commander (se gestiona aparte en
 	# _evaluar_commander), por eso aquí solo aplicamos el cap normal de enemigos.
 	var escena_elegida = _elegir_tipo_enemigo()
+	if escena_elegida == null:
+		push_error("❌ _generar_espectro: _elegir_tipo_enemigo devolvió null")
+		return
 
 	if espectros_vivos >= MAX_ENEMIGOS_SIMULTANEOS:
 		return
@@ -226,6 +229,9 @@ func forzar_commander() -> void:
 	print("🧪 forzar_commander: Commander invocado (Asc ", asc, ") HP ", snapped(hp, 0.1))
 
 func _spawn_commander(hp: float) -> void:
+	if escena_espectro_comander == null:
+		push_error("❌ _spawn_commander: escena_espectro_comander no asignada en editor")
+		return
 	var commander = escena_espectro_comander.instantiate()
 	var _padre := get_tree().current_scene
 	if _padre == null:

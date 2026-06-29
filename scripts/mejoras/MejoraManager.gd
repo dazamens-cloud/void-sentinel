@@ -9,6 +9,14 @@ extends Node
 signal mejora_comprada(mejora_id: String, nuevo_nivel: int)
 signal mejoras_actualizadas
 
+# ✅ Validación: asegurar que todos los max_nivel son > 0 (prevenir división por cero)
+func _validate_mejoras() -> void:
+	for mejora_id in mejoras:
+		var max_nv = mejoras[mejora_id].get("max_nivel", 1)
+		if max_nv <= 0:
+			push_error("⚠️ Mejora '%s' tiene max_nivel inválido: %d" % [mejora_id, max_nv])
+			mejoras[mejora_id]["max_nivel"] = 1
+
 # Fase 2 del balance: daño y vida escalan MULTIPLICATIVAMENTE.
 #   stat = base × FACTOR^nivel   (compuesto)
 # Esto permite que el techo de ascensión suba con la meta-progresión del
@@ -264,6 +272,7 @@ var mejoras: Dictionary = {
 
 # ═══════════════════════════════════════════════════
 func _ready() -> void:
+	_validate_mejoras()  # ✅ Validar integridad de datos
 	# Cada mejora lleva dos contadores:
 	#   - "nivel_nexo": nivel PERMANENTE comprado en el Nexo con ecos (suelo).
 	#   - "nivel":      nivel EFECTIVO de la partida actual (suelo + compras
