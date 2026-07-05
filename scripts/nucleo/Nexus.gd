@@ -159,6 +159,7 @@ var _ultimo_atacante: String = ""
 
 func recibir_ataque(cantidad: float, tipo_atacante: String = "") -> void:
 	if esta_destruido: return
+	if HabilidadEjecutor.manto_activo: return  # Manto: ataques ignorados
 
 	if tipo_atacante != "":
 		_ultimo_atacante = tipo_atacante

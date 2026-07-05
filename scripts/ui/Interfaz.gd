@@ -40,6 +40,10 @@ var _timer_alerta: Timer
 # Evita mostrar el overlay de Game Over más de una vez
 var _game_over_mostrado: bool = false
 
+# ── Barra de habilidades ────────────────────────────
+var _hab_botones: Dictionary = {}   # id → Button
+var _hab_cd_lbls: Dictionary = {}   # id → Label cooldown
+
 # Overlay del menú de pausa (null cuando está cerrado)
 var _menu_pausa: Control = null
 
@@ -78,6 +82,8 @@ func _ready() -> void:
 	_actualizar_ecos()
 	_actualizar_fragmentos()
 	
+	HabilidadEjecutor.cooldown_tick.connect(_refrescar_habilidades)
+
 	await get_tree().process_frame
 
 	var dron = get_tree().current_scene.find_child("Dron", true, false)
@@ -187,6 +193,7 @@ func _construir_interfaz() -> void:
 		push_warning("Interfaz: PanelMejoras no encontrado en CapaUI")
 
 	_crear_boton_pausa()
+	_construir_barra_habilidades()
 
 # Lee el área segura real del dispositivo. En PC mantiene el margen mínimo
 # (MARGEN_SUPERIOR) arriba y 0 abajo; en móvil usa el notch y la barra del
@@ -212,6 +219,77 @@ func _ajustar_escala_movil() -> void:
 	for lbl in [lbl_energia, lbl_ecos, lbl_fragmentos]:
 		if lbl:
 			lbl.add_theme_font_size_override("font_size", HUD_FONT_RECURSOS)
+
+# ═══════════════════════════════════════════════════
+# BARRA DE HABILIDADES (Forja — activas en partida)
+# ═══════════════════════════════════════════════════
+func _construir_barra_habilidades() -> void:
+	var activas := HabilidadManager.get_activas()
+	if activas.is_empty(): return
+
+	var n     := activas.size()
+	var btn_w := 80
+	var gap   := 6
+	var total := n * btn_w + (n - 1) * gap
+	var x0    := int((720 - total) / 2)
+	var y0    := int(960 - _margen_bottom)
+
+	for i in range(n):
+		var id: String = activas[i]
+		var x := x0 + i * (btn_w + gap)
+
+		var btn := Button.new()
+		btn.size = Vector2(btn_w, 72)
+		btn.position = Vector2(x, y0)
+		btn.z_index = 120
+		btn.process_mode = Node.PROCESS_MODE_PAUSABLE
+		btn.mouse_filter = Control.MOUSE_FILTER_STOP
+		btn.flat = true
+
+		# Nombre abreviado
+		var nombre_lbl := Label.new()
+		nombre_lbl.text = HabilidadEjecutor.nombre_corto(id)
+		nombre_lbl.add_theme_font_size_override("font_size", 11)
+		nombre_lbl.add_theme_color_override("font_color", Color(0.6, 0.9, 1.0))
+		nombre_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		nombre_lbl.set_anchors_preset(Control.PRESET_TOP_WIDE)
+		nombre_lbl.size = Vector2(btn_w, 28)
+		nombre_lbl.position = Vector2(0, 4)
+		nombre_lbl.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		btn.add_child(nombre_lbl)
+
+		# Cooldown / listo
+		var cd_lbl := Label.new()
+		cd_lbl.text = "LISTA"
+		cd_lbl.add_theme_font_size_override("font_size", 13)
+		cd_lbl.add_theme_color_override("font_color", Color(0.3, 1.0, 0.5))
+		cd_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		cd_lbl.size = Vector2(btn_w, 28)
+		cd_lbl.position = Vector2(0, 38)
+		cd_lbl.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		btn.add_child(cd_lbl)
+
+		var _id := id  # captura para la lambda
+		btn.pressed.connect(func(): HabilidadEjecutor.activar(_id))
+
+		_hab_botones[id] = btn
+		_hab_cd_lbls[id] = cd_lbl
+		raiz.add_child(btn)
+
+func _refrescar_habilidades() -> void:
+	for id in _hab_botones.keys():
+		var btn: Button = _hab_botones[id]
+		var cd_lbl: Label = _hab_cd_lbls[id]
+		if not is_instance_valid(btn): continue
+		var restante := HabilidadEjecutor.get_cooldown_restante(id)
+		if restante > 0.0:
+			btn.modulate = Color(0.4, 0.4, 0.4, 0.9)
+			cd_lbl.text = "%ds" % ceili(restante)
+			cd_lbl.add_theme_color_override("font_color", Color(0.7, 0.4, 0.4))
+		else:
+			btn.modulate = Color.WHITE
+			cd_lbl.text = "LISTA"
+			cd_lbl.add_theme_color_override("font_color", Color(0.3, 1.0, 0.5))
 
 # ═══════════════════════════════════════════════════
 # MENÚ DE PAUSA

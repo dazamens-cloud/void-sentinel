@@ -13,6 +13,9 @@ var rebotes_restantes: int = 0
 var alcance_rebote: float = 0.0
 var _ya_golpeados: Array = []
 
+# Penetración (habilidad Enjambre): número de enemigos adicionales que atraviesa
+var penetraciones_restantes: int = 0
+
 # ✨ NUEVO: Sistema de disparos especiales
 var es_especial: bool = false
 var color_especial: Color = Color.GOLDENROD
@@ -73,6 +76,11 @@ func _on_body_entered(body: Node) -> void:
 		AudioManager.sfx("critico")
 	else:
 		FX.impacto(global_position, Color(0.4, 0.85, 1.0), 6, 110.0)
+
+	# Penetración (habilidad Enjambre): el proyectil atraviesa sin destruirse
+	if penetraciones_restantes > 0:
+		penetraciones_restantes -= 1
+		return
 
 	# ✅ Rebote: salta al enemigo más cercano que no haya sido golpeado
 	if rebotes_restantes > 0:
