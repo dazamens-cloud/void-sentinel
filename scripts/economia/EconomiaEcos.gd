@@ -10,6 +10,7 @@ signal ecos_obtenidos(cantidad: int, posicion: Vector2)
 signal energia_cambiada(nueva_energia: float)
 signal ecos_actualizados
 signal fragmentos_actualizados
+signal fragmentos_obtenidos(cantidad: int)
 signal espectro_eliminado   # se emite por cada espectro derrotado (para estadísticas/logros)
 
 var energia: float = 50.0
@@ -162,6 +163,7 @@ func añadir_fragmentos(cantidad: int) -> void:
 	guardar_datos()
 	recursos_actualizados.emit()
 	fragmentos_actualizados.emit()
+	fragmentos_obtenidos.emit(cantidad)
 
 func gastar_ecos(cantidad: int) -> bool:
 	if ecos >= cantidad:

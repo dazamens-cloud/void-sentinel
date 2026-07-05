@@ -17,6 +17,12 @@ var _tab_buttons: Dictionary = {}
 var _logros_box: VBoxContainer
 var _stats_box: VBoxContainer
 
+# Refs del hero para refrescar rango sin reconstruir.
+var _hero_badge_lbl: Label
+var _hero_rank_pts: Label
+var _hero_xp_bar: ProgressBar
+var _hero_xp_lbl: Label
+
 
 func _ready() -> void:
 	_build()
@@ -92,42 +98,65 @@ func _make_hero() -> Control:
 	info.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	info.add_theme_constant_override("separation", 4)
 
+	var em := EstadisticasManager
+	var rango := em.get_rango()
+	var prog_rango := em.get_progreso_rango()
+
 	var name_lbl := Label.new()
-	name_lbl.text = "CENTINELA_X"
+	name_lbl.text = "CENTINELA"
 	name_lbl.add_theme_font_size_override("font_size", 20)
 	name_lbl.add_theme_color_override("font_color", MenuTheme.TEXT_PRIMARY)
 	_apply_hud_font(name_lbl)
 
 	var rank_row := HBoxContainer.new()
 	rank_row.add_theme_constant_override("separation", 6)
-	var badge := _make_pill("ELITE", MenuTheme.GOLD)
-	var pts := Label.new()
-	pts.text = "4,820 pts"
-	pts.add_theme_font_size_override("font_size", 11)
-	pts.add_theme_color_override("font_color", MenuTheme.TEXT_MUTED)
-	pts.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	rank_row.add_child(badge)
-	rank_row.add_child(pts)
+	# Guardamos ref al Label interno del pill para poder cambiar el texto después.
+	var badge_panel := PanelContainer.new()
+	var badge_style := StyleBoxFlat.new()
+	badge_style.bg_color = Color(MenuTheme.GOLD.r, MenuTheme.GOLD.g, MenuTheme.GOLD.b, 0.12)
+	badge_style.border_color = Color(MenuTheme.GOLD.r, MenuTheme.GOLD.g, MenuTheme.GOLD.b, 0.3)
+	badge_style.set_border_width_all(1)
+	badge_style.set_corner_radius_all(4)
+	badge_style.content_margin_left = 8
+	badge_style.content_margin_right = 8
+	badge_style.content_margin_top = 2
+	badge_style.content_margin_bottom = 2
+	badge_panel.add_theme_stylebox_override("panel", badge_style)
+	_hero_badge_lbl = Label.new()
+	_hero_badge_lbl.text = rango["nombre"]
+	_hero_badge_lbl.add_theme_font_size_override("font_size", 10)
+	_hero_badge_lbl.add_theme_color_override("font_color", MenuTheme.GOLD)
+	_apply_hud_font(_hero_badge_lbl)
+	badge_panel.add_child(_hero_badge_lbl)
 
-	# Barra XP.
+	_hero_rank_pts = Label.new()
+	var sig_txt := ("Asc. %d" % rango["siguiente"]) if rango["siguiente"] >= 0 else "MÁXIMO"
+	_hero_rank_pts.text = "Asc. %d → %s" % [em.mejor_ascension, sig_txt]
+	_hero_rank_pts.add_theme_font_size_override("font_size", 11)
+	_hero_rank_pts.add_theme_color_override("font_color", MenuTheme.TEXT_MUTED)
+	_hero_rank_pts.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	rank_row.add_child(badge_panel)
+	rank_row.add_child(_hero_rank_pts)
+
+	# Barra de progreso de rango.
 	var xp_row := HBoxContainer.new()
 	xp_row.add_theme_constant_override("separation", 6)
-	var xp := ProgressBar.new()
-	xp.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	xp.custom_minimum_size = Vector2(0, 4)
-	xp.min_value = 0
-	xp.max_value = 10000
-	xp.value = 6800
-	xp.show_percentage = false
-	xp.add_theme_stylebox_override("background", MenuTheme.make_progress_track())
-	xp.add_theme_stylebox_override("fill", MenuTheme.make_progress_fill(MenuTheme.GOLD))
-	var xp_lbl := Label.new()
-	xp_lbl.text = "6,800 / 10,000 XP"
-	xp_lbl.add_theme_font_size_override("font_size", 10)
-	xp_lbl.add_theme_color_override("font_color", MenuTheme.TEXT_MUTED)
-	_apply_hud_font(xp_lbl)
-	xp_row.add_child(xp)
-	xp_row.add_child(xp_lbl)
+	_hero_xp_bar = ProgressBar.new()
+	_hero_xp_bar.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_hero_xp_bar.custom_minimum_size = Vector2(0, 4)
+	_hero_xp_bar.min_value = 0.0
+	_hero_xp_bar.max_value = 1.0
+	_hero_xp_bar.value = prog_rango
+	_hero_xp_bar.show_percentage = false
+	_hero_xp_bar.add_theme_stylebox_override("background", MenuTheme.make_progress_track())
+	_hero_xp_bar.add_theme_stylebox_override("fill", MenuTheme.make_progress_fill(MenuTheme.GOLD))
+	_hero_xp_lbl = Label.new()
+	_hero_xp_lbl.text = "%d%% rango" % int(prog_rango * 100.0)
+	_hero_xp_lbl.add_theme_font_size_override("font_size", 10)
+	_hero_xp_lbl.add_theme_color_override("font_color", MenuTheme.TEXT_MUTED)
+	_apply_hud_font(_hero_xp_lbl)
+	xp_row.add_child(_hero_xp_bar)
+	xp_row.add_child(_hero_xp_lbl)
 
 	info.add_child(name_lbl)
 	info.add_child(rank_row)
@@ -247,9 +276,15 @@ func _refresh_stats() -> void:
 	var eco := get_node_or_null("/root/Economia")
 	var ecos_val := _miles(eco.ecos) if eco else "0"
 	var frag_val := _miles(eco.fragmentos) if eco else "0"
-	v.add_child(_make_section_title("ECONOMIA"))
+	v.add_child(_make_section_title("ECONOMÍA"))
 	v.add_child(_make_stat_row(MenuTheme.SYM_ECOS, "Ecos disponibles", ecos_val, MenuTheme.CYAN))
 	v.add_child(_make_stat_row(MenuTheme.SYM_FRAG, "Fragmentos disponibles", frag_val, MenuTheme.VIOLET))
+
+	# Contadores de vida acumulados.
+	v.add_child(_make_section_title("ACUMULADO"))
+	v.add_child(_make_stat_row(MenuTheme.SYM_ECOS, "Ecos ganados en total", _miles(em.ecos_ganados_total), MenuTheme.CYAN))
+	v.add_child(_make_stat_row(MenuTheme.SYM_FRAG, "Fragmentos recogidos en total", _miles(em.fragmentos_recogidos_total), MenuTheme.VIOLET))
+	v.add_child(_make_stat_row("🌀", "Ascensiones completadas", _miles(em.ascensiones_total), MenuTheme.GOLD))
 
 
 # Cuántos logros están en su nivel máximo (todos los tiers reclamados).
@@ -477,30 +512,41 @@ func _miles(n: int) -> String:
 # SECCION HISTORIAL.
 # ------------------------------------------------------------
 func _make_history_section() -> Control:
+	var scroll := ScrollContainer.new()
+	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	scroll.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+
 	var v := VBoxContainer.new()
 	v.add_theme_constant_override("separation", 8)
 	v.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	scroll.add_child(v)
 
-	var runs := [
-		{"asc": "Ascension 89", "tipo": "best",   "kills": "1,204", "ecos": "+312", "frags": "+84", "tiempo": "48m", "causa": "Limite de oleadas alcanzado", "fecha": "Hace 3 dias", "won": true},
-		{"asc": "Ascension 47", "tipo": "normal", "kills": "312",   "ecos": "+84",  "frags": "+22", "tiempo": "31m", "causa": "Nucleo destruido por Tanque", "fecha": "Ayer", "won": false},
-		{"asc": "Ascension 12", "tipo": "lost",   "kills": "88",    "ecos": "+20",  "frags": "+6",  "tiempo": "11m", "causa": "Desbordamiento de Kamikazes", "fecha": "Hace 3 dias", "won": false},
-	]
-	for r in runs:
-		v.add_child(_make_run_card(r))
-	return v
+	var runs: Array = EstadisticasManager.historial_runs
+	if runs.is_empty():
+		var lbl := Label.new()
+		lbl.text = "Aún no hay partidas registradas.\nJuega tu primera partida para ver el historial aquí."
+		lbl.add_theme_font_size_override("font_size", 14)
+		lbl.add_theme_color_override("font_color", MenuTheme.TEXT_MUTED)
+		lbl.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		v.add_child(lbl)
+	else:
+		for r in runs:
+			v.add_child(_make_run_card(r))
+
+	return scroll
 
 
 func _make_run_card(r: Dictionary) -> Control:
+	var asc_num: int = r.get("asc", 0)
+	var es_record: bool = r.get("record", false)
+	var causa: String = r.get("causa", "")
+
 	var accent := MenuTheme.CYAN
 	var badge_txt := "PARTIDA"
-	match r["tipo"]:
-		"best":
-			accent = MenuTheme.GOLD
-			badge_txt = "RECORD"
-		"lost":
-			accent = MenuTheme.RED
-			badge_txt = "DERROTA"
+	if es_record:
+		accent = MenuTheme.GOLD
+		badge_txt = "RECORD"
 
 	var panel := PanelContainer.new()
 	panel.add_theme_stylebox_override("panel", MenuTheme.make_card_style(MenuTheme.BORDER_DIM))
@@ -510,43 +556,72 @@ func _make_run_card(r: Dictionary) -> Control:
 
 	# Top: ascension + badge.
 	var top := HBoxContainer.new()
-	var asc := Label.new()
-	asc.text = r["asc"]
-	asc.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	asc.add_theme_font_size_override("font_size", 18)
-	asc.add_theme_color_override("font_color", accent if r["tipo"] == "best" else MenuTheme.TEXT_PRIMARY)
-	_apply_hud_font(asc)
-	top.add_child(asc)
+	var asc_lbl := Label.new()
+	asc_lbl.text = "Ascensión %d" % asc_num
+	asc_lbl.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	asc_lbl.add_theme_font_size_override("font_size", 18)
+	asc_lbl.add_theme_color_override("font_color", accent if es_record else MenuTheme.TEXT_PRIMARY)
+	_apply_hud_font(asc_lbl)
+	top.add_child(asc_lbl)
 	top.add_child(_make_pill(badge_txt, accent))
 	v.add_child(top)
 
 	# Stats row.
+	var kills_str := _miles(r.get("kills", 0))
+	var ecos_val: int = r.get("ecos", 0)
+	var ecos_str := ("+%s" % _miles(ecos_val)) if ecos_val > 0 else "0"
 	var stats := HBoxContainer.new()
 	stats.alignment = BoxContainer.ALIGNMENT_CENTER
 	stats.add_theme_constant_override("separation", 0)
-	stats.add_child(_make_run_stat(r["kills"], "KILLS", MenuTheme.TEXT_PRIMARY))
-	stats.add_child(_make_run_stat(r["ecos"] + " " + MenuTheme.SYM_ECOS, "ECOS", MenuTheme.CYAN))
-	stats.add_child(_make_run_stat(r["frags"] + " " + MenuTheme.SYM_FRAG, "FRAGS", MenuTheme.VIOLET))
-	stats.add_child(_make_run_stat(r["tiempo"], "TIEMPO", MenuTheme.TEXT_PRIMARY))
+	stats.add_child(_make_run_stat(kills_str, "BAJAS", MenuTheme.TEXT_PRIMARY))
+	stats.add_child(_make_run_stat(ecos_str + " " + MenuTheme.SYM_ECOS, "ECOS", MenuTheme.CYAN))
 	v.add_child(stats)
 
-	# Causa + fecha.
-	var cause := HBoxContainer.new()
-	cause.add_theme_constant_override("separation", 6)
-	var cause_txt := Label.new()
-	cause_txt.text = r["causa"]
-	cause_txt.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	cause_txt.add_theme_font_size_override("font_size", 11)
-	cause_txt.add_theme_color_override("font_color", MenuTheme.TEXT_MUTED)
-	var fecha := Label.new()
-	fecha.text = r["fecha"]
-	fecha.add_theme_font_size_override("font_size", 11)
-	fecha.add_theme_color_override("font_color", Color(MenuTheme.TEXT_MUTED.r, MenuTheme.TEXT_MUTED.g, MenuTheme.TEXT_MUTED.b, 0.6))
-	cause.add_child(cause_txt)
-	cause.add_child(fecha)
-	v.add_child(cause)
+	# Causa + tiempo relativo.
+	var bottom := HBoxContainer.new()
+	bottom.add_theme_constant_override("separation", 6)
+	var causa_lbl := Label.new()
+	causa_lbl.text = _causa_texto(causa)
+	causa_lbl.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	causa_lbl.add_theme_font_size_override("font_size", 11)
+	causa_lbl.add_theme_color_override("font_color", MenuTheme.TEXT_MUTED)
+	var fecha_lbl := Label.new()
+	fecha_lbl.text = _tiempo_relativo(r.get("ts", 0))
+	fecha_lbl.add_theme_font_size_override("font_size", 11)
+	fecha_lbl.add_theme_color_override("font_color", Color(MenuTheme.TEXT_MUTED.r, MenuTheme.TEXT_MUTED.g, MenuTheme.TEXT_MUTED.b, 0.6))
+	bottom.add_child(causa_lbl)
+	bottom.add_child(fecha_lbl)
+	v.add_child(bottom)
 
 	return panel
+
+
+static func _causa_texto(causa: String) -> String:
+	match causa:
+		"kamikaze":  return "Destruido por Kamikaze"
+		"tanque":    return "Destruido por Tanque"
+		"sniper":    return "Destruido por Sniper"
+		"jefe":      return "Destruido por Jefe"
+		"commander": return "Destruido por Commander"
+		"basico":    return "Destruido por Espectros"
+		"abandono":  return "Partida abandonada"
+		_:           return "Nexo destruido"
+
+
+static func _tiempo_relativo(ts: int) -> String:
+	if ts <= 0:
+		return ""
+	var ahora := int(Time.get_unix_time_from_system())
+	var diff := ahora - ts
+	if diff < 60:
+		return "Ahora"
+	if diff < 3600:
+		return "Hace %dm" % int(diff / 60)
+	if diff < 86400:
+		return "Hace %dh" % int(diff / 3600)
+	if diff < 604800:
+		return "Hace %dd" % int(diff / 86400)
+	return "Hace %ds" % int(diff / 604800)
 
 
 func _make_run_stat(value: String, label: String, color: Color) -> Control:
@@ -575,9 +650,25 @@ func _make_run_stat(value: String, label: String, color: Color) -> Control:
 # Helpers.
 # ------------------------------------------------------------
 func on_show() -> void:
+	_refresh_hero()
 	_refresh_stats()
 	_refresh_logros()
 	_update_tab_colors()
+
+
+func _refresh_hero() -> void:
+	var em := EstadisticasManager
+	var rango := em.get_rango()
+	var prog := em.get_progreso_rango()
+	if _hero_badge_lbl:
+		_hero_badge_lbl.text = rango["nombre"]
+	if _hero_rank_pts:
+		var sig_txt := ("Asc. %d" % rango["siguiente"]) if rango["siguiente"] >= 0 else "MÁXIMO"
+		_hero_rank_pts.text = "Asc. %d → %s" % [em.mejor_ascension, sig_txt]
+	if _hero_xp_bar:
+		_hero_xp_bar.value = prog
+	if _hero_xp_lbl:
+		_hero_xp_lbl.text = "%d%% rango" % int(prog * 100.0)
 
 
 func _toast(msg: String) -> void:
