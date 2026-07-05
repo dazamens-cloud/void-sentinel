@@ -502,6 +502,7 @@ func mostrar_game_over(causa: String) -> void:
 	btn_reiniciar.process_mode = Node.PROCESS_MODE_ALWAYS
 	btn_reiniciar.pressed.connect(func():
 		get_tree().paused = false
+		Economia.iniciar_partida()
 		get_tree().change_scene_to_file("res://escenas/mundo.tscn")
 	)
 	add_child(btn_reiniciar)
