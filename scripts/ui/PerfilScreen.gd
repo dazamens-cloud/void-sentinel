@@ -512,14 +512,9 @@ func _miles(n: int) -> String:
 # SECCION HISTORIAL.
 # ------------------------------------------------------------
 func _make_history_section() -> Control:
-	var scroll := ScrollContainer.new()
-	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
-	scroll.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-
 	var v := VBoxContainer.new()
 	v.add_theme_constant_override("separation", 8)
 	v.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	scroll.add_child(v)
 
 	var runs: Array = EstadisticasManager.historial_runs
 	if runs.is_empty():
@@ -534,7 +529,7 @@ func _make_history_section() -> Control:
 		for r in runs:
 			v.add_child(_make_run_card(r))
 
-	return scroll
+	return v
 
 
 func _make_run_card(r: Dictionary) -> Control:
