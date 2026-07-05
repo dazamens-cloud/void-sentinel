@@ -8,7 +8,8 @@
 ## Decisiones tomadas
 - **Gacha: APARCADO.** No se implementa cartas/módulos por ahora (alta complejidad y
   mantenimiento). Posible v3.0 si el juego funciona. Monetización vía IAP + Ads.
-- **Plataforma objetivo:** Android (APK exportable, vertical 720×1280). Build actual: `v0.3`.
+- **Plataforma objetivo:** Android (APK exportable, vertical 720×1280). Build actual: `v1.0.0`.
+- **APKs builds:** se guardan en `D:\proyectos godot\releases\` (ruta de export actualizada).
 
 ## Estado actual (hecho ✅)
 Núcleo jugable completo: oleadas/ascensiones, escalado de enemigos centralizado,
@@ -18,6 +19,17 @@ permanente (ecos/fragmentos), logros + estadísticas del Perfil, formato de núm
 grandes, juice (partículas + screen shake), menú de pausa, **reanudar partida
 (checkpoint)**, UI escalada para móvil (notch + fuentes), modo prueba para testear
 endgame.
+
+**Preparación v1.0 completada (2026-07-05):**
+- HomeScreen muestra datos reales (última run + stats acumuladas en tiempo real)
+- EstadisticasManager trackea `ultima_ascension`, `ultimo_kills`, `ultimos_ecos`, `ultima_causa`
+- EconomiaEcos snapshot `ecos_inicio_partida` para calcular ecos ganados por run
+- export_presets.cfg: `com.dazamens.voidsentinel`, v1.0.0 (code 10), immersive + edge_to_edge
+- project.godot: nombre del juego corregido a "Void Sentinel"
+- APKs de builds previos movidos a `D:\proyectos godot\releases\`
+- `escenas rotas/` (9 .tscn obsoletas) eliminados
+- cerebro/Void-Sentinel.md actualizado con arquitectura completa
+- 0 print() de debug en los 43 scripts de producción
 
 ---
 
