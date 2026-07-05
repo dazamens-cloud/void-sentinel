@@ -360,7 +360,6 @@ func _chequear_completadas() -> void:
 		_activas.erase(inv)
 		var id: String = inv["id"]
 		_niveles[id] = mini(get_nivel(id) + 1, get_max_nivel(id))
-		print("🔬 Investigación completada: ", INVESTIGACIONES[id]["nombre"], " → nivel ", _niveles[id])
 		investigacion_completada.emit(id, _niveles[id])
 		_reaplicar_efecto(id)
 	_guardar()

@@ -40,7 +40,6 @@ func guardar() -> void:
 	if f:
 		f.store_var(datos)
 		f.close()
-		print("💾 Run guardada (Asc ", Economia.numero_ascension, ")")
 
 
 func borrar() -> void:
@@ -85,7 +84,6 @@ func aplicar() -> void:
 	NexusStats.salud_cambiada.emit(NexusStats.salud_actual, NexusStats.get_salud())
 	MejoraManager.mejoras_actualizadas.emit()
 	NexusStats.stats_actualizadas.emit()
-	print("▶️ Partida reanudada (Asc ", Economia.numero_ascension, ")")
 
 	# Consumir el guardado: la run ya está activa de nuevo.
 	borrar()

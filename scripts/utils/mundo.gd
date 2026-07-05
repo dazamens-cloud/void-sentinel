@@ -57,7 +57,6 @@ func _unhandled_input(event: InputEvent) -> void:
 func _conectar_economia() -> void:
 	if Economia.has_signal("juego_terminado"):
 		Economia.juego_terminado.connect(_on_juego_terminado)
-		print("🌍 Mundo: Conectada señal juego_terminado de Economia")
 
 func _conectar_gestor_oleadas() -> void:
 	if not is_instance_valid(gestor_oleadas): return
@@ -67,39 +66,33 @@ func _conectar_gestor_oleadas() -> void:
 		gestor_oleadas.ascension_completada.connect(_on_ascension_completada)
 	if gestor_oleadas.has_signal("pausa_entre_ascensiones"):
 		gestor_oleadas.pausa_entre_ascensiones.connect(_on_pausa_entre_ascensiones)
-	print("🌍 Mundo: Conectadas señales de AscensionManager")
 
 func _conectar_nucleo() -> void:
-	if not is_instance_valid(nucleo): return
-	print("🌍 Mundo: Nexus encontrado")
+	pass
 
 func _conectar_dron() -> void:
-	if not is_instance_valid(dron): return
-	print("🌍 Mundo: Dron encontrado")
+	pass
 
 func _configurar_camara() -> void:
 	if not is_instance_valid(camara): return
 	if is_instance_valid(nucleo):
 		camara.global_position = nucleo.global_position
 	camara.make_current()
-	# 🎥 Registrar la cámara en FX para el screen shake de esta partida.
 	FX.registrar_camara(camara)
 
 # ═══════════════════════════════════════════════════
 # HANDLERS
 # ═══════════════════════════════════════════════════
-func _on_ascension_iniciada(numero: int) -> void:
-	print("🌍 Mundo: Ascensión ", numero, " iniciada")
+func _on_ascension_iniciada(_numero: int) -> void:
+	pass
 
-func _on_ascension_completada(numero: int) -> void:
-	print("🌍 Mundo: Ascensión ", numero, " completada")
+func _on_ascension_completada(_numero: int) -> void:
+	pass
 
-func _on_pausa_entre_ascensiones(segundos: float) -> void:
-	print("🌍 Mundo: Pausa de ", segundos, " segundos")
+func _on_pausa_entre_ascensiones(_segundos: float) -> void:
+	pass
 
 func _on_juego_terminado(causa: String) -> void:
-	print("🌍 Mundo: JUEGO TERMINADO - ", causa)
 	get_tree().paused = true
-	# ✅ Siempre mostrar Game Over — el hud siempre existe
 	if hud and hud.has_method("mostrar_game_over"):
 		hud.mostrar_game_over(causa)

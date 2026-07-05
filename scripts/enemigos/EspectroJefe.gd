@@ -29,7 +29,6 @@ func _ready() -> void:
 	await get_tree().process_frame
 	nexus = get_tree().get_first_node_in_group("nexus")
 	salud_actual = salud_maxima
-	print("👾 JEFE aparecido! Salud: ", salud_actual)
 
 func configurar(datos: Dictionary) -> void:
 	salud_maxima = datos.get("hp", 1000.0)

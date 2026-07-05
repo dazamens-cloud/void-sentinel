@@ -80,7 +80,6 @@ func _iniciar_ascension() -> void:
 	_total_oleada = espectros_a_spawnear
 	temporizador_spawn = 0.0
 	temporizador_ascension = DURACION_ASCENSION
-	print("🚀 Ascensión ", Economia.numero_ascension, " iniciada")
 
 	# ✅ Evaluar aparición/reingreso del Commander
 	_evaluar_commander()
@@ -94,7 +93,6 @@ func _terminar_ascension() -> void:
 	espectros_a_spawnear = 0
 	ascension_completada.emit(Economia.numero_ascension)
 	pausa_entre_ascensiones.emit(temporizador_pausa)
-	print("⏸️ Ascensión ", Economia.numero_ascension, " completada. Pausa de ", PAUSA_ENTRE_ASCENSIONES, "s")
 
 func get_tiempo_restante() -> float:
 	return temporizador_ascension if en_combate else 0.0
@@ -178,7 +176,6 @@ func _elegir_tipo_enemigo() -> PackedScene:
 	if ascension % 15 == 0 and ascension > 0 and not jefe_generado_esta_ascension:
 		if escena_espectro_jefe:
 			jefe_generado_esta_ascension = true
-			print("👾 JEFE generado en ascensión ", ascension, " (único)")
 			return escena_espectro_jefe
 
 	if ascension >= 10 and escena_espectro_sniper and randf() < 0.06:
@@ -212,27 +209,22 @@ func _evaluar_commander() -> void:
 		_spawn_commander(hp_reingreso)
 		commander_escapo = false
 		commander_reaparicion_en_ascension = -1
-		print("👾 COMMANDER REGRESA con HP ", snapped(hp_reingreso, 0.1))
 		return
 
 	# Commander nuevo cada 50 ascensiones
 	if asc > 0 and asc % 50 == 0 and not commander_generado_esta_ascension:
 		var hp_nuevo := EscaladoEnemigos.vida("commander", asc)
 		_spawn_commander(hp_nuevo)
-		print("👾 COMMANDER NUEVO (Asc ", asc, ") HP ", snapped(hp_nuevo, 0.1))
 
 ## 🧪 Fuerza la aparición del Commander al instante (modo prueba).
 func forzar_commander() -> void:
 	if escena_espectro_comander == null:
-		print("🧪 forzar_commander: no hay escena de Commander asignada")
 		return
 	if _hay_commander_activo():
-		print("🧪 forzar_commander: ya hay un Commander activo")
 		return
 	var asc: int = max(Economia.numero_ascension, 1)
 	var hp := EscaladoEnemigos.vida("commander", asc)
 	_spawn_commander(hp)
-	print("🧪 forzar_commander: Commander invocado (Asc ", asc, ") HP ", snapped(hp, 0.1))
 
 func _spawn_commander(hp: float) -> void:
 	if escena_espectro_comander == null:
@@ -284,7 +276,6 @@ func _on_commander_escapo_real() -> void:
 	commander_reaparicion_en_ascension = Economia.numero_ascension + randi_range(10, 20)
 	escena_espectro_comander_ref = null
 	_commander_activo = null  # ✅ Limpiar caché
-	print("🚀 Commander escapó. Regresará en Asc ", commander_reaparicion_en_ascension)
 
 func _hay_commander_activo() -> bool:
 	# ✅ Usar caché en lugar de O(n) get_nodes_in_group cada vez
@@ -308,7 +299,6 @@ func _obtener_intervalo_spawn() -> float:
 	return base * randf_range(0.85, 1.15)
 
 func _on_juego_terminado(_causa: String) -> void:
-	print("🛑 GAME OVER - Deteniendo todo...")
 	en_combate = false
 	temporizador_pausa = 0.0
 	temporizador_ascension = 0.0

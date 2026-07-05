@@ -38,7 +38,6 @@ func _aplicar_visual_especial() -> void:
 	
 	# Reducir velocidad para que sea visible
 	velocidad_especial = 200.0  # Más lento que normal
-	print("✨ Proyectil especial activado (Dorado, 1.5×)")
 
 func _physics_process(delta: float) -> void:
 	if es_especial and not _visual_especial_aplicado:

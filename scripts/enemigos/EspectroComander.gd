@@ -53,7 +53,6 @@ func _ready() -> void:
 	salud_actual = salud_maxima
 	if nexus:
 		angulo_actual = (global_position - nexus.global_position).angle()
-	print("👾 Commander aparecido!")
 
 	# ✅ Auto-registro en el sistema de disparos especiales (ya no hay autoload CommanderManager)
 	var sds = get_node_or_null("/root/Sistemadisparosespeciales")
@@ -286,7 +285,6 @@ func _destruir() -> void:
 func _escapar() -> void:
 	if esta_destruido: return
 
-	print("🚀 COMMANDER ESCAPA!")
 	escapando = true
 	commander_escapo.emit()
 	set_physics_process(false)

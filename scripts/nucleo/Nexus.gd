@@ -26,7 +26,7 @@ func _ready() -> void:
 	add_to_group("nexus")
 
 	if timer_disparo == null:
-		print("❌ ERROR: TimerAutoDisparo no encontrado en Nexus")
+		push_error("❌ ERROR: TimerAutoDisparo no encontrado en Nexus")
 		return
 
 	timer_disparo.timeout.connect(_disparar)
@@ -34,7 +34,6 @@ func _ready() -> void:
 	timer_disparo.wait_time = NexusStats.get_cadencia_timer()
 	timer_disparo.start()
 
-	print("✅ Nexus iniciado. Cadencia: ", timer_disparo.wait_time, "s")
 
 	await get_tree().process_frame
 	queue_redraw()
@@ -74,7 +73,6 @@ func _emitir_pulso() -> void:
 		# Lentitud temporal
 		if lentitud > 0.0 and e.has_method("aplicar_lentitud"):
 			e.aplicar_lentitud(lentitud, PULSO_LENTITUD_DURACION)
-	print("🌀 Pulso de Quartz emitido (r=", int(radio), ")")
 
 func _efecto_visual_pulso(radio: float) -> void:
 	var poligono := Polygon2D.new()
@@ -105,7 +103,7 @@ func _disparar() -> void:
 	if esta_destruido: return
 
 	if not escena_proyectil:
-		print("❌ ERROR: escena_proyectil no asignada en Nexus")
+		push_error("❌ ERROR: escena_proyectil no asignada en Nexus")
 		return
 
 	var espectros = get_tree().get_nodes_in_group("espectros")
@@ -183,7 +181,6 @@ func recibir_ataque(cantidad: float, tipo_atacante: String = "") -> void:
 	get_tree().current_scene.add_child(texto_dano)
 
 	if NexusStats.salud_actual <= 0.0:
-		print("💥 Nexus destruido!")
 		_destruir()
 
 func _destruir() -> void:
@@ -241,7 +238,6 @@ func _iniciar_drag_especial(posicion: Vector2) -> void:
 	var commanders = get_tree().get_nodes_in_group("commanders")
 	if commanders.size() > 0:
 		objetivo_especial = commanders[0]
-		print("🎯 Apuntando a Commander")
 	else:
 		disparando_especial = false
 
@@ -253,7 +249,6 @@ func _finalizar_drag_especial() -> void:
 	disparando_especial = false
 
 	if not Sistemadisparosespeciales.hay_disparos_disponibles():
-		print("❌ Sin disparos especiales")
 		objetivo_especial = null
 		return
 
@@ -265,7 +260,7 @@ func _finalizar_drag_especial() -> void:
 func _disparar_especial(objetivo: Node2D) -> void:
 	if esta_destruido or not objetivo or not is_instance_valid(objetivo): return
 	if not escena_proyectil:
-		print("❌ ERROR: escena_proyectil no asignada")
+		push_error("❌ ERROR: escena_proyectil no asignada")
 		return
 
 	var proyectil = escena_proyectil.instantiate()
@@ -281,6 +276,5 @@ func _disparar_especial(objetivo: Node2D) -> void:
 	if proyectil.get("es_especial") != null:
 		proyectil.es_especial = true
 
-	print("💥 DISPARO ESPECIAL lanzado")
 
 	Sistemadisparosespeciales.usar_disparo_especial()

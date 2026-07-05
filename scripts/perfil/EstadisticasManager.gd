@@ -17,6 +17,12 @@ var kills_total: int = 0
 var mejor_ascension: int = 0
 var partidas_jugadas: int = 0
 
+# ── Última run (para banner HomeScreen) ───────────────
+var ultima_ascension: int = 0
+var ultimo_kills: int = 0
+var ultimos_ecos: int = 0
+var ultima_causa: String = ""
+
 # ── Logros por niveles ───────────────────────────────
 # Cada logro mide un "stat" contra una lista de "tiers" (objetivo creciente
 # + recompensa creciente). El jugador reclama un tier cuando lo alcanza y
@@ -85,9 +91,14 @@ func _on_ascension_cambiada(numero: int) -> void:
 		estadisticas_actualizadas.emit()
 		logros_actualizados.emit()
 
-func _on_juego_terminado(_causa: String) -> void:
+func _on_juego_terminado(causa: String) -> void:
 	partidas_jugadas += 1
-	guardar()  # persistimos al cerrar la partida (incluye kills acumulados)
+	# Guardar datos de la última run para el banner del HomeScreen
+	ultima_ascension = Economia.numero_ascension
+	ultimo_kills     = Economia.espectros_eliminados
+	ultimos_ecos     = Economia.ecos - Economia.ecos_inicio_partida
+	ultima_causa     = causa
+	guardar()
 	estadisticas_actualizadas.emit()
 	logros_actualizados.emit()
 
@@ -174,6 +185,10 @@ func guardar() -> void:
 		"mejor_ascension": mejor_ascension,
 		"partidas_jugadas": partidas_jugadas,
 		"reclamados": _tier_reclamado,
+		"ultima_ascension": ultima_ascension,
+		"ultimo_kills": ultimo_kills,
+		"ultimos_ecos": ultimos_ecos,
+		"ultima_causa": ultima_causa,
 	}
 	var file = FileAccess.open("user://estadisticas.save", FileAccess.WRITE)
 	if file:
@@ -193,6 +208,10 @@ func cargar() -> void:
 	kills_total = datos.get("kills_total", 0)
 	mejor_ascension = datos.get("mejor_ascension", 0)
 	partidas_jugadas = datos.get("partidas_jugadas", 0)
+	ultima_ascension = datos.get("ultima_ascension", 0)
+	ultimo_kills     = datos.get("ultimo_kills", 0)
+	ultimos_ecos     = datos.get("ultimos_ecos", 0)
+	ultima_causa     = datos.get("ultima_causa", "")
 	var rec = datos.get("reclamados", {})
 	for id in LOGROS.keys():
 		_tier_reclamado[id] = rec.get(id, -1)

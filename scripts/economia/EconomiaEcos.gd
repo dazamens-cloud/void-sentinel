@@ -18,6 +18,8 @@ var fragmentos: int = 0
 var numero_ascension: int = 0
 var espectros_eliminados: int = 0
 var energia_total_partida: float = 0.0
+# Snapshot de ecos al iniciar la run (para calcular ecos ganados en esa run).
+var ecos_inicio_partida: int = 0
 
 # ═══════════════════════════════════════════════════
 # SISTEMA DE INTERÉS (DOC_B)
@@ -48,6 +50,7 @@ func iniciar_partida() -> void:
 	numero_ascension = 0
 	espectros_eliminados = 0
 	energia_total_partida = 0.0
+	ecos_inicio_partida = ecos  # snapshot para calcular ecos ganados al final
 	# ✅ Resetear interés al reiniciar (ecos y fragmentos NO se resetean)
 	tasa_interes = TASA_INTERES_BASE
 	cap_interes = CAP_INTERES_BASE
@@ -92,7 +95,6 @@ func aplicar_interes() -> void:
 	var interes_ganado = calcular_interes()
 	if interes_ganado > 0.5:  # Solo si es significativo
 		añadir_energia(interes_ganado)
-		print("💰 Interés: +", int(interes_ganado), "⚡ (", int(tasa_interes * 100), "% de ", int(energia - interes_ganado), ")")
 
 func mejorar_tasa_interes(nueva_tasa: float) -> void:
 	tasa_interes = nueva_tasa

@@ -587,7 +587,7 @@ func on_show() -> void:
 
 
 func _toast(msg: String) -> void:
-	print("[Tienda] ", msg)
+	push_warning("[Tienda] ", msg)
 
 
 func _format_number(n: int) -> String:

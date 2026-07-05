@@ -38,7 +38,6 @@ var barra_descarga: ProgressBar
 
 # ═══════════════════════════════════════════════════════
 func _ready() -> void:
-	print("🤖 Dron: Inicializando...")
 	add_to_group("drones")
 	
 	barra_descarga = ProgressBar.new()
@@ -51,10 +50,8 @@ func _ready() -> void:
 	
 	await get_tree().process_frame
 	_nexus = get_tree().current_scene.find_child("Nexus", true, false)
-	if _nexus:
-		print("🤖 Dron: Nexus encontrado")
-	else:
-		print("🤖 Dron: ERROR - Nexus no encontrado")
+	if not _nexus:
+		push_warning("Dron: Nexus no encontrado en la escena")
 	
 	_actualizar_capacidad()
 	Economia.ascension_cambiada.connect(_on_ascension_cambiada)
@@ -120,7 +117,6 @@ func _atraer_fragmentos_cercanos(delta: float) -> void:
 func _recoger_fragmento(frag: Node) -> void:
 	fragmentos_en_dron += 1
 	frag.queue_free()
-	print("🤖 Dron: Fragmento recogido. Total: ", fragmentos_en_dron, "/", capacidad_actual)
 
 	if explosion_escena:
 		var exp: Node = explosion_escena.instantiate()
@@ -132,13 +128,11 @@ func _recoger_fragmento(frag: Node) -> void:
 	fragmentos_actualizados.emit(fragmentos_en_dron, capacidad_actual)
 
 	if fragmentos_en_dron >= capacidad_actual:
-		print("🤖 Dron: ¡Capacidad máxima alcanzada! Activando láser 360°")
 		_activar_laser_360()
 		estado = Estado.YENDO_NEXUS
 
 # ═══════════════════════════════════════════════════════
 func _activar_laser_360() -> void:
-	print("🤖 Dron: ACTIVANDO LÁSER 360°")
 	# ✅ CORREGIDO: Usar NexusStats en lugar de Economia
 	var danio: int = int(NexusStats.get_danio() * 5.0)
 
@@ -194,14 +188,12 @@ func _tick_recarga(delta: float) -> void:
 	_tiempo_recarga -= delta
 	depositando_progreso.emit(max(0.0, _tiempo_recarga / TIEMPO_RECARGA))
 	if _tiempo_recarga <= 0.0:
-		print("🤖 Dron: Recarga completada, volviendo a vagar")
 		estado = Estado.VAGANDO
 		depositando_progreso.emit(0.0)
 
 func _depositar() -> void:
 	var ganancia: int = fragmentos_en_dron * 10
 	Economia.añadir_energia(ganancia)
-	print("🤖 Dron: DEPOSITANDO ", fragmentos_en_dron, " fragmentos → +", ganancia, " ⚡")
 	var cantidad_depositada = fragmentos_en_dron
 	fragmentos_en_dron = 0
 	Economia.añadir_fragmentos(cantidad_depositada)
@@ -224,7 +216,6 @@ func _elegir_destino_vago() -> void:
 func _actualizar_capacidad() -> void:
 	capacidad_actual = CAPACIDAD_BASE + (Economia.numero_ascension / 3)
 	fragmentos_actualizados.emit(fragmentos_en_dron, capacidad_actual)
-	print("🤖 Dron: Capacidad actualizada a ", capacidad_actual)
 
 func _actualizar_barra_descarga(pct: float) -> void:
 	if barra_descarga:
@@ -236,7 +227,6 @@ func _on_juego_terminado(_causa: String) -> void:
 	if _juego_terminado_ya_emitido:
 		return
 	_juego_terminado_ya_emitido = true
-	print("🤖 Dron: JUEGO TERMINADO - Explosión lenta")
 	estado = Estado.EN_RECARGA
 	set_physics_process(false)
 	var tween = create_tween()

@@ -50,10 +50,6 @@ var _menu_pausa: Control = null
 @onready var lbl_fragmentos: Label = $PanelSuperior/VBoxContainer/LblFragmentos
 
 func _ready() -> void:
-	print("🖥️ Interfaz: _ready() iniciado")
-	# ✅ #10: la Interfaz procesa durante el juego (PAUSABLE) para que la barra
-	# de ascensión avance. El overlay de Game Over usa su propio contenedor
-	# PROCESS_MODE_ALWAYS para seguir respondiendo con el árbol en pausa.
 	process_mode = Node.PROCESS_MODE_PAUSABLE
 	_calcular_safe_area()
 	_construir_interfaz()
@@ -83,19 +79,17 @@ func _ready() -> void:
 	_actualizar_fragmentos()
 	
 	await get_tree().process_frame
-	
+
 	var dron = get_tree().current_scene.find_child("Dron", true, false)
 	if dron and dron.has_signal("fragmentos_actualizados"):
 		dron.fragmentos_actualizados.connect(actualizar_barra_dron)
-		print("🖥️ Interfaz: Conectada señal del Dron")
-	
+
 	_asc_manager = get_tree().current_scene.find_child("AscensionManager", true, false)
 	if _asc_manager:
 		if _asc_manager.has_signal("ascension_iniciada"):
 			_asc_manager.ascension_iniciada.connect(_on_ascension_iniciada)
 		if _asc_manager.has_signal("pausa_entre_ascensiones"):
 			_asc_manager.pausa_entre_ascensiones.connect(_on_pausa_iniciada)
-		print("🖥️ Interfaz: Conectadas señales de AscensionManager")
 
 func _process(_delta: float) -> void:
 	if barra_ascension and barra_ascension.visible:
@@ -106,7 +100,6 @@ func _process(_delta: float) -> void:
 			barra_ascension.value = clamp(progreso, 0, 100)
 
 func _construir_interfaz() -> void:
-	print("🖥️ Interfaz: Construyendo UI...")
 	
 	# Contenedor base — ignora input para no bloquear nada
 	raiz = Control.new()
@@ -124,7 +117,7 @@ func _construir_interfaz() -> void:
 	barra_dron.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	barra_dron.add_theme_color_override("font_color", Color.CYAN)
 	raiz.add_child(barra_dron)
-	
+
 	# Label texto barra dron
 	label_dron = Label.new()
 	label_dron.position = Vector2(20, 1135 - _margen_bottom)
@@ -143,7 +136,6 @@ func _construir_interfaz() -> void:
 	barra_ascension.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	raiz.add_child(barra_ascension)
 	
-	print("🖥️ Interfaz: Barras creadas")
 
 	# ── UI del Commander ────────────────────────────────
 	lbl_commander_disparos = Label.new()
@@ -192,7 +184,7 @@ func _construir_interfaz() -> void:
 	# hermano de esta interfaz) para poder ocultarlo en el game over.
 	panel_mejoras = get_parent().get_node_or_null("CapaUI/PanelMejoras")
 	if panel_mejoras == null:
-		print("⚠️ Interfaz: PanelMejoras no encontrado en CapaUI")
+		push_warning("Interfaz: PanelMejoras no encontrado en CapaUI")
 
 	_crear_boton_pausa()
 
@@ -420,7 +412,6 @@ func mostrar_game_over(causa: String) -> void:
 	if _game_over_mostrado:
 		return
 	_game_over_mostrado = true
-	print("🖥️ Interfaz: GAME OVER - ", causa)
 
 	# Guardar progreso antes de mostrar pantalla
 	Economia.guardar_datos()

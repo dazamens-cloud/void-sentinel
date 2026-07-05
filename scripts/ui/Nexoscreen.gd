@@ -465,7 +465,7 @@ func _refresh_card(id: String) -> void:
 # ------------------------------------------------------------
 func _on_buy(id: String) -> void:
 	if _mm == null or _eco == null:
-		print("[Nexo] Autoloads no disponibles, ignorando compra")
+		push_warning("[Nexo] Autoloads no disponibles, ignorando compra")
 		return
 	if not _mm.mejoras.has(id):
 		return
@@ -476,24 +476,24 @@ func _on_buy(id: String) -> void:
 	if nivel >= maxn:
 		return
 	if data.get("bloqueado", false):
-		print("[Nexo] Mejora bloqueada: ", id)
+		push_warning("[Nexo] Mejora bloqueada: ", id)
 		return
 
 	var coste: int = _mm.get_coste_nexo(id)
 	if _eco.ecos < coste:
-		print("[Nexo] Ecos insuficientes (necesarios ", coste, ", tienes ", _eco.ecos, ")")
+		push_warning("[Nexo] Ecos insuficientes (necesarios ", coste, ", tienes ", _eco.ecos, ")")
 		return
 
 	# Pagar en Ecos. Si por alguna razon falla (race condition), abortar.
 	if not _eco.gastar_ecos(coste):
-		print("[Nexo] gastar_ecos fallo")
+		push_warning("[Nexo] gastar_ecos fallo")
 		return
 
 	# Subir nivel en MejoraManager (NO cobra, asume que ya pagamos).
 	_mm.subir_nivel_nexo(id)
 	# Las senales recursos_actualizados y mejoras_actualizadas haran el
 	# refresco automatico del label de Ecos y de la card.
-	print("[Nexo] Comprada: ", id, " (-", coste, " ecos)")
+	push_warning("[Nexo] Comprada: ", id, " (-", coste, " ecos)")
 
 
 # ------------------------------------------------------------

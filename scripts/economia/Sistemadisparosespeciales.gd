@@ -52,7 +52,6 @@ func registrar_commander(commander: Node) -> void:
 	and not commander.commander_escapo.is_connected(_on_commander_escapo):
 		commander.commander_escapo.connect(_on_commander_escapo)
 
-	print("⚔️ Commander activo. Disparos: ", disparos_disponibles)
 	commander_apareci.emit()
 	disparos_actualizados.emit(disparos_disponibles)
 
@@ -60,7 +59,6 @@ func _on_commander_muerto() -> void:
 	commander_activo = false
 	disparos_disponibles = 0
 	kills_desde_ultimo_disparo = 0
-	print("✨ Commander derrotado. Disparos reseteados.")
 	commander_finalizado.emit(false)
 	disparos_actualizados.emit(disparos_disponibles)
 
@@ -68,7 +66,6 @@ func _on_commander_escapo() -> void:
 	commander_activo = false
 	kills_desde_ultimo_disparo = 0
 	# disparos_disponibles se MANTIENE (se conservan hasta la próxima aparición)
-	print("🚀 Commander escapó. Disparos conservados: ", disparos_disponibles)
 	commander_finalizado.emit(true)
 	disparos_actualizados.emit(disparos_disponibles)
 
@@ -83,7 +80,6 @@ func registrar_kill_enemigo() -> void:
 	kills_desde_ultimo_disparo += 1
 	if kills_desde_ultimo_disparo % _kills_por_disparo() == 0:
 		disparos_disponibles = mini(disparos_disponibles + 1, CAP_MAXIMO_DISPAROS)
-		print("🎯 +1 DISPARO ESPECIAL (Total: ", disparos_disponibles, ")")
 		nuevo_disparo_ganado.emit()
 		disparos_actualizados.emit(disparos_disponibles)
 
@@ -94,11 +90,9 @@ func registrar_kill_enemigo() -> void:
 func usar_disparo_especial() -> bool:
 	if disparos_disponibles > 0:
 		disparos_disponibles -= 1
-		print("💥 DISPARO ESPECIAL USADO! (Restan: ", disparos_disponibles, ")")
 		disparo_especial_usado.emit()
 		disparos_actualizados.emit(disparos_disponibles)
 		return true
-	print("❌ Sin disparos especiales disponibles")
 	return false
 
 func hay_disparos_disponibles() -> bool:

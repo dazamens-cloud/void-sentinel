@@ -415,7 +415,7 @@ func _leer_frag() -> int:
 
 
 func _toast(msg: String) -> void:
-	print("[Forja] ", msg)
+	push_warning("[Forja] ", msg)
 
 
 # Formatea un float quitando decimales innecesarios (18.0 -> "18", 1.5 -> "1.5").

@@ -581,7 +581,7 @@ func on_show() -> void:
 
 
 func _toast(msg: String) -> void:
-	print("[Perfil] ", msg)
+	push_warning("[Perfil] ", msg)
 
 
 func _apply_hud_font(node) -> void:

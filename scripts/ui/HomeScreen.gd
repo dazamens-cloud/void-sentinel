@@ -23,6 +23,18 @@ signal nav_requested(screen_name: String)
 var _lbl_ecos: Label
 var _lbl_frag: Label
 
+# Stats strip — se guardan refs para refrescar en on_show().
+var _lbl_stat_record: Label
+var _lbl_stat_enemies: Label
+var _lbl_stat_runs: Label
+var _lbl_stat_asc: Label
+
+# Última run — refs para refrescar.
+var _lbl_run_asc: Label
+var _lbl_run_kills: Label
+var _lbl_run_ecos: Label
+var _lbl_run_cause: Label
+
 
 func _ready() -> void:
 	_build()
@@ -162,7 +174,7 @@ func _make_hero() -> Control:
 	v.add_child(title)
 
 	var sub := Label.new()
-	sub.text = "NEXO ACTIVO  -  NIVEL 12"
+	sub.text = "NEXO ACTIVO"
 	sub.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	sub.add_theme_font_size_override("font_size", 17)
 	sub.add_theme_color_override("font_color", MenuTheme.TEXT_MUTED)
@@ -184,29 +196,37 @@ func _make_stats_strip() -> Control:
 	row.add_theme_constant_override("separation", 0)
 	panel.add_child(row)
 
-	row.add_child(_make_stat("47", "ULT. ASCENSION", MenuTheme.GOLD))
+	_lbl_stat_asc     = _make_value_label("--", MenuTheme.GOLD)
+	_lbl_stat_record  = _make_value_label("--", MenuTheme.CYAN)
+	_lbl_stat_enemies = _make_value_label("--", MenuTheme.GREEN)
+	_lbl_stat_runs    = _make_value_label("--", MenuTheme.VIOLET)
+
+	row.add_child(_make_stat_with_label(_lbl_stat_asc,     "ULT. ASC",  MenuTheme.GOLD))
 	row.add_child(_make_vsep())
-	row.add_child(_make_stat("2,341", "ENEMIGOS", MenuTheme.GREEN))
+	row.add_child(_make_stat_with_label(_lbl_stat_record,  "RECORD",    MenuTheme.CYAN))
 	row.add_child(_make_vsep())
-	row.add_child(_make_stat("89", "RECORD", MenuTheme.CYAN))
+	row.add_child(_make_stat_with_label(_lbl_stat_enemies, "BAJAS",     MenuTheme.GREEN))
 	row.add_child(_make_vsep())
-	row.add_child(_make_stat("23", "PARTIDAS", MenuTheme.VIOLET))
+	row.add_child(_make_stat_with_label(_lbl_stat_runs,    "PARTIDAS",  MenuTheme.VIOLET))
 
 	return panel
 
 
 func _make_stat(value: String, label: String, color: Color) -> Control:
+	var lbl_val := _make_value_label(value, color)
+	return _make_stat_with_label(lbl_val, label, color)
+
+
+func _make_stat_with_label(value_lbl: Label, label: String, color: Color) -> Control:
 	var v := VBoxContainer.new()
 	v.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	v.alignment = BoxContainer.ALIGNMENT_CENTER
 	v.add_theme_constant_override("separation", 2)
 
-	var val := Label.new()
-	val.text = value
-	val.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	val.add_theme_font_size_override("font_size", 26)
-	val.add_theme_color_override("font_color", color)
-	_apply_hud_font(val)
+	value_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	value_lbl.add_theme_font_size_override("font_size", 26)
+	value_lbl.add_theme_color_override("font_color", color)
+	_apply_hud_font(value_lbl)
 
 	var lbl := Label.new()
 	lbl.text = label
@@ -215,7 +235,7 @@ func _make_stat(value: String, label: String, color: Color) -> Control:
 	lbl.add_theme_color_override("font_color", MenuTheme.TEXT_MUTED)
 	_apply_hud_font(lbl)
 
-	v.add_child(val)
+	v.add_child(value_lbl)
 	v.add_child(lbl)
 	return v
 
@@ -471,11 +491,15 @@ func _make_last_run() -> Control:
 	label.add_theme_color_override("font_color", MenuTheme.TEXT_MUTED)
 	_apply_hud_font(label)
 
+	_lbl_run_asc   = Label.new()
+	_lbl_run_kills = Label.new()
+	_lbl_run_ecos  = Label.new()
+
 	var stats := HBoxContainer.new()
 	stats.add_theme_constant_override("separation", 12)
-	stats.add_child(_make_mini_stat("Asc 47", "ALCANZADO"))
-	stats.add_child(_make_mini_stat("+84", "ECOS"))
-	stats.add_child(_make_mini_stat("312", "KILLS"))
+	stats.add_child(_make_mini_stat_with_label(_lbl_run_asc,   "--",  "ALCANZADO"))
+	stats.add_child(_make_mini_stat_with_label(_lbl_run_ecos,  "--",  "ECOS"))
+	stats.add_child(_make_mini_stat_with_label(_lbl_run_kills, "--",  "BAJAS"))
 
 	info.add_child(label)
 	info.add_child(stats)
@@ -487,22 +511,26 @@ func _make_last_run() -> Control:
 	skull.text = MenuTheme.SYM_SKULL
 	skull.add_theme_font_size_override("font_size", 26)
 	skull.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-	var cause_txt := Label.new()
-	cause_txt.text = "NUCLEO DESTRUIDO"
-	cause_txt.add_theme_font_size_override("font_size", 14)
-	cause_txt.add_theme_color_override("font_color", Color(1, 0.4, 0.4, 0.7))
-	_apply_hud_font(cause_txt)
+	_lbl_run_cause = Label.new()
+	_lbl_run_cause.text = "SIN PARTIDAS"
+	_lbl_run_cause.add_theme_font_size_override("font_size", 14)
+	_lbl_run_cause.add_theme_color_override("font_color", Color(1, 0.4, 0.4, 0.7))
+	_apply_hud_font(_lbl_run_cause)
 	cause.add_child(skull)
-	cause.add_child(cause_txt)
+	cause.add_child(_lbl_run_cause)
 	h.add_child(cause)
 
 	return panel
 
 
 func _make_mini_stat(value: String, label: String) -> Control:
+	var val := Label.new()
+	return _make_mini_stat_with_label(val, value, label)
+
+
+func _make_mini_stat_with_label(val: Label, value: String, label: String) -> Control:
 	var v := VBoxContainer.new()
 	v.add_theme_constant_override("separation", 1)
-	var val := Label.new()
 	val.text = value
 	val.add_theme_font_size_override("font_size", 20)
 	val.add_theme_color_override("font_color", MenuTheme.TEXT_PRIMARY)
@@ -522,21 +550,59 @@ func _make_mini_stat(value: String, label: String) -> Control:
 # ------------------------------------------------------------
 func on_show() -> void:
 	_refresh_currencies()
+	_refresh_stats()
+	_refresh_last_run()
 
 
 func _refresh_currencies() -> void:
-	# Lee de los autoloads si existen. Si no, deja el placeholder.
-	# Economia y MejoraManager son tus autoloads actuales.
 	var eco_node := get_node_or_null("/root/Economia")
-	if eco_node and eco_node.has_method("get_ecos"):
-		_lbl_ecos.text = _format_number(eco_node.get_ecos())
-	elif eco_node and "ecos" in eco_node:
+	if eco_node and "ecos" in eco_node:
 		_lbl_ecos.text = _format_number(eco_node.ecos)
-
-	if eco_node and eco_node.has_method("get_fragmentos"):
-		_lbl_frag.text = _format_number(eco_node.get_fragmentos())
-	elif eco_node and "fragmentos" in eco_node:
+	if eco_node and "fragmentos" in eco_node:
 		_lbl_frag.text = _format_number(eco_node.fragmentos)
+
+
+func _refresh_stats() -> void:
+	var stats := get_node_or_null("/root/EstadisticasManager")
+	if not stats:
+		return
+	if _lbl_stat_asc:
+		_lbl_stat_asc.text     = _format_number(stats.ultima_ascension)
+	if _lbl_stat_record:
+		_lbl_stat_record.text  = _format_number(stats.mejor_ascension)
+	if _lbl_stat_enemies:
+		_lbl_stat_enemies.text = _format_number(stats.kills_total)
+	if _lbl_stat_runs:
+		_lbl_stat_runs.text    = _format_number(stats.partidas_jugadas)
+
+
+func _refresh_last_run() -> void:
+	var stats := get_node_or_null("/root/EstadisticasManager")
+	if not stats or stats.partidas_jugadas == 0:
+		if _lbl_run_cause:
+			_lbl_run_cause.text = "SIN PARTIDAS"
+		return
+	if _lbl_run_asc:
+		_lbl_run_asc.text   = "Asc %d" % stats.ultima_ascension
+	if _lbl_run_kills:
+		_lbl_run_kills.text = _format_number(stats.ultimo_kills)
+	if _lbl_run_ecos:
+		var ecos_ganados := stats.ultimos_ecos
+		_lbl_run_ecos.text = ("+%d" % ecos_ganados) if ecos_ganados > 0 else "0"
+	if _lbl_run_cause:
+		_lbl_run_cause.text = _formatear_causa_corta(stats.ultima_causa)
+
+
+func _formatear_causa_corta(causa: String) -> String:
+	match causa:
+		"kamikaze":  return "KAMIKAZE"
+		"tanque":    return "TANQUE"
+		"sniper":    return "SNIPER"
+		"jefe":      return "JEFE"
+		"commander": return "COMMANDER"
+		"basico":    return "ESPECTROS"
+		"abandono":  return "ABANDONADO"
+		_:           return "DERROTA"
 
 
 # Formatea numeros con separador de miles.
