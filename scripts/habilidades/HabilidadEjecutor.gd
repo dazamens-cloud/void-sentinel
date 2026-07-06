@@ -44,6 +44,9 @@ func _ready() -> void:
 	t.one_shot = false
 	t.timeout.connect(func(): cooldown_tick.emit())
 	add_child(t)
+	# Resetear cooldowns y efectos activos al iniciar o reiniciar una partida
+	if Economia.has_signal("juego_terminado"):
+		Economia.juego_terminado.connect(_on_juego_terminado)
 
 func _process(delta: float) -> void:
 	for id in _cooldowns.keys():
@@ -55,6 +58,13 @@ func _process(delta: float) -> void:
 		_tick_singularidad(delta)
 		if _singularidad_timer <= 0.0:
 			_finalizar_singularidad()
+
+func _on_juego_terminado(_causa: String) -> void:
+	# Limpiar estado de efectos activos y resetear cooldowns para la próxima run
+	_singularidad_activa = false
+	manto_activo = false
+	for id in _cooldowns.keys():
+		_cooldowns[id] = 0.0
 
 # ═══════════════════════════════════════════════════
 # API PÚBLICA
@@ -157,6 +167,7 @@ func _tick_singularidad(delta: float) -> void:
 
 func _finalizar_singularidad() -> void:
 	_singularidad_activa = false
+	if not _get_nexus(): return  # Partida ya terminada
 	var mundo := _get_mundo()
 	for e in get_tree().get_nodes_in_group("espectros"):
 		if not is_instance_valid(e): continue
@@ -229,6 +240,7 @@ func _activar_detonacion() -> bool:
 
 func _detonar_cadena(objetivo: Node2D, danio: float, radio: float, saltos: int, reduccion: float, ya: Array) -> void:
 	if not is_instance_valid(objetivo): return
+	if not _get_nexus(): return  # Partida ya terminada (timer tardío)
 	var pos := objetivo.global_position
 	if objetivo.has_method("recibir_dano"):
 		objetivo.recibir_dano(danio)
@@ -285,13 +297,13 @@ func _activar_protocolo() -> bool:
 
 	var nexus := _get_nexus()
 	FX.impacto(nexus.global_position if nexus else Vector2(360, 640), Color(0.3, 1.0, 0.5), 18, 150.0)
-	FX.sacudir(0.08)
 
 	if HabilidadManager.tiene_feature("protocolo", "regen_pasiva"):
 		# Boost temporal de regeneración durante 10 s
 		NexusStats.mejora_regeneracion += 2.0
 		get_tree().create_timer(10.0).timeout.connect(func():
-			NexusStats.mejora_regeneracion -= 2.0
+			# maxf evita que quede negativo si reiniciar_partida() se llamó antes
+			NexusStats.mejora_regeneracion = maxf(0.0, NexusStats.mejora_regeneracion - 2.0)
 		)
 	return true
 
