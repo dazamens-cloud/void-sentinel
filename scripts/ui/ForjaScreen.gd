@@ -203,11 +203,11 @@ func _update_tab_colors() -> void:
 
 
 # ✅ Optimizaciones: actualizar solo lo que cambió (no rebuild completo)
-func _on_habilidad_cambiada(_id: String, _nivel: int) -> void:
-	_refresh_frag()  # Solo actualizar fragmentos, no recrear lista completa
+func _on_habilidad_cambiada() -> void:
+	_refresh_frag()
 
-func _on_seleccion_cambiada(_id: String) -> void:
-	_refrescar()  # Necesita rebuild (cambió categoría visible)
+func _on_seleccion_cambiada() -> void:
+	_refrescar()
 
 func _on_fragmentos_actualizados() -> void:
 	_refresh_frag()  # Solo actualizar fragmentos, no recrear lista
