@@ -332,7 +332,7 @@ func _make_section_title(text: String) -> Control:
 	return lbl
 
 
-func _make_stat_row(symbol: String, name: String, value: String, color: Color) -> Control:
+func _make_stat_row(symbol: String, label: String, value: String, color: Color) -> Control:
 	var h := HBoxContainer.new()
 	h.add_theme_constant_override("separation", 8)
 	var icon := Label.new()
@@ -341,7 +341,7 @@ func _make_stat_row(symbol: String, name: String, value: String, color: Color) -
 	icon.custom_minimum_size = Vector2(20, 0)
 	icon.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	var name_lbl := Label.new()
-	name_lbl.text = name
+	name_lbl.text = label
 	name_lbl.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	name_lbl.add_theme_font_size_override("font_size", 14)
 	name_lbl.add_theme_color_override("font_color", MenuTheme.TEXT_MUTED)

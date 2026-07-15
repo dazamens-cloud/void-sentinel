@@ -232,7 +232,10 @@ func _construir_barra_habilidades() -> void:
 	var gap   := 6
 	var total := n * btn_w + (n - 1) * gap
 	var x0    := int((720 - total) / 2)
-	var y0    := int(960 - _margen_bottom)
+	# Situar encima de la barra colapsada del PanelMejoras:
+	# MARGEN_INFERIOR(48) + ALTURA_BARRA(50) + gap(8) + btn_h(72) = 178
+	var vp_h  := get_viewport().get_visible_rect().size.y
+	var y0    := int(vp_h - _margen_bottom - 178.0)
 
 	for i in range(n):
 		var id: String = activas[i]

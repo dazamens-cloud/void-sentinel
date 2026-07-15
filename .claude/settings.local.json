@@ -47,7 +47,19 @@
       "PowerShell(& \"C:\\\\Users\\\\andre\\\\AppData\\\\Local\\\\Android\\\\Sdk\\\\platform-tools\\\\adb.exe\" devices -l)",
       "PowerShell(Test-Path *)",
       "PowerShell(& \"C:\\\\Users\\\\andre\\\\bin\\\\godot.exe\" --headless --path \"D:\\\\proyectos godot\\\\void-sentinel\" --export-debug \"voidsentinel\" \"..\\\\..\\\\void-sentinelv0.4.apk\"; Start-Sleep -Seconds 20; Get-Item \"D:\\\\void-sentinelv0.4.apk\" | Select-Object Length, LastWriteTime)",
-      "PowerShell(& \"C:\\\\Users\\\\andre\\\\AppData\\\\Local\\\\Android\\\\Sdk\\\\platform-tools\\\\adb.exe\" install -r \"D:\\\\void-sentinelv0.4.apk\")"
+      "PowerShell(& \"C:\\\\Users\\\\andre\\\\AppData\\\\Local\\\\Android\\\\Sdk\\\\platform-tools\\\\adb.exe\" install -r \"D:\\\\void-sentinelv0.4.apk\")",
+      "PowerShell($paths = @\\(\"C:\\\\Program Files\\\\Blender Foundation\", \"$env:LOCALAPPDATA\\\\Programs\\\\Blender Foundation\"\\); foreach \\($p in $paths\\) { if \\(Test-Path $p\\) { Get-ChildItem $p -Directory | Select-Object -ExpandProperty FullName } }; $cmd = Get-Command blender -ErrorAction SilentlyContinue; if \\($cmd\\) { $cmd.Source })",
+      "PowerShell($found = @\\(\\); foreach \\($p in @\\(\"C:\\\\Program Files\\\\Blender Foundation\", \"$env:LOCALAPPDATA\\\\Programs\\\\Blender Foundation\", \"D:\\\\Program Files\\\\Blender Foundation\"\\)\\) { if \\(Test-Path $p\\) { $found += \\(Get-ChildItem $p -Directory\\).FullName } }; try { $cmd = Get-Command blender -ErrorAction Stop; $found += $cmd.Source } catch {}; if \\($found.Count -gt 0\\) { $found } else { \"NO_BLENDER\" })",
+      "PowerShell(winget install --id BlenderFoundation.Blender -e --accept-source-agreements --accept-package-agreements)",
+      "WebFetch(domain:getoutlines.com)",
+      "PowerShell($exe = Get-ChildItem \"C:\\\\Program Files\\\\Blender Foundation\" -Recurse -Filter blender.exe -ErrorAction SilentlyContinue | Select-Object -First 1 -ExpandProperty FullName; $exe; if \\($exe\\) { & $exe --version | Select-Object -First 3 })",
+      "WebFetch(domain:www.the-blueprints.com)",
+      "PowerShell(Invoke-WebRequest -Uri \"https://www.the-blueprints.com/modules/vectordrawings/preview/03958-mid.jpg\" -OutFile \"D:\\\\proyectos 3d\\\\opel-astra-g\\\\referencias\\\\astra_g_3p_blueprint_preview.jpg\" -UserAgent \"Mozilla/5.0\"; \\(Get-Item \"D:\\\\proyectos 3d\\\\opel-astra-g\\\\referencias\\\\astra_g_3p_blueprint_preview.jpg\"\\).Length)",
+      "PowerShell(& \"C:\\\\Program Files\\\\Blender Foundation\\\\Blender 5.1\\\\blender.exe\" --background --python \"D:\\\\proyectos 3d\\\\opel-astra-g\\\\scripts\\\\capa0_setup.py\")",
+      "PowerShell(& \"C:\\\\Program Files\\\\Blender Foundation\\\\Blender 5.1\\\\blender.exe\" --background --python \"D:\\\\proyectos 3d\\\\opel-astra-g\\\\scripts\\\\capa1_proporciones.py\")",
+      "PowerShell(& \"C:\\\\Program Files\\\\Blender Foundation\\\\Blender 5.1\\\\blender.exe\" --background --python \"D:\\\\proyectos 3d\\\\opel-astra-g\\\\scripts\\\\render_lateral.py\")",
+      "PowerShell(& \"C:\\\\Program Files\\\\Blender Foundation\\\\Blender 5.1\\\\blender.exe\" --background --python \"D:\\\\proyectos 3d\\\\opel-astra-g\\\\scripts\\\\capa2_plataforma.py\")",
+      "PowerShell($b = \"C:\\\\Program Files\\\\Blender Foundation\\\\Blender 5.1\\\\blender.exe\"; $s = \"D:\\\\proyectos 3d\\\\opel-astra-g\\\\scripts\\\\render_vista.py\"; $r = \"D:\\\\proyectos 3d\\\\opel-astra-g\\\\referencias\"; & $b --background --python $s -- top \"$r\\\\check_top.png\" 01_proporciones; & $b --background --python $s -- side \"$r\\\\check_side.png\" 01_proporciones)"
     ]
   }
 }
