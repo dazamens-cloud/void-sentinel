@@ -34,12 +34,20 @@ func _ready() -> void:
 	_test_mejoras_compra()
 	await _test_habilidades()
 	_test_laboratorio()
+	_test_laboratorio_offline()
 	_test_misiones()
+	_test_misiones_reset()
 	_test_estadisticas()
 
-	_restaurar()
 	print("\n═══ RESULTADO: %d pasados, %d fallos ═══" % [_pasados, _fallos])
+	# La restauración va en _exit_tree: algunos autoloads siguen guardando
+	# después de esta función (MisionesManager escucha señales de Economia y
+	# se guarda solo), y machacarían un restaurado prematuro.
 	get_tree().quit(1 if _fallos > 0 else 0)
+
+
+func _exit_tree() -> void:
+	_restaurar()
 
 
 # ═══════════════════════════════════════════════════
@@ -346,6 +354,73 @@ func _test_laboratorio() -> void:
 		% ("" if raros.is_empty() else str(raros)))
 
 
+# Los timers del Lab corren con el reloj del sistema (unix time guardado en
+# disco), así que el avance offline se puede simular moviendo el "fin".
+func _test_laboratorio_offline() -> void:
+	_sec("Laboratorio — timers offline")
+	var id := "despertar_centinela"
+	if not Laboratorio.INVESTIGACIONES.has(id):
+		id = Laboratorio.INVESTIGACIONES.keys()[0]
+
+	# Estado limpio y ecos de sobra para poder iniciar.
+	Laboratorio._niveles = {}
+	Laboratorio._activas = []
+	Economia.ecos = 1000000
+
+	var nivel_previo: int = Laboratorio.get_nivel(id)
+	var arrancada: bool = Laboratorio.iniciar(id)
+	_ok(arrancada, "arranca una investigación pagando con ecos")
+	_ok(Laboratorio.esta_activa(id), "queda marcada como activa")
+	_ok(Laboratorio.tiempo_restante(id) > 0, "le queda tiempo por delante")
+	_ok(Laboratorio.progreso(id) < 1.0, "el progreso arranca por debajo de 1")
+	_eq(float(Laboratorio.get_nivel(id)), float(nivel_previo),
+		"aún no sube de nivel mientras corre")
+
+	# Simular que el jugador cierra el juego y vuelve pasado el tiempo.
+	for inv in Laboratorio._activas:
+		if inv["id"] == id:
+			inv["fin"] = int(Time.get_unix_time_from_system()) - 1
+	Laboratorio._chequear_completadas()
+	_ok(not Laboratorio.esta_activa(id), "al volver, la investigación ya no está activa")
+	_eq(float(Laboratorio.get_nivel(id)), float(nivel_previo + 1),
+		"el nivel sube sola tras cumplirse el plazo estando fuera")
+	_eq(float(Laboratorio.tiempo_restante(id)), 0.0,
+		"una investigación terminada no reporta tiempo restante")
+
+	# El bonus pasivo debe reflejar el nuevo nivel.
+	var data: Dictionary = Laboratorio.INVESTIGACIONES[id]
+	_eq(Laboratorio.get_bonus(id), Laboratorio.get_nivel(id) * data.get("incremento", 0.0),
+		"el bonus pasivo refleja el nivel completado")
+
+	# Coste y duración deben encarecerse con el nivel.
+	Laboratorio._niveles[id] = 0
+	var coste0: int = Laboratorio.get_coste(id)
+	var dur0: float = Laboratorio.get_duracion(id)
+	Laboratorio._niveles[id] = 3
+	_ok(Laboratorio.get_coste(id) > coste0, "el coste sube con el nivel")
+	_ok(Laboratorio.get_duracion(id) > dur0, "la duración sube con el nivel")
+
+	# No debe dejar investigar más allá del tope.
+	Laboratorio._niveles[id] = Laboratorio.get_max_nivel(id)
+	_ok(Laboratorio.nivel_maximo_alcanzado(id), "detecta el nivel máximo")
+	_ok(not Laboratorio.puede_investigar(id), "en el tope ya no se puede investigar")
+
+	# Los slots deben limitar las investigaciones en paralelo.
+	Laboratorio._niveles = {}
+	Laboratorio._activas = []
+	var slots: int = Laboratorio.get_slots()
+	var arrancadas: int = 0
+	for inv_id in Laboratorio.INVESTIGACIONES.keys():
+		if Laboratorio.iniciar(inv_id):
+			arrancadas += 1
+	_eq(float(arrancadas), float(slots),
+		"no se pueden arrancar más investigaciones que slots (%d)" % slots)
+	_eq(float(Laboratorio.slots_libres()), 0.0, "con los slots llenos no quedan libres")
+
+	Laboratorio._niveles = {}
+	Laboratorio._activas = []
+
+
 # ═══════════════════════════════════════════════════
 # MISIONES
 # ═══════════════════════════════════════════════════
@@ -390,6 +465,58 @@ func _test_misiones() -> void:
 			mal.append(f)
 	_ok(mal.is_empty(), "28 fechas seguidas dan siempre 3 misiones sin repetir %s"
 		% ("" if mal.is_empty() else str(mal)))
+
+
+# Progreso, reclamo y el reset de medianoche.
+func _test_misiones_reset() -> void:
+	_sec("Misiones — progreso, reclamo y reset diario")
+	var id: String = MisionesManager.ids_activas()[0]
+	var data: Dictionary = MisionesManager.get_data(id)
+	var stat: String = data["stat"]
+	var objetivo: int = data["objetivo"]
+
+	# Partir de cero.
+	MisionesManager._progreso = {}
+	MisionesManager._reclamadas = {}
+	_eq(float(MisionesManager.get_progreso(id)), 0.0, "arranca sin progreso")
+	_ok(not MisionesManager.completada(id), "no está completada de inicio")
+	_ok(not MisionesManager.es_reclamable(id), "no es reclamable sin completar")
+
+	# Progreso parcial.
+	MisionesManager._sumar(stat, maxi(1, objetivo / 2))
+	_ok(MisionesManager.progreso_frac(id) > 0.0 and MisionesManager.progreso_frac(id) < 1.0,
+		"el progreso parcial va entre 0 y 1 (%.2f)" % MisionesManager.progreso_frac(id))
+
+	# Completar y pasarse: el progreso mostrado no debe superar el objetivo.
+	MisionesManager._sumar(stat, objetivo * 5)
+	_ok(MisionesManager.completada(id), "se completa al llegar al objetivo")
+	_eq(float(MisionesManager.get_progreso(id)), float(objetivo),
+		"el progreso mostrado no pasa del objetivo")
+	_eq(MisionesManager.progreso_frac(id), 1.0, "la fracción topa en 1")
+
+	# Reclamar paga una vez y solo una.
+	var ecos_antes: int = Economia.ecos
+	var frag_antes: int = Economia.fragmentos
+	_ok(MisionesManager.reclamar(id), "se puede reclamar una misión completada")
+	var pago: bool = Economia.ecos > ecos_antes or Economia.fragmentos > frag_antes
+	_ok(pago, "reclamar paga la recompensa")
+	_ok(MisionesManager.reclamada(id), "queda marcada como reclamada")
+	var ecos_tras: int = Economia.ecos
+	var frag_tras: int = Economia.fragmentos
+	_ok(not MisionesManager.reclamar(id), "no se puede reclamar dos veces")
+	_ok(Economia.ecos == ecos_tras and Economia.fragmentos == frag_tras,
+		"el segundo intento no vuelve a pagar")
+
+	# Reset de medianoche: al cambiar la fecha, misiones y progreso se renuevan.
+	MisionesManager._fecha = "2000-01-01"
+	MisionesManager._chequear_reset()
+	_eq(float(MisionesManager._activas.size()), 3.0, "tras el reset vuelve a haber 3 misiones")
+	_ok(MisionesManager._progreso.is_empty(), "el reset limpia el progreso del día")
+	_ok(MisionesManager._reclamadas.is_empty(), "el reset limpia lo reclamado")
+	_eq(float(MisionesManager._fecha.length()), 10.0, "la fecha queda en formato YYYY-MM-DD")
+
+	var seg: int = MisionesManager.segundos_para_reset()
+	_ok(seg >= 0 and seg <= 86400, "el contador hasta medianoche es coherente (%d s)" % seg)
 
 
 # ═══════════════════════════════════════════════════
