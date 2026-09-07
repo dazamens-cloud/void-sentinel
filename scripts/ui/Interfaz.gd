@@ -231,8 +231,13 @@ func _construir_barra_habilidades() -> void:
 	var btn_w := 80
 	var gap   := 6
 	var total := n * btn_w + (n - 1) * gap
-	var x0    := int((720 - total) / 2)
-	var y0    := int(960 - _margen_bottom)
+	# Situar encima de la barra colapsada del PanelMejoras:
+	# MARGEN_INFERIOR(48) + ALTURA_BARRA(50) + gap(8) + btn_h(72) = 178
+	var vp    := get_viewport().get_visible_rect().size
+	# Centrar sobre el ancho real: con stretch expand el viewport no siempre
+	# mide los 720 de diseño y la barra quedaba descentrada a la izquierda.
+	var x0    := int((vp.x - total) / 2.0)
+	var y0    := int(vp.y - _margen_bottom - 178.0)
 
 	for i in range(n):
 		var id: String = activas[i]
@@ -252,7 +257,9 @@ func _construir_barra_habilidades() -> void:
 		nombre_lbl.add_theme_font_size_override("font_size", 11)
 		nombre_lbl.add_theme_color_override("font_color", Color(0.6, 0.9, 1.0))
 		nombre_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		nombre_lbl.set_anchors_preset(Control.PRESET_TOP_WIDE)
+		# Sin preset de anchors: combinarlo con size hacía que Godot avisara de
+		# "non-equal opposite anchors" y sobrescribiera el tamaño tras _ready().
+		# Se posiciona a mano, igual que cd_lbl.
 		nombre_lbl.size = Vector2(btn_w, 28)
 		nombre_lbl.position = Vector2(0, 4)
 		nombre_lbl.mouse_filter = Control.MOUSE_FILTER_IGNORE

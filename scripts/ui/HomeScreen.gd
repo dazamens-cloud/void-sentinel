@@ -587,7 +587,7 @@ func _refresh_last_run() -> void:
 	if _lbl_run_kills:
 		_lbl_run_kills.text = _format_number(stats.ultimo_kills)
 	if _lbl_run_ecos:
-		var ecos_ganados := stats.ultimos_ecos
+		var ecos_ganados: int = stats.ultimos_ecos
 		_lbl_run_ecos.text = ("+%d" % ecos_ganados) if ecos_ganados > 0 else "0"
 	if _lbl_run_cause:
 		_lbl_run_cause.text = _formatear_causa_corta(stats.ultima_causa)

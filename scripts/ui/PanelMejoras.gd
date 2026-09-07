@@ -278,8 +278,15 @@ func _animar_apertura_modal() -> void:
 	_tween_modal.tween_property(modal_panel, "scale", Vector2.ONE, 0.18)
 
 func _cerrar_modal() -> void:
+	# Cortar la animación de apertura si seguía en vuelo y dejar el overlay con su
+	# alpha íntegro; si no, la próxima apertura podía heredar un alpha a medias.
+	if _tween_modal:
+		_tween_modal.kill()
+		_tween_modal = null
 	if modal_overlay:
 		modal_overlay.visible = false
+		modal_overlay.modulate.a = 1.0
+	modal_mejora_id = ""
 
 func _on_overlay_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.pressed:
@@ -302,6 +309,11 @@ func _expandir(estado: bool, animar: bool = true) -> void:
 	if estado:
 		_recalcular_altura(animar)
 	else:
+		# El ModalOverlay cubre el rect del panel: si se queda abierto al colapsar,
+		# encoge con él hasta la barra de título y, como ColorRect con mouse_filter
+		# STOP, se traga los clics del botón de toggle — el panel ya no se puede
+		# volver a abrir. Al colapsar se cierra siempre.
+		_cerrar_modal()
 		_reposicionar(animar)
 
 # ═══════════════════════════════════════════════════

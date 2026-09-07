@@ -81,6 +81,19 @@ func _run() -> void:
 				await _esperar(0.5)
 				await _capturar("mundo_panel_modal")
 				panel._cerrar_modal()
+
+			# Regresión: con el modal abierto, colapsar el panel dejaba el
+			# overlay sobre la barra de título tragándose los clics, y el panel
+			# ya no se podía reabrir en toda la partida.
+			if panel.has_method("_mostrar_modal") and panel.has_method("_toggle_panel"):
+				panel._mostrar_modal("danio", Color(0.06, 0.35, 0.54))
+				await _esperar(0.4)
+				panel._toggle_panel()          # colapsar SIN cerrar el modal
+				await _esperar(0.6)
+				await _capturar("mundo_panel_colapsado_tras_modal")
+				panel._toggle_panel()          # reabrir: antes era imposible
+				await _esperar(0.6)
+				await _capturar("mundo_panel_reabierto_tras_modal")
 	else:
 		print("UiTester: PanelMejoras no encontrado en mundo")
 

@@ -176,9 +176,9 @@ func _finalizar_singularidad() -> void:
 	# Explosión final
 	FX.impacto(_singularidad_centro, Color(1.0, 0.3, 1.0), 45, 340.0)
 	FX.sacudir(0.45)
-	var exp := ESCENA_EXPLOSION.instantiate()
-	exp.global_position = _singularidad_centro
-	mundo.add_child(exp)
+	var expl := ESCENA_EXPLOSION.instantiate()
+	expl.global_position = _singularidad_centro
+	mundo.add_child(expl)
 	# Radio de explosión exterior
 	for e in get_tree().get_nodes_in_group("espectros"):
 		if not is_instance_valid(e): continue
@@ -244,9 +244,9 @@ func _detonar_cadena(objetivo: Node2D, danio: float, radio: float, saltos: int, 
 	var pos := objetivo.global_position
 	if objetivo.has_method("recibir_dano"):
 		objetivo.recibir_dano(danio)
-	var exp := ESCENA_EXPLOSION.instantiate()
-	exp.global_position = pos
-	_get_mundo().add_child(exp)
+	var expl := ESCENA_EXPLOSION.instantiate()
+	expl.global_position = pos
+	_get_mundo().add_child(expl)
 	FX.impacto(pos, Color(1.0, 0.6, 0.1), 14, radio * 0.8)
 
 	if saltos <= 0: return

@@ -37,12 +37,27 @@ var _musica_actual: String = ""
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
+	_aplicar_mudo_por_argumento()
 	for i in NUM_CANALES:
 		var p := AudioStreamPlayer.new()
 		add_child(p)
 		_pool.append(p)
 	_player_musica = AudioStreamPlayer.new()
 	add_child(_player_musica)
+
+
+# Silencia el juego cuando se arranca con "--mudo", para poder probarlo sin
+# molestar. Solo afecta a esa ejecución: no toca ajustes ni el guardado.
+#
+#   godot --path . -- --mudo
+#
+# El "--" separador es necesario: sin él, Godot rechaza el argumento por
+# desconocido en vez de pasarlo al juego.
+func _aplicar_mudo_por_argumento() -> void:
+	if not OS.get_cmdline_user_args().has("--mudo"):
+		return
+	AudioServer.set_bus_mute(AudioServer.get_bus_index("Master"), true)
+	print("[AudioManager] arrancado en modo mudo (--mudo)")
 
 
 func _cargar(dir: String, nombre: String) -> AudioStream:

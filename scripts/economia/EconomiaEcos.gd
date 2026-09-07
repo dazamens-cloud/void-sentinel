@@ -65,6 +65,9 @@ func añadir_energia(cantidad: float) -> void:
 	energia_cambiada.emit(energia)
 
 func gastar_energia(cantidad: float) -> bool:
+	# Igual que en ecos y fragmentos: un coste negativo daría energía gratis.
+	if cantidad <= 0.0:
+		return false
 	if energia >= cantidad:
 		energia -= cantidad
 		recursos_actualizados.emit()
@@ -166,6 +169,10 @@ func añadir_fragmentos(cantidad: int) -> void:
 	fragmentos_obtenidos.emit(cantidad)
 
 func gastar_ecos(cantidad: int) -> bool:
+	# Una cantidad negativa restaba en negativo, es decir, REGALABA ecos y
+	# devolvía true. Un gasto no positivo no es una compra válida.
+	if cantidad <= 0:
+		return false
 	if ecos >= cantidad:
 		ecos -= cantidad
 		guardar_datos()
@@ -175,6 +182,9 @@ func gastar_ecos(cantidad: int) -> bool:
 	return false
 
 func gastar_fragmentos(cantidad: int) -> bool:
+	# Mismo motivo que en gastar_ecos: un gasto no positivo no es válido.
+	if cantidad <= 0:
+		return false
 	if fragmentos >= cantidad:
 		fragmentos -= cantidad
 		guardar_datos()
