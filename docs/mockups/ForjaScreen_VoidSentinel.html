@@ -1,0 +1,1219 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Void Sentinel — Forja</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Rajdhani:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-deep:       #020409;
+    --bg-mid:        #060c14;
+    --bg-card:       #0a1525;
+    --accent-cyan:   #00e5ff;
+    --accent-gold:   #ffd740;
+    --accent-violet: #b388ff;
+    --accent-green:  #69ff47;
+    --accent-red:    #ff5252;
+    --danger:        #ff1744;
+    --text-primary:  #e8f4fd;
+    --text-muted:    #4a7a9b;
+    --border-glow:   rgba(0,229,255,0.18);
+    --border-dim:    rgba(0,229,255,0.06);
+    --font-hud:      'Orbitron', monospace;
+    --font-body:     'Rajdhani', sans-serif;
+
+    --frag-color:    #b388ff;
+    --frag-glow:     rgba(179,136,255,0.3);
+
+    /* Rareza */
+    --r-comun:      #78909c;
+    --r-raro:       #00e5ff;
+    --r-epico:      #b388ff;
+    --r-legendario: #ffd740;
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    background: var(--bg-deep);
+    color: var(--text-primary);
+    font-family: var(--font-body);
+    min-height: 100vh;
+    display: flex; justify-content: center;
+  }
+
+  .phone {
+    width: 390px; min-height: 100vh;
+    position: relative; overflow: hidden;
+    background: var(--bg-deep);
+    display: flex; flex-direction: column;
+  }
+
+  /* ── STARFIELD ───────────────────────────── */
+  .starfield {
+    position: fixed; top: 0; left: 50%;
+    transform: translateX(-50%);
+    width: 390px; height: 100vh;
+    pointer-events: none; z-index: 0; overflow: hidden;
+  }
+  .starfield::before, .starfield::after {
+    content:''; position:absolute; inset:0;
+    background-image:
+      radial-gradient(1px 1px at 14% 19%, rgba(255,255,255,0.8) 0%, transparent 100%),
+      radial-gradient(1px 1px at 30% 45%, rgba(179,136,255,0.6) 0%, transparent 100%),
+      radial-gradient(1.5px 1.5px at 55% 8%, rgba(255,255,255,0.7) 0%, transparent 100%),
+      radial-gradient(1px 1px at 75% 28%, rgba(179,136,255,0.7) 0%, transparent 100%),
+      radial-gradient(1px 1px at 88% 65%, rgba(255,255,255,0.5) 0%, transparent 100%),
+      radial-gradient(1px 1px at 20% 75%, rgba(179,136,255,0.4) 0%, transparent 100%),
+      radial-gradient(2px 2px at 94% 14%, rgba(255,255,255,0.8) 0%, transparent 100%),
+      radial-gradient(1px 1px at 40% 58%, rgba(255,215,64,0.4) 0%, transparent 100%),
+      radial-gradient(1px 1px at 62% 83%, rgba(255,255,255,0.5) 0%, transparent 100%);
+    animation: twinkle 4s ease-in-out infinite alternate;
+  }
+  .starfield::after {
+    background-image:
+      radial-gradient(1px 1px at 23% 34%, rgba(255,255,255,0.5) 0%, transparent 100%),
+      radial-gradient(1px 1px at 48% 24%, rgba(179,136,255,0.4) 0%, transparent 100%),
+      radial-gradient(1.5px 1.5px at 78% 84%, rgba(255,255,255,0.7) 0%, transparent 100%),
+      radial-gradient(2px 2px at 95% 92%, rgba(255,215,64,0.5) 0%, transparent 100%);
+    animation-delay: 2s; animation-duration: 5s;
+  }
+  @keyframes twinkle { 0%{opacity:0.5} 100%{opacity:1} }
+
+  .nebula {
+    position:fixed; top:0; left:50%; transform:translateX(-50%);
+    width:390px; height:100vh; pointer-events:none; z-index:0;
+  }
+  .nebula::before {
+    content:''; position:absolute; top:-80px; left:-40px;
+    width:260px; height:260px;
+    background: radial-gradient(ellipse, rgba(100,0,180,0.10) 0%, transparent 70%);
+    animation: nd 9s ease-in-out infinite alternate;
+  }
+  .nebula::after {
+    content:''; position:absolute; bottom:100px; right:-70px;
+    width:220px; height:220px;
+    background: radial-gradient(ellipse, rgba(60,0,120,0.08) 0%, transparent 70%);
+    animation: nd 11s ease-in-out infinite alternate-reverse;
+  }
+  @keyframes nd { from{transform:translate(0,0)scale(1)} to{transform:translate(14px,12px)scale(1.08)} }
+
+  .scanlines {
+    position:fixed; top:0; left:50%; transform:translateX(-50%);
+    width:390px; height:100vh; pointer-events:none; z-index:200;
+    background: repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.025) 2px,rgba(0,0,0,0.025) 4px);
+  }
+
+  /* ── STATUS BAR ──────────────────────────── */
+  .status-bar {
+    position:relative; z-index:10;
+    display:flex; justify-content:space-between; align-items:center;
+    padding:12px 18px 8px;
+    font-family:var(--font-hud); font-size:10px; color:var(--text-muted); letter-spacing:0.08em;
+  }
+  .status-bar .time { font-size:13px; color:var(--text-primary); font-weight:600; }
+  .status-bar .icons { display:flex; gap:6px; font-size:11px; }
+
+  /* ── HEADER ──────────────────────────────── */
+  .forja-header {
+    position:relative; z-index:10;
+    padding: 6px 16px 12px;
+    display:flex; align-items:center; justify-content:space-between;
+  }
+  .forja-title-block { display:flex; flex-direction:column; gap:2px; }
+  .forja-eyebrow {
+    font-family:var(--font-hud); font-size:8px;
+    letter-spacing:0.2em; color:var(--text-muted); text-transform:uppercase;
+  }
+  .forja-title {
+    font-family:var(--font-hud); font-size:22px; font-weight:900;
+    letter-spacing:0.15em; color:var(--text-primary); line-height:1;
+    text-shadow: 0 0 16px rgba(179,136,255,0.5);
+  }
+  .forja-title span { color:var(--frag-color); }
+
+  .frag-pill {
+    display:flex; flex-direction:column; align-items:flex-end; gap:2px;
+  }
+  .frag-pill .pill-label {
+    font-size:8px; letter-spacing:0.15em;
+    text-transform:uppercase; color:var(--text-muted);
+  }
+  .frag-pill .pill-value {
+    display:flex; align-items:center; gap:5px;
+    background: rgba(179,136,255,0.08);
+    border:1px solid rgba(179,136,255,0.28);
+    border-radius:20px; padding:4px 10px;
+  }
+  .frag-pill .pill-icon { font-size:13px; color:var(--frag-color); }
+  .frag-pill .pill-num {
+    font-family:var(--font-hud); font-size:14px; font-weight:700;
+    color:var(--frag-color);
+    text-shadow: 0 0 8px rgba(179,136,255,0.6);
+  }
+
+  /* ── SECTION TABS ────────────────────────── */
+  .section-tabs {
+    position:relative; z-index:10;
+    display:flex; gap:0; margin:0 16px 14px;
+    background:rgba(6,12,20,0.8);
+    border:1px solid var(--border-glow);
+    border-radius:10px; overflow:hidden; backdrop-filter:blur(6px);
+  }
+  .sec-tab {
+    flex:1; padding:10px 4px;
+    display:flex; flex-direction:column; align-items:center; gap:3px;
+    cursor:pointer; border:none; background:none; position:relative;
+    transition:background 0.2s;
+  }
+  .sec-tab + .sec-tab { border-left:1px solid var(--border-dim); }
+  .sec-tab .st-label {
+    font-family:var(--font-hud); font-size:8px; letter-spacing:0.1em;
+    text-transform:uppercase; color:var(--text-muted); transition:color 0.2s;
+  }
+  .sec-tab .st-icon { font-size:16px; }
+  .sec-tab::after {
+    content:''; position:absolute; bottom:0; left:10%; right:10%; height:2px;
+    border-radius:1px; opacity:0; transition:opacity 0.2s;
+  }
+  .sec-tab.active {
+    background: rgba(179,136,255,0.06);
+  }
+  .sec-tab.active .st-label { color:var(--frag-color); }
+  .sec-tab.active::after { background:var(--frag-color); opacity:1; }
+
+  /* ── SCROLLABLE CONTENT ──────────────────── */
+  .forja-scroll {
+    position:relative; z-index:10;
+    flex:1; overflow-y:auto; padding:0 16px 90px;
+    scrollbar-width:none;
+  }
+  .forja-scroll::-webkit-scrollbar { display:none; }
+
+  .forja-section { display:none; }
+  .forja-section.visible { display:block; }
+
+  /* ─────────────────────────────────────────
+     SECCIÓN 1: SENTINEL + SLOTS
+  ───────────────────────────────────────── */
+
+  /* Sentinel visual con slots */
+  .sentinel-arena {
+    position:relative;
+    width:100%; height:240px;
+    display:flex; align-items:center; justify-content:center;
+    margin-bottom:14px;
+  }
+
+  /* Fondo hexagonal sutil */
+  .arena-bg {
+    position:absolute; inset:0;
+    background:
+      radial-gradient(ellipse 60% 50% at 50% 50%, rgba(100,0,180,0.06) 0%, transparent 70%),
+      radial-gradient(ellipse 80% 60% at 50% 50%, rgba(0,0,60,0.3) 0%, transparent 80%);
+    border-radius:16px;
+    border:1px solid var(--border-dim);
+  }
+
+  /* Líneas de conexión SVG */
+  .slot-lines {
+    position:absolute; inset:0; width:100%; height:100%; pointer-events:none;
+  }
+
+  /* Core central */
+  .sentinel-core {
+    position:relative; z-index:5;
+    width:70px; height:70px; border-radius:50%;
+    background: radial-gradient(circle at 35% 30%,
+      rgba(200,170,255,0.95) 0%,
+      rgba(120,60,220,0.85) 30%,
+      rgba(50,10,100,0.95) 65%,
+      rgba(10,0,30,1) 100%
+    );
+    box-shadow:
+      0 0 20px 6px rgba(150,80,255,0.4),
+      0 0 50px 14px rgba(100,50,200,0.2),
+      inset 0 0 15px rgba(255,255,255,0.12);
+    animation: core-pulse 3s ease-in-out infinite;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .sentinel-core::after {
+    content:''; position:absolute;
+    top:10px; left:13px; width:18px; height:9px;
+    background:rgba(255,255,255,0.25); border-radius:50%;
+    transform:rotate(-30deg); filter:blur(3px);
+  }
+  @keyframes core-pulse {
+    0%,100% { box-shadow:0 0 20px 6px rgba(150,80,255,0.4),0 0 50px 14px rgba(100,50,200,0.2),inset 0 0 15px rgba(255,255,255,0.12); }
+    50%      { box-shadow:0 0 30px 10px rgba(170,100,255,0.6),0 0 70px 20px rgba(130,70,230,0.3),inset 0 0 20px rgba(255,255,255,0.2); }
+  }
+
+  /* Anillos orbitales */
+  .core-ring {
+    position:absolute; border-radius:50%;
+    border:1px solid rgba(179,136,255,0.3);
+    animation: spin-slow 8s linear infinite;
+  }
+  .core-ring-1 { width:90px; height:90px; }
+  .core-ring-1::before {
+    content:''; position:absolute; top:-2px; left:50%; transform:translateX(-50%);
+    width:5px; height:5px; background:var(--frag-color); border-radius:50%;
+    box-shadow:0 0 8px 3px var(--frag-color);
+  }
+  .core-ring-2 {
+    width:110px; height:110px;
+    border-style:dashed; border-color:rgba(179,136,255,0.15);
+    animation-duration:5s; animation-direction:reverse;
+  }
+  @keyframes spin-slow { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
+
+  /* SLOTS */
+  .equip-slot {
+    position:absolute; z-index:10;
+    width:52px; height:52px;
+    cursor:pointer;
+    transition:transform 0.15s;
+  }
+  .equip-slot:active { transform:scale(0.93); }
+
+  /* Posiciones */
+  .slot-top    { top:18px;  left:50%; transform:translateX(-50%); }
+  .slot-bottom { bottom:18px; left:50%; transform:translateX(-50%); }
+  .slot-left   { left:14px;  top:50%; transform:translateY(-50%); }
+  .slot-right  { right:14px; top:50%; transform:translateY(-50%); }
+  .slot-top-r  { top:36px;  right:40px; }
+
+  .slot-inner {
+    width:52px; height:52px;
+    border-radius:10px;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    gap:2px; position:relative; overflow:hidden;
+  }
+
+  /* Slot vacío */
+  .slot-empty .slot-inner {
+    background: rgba(10,20,40,0.8);
+    border:1.5px dashed rgba(179,136,255,0.25);
+  }
+  .slot-empty .slot-icon { font-size:18px; opacity:0.25; }
+  .slot-empty .slot-cost {
+    font-family:var(--font-hud); font-size:7px;
+    color:var(--frag-color); opacity:0.6;
+    letter-spacing:0.05em;
+  }
+
+  /* Slot equipado */
+  .slot-filled .slot-inner {
+    border:1.5px solid;
+    background: rgba(15,10,35,0.9);
+  }
+  .slot-filled.r-comun .slot-inner      { border-color:var(--r-comun); }
+  .slot-filled.r-raro .slot-inner       { border-color:var(--r-raro); }
+  .slot-filled.r-epico .slot-inner      { border-color:var(--r-epico); }
+  .slot-filled.r-legendario .slot-inner { border-color:var(--r-legendario); box-shadow:0 0 10px rgba(255,215,64,0.3); }
+
+  /* Glow superior según rareza */
+  .slot-filled .slot-inner::before {
+    content:''; position:absolute; top:0; left:0; right:0; height:1px;
+  }
+  .slot-filled.r-comun .slot-inner::before      { background:linear-gradient(90deg,transparent,var(--r-comun),transparent); }
+  .slot-filled.r-raro .slot-inner::before       { background:linear-gradient(90deg,transparent,var(--r-raro),transparent); }
+  .slot-filled.r-epico .slot-inner::before      { background:linear-gradient(90deg,transparent,var(--r-epico),transparent); }
+  .slot-filled.r-legendario .slot-inner::before { background:linear-gradient(90deg,transparent,var(--r-legendario),transparent); }
+
+  .slot-filled .slot-icon { font-size:20px; }
+  .slot-filled .slot-name {
+    font-family:var(--font-hud); font-size:6px; letter-spacing:0.06em;
+    color:var(--text-muted); text-transform:uppercase; text-align:center;
+    line-height:1.1;
+  }
+  .slot-filled .slot-lv {
+    font-family:var(--font-hud); font-size:7px; font-weight:700;
+    position:absolute; bottom:3px; right:4px;
+  }
+  .slot-filled.r-comun .slot-lv      { color:var(--r-comun); }
+  .slot-filled.r-raro .slot-lv       { color:var(--r-raro); }
+  .slot-filled.r-epico .slot-lv      { color:var(--r-epico); }
+  .slot-filled.r-legendario .slot-lv { color:var(--r-legendario); }
+
+  /* Rareza badge */
+  .slot-filled .slot-rarity {
+    position:absolute; top:3px; left:4px;
+    font-size:5px; letter-spacing:0.05em;
+    text-transform:uppercase; font-family:var(--font-hud);
+  }
+  .slot-filled.r-raro .slot-rarity       { color:var(--r-raro); }
+  .slot-filled.r-epico .slot-rarity      { color:var(--r-epico); }
+  .slot-filled.r-legendario .slot-rarity { color:var(--r-legendario); }
+
+  /* Slot bloqueado */
+  .slot-locked .slot-inner {
+    background: rgba(5,8,16,0.9);
+    border:1.5px solid rgba(255,255,255,0.06);
+  }
+  .slot-locked .slot-icon { font-size:18px; opacity:0.18; }
+  .slot-locked .slot-cost {
+    font-family:var(--font-hud); font-size:6px;
+    color:var(--text-muted); opacity:0.5; letter-spacing:0.05em;
+  }
+
+  /* ── STAT SUMMARY STRIP ──────────────────── */
+  .stat-strip {
+    display:flex; gap:8px; margin-bottom:14px;
+  }
+  .stat-pill {
+    flex:1; background:rgba(6,12,20,0.8);
+    border:1px solid var(--border-dim);
+    border-radius:10px; padding:8px 8px;
+    display:flex; flex-direction:column; align-items:center; gap:2px;
+    backdrop-filter:blur(4px);
+  }
+  .stat-pill .sp-val {
+    font-family:var(--font-hud); font-size:12px; font-weight:700;
+    color:var(--frag-color);
+    text-shadow:0 0 6px rgba(179,136,255,0.4);
+  }
+  .stat-pill .sp-lbl {
+    font-size:8px; letter-spacing:0.1em;
+    text-transform:uppercase; color:var(--text-muted);
+  }
+
+  /* ── UPGRADE EQUIPPED CARD ───────────────── */
+  .upgrade-title {
+    display:flex; align-items:center; gap:8px; margin-bottom:10px;
+  }
+  .upgrade-title .line {
+    flex:1; height:1px;
+    background:linear-gradient(90deg, rgba(179,136,255,0.2), transparent);
+  }
+  .upgrade-title .ut-label {
+    font-family:var(--font-hud); font-size:9px;
+    letter-spacing:0.16em; color:var(--frag-color); text-transform:uppercase;
+  }
+
+  .mod-detail-card {
+    background:rgba(6,12,20,0.9);
+    border-radius:12px; overflow:hidden;
+    margin-bottom:8px; position:relative;
+    backdrop-filter:blur(4px);
+    animation:fade-up 0.25s ease both;
+  }
+  @keyframes fade-up { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
+
+  .mod-detail-card::before {
+    content:''; position:absolute; left:0; top:8px; bottom:8px;
+    width:2px; border-radius:1px;
+  }
+  .mod-detail-card.r-comun::before      { background:var(--r-comun); border:1px solid var(--r-comun); }
+  .mod-detail-card.r-raro::before       { background:var(--r-raro); }
+  .mod-detail-card.r-epico::before      { background:var(--r-epico); }
+  .mod-detail-card.r-legendario::before { background:var(--r-legendario); box-shadow:0 0 6px var(--r-legendario); }
+
+  .mod-detail-card .top-bar {
+    display:flex; align-items:center; gap:10px;
+    padding:10px 12px 8px 18px;
+    border-bottom:1px solid var(--border-dim);
+  }
+  .mod-detail-card .mod-icon-big { font-size:24px; }
+  .mod-detail-card .mod-head { flex:1; }
+  .mod-detail-card .mod-name {
+    font-family:var(--font-hud); font-size:12px; font-weight:600;
+    letter-spacing:0.08em; color:var(--text-primary); margin-bottom:3px;
+  }
+  .mod-detail-card .mod-rarity-row {
+    display:flex; align-items:center; gap:6px;
+  }
+  .mod-detail-card .mod-rarity-badge {
+    font-size:9px; font-family:var(--font-hud); letter-spacing:0.1em;
+    text-transform:uppercase; padding:1px 6px; border-radius:4px;
+  }
+  .r-comun .mod-rarity-badge      { color:var(--r-comun); border:1px solid rgba(120,144,156,0.3); background:rgba(120,144,156,0.08); }
+  .r-raro .mod-rarity-badge       { color:var(--r-raro); border:1px solid rgba(0,229,255,0.3); background:rgba(0,229,255,0.08); }
+  .r-epico .mod-rarity-badge      { color:var(--r-epico); border:1px solid rgba(179,136,255,0.3); background:rgba(179,136,255,0.08); }
+  .r-legendario .mod-rarity-badge { color:var(--r-legendario); border:1px solid rgba(255,215,64,0.3); background:rgba(255,215,64,0.1); }
+
+  .mod-detail-card .mod-lv-badge {
+    font-family:var(--font-hud); font-size:9px; color:var(--text-muted);
+  }
+  .mod-detail-card .mod-actions {
+    display:flex; flex-direction:column; align-items:flex-end; gap:4px;
+  }
+
+  /* Stats fila */
+  .mod-stats {
+    padding:8px 12px 10px 18px;
+    display:grid; grid-template-columns:1fr 1fr; gap:6px 12px;
+  }
+  .mod-stat-row { display:flex; justify-content:space-between; align-items:center; }
+  .mod-stat-row .ms-label {
+    font-size:10px; color:var(--text-muted); letter-spacing:0.05em;
+  }
+  .mod-stat-row .ms-val {
+    font-family:var(--font-hud); font-size:10px; font-weight:600;
+    color:var(--text-primary);
+  }
+
+  /* Botones upgrade/quitar */
+  .btn-mod {
+    padding:5px 8px; border-radius:6px; border:none; cursor:pointer;
+    font-family:var(--font-hud); font-size:8px; letter-spacing:0.06em;
+    transition:opacity 0.15s, transform 0.1s; display:flex; align-items:center; gap:3px;
+  }
+  .btn-mod:active { transform:scale(0.95); }
+  .btn-upgrade {
+    background:rgba(179,136,255,0.12);
+    color:var(--frag-color);
+    border:1px solid rgba(179,136,255,0.3);
+  }
+  .btn-upgrade.cant-afford { opacity:0.35; cursor:not-allowed; }
+  .btn-remove {
+    background:rgba(255,82,82,0.08);
+    color:var(--accent-red);
+    border:1px solid rgba(255,82,82,0.2);
+    font-size:7px; padding:3px 6px;
+  }
+
+  /* Upgrade progress bar en card */
+  .mod-upgrade-bar {
+    padding:0 12px 10px 18px;
+    display:flex; align-items:center; gap:8px;
+  }
+  .mub-track {
+    flex:1; height:3px; border-radius:2px;
+    background:rgba(255,255,255,0.06); overflow:hidden;
+  }
+  .mub-fill {
+    height:100%; border-radius:2px;
+    background:linear-gradient(90deg, rgba(120,60,220,0.6), var(--frag-color));
+  }
+  .mub-label { font-family:var(--font-hud); font-size:8px; color:var(--text-muted); }
+
+  /* ─────────────────────────────────────────
+     SECCIÓN 2: INVENTARIO
+  ───────────────────────────────────────── */
+
+  .inv-filters {
+    display:flex; gap:6px; margin-bottom:12px; overflow-x:auto;
+    scrollbar-width:none; padding-bottom:2px;
+  }
+  .inv-filters::-webkit-scrollbar { display:none; }
+  .filter-pill {
+    flex-shrink:0; padding:5px 10px; border-radius:20px;
+    font-family:var(--font-hud); font-size:8px; letter-spacing:0.08em;
+    border:none; cursor:pointer; transition:all 0.15s;
+    background:rgba(6,12,20,0.8); color:var(--text-muted);
+    border:1px solid var(--border-dim);
+  }
+  .filter-pill.active {
+    background:rgba(179,136,255,0.12); color:var(--frag-color);
+    border-color:rgba(179,136,255,0.3);
+  }
+
+  .inv-grid {
+    display:grid; grid-template-columns:repeat(3,1fr); gap:8px;
+    margin-bottom:14px;
+  }
+
+  .inv-item {
+    background:rgba(6,12,20,0.85); border-radius:10px;
+    padding:10px 8px; border:1px solid var(--border-dim);
+    display:flex; flex-direction:column; align-items:center; gap:4px;
+    cursor:pointer; position:relative; overflow:hidden;
+    transition:border-color 0.15s, background 0.15s;
+  }
+  .inv-item:active { border-color:var(--frag-color); background:rgba(30,10,60,0.8); }
+  .inv-item::before {
+    content:''; position:absolute; top:0; left:0; right:0; height:1px;
+  }
+
+  .inv-item.r-comun      { border-color:rgba(120,144,156,0.25); }
+  .inv-item.r-raro       { border-color:rgba(0,229,255,0.2); }
+  .inv-item.r-epico      { border-color:rgba(179,136,255,0.25); }
+  .inv-item.r-legendario { border-color:rgba(255,215,64,0.3); box-shadow:0 0 8px rgba(255,215,64,0.1); }
+
+  .inv-item.r-comun::before      { background:linear-gradient(90deg,transparent,rgba(120,144,156,0.3),transparent); }
+  .inv-item.r-raro::before       { background:linear-gradient(90deg,transparent,rgba(0,229,255,0.3),transparent); }
+  .inv-item.r-epico::before      { background:linear-gradient(90deg,transparent,rgba(179,136,255,0.35),transparent); }
+  .inv-item.r-legendario::before { background:linear-gradient(90deg,transparent,rgba(255,215,64,0.4),transparent); }
+
+  .inv-icon { font-size:22px; line-height:1; }
+  .inv-name {
+    font-family:var(--font-hud); font-size:8px; letter-spacing:0.06em;
+    color:var(--text-muted); text-transform:uppercase; text-align:center; line-height:1.2;
+  }
+  .inv-rarity-dot {
+    width:6px; height:6px; border-radius:50%; margin-top:2px;
+  }
+  .r-comun .inv-rarity-dot      { background:var(--r-comun); }
+  .r-raro .inv-rarity-dot       { background:var(--r-raro); box-shadow:0 0 4px var(--r-raro); }
+  .r-epico .inv-rarity-dot      { background:var(--r-epico); box-shadow:0 0 4px var(--r-epico); }
+  .r-legendario .inv-rarity-dot { background:var(--r-legendario); box-shadow:0 0 5px var(--r-legendario); }
+
+  .inv-lv {
+    position:absolute; bottom:4px; right:5px;
+    font-family:var(--font-hud); font-size:7px; font-weight:700;
+  }
+  .r-comun .inv-lv      { color:var(--r-comun); }
+  .r-raro .inv-lv       { color:var(--r-raro); }
+  .r-epico .inv-lv      { color:var(--r-epico); }
+  .r-legendario .inv-lv { color:var(--r-legendario); }
+
+  /* Equipado badge */
+  .inv-equipped {
+    position:absolute; top:3px; left:3px;
+    font-size:7px; background:rgba(179,136,255,0.2);
+    border:1px solid rgba(179,136,255,0.4);
+    border-radius:3px; padding:1px 3px;
+    font-family:var(--font-hud); color:var(--frag-color);
+    letter-spacing:0.04em;
+  }
+
+  /* ─────────────────────────────────────────
+     SECCIÓN 3: FORJAR
+  ───────────────────────────────────────── */
+  .craft-area {
+    display:flex; flex-direction:column; gap:12px;
+  }
+
+  .craft-info {
+    background:rgba(6,12,20,0.7);
+    border:1px solid var(--border-dim); border-radius:12px;
+    padding:12px 14px; display:flex; align-items:flex-start; gap:10px;
+    backdrop-filter:blur(4px);
+  }
+  .craft-info::before { content:'◈'; font-size:18px; color:var(--frag-color); flex-shrink:0; margin-top:1px; }
+  .craft-info .ci-title {
+    font-family:var(--font-hud); font-size:10px; letter-spacing:0.1em;
+    color:var(--frag-color); text-transform:uppercase; margin-bottom:4px;
+  }
+  .craft-info .ci-desc { font-size:11px; color:var(--text-muted); line-height:1.4; }
+
+  .craft-grid {
+    display:grid; grid-template-columns:repeat(2,1fr); gap:10px;
+  }
+
+  .craft-card {
+    background:rgba(6,12,20,0.8);
+    border-radius:12px; overflow:hidden;
+    border:1px solid var(--border-dim);
+    cursor:pointer; position:relative;
+    transition:border-color 0.15s; backdrop-filter:blur(4px);
+  }
+  .craft-card:active { border-color:var(--frag-color); }
+  .craft-card::before {
+    content:''; position:absolute; top:0; left:0; right:0; height:1px;
+    background:linear-gradient(90deg,transparent,rgba(179,136,255,0.25),transparent);
+  }
+  .craft-card-body { padding:12px 10px; }
+  .craft-icon { font-size:26px; margin-bottom:6px; }
+  .craft-name {
+    font-family:var(--font-hud); font-size:10px; font-weight:600;
+    letter-spacing:0.08em; color:var(--text-primary); margin-bottom:3px;
+  }
+  .craft-desc { font-size:9px; color:var(--text-muted); line-height:1.3; margin-bottom:8px; }
+  .craft-cost {
+    display:flex; align-items:center; gap:4px;
+    font-family:var(--font-hud); font-size:10px;
+    color:var(--frag-color);
+  }
+  .craft-cost .cc-icon { font-size:11px; }
+
+  /* Rareza chance strip */
+  .craft-rarities {
+    display:flex; gap:0; border-top:1px solid var(--border-dim); overflow:hidden;
+  }
+  .cr-item {
+    flex:1; padding:4px 2px; text-align:center;
+    font-family:var(--font-hud); font-size:7px; letter-spacing:0.04em;
+  }
+  .cr-item.r-comun      { color:var(--r-comun); background:rgba(120,144,156,0.06); }
+  .cr-item.r-raro       { color:var(--r-raro); background:rgba(0,229,255,0.05); }
+  .cr-item.r-epico      { color:var(--r-epico); background:rgba(179,136,255,0.06); }
+  .cr-item.r-legendario { color:var(--r-legendario); background:rgba(255,215,64,0.05); }
+
+  /* ── TOAST ───────────────────────────────── */
+  .toast {
+    position:fixed; bottom:90px; left:50%; transform:translateX(-50%) translateY(20px);
+    background:rgba(10,5,30,0.95);
+    border:1px solid var(--frag-color); border-radius:8px;
+    padding:8px 16px; font-family:var(--font-hud); font-size:11px;
+    color:var(--frag-color); letter-spacing:0.1em; opacity:0; z-index:300;
+    transition:opacity 0.2s, transform 0.2s; white-space:nowrap;
+    box-shadow:0 0 20px rgba(179,136,255,0.2);
+  }
+  .toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+
+  /* ── BOTTOM NAV ──────────────────────────── */
+  .bottom-nav {
+    position:fixed; bottom:0; left:50%; transform:translateX(-50%);
+    width:390px; z-index:100;
+    background:rgba(4,9,16,0.95);
+    border-top:1px solid var(--border-glow);
+    backdrop-filter:blur(12px);
+    padding:8px 0 20px; display:flex; justify-content:space-around; align-items:center;
+  }
+  .bottom-nav::before {
+    content:''; position:absolute; top:0; left:0; right:0; height:1px;
+    background:linear-gradient(90deg,transparent 0%,rgba(0,229,255,0.4) 20%,rgba(0,229,255,0.8) 50%,rgba(0,229,255,0.4) 80%,transparent 100%);
+  }
+  .nav-item {
+    flex:1; display:flex; flex-direction:column; align-items:center; gap:4px;
+    padding:4px 8px; cursor:pointer; position:relative; transition:opacity 0.15s;
+  }
+  .nav-icon { font-size:20px; line-height:1; transition:filter 0.2s; }
+  .nav-label {
+    font-family:var(--font-hud); font-size:7px; letter-spacing:0.08em;
+    text-transform:uppercase; color:var(--text-muted); transition:color 0.2s;
+  }
+  .nav-item.active .nav-label { color:var(--frag-color); }
+  .nav-item.active .nav-icon  { filter:drop-shadow(0 0 4px var(--frag-color)); }
+  .nav-item.active::after {
+    content:''; position:absolute; bottom:-4px;
+    width:24px; height:2px; background:var(--frag-color);
+    border-radius:1px; box-shadow:0 0 8px var(--frag-color);
+  }
+  .nav-item.play-nav {
+    background:rgba(0,60,110,0.5); border:1px solid rgba(0,229,255,0.3);
+    border-radius:12px; padding:6px 10px;
+  }
+  .nav-item.play-nav .nav-label { color:var(--accent-cyan); }
+
+  /* ── ANIMS ───────────────────────────────── */
+  .forja-header   { animation:fade-up 0.35s ease 0.05s both; }
+  .section-tabs   { animation:fade-up 0.35s ease 0.12s both; }
+  .forja-scroll   { animation:fade-up 0.35s ease 0.20s both; }
+</style>
+</head>
+<body>
+
+<div class="starfield"></div>
+<div class="nebula"></div>
+<div class="scanlines"></div>
+
+<div class="phone">
+
+  <!-- STATUS BAR -->
+  <div class="status-bar">
+    <span class="time">21:34</span>
+    <div class="icons"><span>▲▲▲</span><span>WiFi</span><span>87%</span></div>
+  </div>
+
+  <!-- HEADER -->
+  <div class="forja-header">
+    <div class="forja-title-block">
+      <div class="forja-eyebrow">Equipamiento de potencia</div>
+      <div class="forja-title">FOR<span>JA</span></div>
+    </div>
+    <div class="frag-pill">
+      <div class="pill-label">Fragmentos</div>
+      <div class="pill-value">
+        <span class="pill-icon">◆</span>
+        <span class="pill-num" id="frag-display">384</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION TABS -->
+  <div class="section-tabs">
+    <button class="sec-tab active" onclick="switchSec('equipamiento',this)">
+      <div class="st-icon">⬡</div>
+      <div class="st-label">Equipado</div>
+    </button>
+    <button class="sec-tab" onclick="switchSec('inventario',this)">
+      <div class="st-icon">◫</div>
+      <div class="st-label">Inventario</div>
+    </button>
+    <button class="sec-tab" onclick="switchSec('forjar',this)">
+      <div class="st-icon">◆</div>
+      <div class="st-label">Forjar</div>
+    </button>
+  </div>
+
+  <div class="forja-scroll">
+
+    <!-- ═══ EQUIPAMIENTO ═══ -->
+    <div class="forja-section visible" id="section-equipamiento">
+
+      <!-- SENTINEL ARENA CON SLOTS -->
+      <div class="sentinel-arena">
+        <div class="arena-bg"></div>
+
+        <!-- Líneas conectoras SVG -->
+        <svg class="slot-lines" viewBox="0 0 358 240" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- centro aprox 179,120 -->
+          <!-- top slot -->
+          <line x1="179" y1="70" x2="179" y2="95" stroke="rgba(179,136,255,0.15)" stroke-width="1" stroke-dasharray="3,3"/>
+          <!-- bottom slot -->
+          <line x1="179" y1="145" x2="179" y2="170" stroke="rgba(179,136,255,0.15)" stroke-width="1" stroke-dasharray="3,3"/>
+          <!-- left slot -->
+          <line x1="67" y1="120" x2="92" y2="120" stroke="rgba(179,136,255,0.15)" stroke-width="1" stroke-dasharray="3,3"/>
+          <!-- right slot -->
+          <line x1="265" y1="120" x2="291" y2="120" stroke="rgba(179,136,255,0.15)" stroke-width="1" stroke-dasharray="3,3"/>
+          <!-- top-right slot (diagonal) -->
+          <line x1="245" y1="62" x2="220" y2="95" stroke="rgba(179,136,255,0.1)" stroke-width="1" stroke-dasharray="3,3"/>
+        </svg>
+
+        <!-- RINGS + CORE -->
+        <div class="core-ring core-ring-2"></div>
+        <div class="core-ring core-ring-1"></div>
+        <div class="sentinel-core"></div>
+
+        <!-- SLOT: TOP — equipado épico -->
+        <div class="equip-slot slot-top slot-filled r-epico" onclick="selectSlot('cannon')">
+          <div class="slot-inner">
+            <div class="slot-rarity">épico</div>
+            <div class="slot-icon">🔫</div>
+            <div class="slot-name">Cañón</div>
+            <div class="slot-lv">Lv.4</div>
+          </div>
+        </div>
+
+        <!-- SLOT: LEFT — equipado raro -->
+        <div class="equip-slot slot-left slot-filled r-raro" onclick="selectSlot('shield')">
+          <div class="slot-inner">
+            <div class="slot-rarity">raro</div>
+            <div class="slot-icon">🛡</div>
+            <div class="slot-name">Escudo</div>
+            <div class="slot-lv">Lv.2</div>
+          </div>
+        </div>
+
+        <!-- SLOT: RIGHT — equipado legendario -->
+        <div class="equip-slot slot-right slot-filled r-legendario" onclick="selectSlot('core')">
+          <div class="slot-inner">
+            <div class="slot-rarity">leg.</div>
+            <div class="slot-icon">⚡</div>
+            <div class="slot-name">Núcleo+</div>
+            <div class="slot-lv">Lv.7</div>
+          </div>
+        </div>
+
+        <!-- SLOT: BOTTOM — vacío desbloqueable -->
+        <div class="equip-slot slot-bottom slot-empty" onclick="unlockSlot(3)">
+          <div class="slot-inner">
+            <div class="slot-icon">+</div>
+            <div class="slot-cost">◆ 120</div>
+          </div>
+        </div>
+
+        <!-- SLOT: TOP-RIGHT — bloqueado -->
+        <div class="equip-slot slot-top-r slot-locked">
+          <div class="slot-inner">
+            <div class="slot-icon">🔒</div>
+            <div class="slot-cost">◆ 300</div>
+          </div>
+        </div>
+
+      </div><!-- /sentinel-arena -->
+
+      <!-- STAT SUMMARY -->
+      <div class="stat-strip">
+        <div class="stat-pill">
+          <div class="sp-val">+340</div>
+          <div class="sp-lbl">Daño</div>
+        </div>
+        <div class="stat-pill">
+          <div class="sp-val">+18%</div>
+          <div class="sp-lbl">Def.</div>
+        </div>
+        <div class="stat-pill">
+          <div class="sp-val">×1.6</div>
+          <div class="sp-lbl">Ecos</div>
+        </div>
+        <div class="stat-pill">
+          <div class="sp-val">3/5</div>
+          <div class="sp-lbl">Slots</div>
+        </div>
+      </div>
+
+      <!-- MÓDULOS EQUIPADOS: DETALLE -->
+      <div class="upgrade-title">
+        <div class="ut-label">Módulos activos</div>
+        <div class="line"></div>
+      </div>
+
+      <!-- Cañón de Plasma (épico) -->
+      <div class="mod-detail-card r-epico" id="detail-cannon">
+        <div class="top-bar">
+          <div class="mod-icon-big">🔫</div>
+          <div class="mod-head">
+            <div class="mod-name">Cañón de Plasma</div>
+            <div class="mod-rarity-row">
+              <div class="mod-rarity-badge">Épico</div>
+              <div class="mod-lv-badge">Nivel 4 / 10</div>
+            </div>
+          </div>
+          <div class="mod-actions">
+            <button class="btn-mod btn-upgrade" onclick="upgradeModule('cannon',45)">
+              <span>◆ 45</span>
+            </button>
+            <button class="btn-mod btn-remove" onclick="removeModule('cannon')">Quitar</button>
+          </div>
+        </div>
+        <div class="mod-upgrade-bar">
+          <div class="mub-track"><div class="mub-fill" style="width:40%"></div></div>
+          <div class="mub-label">4/10</div>
+        </div>
+        <div class="mod-stats">
+          <div class="mod-stat-row">
+            <span class="ms-label">Daño bonus</span>
+            <span class="ms-val">+200</span>
+          </div>
+          <div class="mod-stat-row">
+            <span class="ms-label">Vel. ataque</span>
+            <span class="ms-val">×1.15</span>
+          </div>
+          <div class="mod-stat-row">
+            <span class="ms-label">Penetración</span>
+            <span class="ms-val">12%</span>
+          </div>
+          <div class="mod-stat-row">
+            <span class="ms-label">Alcance</span>
+            <span class="ms-val">+5m</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Escudo Cuántico (raro) -->
+      <div class="mod-detail-card r-raro" id="detail-shield">
+        <div class="top-bar">
+          <div class="mod-icon-big">🛡</div>
+          <div class="mod-head">
+            <div class="mod-name">Escudo Cuántico</div>
+            <div class="mod-rarity-row">
+              <div class="mod-rarity-badge">Raro</div>
+              <div class="mod-lv-badge">Nivel 2 / 8</div>
+            </div>
+          </div>
+          <div class="mod-actions">
+            <button class="btn-mod btn-upgrade" onclick="upgradeModule('shield',20)">
+              <span>◆ 20</span>
+            </button>
+            <button class="btn-mod btn-remove" onclick="removeModule('shield')">Quitar</button>
+          </div>
+        </div>
+        <div class="mod-upgrade-bar">
+          <div class="mub-track"><div class="mub-fill" style="width:25%"></div></div>
+          <div class="mub-label">2/8</div>
+        </div>
+        <div class="mod-stats">
+          <div class="mod-stat-row">
+            <span class="ms-label">HP bonus</span>
+            <span class="ms-val">+80</span>
+          </div>
+          <div class="mod-stat-row">
+            <span class="ms-label">Def. %</span>
+            <span class="ms-val">+8%</span>
+          </div>
+          <div class="mod-stat-row">
+            <span class="ms-label">Regen</span>
+            <span class="ms-val">+0.5/s</span>
+          </div>
+          <div class="mod-stat-row">
+            <span class="ms-label">Espina</span>
+            <span class="ms-val">5%</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Núcleo Amplificado (legendario) -->
+      <div class="mod-detail-card r-legendario" id="detail-core">
+        <div class="top-bar">
+          <div class="mod-icon-big">⚡</div>
+          <div class="mod-head">
+            <div class="mod-name">Núcleo Amplificado</div>
+            <div class="mod-rarity-row">
+              <div class="mod-rarity-badge">Legendario</div>
+              <div class="mod-lv-badge">Nivel 7 / 12</div>
+            </div>
+          </div>
+          <div class="mod-actions">
+            <button class="btn-mod btn-upgrade cant-afford" onclick="upgradeModule('core',280)">
+              <span>◆ 280</span>
+            </button>
+            <button class="btn-mod btn-remove" onclick="removeModule('core')">Quitar</button>
+          </div>
+        </div>
+        <div class="mod-upgrade-bar">
+          <div class="mub-track"><div class="mub-fill" style="width:58%"></div></div>
+          <div class="mub-label">7/12</div>
+        </div>
+        <div class="mod-stats">
+          <div class="mod-stat-row">
+            <span class="ms-label">Daño bonus</span>
+            <span class="ms-val">+140</span>
+          </div>
+          <div class="mod-stat-row">
+            <span class="ms-label">Ecos ×</span>
+            <span class="ms-val">×1.6</span>
+          </div>
+          <div class="mod-stat-row">
+            <span class="ms-label">Def. abs.</span>
+            <span class="ms-val">+10</span>
+          </div>
+          <div class="mod-stat-row">
+            <span class="ms-label">Crit %</span>
+            <span class="ms-val">+6%</span>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /section-equipamiento -->
+
+    <!-- ═══ INVENTARIO ═══ -->
+    <div class="forja-section" id="section-inventario">
+
+      <div class="inv-filters">
+        <button class="filter-pill active" onclick="filterInv('todo',this)">Todos</button>
+        <button class="filter-pill" onclick="filterInv('comun',this)">Común</button>
+        <button class="filter-pill" onclick="filterInv('raro',this)">Raro</button>
+        <button class="filter-pill" onclick="filterInv('epico',this)">Épico</button>
+        <button class="filter-pill" onclick="filterInv('legendario',this)">Legendario</button>
+      </div>
+
+      <div class="inv-grid">
+
+        <div class="inv-item r-epico">
+          <div class="inv-equipped">EQ</div>
+          <div class="inv-icon">🔫</div>
+          <div class="inv-name">Cañón Plasma</div>
+          <div class="inv-rarity-dot"></div>
+          <div class="inv-lv">Lv.4</div>
+        </div>
+
+        <div class="inv-item r-legendario">
+          <div class="inv-equipped">EQ</div>
+          <div class="inv-icon">⚡</div>
+          <div class="inv-name">Núcleo Amp.</div>
+          <div class="inv-rarity-dot"></div>
+          <div class="inv-lv">Lv.7</div>
+        </div>
+
+        <div class="inv-item r-raro">
+          <div class="inv-equipped">EQ</div>
+          <div class="inv-icon">🛡</div>
+          <div class="inv-name">Escudo Cuánt.</div>
+          <div class="inv-rarity-dot"></div>
+          <div class="inv-lv">Lv.2</div>
+        </div>
+
+        <div class="inv-item r-epico" onclick="showToast('Cañón de Iones — Épico')">
+          <div class="inv-icon">🔭</div>
+          <div class="inv-name">Cañón Iones</div>
+          <div class="inv-rarity-dot"></div>
+          <div class="inv-lv">Lv.1</div>
+        </div>
+
+        <div class="inv-item r-comun" onclick="showToast('Placa Blindada — Común')">
+          <div class="inv-icon">🔲</div>
+          <div class="inv-name">Placa Blindada</div>
+          <div class="inv-rarity-dot"></div>
+          <div class="inv-lv">Lv.3</div>
+        </div>
+
+        <div class="inv-item r-raro" onclick="showToast('Orbe Ecos — Raro')">
+          <div class="inv-icon">◈</div>
+          <div class="inv-name">Orbe Ecos</div>
+          <div class="inv-rarity-dot"></div>
+          <div class="inv-lv">Lv.1</div>
+        </div>
+
+        <div class="inv-item r-comun" onclick="showToast('Amplificador — Común')">
+          <div class="inv-icon">📡</div>
+          <div class="inv-name">Amplificador</div>
+          <div class="inv-rarity-dot"></div>
+          <div class="inv-lv">Lv.2</div>
+        </div>
+
+        <div class="inv-item r-legendario" onclick="showToast('Pulso Vacío — Legendario')">
+          <div class="inv-icon">🌀</div>
+          <div class="inv-name">Pulso Vacío</div>
+          <div class="inv-rarity-dot"></div>
+          <div class="inv-lv">Lv.1</div>
+        </div>
+
+        <div class="inv-item r-raro" onclick="showToast('Reactor de Fragmentos — Raro')">
+          <div class="inv-icon">◆</div>
+          <div class="inv-name">Reactor Frag.</div>
+          <div class="inv-rarity-dot"></div>
+          <div class="inv-lv">Lv.1</div>
+        </div>
+
+      </div><!-- /inv-grid -->
+
+    </div><!-- /section-inventario -->
+
+    <!-- ═══ FORJAR ═══ -->
+    <div class="forja-section" id="section-forjar">
+      <div class="craft-area">
+
+        <div class="craft-info">
+          <div>
+            <div class="ci-title">¿Cómo funciona?</div>
+            <div class="ci-desc">Gasta Fragmentos para forjar un nuevo módulo. La rareza es aleatoria según la cápsula elegida. Los módulos forjados van a tu inventario.</div>
+          </div>
+        </div>
+
+        <div class="craft-grid">
+
+          <div class="craft-card" onclick="craftModule('basica',40)">
+            <div class="craft-card-body">
+              <div class="craft-icon">📦</div>
+              <div class="craft-name">Cápsula Básica</div>
+              <div class="craft-desc">Alta prob. de módulos comunes y raros</div>
+              <div class="craft-cost"><span class="cc-icon">◆</span> 40 Fragmentos</div>
+            </div>
+            <div class="craft-rarities">
+              <div class="cr-item r-comun">60%</div>
+              <div class="cr-item r-raro">30%</div>
+              <div class="cr-item r-epico">9%</div>
+              <div class="cr-item r-legendario">1%</div>
+            </div>
+          </div>
+
+          <div class="craft-card" onclick="craftModule('avanzada',100)">
+            <div class="craft-card-body">
+              <div class="craft-icon">💎</div>
+              <div class="craft-name">Cápsula Avanzada</div>
+              <div class="craft-desc">Mayor probabilidad de módulos épicos</div>
+              <div class="craft-cost"><span class="cc-icon">◆</span> 100 Fragmentos</div>
+            </div>
+            <div class="craft-rarities">
+              <div class="cr-item r-comun">20%</div>
+              <div class="cr-item r-raro">40%</div>
+              <div class="cr-item r-epico">30%</div>
+              <div class="cr-item r-legendario">10%</div>
+            </div>
+          </div>
+
+          <div class="craft-card" onclick="craftModule('nexo',200)">
+            <div class="craft-card-body">
+              <div class="craft-icon">🌀</div>
+              <div class="craft-name">Cápsula Nexo</div>
+              <div class="craft-desc">Garantizado épico o legendario</div>
+              <div class="craft-cost"><span class="cc-icon">◆</span> 200 Fragmentos</div>
+            </div>
+            <div class="craft-rarities">
+              <div class="cr-item r-comun" style="opacity:0.2">0%</div>
+              <div class="cr-item r-raro" style="opacity:0.2">0%</div>
+              <div class="cr-item r-epico">75%</div>
+              <div class="cr-item r-legendario">25%</div>
+            </div>
+          </div>
+
+          <div class="craft-card" onclick="craftModule('void',500)">
+            <div class="craft-card-body">
+              <div class="craft-icon">⭐</div>
+              <div class="craft-name">Cápsula Void</div>
+              <div class="craft-desc">Garantizado legendario. Muy escasa</div>
+              <div class="craft-cost"><span class="cc-icon">◆</span> 500 Fragmentos</div>
+            </div>
+            <div class="craft-rarities">
+              <div class="cr-item r-comun" style="opacity:0.2">0%</div>
+              <div class="cr-item r-raro" style="opacity:0.2">0%</div>
+              <div class="cr-item r-epico" style="opacity:0.2">0%</div>
+              <div class="cr-item r-legendario">100%</div>
+            </div>
+          </div>
+
+        </div><!-- /craft-grid -->
+
+      </div>
+    </div><!-- /section-forjar -->
+
+  </div><!-- /forja-scroll -->
+</div><!-- /phone -->
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- BOTTOM NAV -->
+<div class="bottom-nav">
+  <div class="nav-item">
+    <div class="nav-icon">⌂</div>
+    <div class="nav-label">Inicio</div>
+  </div>
+  <div class="nav-item">
+    <div class="nav-icon">◈</div>
+    <div class="nav-label">Nexo</div>
+  </div>
+  <div class="nav-item play-nav">
+    <div class="nav-icon">▶</div>
+    <div class="nav-label">Jugar</div>
+  </div>
+  <div class="nav-item active">
+    <div class="nav-icon">◆</div>
+    <div class="nav-label">Forja</div>
+  </div>
+  <div class="nav-item">
+    <div class="nav-icon">⬡</div>
+    <div class="nav-label">Perfil</div>
+  </div>
+  <div class="nav-item">
+    <div class="nav-icon">⬙</div>
+    <div class="nav-label">Tienda</div>
+  </div>
+</div>
+
+<script>
+  var fragmentos = 384;
+
+  function switchSec(sec, btn) {
+    document.querySelectorAll('.sec-tab').forEach(function(t){ t.className='sec-tab'; });
+    btn.classList.add('active');
+    document.querySelectorAll('.forja-section').forEach(function(s){ s.classList.remove('visible'); });
+    document.getElementById('section-'+sec).classList.add('visible');
+  }
+
+  function filterInv(type, btn) {
+    document.querySelectorAll('.filter-pill').forEach(function(p){ p.classList.remove('active'); });
+    btn.classList.add('active');
+    var items = document.querySelectorAll('.inv-item');
+    items.forEach(function(item){
+      if (type==='todo') { item.style.display='flex'; }
+      else { item.style.display = item.classList.contains('r-'+type) ? 'flex' : 'none'; }
+    });
+  }
+
+  function upgradeModule(mod, cost) {
+    if (fragmentos < cost) { showToast('Fragmentos insuficientes'); return; }
+    fragmentos -= cost;
+    document.getElementById('frag-display').textContent = fragmentos.toLocaleString();
+    showToast('✓ Módulo mejorado');
+  }
+
+  function removeModule(mod) {
+    showToast('Módulo retirado al inventario');
+  }
+
+  function unlockSlot(n) {
+    showToast('Desbloquear slot · ◆ 120');
+  }
+
+  function craftModule(type, cost) {
+    if (fragmentos < cost) { showToast('Fragmentos insuficientes · ◆ ' + cost); return; }
+    fragmentos -= cost;
+    document.getElementById('frag-display').textContent = fragmentos.toLocaleString();
+    var names = ['Cañón de Iones','Placa Blindada','Orbe Ecos','Amplificador','Reactor de Fragmentos'];
+    var rarities = { basica:['Común','Común','Raro'], avanzada:['Raro','Épico','Raro'], nexo:['Épico','Legendario','Épico'], void:['Legendario'] };
+    var pool = rarities[type];
+    var result = pool[Math.floor(Math.random()*pool.length)];
+    var name = names[Math.floor(Math.random()*names.length)];
+    showToast('✦ Forjado: ' + name + ' [' + result + ']');
+  }
+
+  function selectSlot(mod) {
+    showToast('Módulo: ' + mod + ' · Toca "Quitar" en detalle');
+  }
+
+  var toastTimer;
+  function showToast(msg) {
+    var t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function(){ t.classList.remove('show'); }, 2000);
+  }
+</script>
+</body>
+</html>

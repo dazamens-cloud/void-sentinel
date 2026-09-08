@@ -1,0 +1,1028 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Void Sentinel — Tienda</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Rajdhani:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-deep:       #020409;
+    --bg-mid:        #060c14;
+    --accent-cyan:   #00e5ff;
+    --accent-gold:   #ffd740;
+    --accent-violet: #b388ff;
+    --accent-green:  #69ff47;
+    --accent-red:    #ff5252;
+    --text-primary:  #e8f4fd;
+    --text-muted:    #4a7a9b;
+    --border-glow:   rgba(0,229,255,0.18);
+    --border-dim:    rgba(0,229,255,0.06);
+    --font-hud:      'Orbitron', monospace;
+    --font-body:     'Rajdhani', sans-serif;
+    --gem-color:     #e040fb;
+    --gem-glow:      rgba(224,64,251,0.3);
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    background: var(--bg-deep);
+    color: var(--text-primary);
+    font-family: var(--font-body);
+    min-height: 100vh;
+    display: flex; justify-content: center;
+  }
+  .phone {
+    width: 390px; min-height: 100vh;
+    position: relative; overflow: hidden;
+    background: var(--bg-deep);
+    display: flex; flex-direction: column;
+  }
+
+  /* ── STARFIELD ── */
+  .starfield {
+    position:fixed; top:0; left:50%; transform:translateX(-50%);
+    width:390px; height:100vh; pointer-events:none; z-index:0; overflow:hidden;
+  }
+  .starfield::before, .starfield::after {
+    content:''; position:absolute; inset:0;
+    background-image:
+      radial-gradient(1px 1px at 10% 15%, rgba(255,255,255,0.8) 0%, transparent 100%),
+      radial-gradient(1px 1px at 30% 40%, rgba(224,64,251,0.5) 0%, transparent 100%),
+      radial-gradient(1.5px 1.5px at 55% 8%, rgba(255,255,255,0.7) 0%, transparent 100%),
+      radial-gradient(1px 1px at 75% 28%, rgba(255,215,64,0.5) 0%, transparent 100%),
+      radial-gradient(2px 2px at 92% 12%, rgba(255,255,255,0.8) 0%, transparent 100%),
+      radial-gradient(1px 1px at 18% 72%, rgba(0,229,255,0.3) 0%, transparent 100%),
+      radial-gradient(1px 1px at 60% 82%, rgba(255,255,255,0.5) 0%, transparent 100%);
+    animation: twinkle 4s ease-in-out infinite alternate;
+  }
+  .starfield::after {
+    background-image:
+      radial-gradient(1px 1px at 22% 33%, rgba(224,64,251,0.4) 0%, transparent 100%),
+      radial-gradient(1.5px 1.5px at 78% 84%, rgba(255,255,255,0.7) 0%, transparent 100%),
+      radial-gradient(1px 1px at 47% 55%, rgba(255,215,64,0.4) 0%, transparent 100%),
+      radial-gradient(2px 2px at 94% 90%, rgba(224,64,251,0.5) 0%, transparent 100%);
+    animation-delay:2s; animation-duration:5s;
+  }
+  @keyframes twinkle { 0%{opacity:0.5} 100%{opacity:1} }
+
+  .nebula {
+    position:fixed; top:0; left:50%; transform:translateX(-50%);
+    width:390px; height:100vh; pointer-events:none; z-index:0;
+  }
+  .nebula::before {
+    content:''; position:absolute; top:-60px; right:-40px;
+    width:260px; height:260px;
+    background: radial-gradient(ellipse, rgba(120,0,180,0.09) 0%, transparent 70%);
+    animation: nd 9s ease-in-out infinite alternate;
+  }
+  .nebula::after {
+    content:''; position:absolute; bottom:100px; left:-60px;
+    width:220px; height:220px;
+    background: radial-gradient(ellipse, rgba(80,50,0,0.08) 0%, transparent 70%);
+    animation: nd 11s ease-in-out infinite alternate-reverse;
+  }
+  @keyframes nd { from{transform:translate(0,0)scale(1)} to{transform:translate(14px,12px)scale(1.08)} }
+
+  .scanlines {
+    position:fixed; top:0; left:50%; transform:translateX(-50%);
+    width:390px; height:100vh; pointer-events:none; z-index:200;
+    background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.025) 2px,rgba(0,0,0,0.025) 4px);
+  }
+
+  /* ── STATUS BAR ── */
+  .status-bar {
+    position:relative; z-index:10;
+    display:flex; justify-content:space-between; align-items:center;
+    padding:12px 18px 8px;
+    font-family:var(--font-hud); font-size:10px; color:var(--text-muted); letter-spacing:0.08em;
+  }
+  .status-bar .time { font-size:13px; color:var(--text-primary); font-weight:600; }
+  .status-bar .icons { display:flex; gap:6px; font-size:11px; }
+
+  /* ── HEADER ── */
+  .tienda-header {
+    position:relative; z-index:10;
+    padding:6px 16px 12px;
+    display:flex; align-items:center; justify-content:space-between;
+  }
+  .tienda-title-block { display:flex; flex-direction:column; gap:2px; }
+  .tienda-eyebrow {
+    font-family:var(--font-hud); font-size:8px;
+    letter-spacing:0.2em; color:var(--text-muted); text-transform:uppercase;
+  }
+  .tienda-title {
+    font-family:var(--font-hud); font-size:22px; font-weight:900;
+    letter-spacing:0.15em; color:var(--text-primary); line-height:1;
+    text-shadow:0 0 16px rgba(224,64,251,0.4);
+  }
+  .tienda-title span { color:var(--gem-color); }
+
+  /* Gem balance pill */
+  .gem-pill {
+    display:flex; flex-direction:column; align-items:flex-end; gap:2px;
+  }
+  .gem-pill .pill-label { font-size:8px; letter-spacing:0.15em; text-transform:uppercase; color:var(--text-muted); }
+  .gem-pill .pill-value {
+    display:flex; align-items:center; gap:5px;
+    background:rgba(224,64,251,0.08); border:1px solid rgba(224,64,251,0.28);
+    border-radius:20px; padding:4px 10px;
+  }
+  .gem-pill .pill-icon { font-size:13px; color:var(--gem-color); }
+  .gem-pill .pill-num {
+    font-family:var(--font-hud); font-size:14px; font-weight:700;
+    color:var(--gem-color); text-shadow:0 0 8px rgba(224,64,251,0.6);
+  }
+
+  /* ── CATEGORY TABS ── */
+  .cat-tabs {
+    position:relative; z-index:10;
+    display:flex; margin:0 16px 14px;
+    background:rgba(6,12,20,0.8); border:1px solid var(--border-glow);
+    border-radius:10px; overflow:hidden; backdrop-filter:blur(6px);
+  }
+  .cat-tab {
+    flex:1; padding:10px 4px;
+    display:flex; flex-direction:column; align-items:center; gap:3px;
+    cursor:pointer; border:none; background:none; position:relative; transition:background 0.2s;
+  }
+  .cat-tab + .cat-tab { border-left:1px solid var(--border-dim); }
+  .cat-tab .ct-icon { font-size:15px; }
+  .cat-tab .ct-label {
+    font-family:var(--font-hud); font-size:7px; letter-spacing:0.1em;
+    text-transform:uppercase; color:var(--text-muted); transition:color 0.2s;
+  }
+  .cat-tab::after {
+    content:''; position:absolute; bottom:0; left:10%; right:10%;
+    height:2px; border-radius:1px; opacity:0; transition:opacity 0.2s;
+  }
+  .cat-tab.active-gemas      { background:rgba(224,64,251,0.06); }
+  .cat-tab.active-recursos   { background:rgba(255,215,64,0.05); }
+  .cat-tab.active-paquetes   { background:rgba(0,229,255,0.05); }
+
+  .cat-tab.active-gemas .ct-label    { color:var(--gem-color); }
+  .cat-tab.active-recursos .ct-label { color:var(--accent-gold); }
+  .cat-tab.active-paquetes .ct-label { color:var(--accent-cyan); }
+
+  .cat-tab.active-gemas::after    { background:var(--gem-color); opacity:1; }
+  .cat-tab.active-recursos::after { background:var(--accent-gold); opacity:1; }
+  .cat-tab.active-paquetes::after { background:var(--accent-cyan); opacity:1; }
+
+  /* ── SCROLL ── */
+  .tienda-scroll {
+    position:relative; z-index:10;
+    flex:1; overflow-y:auto; padding:0 16px 90px;
+    scrollbar-width:none;
+  }
+  .tienda-scroll::-webkit-scrollbar { display:none; }
+
+  .tienda-section { display:none; }
+  .tienda-section.visible { display:block; }
+
+  /* ── DAILY REWARD BANNER ── */
+  .daily-banner {
+    background:rgba(6,12,20,0.9);
+    border:1px solid rgba(105,255,71,0.25);
+    border-radius:14px; overflow:hidden;
+    margin-bottom:14px; position:relative;
+    backdrop-filter:blur(6px);
+  }
+  .daily-banner::before {
+    content:''; position:absolute; top:0; left:0; right:0; height:1px;
+    background:linear-gradient(90deg,transparent,var(--accent-green),transparent);
+  }
+  .daily-inner {
+    display:flex; align-items:center; gap:12px; padding:14px 14px;
+  }
+  .daily-icon {
+    font-size:30px; flex-shrink:0;
+    filter:drop-shadow(0 0 6px rgba(105,255,71,0.6));
+    animation:icon-bob 2s ease-in-out infinite;
+  }
+  @keyframes icon-bob {
+    0%,100%{transform:translateY(0)} 50%{transform:translateY(-3px)}
+  }
+  .daily-info { flex:1; }
+  .daily-label {
+    font-family:var(--font-hud); font-size:8px; letter-spacing:0.18em;
+    text-transform:uppercase; color:var(--accent-green); margin-bottom:3px;
+  }
+  .daily-title { font-size:14px; font-weight:600; color:var(--text-primary); margin-bottom:2px; }
+  .daily-timer {
+    font-family:var(--font-hud); font-size:9px; color:var(--text-muted);
+    letter-spacing:0.06em;
+  }
+  .daily-timer span { color:var(--accent-green); }
+  .btn-daily {
+    padding:10px 14px; border-radius:10px; border:none; cursor:pointer;
+    background:rgba(105,255,71,0.12); color:var(--accent-green);
+    border:1px solid rgba(105,255,71,0.3);
+    font-family:var(--font-hud); font-size:9px; letter-spacing:0.1em;
+    transition:opacity 0.15s, transform 0.1s; flex-shrink:0;
+    display:flex; flex-direction:column; align-items:center; gap:2px;
+  }
+  .btn-daily:active { transform:scale(0.95); }
+  .btn-daily .bd-reward { font-size:13px; font-weight:700; color:var(--gem-color); }
+  .btn-daily .bd-label  { font-size:7px; }
+
+  /* ── OFERTA ESPECIAL TIMER ── */
+  .oferta-timer-banner {
+    background:rgba(6,12,20,0.85);
+    border:1px solid rgba(255,82,82,0.3);
+    border-radius:12px; overflow:hidden;
+    margin-bottom:14px; position:relative;
+    backdrop-filter:blur(4px);
+  }
+  .oferta-timer-banner::before {
+    content:''; position:absolute; top:0; left:0; right:0; height:1px;
+    background:linear-gradient(90deg,transparent,var(--accent-red),transparent);
+  }
+  .oferta-top {
+    display:flex; align-items:center; justify-content:space-between;
+    padding:10px 14px 6px;
+  }
+  .oferta-badge {
+    display:flex; align-items:center; gap:6px;
+  }
+  .oferta-dot {
+    width:6px; height:6px; border-radius:50%; background:var(--accent-red);
+    box-shadow:0 0 6px rgba(255,82,82,0.8);
+    animation:blink-dot 1s ease-in-out infinite;
+  }
+  @keyframes blink-dot { 0%,100%{opacity:1} 50%{opacity:0.3} }
+  .oferta-badge-txt {
+    font-family:var(--font-hud); font-size:8px; letter-spacing:0.15em;
+    text-transform:uppercase; color:var(--accent-red);
+  }
+  .oferta-countdown {
+    font-family:var(--font-hud); font-size:12px; font-weight:700;
+    color:var(--accent-red); letter-spacing:0.08em;
+    text-shadow:0 0 8px rgba(255,82,82,0.5);
+  }
+  .oferta-card-inner {
+    display:flex; align-items:center; gap:12px;
+    padding:8px 14px 12px;
+  }
+  .oferta-icon { font-size:32px; flex-shrink:0; }
+  .oferta-info { flex:1; }
+  .oferta-name {
+    font-family:var(--font-hud); font-size:12px; font-weight:600;
+    letter-spacing:0.06em; color:var(--text-primary); margin-bottom:3px;
+  }
+  .oferta-contents { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:6px; }
+  .oferta-pill {
+    font-family:var(--font-hud); font-size:9px; padding:2px 7px;
+    border-radius:6px; font-weight:600;
+  }
+  .op-gem    { background:rgba(224,64,251,0.15); color:var(--gem-color); border:1px solid rgba(224,64,251,0.3); }
+  .op-eco    { background:rgba(0,229,255,0.10); color:var(--accent-cyan); border:1px solid rgba(0,229,255,0.25); }
+  .op-frag   { background:rgba(179,136,255,0.12); color:var(--accent-violet); border:1px solid rgba(179,136,255,0.3); }
+  .oferta-price-row { display:flex; align-items:center; gap:8px; }
+  .oferta-old-price {
+    font-family:var(--font-hud); font-size:10px; color:var(--text-muted);
+    text-decoration:line-through;
+  }
+  .oferta-new-price {
+    font-family:var(--font-hud); font-size:16px; font-weight:900;
+    color:var(--accent-gold); text-shadow:0 0 8px rgba(255,215,64,0.4);
+  }
+  .oferta-discount {
+    font-family:var(--font-hud); font-size:8px; padding:2px 6px;
+    border-radius:4px; background:rgba(255,82,82,0.15);
+    color:var(--accent-red); border:1px solid rgba(255,82,82,0.3);
+  }
+  .btn-oferta {
+    padding:12px 10px; border-radius:10px; border:none; cursor:pointer;
+    background:rgba(255,215,64,0.12); color:var(--accent-gold);
+    border:1px solid rgba(255,215,64,0.35);
+    font-family:var(--font-hud); font-size:9px; letter-spacing:0.08em;
+    transition:opacity 0.15s, transform 0.1s; flex-shrink:0;
+    text-align:center; min-width:64px;
+  }
+  .btn-oferta:active { transform:scale(0.95); }
+
+  /* ── SECTION HEADING ── */
+  .shop-heading {
+    display:flex; align-items:center; gap:8px; margin-bottom:10px; margin-top:4px;
+  }
+  .shop-heading .line { flex:1; height:1px; }
+  .shop-heading .sh-label {
+    font-family:var(--font-hud); font-size:9px; letter-spacing:0.16em; text-transform:uppercase;
+  }
+
+  /* ══ SECCIÓN GEMAS ══════════════════════ */
+
+  /* Grid 3 columnas para gemas */
+  .gem-grid {
+    display:grid; grid-template-columns:repeat(3,1fr);
+    gap:8px; margin-bottom:16px;
+  }
+  .gem-card {
+    background:rgba(6,12,20,0.85); border-radius:12px; overflow:hidden;
+    border:1px solid rgba(224,64,251,0.15);
+    position:relative; cursor:pointer; transition:border-color 0.15s;
+    backdrop-filter:blur(4px);
+  }
+  .gem-card:active { border-color:rgba(224,64,251,0.4); }
+  .gem-card::before {
+    content:''; position:absolute; top:0; left:0; right:0; height:1px;
+    background:linear-gradient(90deg,transparent,rgba(224,64,251,0.4),transparent);
+  }
+  .gem-card.best-value {
+    border-color:rgba(255,215,64,0.35);
+  }
+  .gem-card.best-value::before {
+    background:linear-gradient(90deg,transparent,var(--accent-gold),transparent);
+  }
+  .best-value-badge {
+    position:absolute; top:6px; right:6px;
+    font-family:var(--font-hud); font-size:6px; letter-spacing:0.06em;
+    text-transform:uppercase; padding:1px 4px; border-radius:3px;
+    background:rgba(255,215,64,0.2); color:var(--accent-gold);
+    border:1px solid rgba(255,215,64,0.35);
+  }
+  .gem-card-body { padding:12px 8px 10px; text-align:center; }
+  .gem-icon {
+    font-size:28px; margin-bottom:4px;
+    filter:drop-shadow(0 0 6px rgba(224,64,251,0.5));
+  }
+  .gem-amount {
+    font-family:var(--font-hud); font-size:15px; font-weight:900;
+    color:var(--gem-color); text-shadow:0 0 8px rgba(224,64,251,0.4);
+    margin-bottom:1px;
+  }
+  .gem-bonus {
+    font-size:8px; color:var(--accent-green); letter-spacing:0.06em;
+    font-family:var(--font-hud); margin-bottom:6px;
+  }
+  .gem-price {
+    font-family:var(--font-hud); font-size:11px; font-weight:700;
+    color:var(--accent-gold); padding:5px 0;
+    border-top:1px solid var(--border-dim);
+  }
+
+  /* Ad reward gem card */
+  .gem-card.ad-card { border-color:rgba(105,255,71,0.2); }
+  .gem-card.ad-card::before { background:linear-gradient(90deg,transparent,var(--accent-green),transparent); }
+  .gem-card.ad-card .gem-amount { color:var(--accent-green); text-shadow:0 0 8px rgba(105,255,71,0.4); }
+  .gem-card.ad-card .gem-price { color:var(--accent-green); border-top-color:rgba(105,255,71,0.1); }
+  .ad-timer { font-size:8px; color:var(--text-muted); font-family:var(--font-hud); }
+  .ad-timer span { color:var(--accent-green); }
+
+  /* ══ SECCIÓN RECURSOS ═══════════════════ */
+
+  .resource-grid {
+    display:grid; grid-template-columns:1fr 1fr;
+    gap:10px; margin-bottom:14px;
+  }
+  .res-card {
+    background:rgba(6,12,20,0.85); border-radius:12px; overflow:hidden;
+    position:relative; cursor:pointer; border:1px solid var(--border-dim);
+    transition:border-color 0.15s; backdrop-filter:blur(4px);
+  }
+  .res-card:active { transform:scale(0.98); }
+  .res-card::before {
+    content:''; position:absolute; top:0; left:0; right:0; height:1px;
+  }
+  .res-card.ecos::before  { background:linear-gradient(90deg,transparent,var(--accent-cyan),transparent); }
+  .res-card.frags::before { background:linear-gradient(90deg,transparent,var(--accent-violet),transparent); }
+  .res-card.energia::before { background:linear-gradient(90deg,transparent,var(--accent-gold),transparent); }
+
+  .res-card.ecos  { border-color:rgba(0,229,255,0.15); }
+  .res-card.frags { border-color:rgba(179,136,255,0.15); }
+  .res-card.energia { border-color:rgba(255,215,64,0.15); }
+
+  .res-body { padding:12px 12px 0; }
+  .res-icon { font-size:24px; margin-bottom:4px; }
+  .res-name {
+    font-family:var(--font-hud); font-size:10px; font-weight:600;
+    letter-spacing:0.08em; color:var(--text-primary); margin-bottom:2px;
+  }
+  .res-desc { font-size:10px; color:var(--text-muted); line-height:1.3; margin-bottom:8px; }
+
+  /* Tier selector dentro de la card */
+  .res-tiers { display:flex; gap:4px; padding:0 12px 12px; }
+  .res-tier {
+    flex:1; padding:6px 4px; border-radius:7px; text-align:center;
+    cursor:pointer; border:none; transition:all 0.15s; position:relative;
+  }
+  .res-tier .rt-amount {
+    font-family:var(--font-hud); font-size:10px; font-weight:700; display:block; line-height:1;
+  }
+  .res-tier .rt-price {
+    font-family:var(--font-hud); font-size:8px; color:var(--text-muted); margin-top:2px; display:block;
+  }
+
+  .ecos .res-tier { background:rgba(0,229,255,0.06); border:1px solid rgba(0,229,255,0.15); color:var(--accent-cyan); }
+  .ecos .res-tier:active { background:rgba(0,229,255,0.15); }
+
+  .frags .res-tier { background:rgba(179,136,255,0.06); border:1px solid rgba(179,136,255,0.15); color:var(--accent-violet); }
+  .frags .res-tier:active { background:rgba(179,136,255,0.15); }
+
+  .energia .res-tier { background:rgba(255,215,64,0.06); border:1px solid rgba(255,215,64,0.15); color:var(--accent-gold); }
+  .energia .res-tier:active { background:rgba(255,215,64,0.15); }
+
+  /* ══ SECCIÓN PAQUETES ════════════════════ */
+
+  .bundle-list { display:flex; flex-direction:column; gap:10px; margin-bottom:14px; }
+
+  .bundle-card {
+    background:rgba(6,12,20,0.88); border-radius:14px; overflow:hidden;
+    border:1px solid var(--border-dim); position:relative; backdrop-filter:blur(6px);
+    cursor:pointer; transition:border-color 0.15s;
+  }
+  .bundle-card:active { border-color:var(--accent-cyan); }
+  .bundle-card::before {
+    content:''; position:absolute; top:0; left:0; right:0; height:1px;
+  }
+  .bundle-card.tier-starter::before  { background:linear-gradient(90deg,transparent,rgba(120,144,156,0.6),transparent); }
+  .bundle-card.tier-valor::before    { background:linear-gradient(90deg,transparent,var(--accent-cyan),transparent); }
+  .bundle-card.tier-elite::before    { background:linear-gradient(90deg,transparent,var(--accent-violet),transparent); }
+  .bundle-card.tier-void::before     { background:linear-gradient(90deg,transparent,var(--accent-gold),transparent); }
+
+  .bundle-card.tier-starter { border-color:rgba(120,144,156,0.2); }
+  .bundle-card.tier-valor   { border-color:rgba(0,229,255,0.22); }
+  .bundle-card.tier-elite   { border-color:rgba(179,136,255,0.22); }
+  .bundle-card.tier-void    { border-color:rgba(255,215,64,0.3); box-shadow:0 0 20px rgba(255,215,64,0.06); }
+
+  .bundle-inner { display:flex; align-items:center; gap:12px; padding:14px; }
+  .bundle-icon { font-size:36px; flex-shrink:0; }
+
+  .bundle-info { flex:1; min-width:0; }
+  .bundle-tier-badge {
+    font-family:var(--font-hud); font-size:7px; letter-spacing:0.14em;
+    text-transform:uppercase; padding:1px 6px; border-radius:3px;
+    margin-bottom:4px; display:inline-block;
+  }
+  .tier-starter .bundle-tier-badge  { background:rgba(120,144,156,0.15); color:#90a4ae; border:1px solid rgba(120,144,156,0.3); }
+  .tier-valor .bundle-tier-badge    { background:rgba(0,229,255,0.10); color:var(--accent-cyan); border:1px solid rgba(0,229,255,0.25); }
+  .tier-elite .bundle-tier-badge   { background:rgba(179,136,255,0.12); color:var(--accent-violet); border:1px solid rgba(179,136,255,0.3); }
+  .tier-void .bundle-tier-badge    { background:rgba(255,215,64,0.12); color:var(--accent-gold); border:1px solid rgba(255,215,64,0.3); }
+
+  .bundle-name {
+    font-family:var(--font-hud); font-size:13px; font-weight:700;
+    letter-spacing:0.06em; color:var(--text-primary); margin-bottom:5px;
+  }
+  .bundle-contents { display:flex; gap:6px; flex-wrap:wrap; }
+  .bc-pill {
+    font-family:var(--font-hud); font-size:9px; font-weight:600;
+    padding:2px 7px; border-radius:5px;
+  }
+  .bc-gem   { background:rgba(224,64,251,0.12); color:var(--gem-color); border:1px solid rgba(224,64,251,0.25); }
+  .bc-eco   { background:rgba(0,229,255,0.08); color:var(--accent-cyan); border:1px solid rgba(0,229,255,0.2); }
+  .bc-frag  { background:rgba(179,136,255,0.10); color:var(--accent-violet); border:1px solid rgba(179,136,255,0.25); }
+  .bc-boost { background:rgba(105,255,71,0.08); color:var(--accent-green); border:1px solid rgba(105,255,71,0.2); }
+
+  .bundle-right { display:flex; flex-direction:column; align-items:flex-end; gap:6px; flex-shrink:0; }
+  .bundle-old-price { font-family:var(--font-hud); font-size:9px; color:var(--text-muted); text-decoration:line-through; }
+  .bundle-price {
+    font-family:var(--font-hud); font-size:18px; font-weight:900; line-height:1;
+  }
+  .tier-starter .bundle-price { color:#90a4ae; }
+  .tier-valor .bundle-price   { color:var(--accent-cyan); text-shadow:0 0 8px rgba(0,229,255,0.4); }
+  .tier-elite .bundle-price  { color:var(--accent-violet); text-shadow:0 0 8px rgba(179,136,255,0.4); }
+  .tier-void .bundle-price   { color:var(--accent-gold); text-shadow:0 0 10px rgba(255,215,64,0.5); }
+
+  .btn-bundle {
+    padding:7px 12px; border-radius:8px; border:none; cursor:pointer;
+    font-family:var(--font-hud); font-size:9px; letter-spacing:0.08em;
+    transition:opacity 0.15s, transform 0.1s;
+  }
+  .btn-bundle:active { transform:scale(0.95); }
+  .tier-starter .btn-bundle { background:rgba(120,144,156,0.15); color:#90a4ae; border:1px solid rgba(120,144,156,0.3); }
+  .tier-valor .btn-bundle   { background:rgba(0,229,255,0.12); color:var(--accent-cyan); border:1px solid rgba(0,229,255,0.3); }
+  .tier-elite .btn-bundle  { background:rgba(179,136,255,0.12); color:var(--accent-violet); border:1px solid rgba(179,136,255,0.3); }
+  .tier-void .btn-bundle   { background:rgba(255,215,64,0.15); color:var(--accent-gold); border:1px solid rgba(255,215,64,0.35); }
+
+  /* Popular badge */
+  .popular-badge {
+    position:absolute; top:10px; right:10px;
+    font-family:var(--font-hud); font-size:6px; letter-spacing:0.1em;
+    text-transform:uppercase; padding:2px 6px; border-radius:4px;
+    background:rgba(0,229,255,0.15); color:var(--accent-cyan);
+    border:1px solid rgba(0,229,255,0.3);
+  }
+
+  /* ── TOAST ── */
+  .toast {
+    position:fixed; bottom:90px; left:50%; transform:translateX(-50%) translateY(20px);
+    background:rgba(8,2,16,0.95); border:1px solid var(--gem-color); border-radius:8px;
+    padding:8px 16px; font-family:var(--font-hud); font-size:11px;
+    color:var(--gem-color); letter-spacing:0.1em; opacity:0; z-index:300;
+    transition:opacity 0.2s, transform 0.2s; white-space:nowrap;
+    box-shadow:0 0 20px rgba(224,64,251,0.2);
+  }
+  .toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+
+  /* ── BOTTOM NAV ── */
+  .bottom-nav {
+    position:fixed; bottom:0; left:50%; transform:translateX(-50%);
+    width:390px; z-index:100;
+    background:rgba(4,9,16,0.95); border-top:1px solid var(--border-glow);
+    backdrop-filter:blur(12px); padding:8px 0 20px;
+    display:flex; justify-content:space-around; align-items:center;
+  }
+  .bottom-nav::before {
+    content:''; position:absolute; top:0; left:0; right:0; height:1px;
+    background:linear-gradient(90deg,transparent 0%,rgba(0,229,255,0.4) 20%,rgba(0,229,255,0.8) 50%,rgba(0,229,255,0.4) 80%,transparent 100%);
+  }
+  .nav-item {
+    flex:1; display:flex; flex-direction:column; align-items:center; gap:4px;
+    padding:4px 8px; cursor:pointer; position:relative; transition:opacity 0.15s;
+  }
+  .nav-icon { font-size:20px; line-height:1; transition:filter 0.2s; }
+  .nav-label {
+    font-family:var(--font-hud); font-size:7px; letter-spacing:0.08em;
+    text-transform:uppercase; color:var(--text-muted); transition:color 0.2s;
+  }
+  .nav-item.active .nav-label { color:var(--gem-color); }
+  .nav-item.active .nav-icon  { filter:drop-shadow(0 0 4px var(--gem-color)); }
+  .nav-item.active::after {
+    content:''; position:absolute; bottom:-4px;
+    width:24px; height:2px; background:var(--gem-color);
+    border-radius:1px; box-shadow:0 0 8px var(--gem-color);
+  }
+  .nav-item.play-nav {
+    background:rgba(0,60,110,0.5); border:1px solid rgba(0,229,255,0.3);
+    border-radius:12px; padding:6px 10px;
+  }
+  .nav-item.play-nav .nav-label { color:var(--accent-cyan); }
+
+  /* ── ANIMS ── */
+  .tienda-header  { animation:fade-up 0.35s ease 0.05s both; }
+  .cat-tabs       { animation:fade-up 0.35s ease 0.12s both; }
+  .tienda-scroll  { animation:fade-up 0.35s ease 0.20s both; }
+  @keyframes fade-up { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+</style>
+</head>
+<body>
+
+<div class="starfield"></div>
+<div class="nebula"></div>
+<div class="scanlines"></div>
+
+<div class="phone">
+
+  <!-- STATUS BAR -->
+  <div class="status-bar">
+    <span class="time">21:34</span>
+    <div class="icons"><span>▲▲▲</span><span>WiFi</span><span>87%</span></div>
+  </div>
+
+  <!-- HEADER -->
+  <div class="tienda-header">
+    <div class="tienda-title-block">
+      <div class="tienda-eyebrow">Recursos y mejoras</div>
+      <div class="tienda-title">TIEN<span>DA</span></div>
+    </div>
+    <div class="gem-pill">
+      <div class="pill-label">Gemas</div>
+      <div class="pill-value">
+        <span class="pill-icon">💎</span>
+        <span class="pill-num" id="gem-display">240</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- CATEGORY TABS -->
+  <div class="cat-tabs">
+    <button class="cat-tab active-gemas" onclick="switchCat('gemas',this)">
+      <div class="ct-icon">💎</div>
+      <div class="ct-label">Gemas</div>
+    </button>
+    <button class="cat-tab" onclick="switchCat('recursos',this)">
+      <div class="ct-icon">◈</div>
+      <div class="ct-label">Recursos</div>
+    </button>
+    <button class="cat-tab" onclick="switchCat('paquetes',this)">
+      <div class="ct-icon">📦</div>
+      <div class="ct-label">Paquetes</div>
+    </button>
+  </div>
+
+  <div class="tienda-scroll">
+
+    <!-- ═══ GEMAS ═══ -->
+    <div class="tienda-section visible" id="section-gemas">
+
+      <!-- Daily reward -->
+      <div class="daily-banner">
+        <div class="daily-inner">
+          <div class="daily-icon">📺</div>
+          <div class="daily-info">
+            <div class="daily-label">Recompensa diaria</div>
+            <div class="daily-title">Ver un anuncio gratis</div>
+            <div class="daily-timer">Siguiente en <span id="countdown">17h 24m</span></div>
+          </div>
+          <button class="btn-daily" onclick="claimDaily()">
+            <span class="bd-reward">+5 💎</span>
+            <span class="bd-label">Ver anuncio</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Oferta especial con timer -->
+      <div class="oferta-timer-banner">
+        <div class="oferta-top">
+          <div class="oferta-badge">
+            <div class="oferta-dot"></div>
+            <div class="oferta-badge-txt">Oferta especial</div>
+          </div>
+          <div class="oferta-countdown" id="oferta-timer">11d 18h 32m</div>
+        </div>
+        <div class="oferta-card-inner">
+          <div class="oferta-icon">💫</div>
+          <div class="oferta-info">
+            <div class="oferta-name">Pack Bienvenida</div>
+            <div class="oferta-contents">
+              <span class="oferta-pill op-gem">110 💎</span>
+              <span class="oferta-pill op-eco">500 ◈</span>
+              <span class="oferta-pill op-frag">120 ◆</span>
+            </div>
+            <div class="oferta-price-row">
+              <span class="oferta-old-price">9.99€</span>
+              <span class="oferta-new-price">2.99€</span>
+              <span class="oferta-discount">-70%</span>
+            </div>
+          </div>
+          <button class="btn-oferta" onclick="buyItem('Pack Bienvenida','2.99€')">
+            Comprar<br>2.99€
+          </button>
+        </div>
+      </div>
+
+      <!-- Gemas grid -->
+      <div class="shop-heading">
+        <div class="sh-label" style="color:var(--gem-color)">💎 Comprar Gemas</div>
+        <div class="line" style="background:linear-gradient(90deg,rgba(224,64,251,0.2),transparent)"></div>
+      </div>
+
+      <div class="gem-grid">
+
+        <!-- Ad free -->
+        <div class="gem-card ad-card" onclick="claimDaily()">
+          <div class="gem-card-body">
+            <div class="gem-icon" style="filter:drop-shadow(0 0 6px rgba(105,255,71,0.6))">📺</div>
+            <div class="gem-amount" style="color:var(--accent-green)">+5</div>
+            <div class="gem-bonus">GRATIS</div>
+            <div class="gem-price" style="color:var(--accent-green); font-size:8px">
+              <div class="ad-timer">En <span>17h 24m</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 110 gems -->
+        <div class="gem-card" onclick="buyItem('110 Gemas','4.99€')">
+          <div class="gem-card-body">
+            <div class="gem-icon">💎</div>
+            <div class="gem-amount">110</div>
+            <div class="gem-bonus" style="opacity:0">·</div>
+            <div class="gem-price">4.99€</div>
+          </div>
+        </div>
+
+        <!-- 248 gems — best value -->
+        <div class="gem-card best-value" onclick="buyItem('248 Gemas','9.99€')">
+          <div class="best-value-badge">Mejor valor</div>
+          <div class="gem-card-body">
+            <div class="gem-icon">💎</div>
+            <div class="gem-amount">248</div>
+            <div class="gem-bonus">+13% más</div>
+            <div class="gem-price">9.99€</div>
+          </div>
+        </div>
+
+        <!-- 550 gems -->
+        <div class="gem-card" onclick="buyItem('550 Gemas','22.99€')">
+          <div class="gem-card-body">
+            <div class="gem-icon" style="font-size:32px">💎</div>
+            <div class="gem-amount">550</div>
+            <div class="gem-bonus">+25% más</div>
+            <div class="gem-price">22.99€</div>
+          </div>
+        </div>
+
+        <!-- 1200 gems -->
+        <div class="gem-card" onclick="buyItem('1200 Gemas','49.99€')">
+          <div class="gem-card-body">
+            <div class="gem-icon" style="font-size:32px">💎</div>
+            <div class="gem-amount">1200</div>
+            <div class="gem-bonus">+45% más</div>
+            <div class="gem-price">49.99€</div>
+          </div>
+        </div>
+
+        <!-- 2800 gems -->
+        <div class="gem-card" onclick="buyItem('2800 Gemas','99.99€')">
+          <div class="gem-card-body">
+            <div class="gem-icon" style="font-size:32px">💎</div>
+            <div class="gem-amount">2800</div>
+            <div class="gem-bonus">+75% más</div>
+            <div class="gem-price">99.99€</div>
+          </div>
+        </div>
+
+      </div>
+    </div><!-- /section-gemas -->
+
+    <!-- ═══ RECURSOS ═══ -->
+    <div class="tienda-section" id="section-recursos">
+
+      <!-- Oferta del día en recursos -->
+      <div class="oferta-timer-banner" style="border-color:rgba(255,215,64,0.25)">
+        <div class="oferta-top">
+          <div class="oferta-badge">
+            <div class="oferta-dot" style="background:var(--accent-gold);box-shadow:0 0 6px rgba(255,215,64,0.8)"></div>
+            <div class="oferta-badge-txt" style="color:var(--accent-gold)">Oferta del día</div>
+          </div>
+          <div class="oferta-countdown" style="color:var(--accent-gold)">23h 12m</div>
+        </div>
+        <div class="oferta-card-inner">
+          <div class="oferta-icon">⚡</div>
+          <div class="oferta-info">
+            <div class="oferta-name">Carga de Ecos x2</div>
+            <div class="oferta-contents">
+              <span class="oferta-pill op-eco">2,000 ◈ Ecos</span>
+            </div>
+            <div class="oferta-price-row">
+              <span class="oferta-old-price">200 💎</span>
+              <span class="oferta-new-price" style="font-size:14px;color:var(--accent-cyan)">100 💎</span>
+              <span class="oferta-discount">-50%</span>
+            </div>
+          </div>
+          <button class="btn-oferta" style="color:var(--accent-cyan);background:rgba(0,229,255,0.10);border-color:rgba(0,229,255,0.3)" onclick="buyGems('2000 Ecos',100)">
+            100 💎
+          </button>
+        </div>
+      </div>
+
+      <div class="shop-heading">
+        <div class="sh-label" style="color:var(--accent-gold)">◈ Comprar Recursos</div>
+        <div class="line" style="background:linear-gradient(90deg,rgba(255,215,64,0.2),transparent)"></div>
+      </div>
+
+      <div class="resource-grid">
+
+        <!-- ECOS -->
+        <div class="res-card ecos">
+          <div class="res-body">
+            <div class="res-icon">◈</div>
+            <div class="res-name" style="color:var(--accent-cyan)">Ecos</div>
+            <div class="res-desc">Divisa permanente para el Nexo</div>
+          </div>
+          <div class="res-tiers">
+            <button class="res-tier" onclick="buyGems('250 Ecos',30)">
+              <span class="rt-amount">250</span>
+              <span class="rt-price">30 💎</span>
+            </button>
+            <button class="res-tier" onclick="buyGems('800 Ecos',80)">
+              <span class="rt-amount">800</span>
+              <span class="rt-price">80 💎</span>
+            </button>
+            <button class="res-tier" onclick="buyGems('2000 Ecos',180)">
+              <span class="rt-amount">2K</span>
+              <span class="rt-price">180 💎</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- FRAGMENTOS -->
+        <div class="res-card frags">
+          <div class="res-body">
+            <div class="res-icon">◆</div>
+            <div class="res-name" style="color:var(--accent-violet)">Fragmentos</div>
+            <div class="res-desc">Para forjar módulos en la Forja</div>
+          </div>
+          <div class="res-tiers">
+            <button class="res-tier" onclick="buyGems('100 Frags',25)">
+              <span class="rt-amount">100</span>
+              <span class="rt-price">25 💎</span>
+            </button>
+            <button class="res-tier" onclick="buyGems('300 Frags',65)">
+              <span class="rt-amount">300</span>
+              <span class="rt-price">65 💎</span>
+            </button>
+            <button class="res-tier" onclick="buyGems('800 Frags',150)">
+              <span class="rt-amount">800</span>
+              <span class="rt-price">150 💎</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- ENERGIA -->
+        <div class="res-card energia" style="grid-column:1/-1">
+          <div class="res-body">
+            <div class="res-icon">⚡</div>
+            <div class="res-name" style="color:var(--accent-gold)">Energía de Arranque</div>
+            <div class="res-desc">Energía extra al inicio de la siguiente partida</div>
+          </div>
+          <div class="res-tiers" style="padding-bottom:12px">
+            <button class="res-tier" onclick="buyGems('+5K Energía',20)">
+              <span class="rt-amount">+5K</span>
+              <span class="rt-price">20 💎</span>
+            </button>
+            <button class="res-tier" onclick="buyGems('+20K Energía',60)">
+              <span class="rt-amount">+20K</span>
+              <span class="rt-price">60 💎</span>
+            </button>
+            <button class="res-tier" onclick="buyGems('+100K Energía',120)">
+              <span class="rt-amount">+100K</span>
+              <span class="rt-price">120 💎</span>
+            </button>
+            <button class="res-tier" onclick="buyGems('+500K Energía',250)">
+              <span class="rt-amount">+500K</span>
+              <span class="rt-price">250 💎</span>
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div><!-- /section-recursos -->
+
+    <!-- ═══ PAQUETES ═══ -->
+    <div class="tienda-section" id="section-paquetes">
+
+      <div class="shop-heading">
+        <div class="sh-label" style="color:var(--accent-cyan)">📦 Paquetes</div>
+        <div class="line" style="background:linear-gradient(90deg,rgba(0,229,255,0.2),transparent)"></div>
+      </div>
+
+      <div class="bundle-list">
+
+        <!-- STARTER -->
+        <div class="bundle-card tier-starter" onclick="buyItem('Pack Starter','1.99€')">
+          <div class="bundle-inner">
+            <div class="bundle-icon">🎁</div>
+            <div class="bundle-info">
+              <div class="bundle-tier-badge">Starter</div>
+              <div class="bundle-name">Pack Iniciado</div>
+              <div class="bundle-contents">
+                <span class="bc-pill bc-gem">50 💎</span>
+                <span class="bc-pill bc-eco">200 ◈</span>
+                <span class="bc-pill bc-frag">50 ◆</span>
+              </div>
+            </div>
+            <div class="bundle-right">
+              <div class="bundle-price">1.99€</div>
+              <button class="btn-bundle">Comprar</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- VALOR — popular -->
+        <div class="bundle-card tier-valor" onclick="buyItem('Pack Valor','9.99€')">
+          <div class="popular-badge">🔥 Popular</div>
+          <div class="bundle-inner">
+            <div class="bundle-icon">⚡</div>
+            <div class="bundle-info">
+              <div class="bundle-tier-badge">Valor</div>
+              <div class="bundle-name">Pack Centinela</div>
+              <div class="bundle-contents">
+                <span class="bc-pill bc-gem">248 💎</span>
+                <span class="bc-pill bc-eco">1,000 ◈</span>
+                <span class="bc-pill bc-frag">250 ◆</span>
+                <span class="bc-pill bc-boost">×2 Ecos 24h</span>
+              </div>
+            </div>
+            <div class="bundle-right">
+              <div class="bundle-old-price">14.99€</div>
+              <div class="bundle-price">9.99€</div>
+              <button class="btn-bundle">Comprar</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- ELITE -->
+        <div class="bundle-card tier-elite" onclick="buyItem('Pack Élite','34.99€')">
+          <div class="bundle-inner">
+            <div class="bundle-icon">🌀</div>
+            <div class="bundle-info">
+              <div class="bundle-tier-badge">Élite</div>
+              <div class="bundle-name">Pack Nexo</div>
+              <div class="bundle-contents">
+                <span class="bc-pill bc-gem">750 💎</span>
+                <span class="bc-pill bc-eco">4,000 ◈</span>
+                <span class="bc-pill bc-frag">800 ◆</span>
+                <span class="bc-pill bc-boost">Módulo Épico</span>
+              </div>
+            </div>
+            <div class="bundle-right">
+              <div class="bundle-old-price">49.99€</div>
+              <div class="bundle-price">34.99€</div>
+              <button class="btn-bundle">Comprar</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- VOID -->
+        <div class="bundle-card tier-void" onclick="buyItem('Pack Void','66.99€')">
+          <div class="bundle-inner">
+            <div class="bundle-icon">⭐</div>
+            <div class="bundle-info">
+              <div class="bundle-tier-badge">Void</div>
+              <div class="bundle-name">Pack Supremo</div>
+              <div class="bundle-contents">
+                <span class="bc-pill bc-gem">2,000 💎</span>
+                <span class="bc-pill bc-eco">10,000 ◈</span>
+                <span class="bc-pill bc-frag">2,000 ◆</span>
+                <span class="bc-pill bc-boost">Módulo Legendario</span>
+              </div>
+            </div>
+            <div class="bundle-right">
+              <div class="bundle-old-price">99.99€</div>
+              <div class="bundle-price">66.99€</div>
+              <button class="btn-bundle">Comprar</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div><!-- /section-paquetes -->
+
+  </div><!-- /tienda-scroll -->
+</div><!-- /phone -->
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- BOTTOM NAV -->
+<div class="bottom-nav">
+  <div class="nav-item">
+    <div class="nav-icon">⌂</div>
+    <div class="nav-label">Inicio</div>
+  </div>
+  <div class="nav-item">
+    <div class="nav-icon">◈</div>
+    <div class="nav-label">Nexo</div>
+  </div>
+  <div class="nav-item play-nav">
+    <div class="nav-icon">▶</div>
+    <div class="nav-label">Jugar</div>
+  </div>
+  <div class="nav-item">
+    <div class="nav-icon">◆</div>
+    <div class="nav-label">Forja</div>
+  </div>
+  <div class="nav-item">
+    <div class="nav-icon">⬡</div>
+    <div class="nav-label">Perfil</div>
+  </div>
+  <div class="nav-item active">
+    <div class="nav-icon">⬙</div>
+    <div class="nav-label">Tienda</div>
+  </div>
+</div>
+
+<script>
+  var gems = 240;
+  var dailyClaimed = false;
+
+  function switchCat(cat, btn) {
+    document.querySelectorAll('.cat-tab').forEach(function(t){ t.className='cat-tab'; });
+    btn.classList.add('active-'+cat);
+    document.querySelectorAll('.tienda-section').forEach(function(s){ s.classList.remove('visible'); });
+    document.getElementById('section-'+cat).classList.add('visible');
+  }
+
+  function claimDaily() {
+    if (dailyClaimed) { showToast('Ya reclamaste hoy · Vuelve en 17h'); return; }
+    dailyClaimed = true;
+    gems += 5;
+    document.getElementById('gem-display').textContent = gems.toLocaleString();
+    showToast('✦ +5 💎 recibidas — ¡Gracias por jugar!');
+  }
+
+  function buyItem(name, price) {
+    showToast('Comprar: ' + name + ' · ' + price);
+  }
+
+  function buyGems(item, cost) {
+    if (gems < cost) { showToast('💎 Insuficientes · Necesitas ' + cost); return; }
+    gems -= cost;
+    document.getElementById('gem-display').textContent = gems.toLocaleString();
+    showToast('✓ ' + item + ' adquiridos');
+  }
+
+  var toastTimer;
+  function showToast(msg) {
+    var t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function(){ t.classList.remove('show'); }, 2200);
+  }
+
+  // Countdown simulado
+  var seconds = 11*24*3600 + 18*3600 + 32*60;
+  setInterval(function(){
+    if (seconds <= 0) return;
+    seconds--;
+    var d = Math.floor(seconds/86400);
+    var h = Math.floor((seconds%86400)/3600);
+    var m = Math.floor((seconds%3600)/60);
+    var el = document.getElementById('oferta-timer');
+    if (el) el.textContent = d+'d '+h+'h '+m+'m';
+  }, 1000);
+</script>
+</body>
+</html>

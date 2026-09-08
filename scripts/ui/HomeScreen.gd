@@ -650,9 +650,11 @@ class SentinelOrb extends Control:
 			draw_circle(center, gr, Color(0.0, 0.78, 1.0, a))
 
 		# Nucleo (degradado simulado con circulos).
+		# El brillo va desplazado hacia arriba-izquierda para simular una luz,
+		# pero poco: con offsets grandes el nucleo parecia descentrado.
 		draw_circle(center, r, Color("003c78"))
-		draw_circle(center - Vector2(r * 0.2, r * 0.2), r * 0.75, Color("008cdc"))
-		draw_circle(center - Vector2(r * 0.3, r * 0.3), r * 0.4, Color("b4dcff"))
+		draw_circle(center - Vector2(r * 0.10, r * 0.12), r * 0.72, Color("008cdc"))
+		draw_circle(center - Vector2(r * 0.16, r * 0.20), r * 0.38, Color("b4dcff"))
 
 		# Anillo exterior giratorio.
 		var ring_r := base_r * 2.0

@@ -1,0 +1,1020 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Void Sentinel — Nexo</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Rajdhani:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-deep:       #020409;
+    --bg-mid:        #060c14;
+    --bg-card:       #0a1525;
+    --accent-cyan:   #00e5ff;
+    --accent-gold:   #ffd740;
+    --accent-violet: #b388ff;
+    --accent-green:  #69ff47;
+    --accent-red:    #ff5252;
+    --danger:        #ff1744;
+    --text-primary:  #e8f4fd;
+    --text-muted:    #4a7a9b;
+    --border-glow:   rgba(0,229,255,0.18);
+    --border-dim:    rgba(0,229,255,0.06);
+    --font-hud:      'Orbitron', monospace;
+    --font-body:     'Rajdhani', sans-serif;
+
+    /* Colores por categoría */
+    --cat-ataque:      #ff6b6b;
+    --cat-defensa:     #00e5ff;
+    --cat-bonificacion:#ffd740;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg-deep);
+    color: var(--text-primary);
+    font-family: var(--font-body);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+  }
+
+  .phone {
+    width: 390px;
+    min-height: 100vh;
+    position: relative;
+    overflow: hidden;
+    background: var(--bg-deep);
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ── STARFIELD ───────────────────────────────────── */
+  .starfield {
+    position: fixed; top: 0; left: 50%;
+    transform: translateX(-50%);
+    width: 390px; height: 100vh;
+    pointer-events: none; z-index: 0; overflow: hidden;
+  }
+  .starfield::before, .starfield::after {
+    content: ''; position: absolute; inset: 0;
+    background-image:
+      radial-gradient(1px 1px at 12% 18%, rgba(255,255,255,0.8) 0%, transparent 100%),
+      radial-gradient(1px 1px at 28% 42%, rgba(0,229,255,0.6) 0%, transparent 100%),
+      radial-gradient(1.5px 1.5px at 52% 9%, rgba(255,255,255,0.7) 0%, transparent 100%),
+      radial-gradient(1px 1px at 72% 27%, rgba(179,136,255,0.7) 0%, transparent 100%),
+      radial-gradient(1px 1px at 88% 62%, rgba(255,255,255,0.5) 0%, transparent 100%),
+      radial-gradient(1px 1px at 18% 72%, rgba(0,229,255,0.4) 0%, transparent 100%),
+      radial-gradient(2px 2px at 93% 12%, rgba(255,255,255,0.8) 0%, transparent 100%),
+      radial-gradient(1px 1px at 38% 57%, rgba(0,229,255,0.4) 0%, transparent 100%),
+      radial-gradient(1px 1px at 60% 82%, rgba(255,255,255,0.6) 0%, transparent 100%);
+    animation: twinkle 4s ease-in-out infinite alternate;
+  }
+  .starfield::after {
+    background-image:
+      radial-gradient(1px 1px at 22% 33%, rgba(255,255,255,0.5) 0%, transparent 100%),
+      radial-gradient(1px 1px at 47% 22%, rgba(0,229,255,0.4) 0%, transparent 100%),
+      radial-gradient(1.5px 1.5px at 77% 82%, rgba(255,255,255,0.7) 0%, transparent 100%),
+      radial-gradient(1px 1px at 67% 37%, rgba(255,255,255,0.6) 0%, transparent 100%),
+      radial-gradient(2px 2px at 94% 90%, rgba(255,215,64,0.5) 0%, transparent 100%);
+    animation-delay: 2s; animation-duration: 5s;
+  }
+  @keyframes twinkle {
+    0%   { opacity: 0.5; }
+    100% { opacity: 1.0; }
+  }
+
+  .nebula {
+    position: fixed; top: 0; left: 50%;
+    transform: translateX(-50%);
+    width: 390px; height: 100vh;
+    pointer-events: none; z-index: 0;
+  }
+  .nebula::before {
+    content: ''; position: absolute;
+    top: -60px; left: -80px;
+    width: 280px; height: 280px;
+    background: radial-gradient(ellipse, rgba(180,0,50,0.08) 0%, transparent 70%);
+    animation: nebula-drift 9s ease-in-out infinite alternate;
+  }
+  .nebula::after {
+    content: ''; position: absolute;
+    bottom: 80px; right: -60px;
+    width: 220px; height: 220px;
+    background: radial-gradient(ellipse, rgba(0,80,160,0.09) 0%, transparent 70%);
+    animation: nebula-drift 11s ease-in-out infinite alternate-reverse;
+  }
+  @keyframes nebula-drift {
+    from { transform: translate(0,0) scale(1); }
+    to   { transform: translate(15px,12px) scale(1.08); }
+  }
+
+  .scanlines {
+    position: fixed; top: 0; left: 50%; transform: translateX(-50%);
+    width: 390px; height: 100vh; pointer-events: none; z-index: 200;
+    background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.025) 2px, rgba(0,0,0,0.025) 4px);
+  }
+
+  /* ── STATUS BAR ──────────────────────────────────── */
+  .status-bar {
+    position: relative; z-index: 10;
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 12px 18px 8px;
+    font-family: var(--font-hud); font-size: 10px; color: var(--text-muted);
+    letter-spacing: 0.08em;
+  }
+  .status-bar .time { font-size: 13px; color: var(--text-primary); font-weight: 600; }
+  .status-bar .icons { display: flex; gap: 6px; align-items: center; font-size: 11px; }
+
+  /* ── HEADER NEXO ─────────────────────────────────── */
+  .nexo-header {
+    position: relative; z-index: 10;
+    padding: 6px 16px 12px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+
+  .nexo-title-block {
+    display: flex; flex-direction: column; gap: 2px;
+  }
+  .nexo-eyebrow {
+    font-family: var(--font-hud);
+    font-size: 8px; letter-spacing: 0.2em;
+    color: var(--text-muted); text-transform: uppercase;
+  }
+  .nexo-title {
+    font-family: var(--font-hud);
+    font-size: 22px; font-weight: 900;
+    letter-spacing: 0.15em; color: var(--text-primary);
+    text-shadow: 0 0 16px rgba(0,229,255,0.4);
+    line-height: 1;
+  }
+  .nexo-title span { color: var(--accent-cyan); }
+
+  /* Ecos balance pill */
+  .ecos-pill {
+    display: flex; flex-direction: column; align-items: flex-end; gap: 2px;
+  }
+  .ecos-pill .pill-label {
+    font-size: 8px; letter-spacing: 0.15em;
+    text-transform: uppercase; color: var(--text-muted);
+  }
+  .ecos-pill .pill-value {
+    display: flex; align-items: center; gap: 5px;
+    background: rgba(0,229,255,0.08);
+    border: 1px solid rgba(0,229,255,0.25);
+    border-radius: 20px;
+    padding: 4px 10px;
+  }
+  .ecos-pill .pill-icon { font-size: 13px; color: var(--accent-cyan); }
+  .ecos-pill .pill-num {
+    font-family: var(--font-hud);
+    font-size: 14px; font-weight: 700;
+    color: var(--accent-cyan);
+    text-shadow: 0 0 8px rgba(0,229,255,0.6);
+  }
+
+  /* ── CATEGORY TABS ───────────────────────────────── */
+  .cat-tabs {
+    position: relative; z-index: 10;
+    display: flex; gap: 0;
+    margin: 0 16px 12px;
+    background: rgba(6,12,20,0.8);
+    border: 1px solid var(--border-glow);
+    border-radius: 10px;
+    overflow: hidden;
+    backdrop-filter: blur(6px);
+  }
+
+  .cat-tab {
+    flex: 1; padding: 10px 4px;
+    display: flex; flex-direction: column; align-items: center; gap: 3px;
+    cursor: pointer;
+    position: relative;
+    transition: background 0.2s;
+    border: none; background: none;
+  }
+  .cat-tab + .cat-tab { border-left: 1px solid var(--border-dim); }
+
+  .cat-tab .tab-icon { font-size: 15px; line-height: 1; }
+  .cat-tab .tab-label {
+    font-family: var(--font-hud);
+    font-size: 7px; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--text-muted);
+    transition: color 0.2s;
+  }
+  .cat-tab .tab-count {
+    font-size: 8px; color: var(--text-muted);
+    transition: color 0.2s;
+  }
+
+  /* Active tab indicator */
+  .cat-tab::after {
+    content: ''; position: absolute;
+    bottom: 0; left: 10%; right: 10%; height: 2px;
+    border-radius: 1px; opacity: 0;
+    transition: opacity 0.2s;
+  }
+  .cat-tab.active-ataque      { background: rgba(255,107,107,0.06); }
+  .cat-tab.active-defensa     { background: rgba(0,229,255,0.06); }
+  .cat-tab.active-bonificacion{ background: rgba(255,215,64,0.06); }
+
+  .cat-tab.active-ataque .tab-label,
+  .cat-tab.active-ataque .tab-count       { color: var(--cat-ataque); }
+  .cat-tab.active-defensa .tab-label,
+  .cat-tab.active-defensa .tab-count      { color: var(--cat-defensa); }
+  .cat-tab.active-bonificacion .tab-label,
+  .cat-tab.active-bonificacion .tab-count { color: var(--cat-bonificacion); }
+
+  .cat-tab.active-ataque::after       { background: var(--cat-ataque); opacity: 1; }
+  .cat-tab.active-defensa::after      { background: var(--cat-defensa); opacity: 1; }
+  .cat-tab.active-bonificacion::after { background: var(--cat-bonificacion); opacity: 1; }
+
+  /* ── SCROLLABLE UPGRADE LIST ─────────────────────── */
+  .upgrades-scroll {
+    position: relative; z-index: 10;
+    flex: 1;
+    overflow-y: auto;
+    padding: 0 16px 90px;
+    scrollbar-width: none;
+  }
+  .upgrades-scroll::-webkit-scrollbar { display: none; }
+
+  /* Category header inside list */
+  .cat-section { display: none; }
+  .cat-section.visible { display: block; }
+
+  .cat-section-title {
+    display: flex; align-items: center; gap: 8px;
+    margin-bottom: 10px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--border-dim);
+  }
+  .cat-section-title .sect-line {
+    flex: 1; height: 1px;
+  }
+  .cat-section-title .sect-label {
+    font-family: var(--font-hud);
+    font-size: 9px; letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+
+  /* ── UPGRADE CARD ────────────────────────────────── */
+  .upgrade-card {
+    background: rgba(6,12,20,0.85);
+    border-radius: 12px;
+    margin-bottom: 8px;
+    overflow: hidden;
+    border: 1px solid var(--border-dim);
+    position: relative;
+    transition: border-color 0.15s;
+    backdrop-filter: blur(4px);
+  }
+  .upgrade-card:active { border-color: rgba(0,229,255,0.3); }
+  .upgrade-card.maxed { opacity: 0.55; }
+
+  /* Accent left bar */
+  .upgrade-card::before {
+    content: ''; position: absolute;
+    left: 0; top: 8px; bottom: 8px; width: 2px;
+    border-radius: 1px;
+  }
+  .upgrade-card.cat-ataque::before      { background: var(--cat-ataque); }
+  .upgrade-card.cat-defensa::before     { background: var(--cat-defensa); }
+  .upgrade-card.cat-bonificacion::before{ background: var(--cat-bonificacion); }
+
+  /* Top glow line on hover/affordable */
+  .upgrade-card.affordable::after {
+    content: ''; position: absolute;
+    top: 0; left: 0; right: 0; height: 1px;
+  }
+  .upgrade-card.cat-ataque.affordable::after      { background: linear-gradient(90deg, transparent, var(--cat-ataque), transparent); }
+  .upgrade-card.cat-defensa.affordable::after     { background: linear-gradient(90deg, transparent, var(--cat-defensa), transparent); }
+  .upgrade-card.cat-bonificacion.affordable::after{ background: linear-gradient(90deg, transparent, var(--cat-bonificacion), transparent); }
+
+  .card-body {
+    padding: 10px 12px 10px 18px;
+    display: flex; align-items: center; gap: 10px;
+  }
+
+  .card-icon-wrap {
+    width: 36px; height: 36px; flex-shrink: 0;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 17px;
+    position: relative;
+  }
+  .cat-ataque .card-icon-wrap      { background: rgba(255,107,107,0.12); }
+  .cat-defensa .card-icon-wrap     { background: rgba(0,229,255,0.08); }
+  .cat-bonificacion .card-icon-wrap{ background: rgba(255,215,64,0.10); }
+
+  .card-info { flex: 1; min-width: 0; }
+  .card-name {
+    font-family: var(--font-hud);
+    font-size: 11px; font-weight: 600;
+    letter-spacing: 0.06em;
+    color: var(--text-primary);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    margin-bottom: 3px;
+  }
+  .card-desc {
+    font-size: 10px; color: var(--text-muted);
+    line-height: 1.3; margin-bottom: 5px;
+  }
+
+  /* Progress bar */
+  .card-progress-wrap {
+    display: flex; align-items: center; gap: 6px;
+  }
+  .card-progress-bar {
+    flex: 1; height: 3px; border-radius: 2px;
+    background: rgba(255,255,255,0.06);
+    overflow: hidden;
+  }
+  .card-progress-fill {
+    height: 100%; border-radius: 2px;
+    transition: width 0.3s ease;
+  }
+  .cat-ataque .card-progress-fill      { background: linear-gradient(90deg, rgba(255,107,107,0.6), var(--cat-ataque)); }
+  .cat-defensa .card-progress-fill     { background: linear-gradient(90deg, rgba(0,180,220,0.6), var(--cat-defensa)); }
+  .cat-bonificacion .card-progress-fill{ background: linear-gradient(90deg, rgba(200,160,0,0.6), var(--cat-bonificacion)); }
+
+  .card-level {
+    font-family: var(--font-hud);
+    font-size: 8px; white-space: nowrap;
+    color: var(--text-muted);
+  }
+  .card-level .lvl-cur { font-size: 10px; color: var(--text-primary); }
+
+  /* Right side: value + buy button */
+  .card-right {
+    display: flex; flex-direction: column;
+    align-items: flex-end; gap: 4px;
+    flex-shrink: 0;
+  }
+  .card-value {
+    font-family: var(--font-hud);
+    font-size: 12px; font-weight: 700;
+    letter-spacing: 0.04em;
+  }
+  .cat-ataque .card-value      { color: var(--cat-ataque); }
+  .cat-defensa .card-value     { color: var(--cat-defensa); }
+  .cat-bonificacion .card-value{ color: var(--cat-bonificacion); }
+
+  .card-value .val-unit { font-size: 9px; font-weight: 400; opacity: 0.7; }
+
+  .btn-buy {
+    display: flex; align-items: center; gap: 4px;
+    padding: 5px 8px;
+    border-radius: 6px; border: none; cursor: pointer;
+    font-family: var(--font-hud);
+    font-size: 9px; letter-spacing: 0.08em;
+    font-weight: 600;
+    transition: opacity 0.15s, transform 0.1s;
+  }
+  .btn-buy:active { transform: scale(0.95); }
+
+  .cat-ataque .btn-buy {
+    background: rgba(255,107,107,0.15);
+    color: var(--cat-ataque);
+    border: 1px solid rgba(255,107,107,0.3);
+  }
+  .cat-defensa .btn-buy {
+    background: rgba(0,229,255,0.10);
+    color: var(--cat-defensa);
+    border: 1px solid rgba(0,229,255,0.25);
+  }
+  .cat-bonificacion .btn-buy {
+    background: rgba(255,215,64,0.12);
+    color: var(--cat-bonificacion);
+    border: 1px solid rgba(255,215,64,0.3);
+  }
+
+  .btn-buy.cant-afford {
+    opacity: 0.35;
+    cursor: not-allowed;
+  }
+  .btn-buy.maxed-btn {
+    background: rgba(255,255,255,0.04);
+    color: var(--text-muted);
+    border: 1px solid var(--border-dim);
+    cursor: default;
+    letter-spacing: 0.05em;
+  }
+
+  .btn-buy .buy-icon { font-size: 10px; }
+  .btn-buy .buy-cost { font-size: 9px; }
+
+  /* ── TOAST FEEDBACK ──────────────────────────────── */
+  .toast {
+    position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%) translateY(20px);
+    background: rgba(6,20,35,0.95);
+    border: 1px solid var(--accent-cyan);
+    border-radius: 8px; padding: 8px 16px;
+    font-family: var(--font-hud); font-size: 11px;
+    color: var(--accent-cyan); letter-spacing: 0.1em;
+    opacity: 0; z-index: 300;
+    transition: opacity 0.2s, transform 0.2s;
+    white-space: nowrap;
+    box-shadow: 0 0 20px rgba(0,229,255,0.2);
+  }
+  .toast.show {
+    opacity: 1; transform: translateX(-50%) translateY(0);
+  }
+
+  /* ── BOTTOM NAV BAR ──────────────────────────────── */
+  .bottom-nav {
+    position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
+    width: 390px; z-index: 100;
+    background: rgba(4,9,16,0.95);
+    border-top: 1px solid var(--border-glow);
+    backdrop-filter: blur(12px);
+    padding: 8px 0 20px;
+    display: flex; justify-content: space-around; align-items: center;
+  }
+  .bottom-nav::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+    background: linear-gradient(90deg, transparent 0%, rgba(0,229,255,0.4) 20%, rgba(0,229,255,0.8) 50%, rgba(0,229,255,0.4) 80%, transparent 100%);
+  }
+  .nav-item {
+    flex: 1; display: flex; flex-direction: column;
+    align-items: center; gap: 4px; padding: 4px 8px;
+    cursor: pointer; position: relative; transition: opacity 0.15s;
+  }
+  .nav-icon { font-size: 20px; line-height: 1; transition: filter 0.2s; }
+  .nav-label {
+    font-family: var(--font-hud); font-size: 7px;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--text-muted); transition: color 0.2s;
+  }
+  .nav-item.active .nav-label { color: var(--accent-cyan); }
+  .nav-item.active .nav-icon  { filter: drop-shadow(0 0 4px var(--accent-cyan)); }
+  .nav-item.active::after {
+    content: ''; position: absolute; bottom: -4px;
+    width: 24px; height: 2px; background: var(--accent-cyan);
+    border-radius: 1px; box-shadow: 0 0 8px var(--accent-cyan);
+  }
+  .nav-item.play-nav {
+    background: rgba(0,60,110,0.5);
+    border: 1px solid rgba(0,229,255,0.3);
+    border-radius: 12px; padding: 6px 10px;
+  }
+  .nav-item.play-nav .nav-label { color: var(--accent-cyan); }
+
+  /* ── FADE IN ANIM ────────────────────────────────── */
+  .nexo-header   { animation: fade-up 0.35s ease 0.05s both; }
+  .cat-tabs      { animation: fade-up 0.35s ease 0.15s both; }
+  .upgrades-scroll{ animation: fade-up 0.35s ease 0.22s both; }
+  @keyframes fade-up {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+</style>
+</head>
+<body>
+
+<div class="starfield"></div>
+<div class="nebula"></div>
+<div class="scanlines"></div>
+
+<div class="phone">
+
+  <!-- STATUS BAR -->
+  <div class="status-bar">
+    <span class="time">21:34</span>
+    <div class="icons"><span>▲▲▲</span><span>WiFi</span><span>87%</span></div>
+  </div>
+
+  <!-- HEADER -->
+  <div class="nexo-header">
+    <div class="nexo-title-block">
+      <div class="nexo-eyebrow">Mejoras permanentes</div>
+      <div class="nexo-title">NEX<span>O</span></div>
+    </div>
+    <div class="ecos-pill">
+      <div class="pill-label">Ecos disponibles</div>
+      <div class="pill-value">
+        <span class="pill-icon">◈</span>
+        <span class="pill-num" id="ecos-display">1,247</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- CATEGORY TABS -->
+  <div class="cat-tabs">
+    <button class="cat-tab active-ataque" onclick="switchCat('ataque',this)">
+      <div class="tab-icon">⚔</div>
+      <div class="tab-label">Ataque</div>
+      <div class="tab-count">6 mejoras</div>
+    </button>
+    <button class="cat-tab" onclick="switchCat('defensa',this)">
+      <div class="tab-icon">🛡</div>
+      <div class="tab-label">Defensa</div>
+      <div class="tab-count">5 mejoras</div>
+    </button>
+    <button class="cat-tab" onclick="switchCat('bonificacion',this)">
+      <div class="tab-icon">◈</div>
+      <div class="tab-label">Bonific.</div>
+      <div class="tab-count">4 mejoras</div>
+    </button>
+  </div>
+
+  <!-- UPGRADE LISTS -->
+  <div class="upgrades-scroll">
+
+    <!-- ═══ ATAQUE ═══ -->
+    <div class="cat-section visible" id="section-ataque">
+      <div class="cat-section-title">
+        <div class="sect-line" style="background:linear-gradient(90deg,transparent,rgba(255,107,107,0.3))"></div>
+        <div class="sect-label" style="color:var(--cat-ataque)">⚔ Ataque</div>
+        <div class="sect-line" style="background:linear-gradient(90deg,rgba(255,107,107,0.3),transparent)"></div>
+      </div>
+
+      <!-- Daño Base -->
+      <div class="upgrade-card cat-ataque affordable" id="card-danio">
+        <div class="card-body">
+          <div class="card-icon-wrap">💥</div>
+          <div class="card-info">
+            <div class="card-name">Daño Base</div>
+            <div class="card-desc">+5 daño por nivel al proyectil principal</div>
+            <div class="card-progress-wrap">
+              <div class="card-progress-bar">
+                <div class="card-progress-fill" style="width:32%"></div>
+              </div>
+              <div class="card-level"><span class="lvl-cur">16</span>/50</div>
+            </div>
+          </div>
+          <div class="card-right">
+            <div class="card-value">+80 <span class="val-unit">dmg</span></div>
+            <button class="btn-buy" onclick="comprar('danio',44,this)">
+              <span class="buy-icon">◈</span>
+              <span class="buy-cost" id="cost-danio">44</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Velocidad de Ataque -->
+      <div class="upgrade-card cat-ataque affordable" id="card-velocidad">
+        <div class="card-body">
+          <div class="card-icon-wrap">⚡</div>
+          <div class="card-info">
+            <div class="card-name">Velocidad Ataque</div>
+            <div class="card-desc">Reduce el tiempo entre disparos</div>
+            <div class="card-progress-wrap">
+              <div class="card-progress-bar">
+                <div class="card-progress-fill" style="width:20%"></div>
+              </div>
+              <div class="card-level"><span class="lvl-cur">10</span>/50</div>
+            </div>
+          </div>
+          <div class="card-right">
+            <div class="card-value">×1.24 <span class="val-unit">spd</span></div>
+            <button class="btn-buy" onclick="comprar('velocidad',24,this)">
+              <span class="buy-icon">◈</span>
+              <span class="buy-cost" id="cost-velocidad">24</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Prob. Crítico -->
+      <div class="upgrade-card cat-ataque" id="card-critico">
+        <div class="card-body">
+          <div class="card-icon-wrap">🎯</div>
+          <div class="card-info">
+            <div class="card-name">Prob. Crítico</div>
+            <div class="card-desc">% de que el disparo haga daño crítico</div>
+            <div class="card-progress-wrap">
+              <div class="card-progress-bar">
+                <div class="card-progress-fill" style="width:8%"></div>
+              </div>
+              <div class="card-level"><span class="lvl-cur">4</span>/50</div>
+            </div>
+          </div>
+          <div class="card-right">
+            <div class="card-value">4% <span class="val-unit">crit</span></div>
+            <button class="btn-buy cant-afford" onclick="comprar('critico',1380,this)">
+              <span class="buy-icon">◈</span>
+              <span class="buy-cost" id="cost-critico">1,380</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Factor Crítico -->
+      <div class="upgrade-card cat-ataque" id="card-factor">
+        <div class="card-body">
+          <div class="card-icon-wrap">💫</div>
+          <div class="card-info">
+            <div class="card-name">Factor Crítico</div>
+            <div class="card-desc">Multiplicador de daño en golpe crítico</div>
+            <div class="card-progress-wrap">
+              <div class="card-progress-bar">
+                <div class="card-progress-fill" style="width:4%"></div>
+              </div>
+              <div class="card-level"><span class="lvl-cur">2</span>/50</div>
+            </div>
+          </div>
+          <div class="card-right">
+            <div class="card-value">×2.4 <span class="val-unit">crit</span></div>
+            <button class="btn-buy cant-afford" onclick="comprar('factor',860,this)">
+              <span class="buy-icon">◈</span>
+              <span class="buy-cost" id="cost-factor">860</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Prob. Multidisparo -->
+      <div class="upgrade-card cat-ataque" id="card-multi">
+        <div class="card-body">
+          <div class="card-icon-wrap">✦</div>
+          <div class="card-info">
+            <div class="card-name">Multidisparo</div>
+            <div class="card-desc">% de disparar 2 proyectiles a la vez</div>
+            <div class="card-progress-wrap">
+              <div class="card-progress-bar">
+                <div class="card-progress-fill" style="width:0%"></div>
+              </div>
+              <div class="card-level"><span class="lvl-cur">0</span>/50</div>
+            </div>
+          </div>
+          <div class="card-right">
+            <div class="card-value">0% <span class="val-unit">multi</span></div>
+            <button class="btn-buy affordable" onclick="comprar('multi',11,this)">
+              <span class="buy-icon">◈</span>
+              <span class="buy-cost" id="cost-multi">11</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Alcance -->
+      <div class="upgrade-card cat-ataque maxed" id="card-alcance">
+        <div class="card-body">
+          <div class="card-icon-wrap">📡</div>
+          <div class="card-info">
+            <div class="card-name">Alcance</div>
+            <div class="card-desc">Distancia máxima de detección de enemigos</div>
+            <div class="card-progress-wrap">
+              <div class="card-progress-bar">
+                <div class="card-progress-fill" style="width:100%"></div>
+              </div>
+              <div class="card-level"><span class="lvl-cur" style="color:var(--accent-gold)">MAX</span></div>
+            </div>
+          </div>
+          <div class="card-right">
+            <div class="card-value" style="color:var(--accent-gold)">50m</div>
+            <button class="btn-buy maxed-btn">MAX</button>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /section-ataque -->
+
+    <!-- ═══ DEFENSA ═══ -->
+    <div class="cat-section" id="section-defensa">
+      <div class="cat-section-title">
+        <div class="sect-line" style="background:linear-gradient(90deg,transparent,rgba(0,229,255,0.3))"></div>
+        <div class="sect-label" style="color:var(--cat-defensa)">🛡 Defensa</div>
+        <div class="sect-line" style="background:linear-gradient(90deg,rgba(0,229,255,0.3),transparent)"></div>
+      </div>
+
+      <!-- Salud Máxima -->
+      <div class="upgrade-card cat-defensa affordable" id="card-salud">
+        <div class="card-body">
+          <div class="card-icon-wrap">❤</div>
+          <div class="card-info">
+            <div class="card-name">Salud Máxima</div>
+            <div class="card-desc">Aumenta los HP del Núcleo Centinela</div>
+            <div class="card-progress-wrap">
+              <div class="card-progress-bar">
+                <div class="card-progress-fill" style="width:24%"></div>
+              </div>
+              <div class="card-level"><span class="lvl-cur">12</span>/50</div>
+            </div>
+          </div>
+          <div class="card-right">
+            <div class="card-value">+240 <span class="val-unit">hp</span></div>
+            <button class="btn-buy" onclick="comprar('salud',28,this)">
+              <span class="buy-icon">◈</span>
+              <span class="buy-cost" id="cost-salud">28</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Regeneración -->
+      <div class="upgrade-card cat-defensa affordable" id="card-regen">
+        <div class="card-body">
+          <div class="card-icon-wrap">♻</div>
+          <div class="card-info">
+            <div class="card-name">Regeneración</div>
+            <div class="card-desc">HP recuperados por segundo fuera de daño</div>
+            <div class="card-progress-wrap">
+              <div class="card-progress-bar">
+                <div class="card-progress-fill" style="width:10%"></div>
+              </div>
+              <div class="card-level"><span class="lvl-cur">5</span>/50</div>
+            </div>
+          </div>
+          <div class="card-right">
+            <div class="card-value">0.5 <span class="val-unit">hp/s</span></div>
+            <button class="btn-buy" onclick="comprar('regen',14,this)">
+              <span class="buy-icon">◈</span>
+              <span class="buy-cost" id="cost-regen">14</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Defensa % -->
+      <div class="upgrade-card cat-defensa" id="card-defpct">
+        <div class="card-body">
+          <div class="card-icon-wrap">🔰</div>
+          <div class="card-info">
+            <div class="card-name">Defensa %</div>
+            <div class="card-desc">Reduce el daño recibido en porcentaje</div>
+            <div class="card-progress-wrap">
+              <div class="card-progress-bar">
+                <div class="card-progress-fill" style="width:2%"></div>
+              </div>
+              <div class="card-level"><span class="lvl-cur">1</span>/50</div>
+            </div>
+          </div>
+          <div class="card-right">
+            <div class="card-value">1% <span class="val-unit">red.</span></div>
+            <button class="btn-buy cant-afford" onclick="comprar('defpct',749,this)">
+              <span class="buy-icon">◈</span>
+              <span class="buy-cost" id="cost-defpct">749</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Daño Espina -->
+      <div class="upgrade-card cat-defensa" id="card-espina">
+        <div class="card-body">
+          <div class="card-icon-wrap">🌵</div>
+          <div class="card-info">
+            <div class="card-name">Daño Espina</div>
+            <div class="card-desc">% del daño recibido devuelto al atacante</div>
+            <div class="card-progress-wrap">
+              <div class="card-progress-bar">
+                <div class="card-progress-fill" style="width:0%"></div>
+              </div>
+              <div class="card-level"><span class="lvl-cur">0</span>/50</div>
+            </div>
+          </div>
+          <div class="card-right">
+            <div class="card-value">0% <span class="val-unit">rfl.</span></div>
+            <button class="btn-buy affordable" onclick="comprar('espina',11,this)">
+              <span class="buy-icon">◈</span>
+              <span class="buy-cost" id="cost-espina">11</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Prob. Empuje -->
+      <div class="upgrade-card cat-defensa" id="card-empuje">
+        <div class="card-body">
+          <div class="card-icon-wrap">💨</div>
+          <div class="card-info">
+            <div class="card-name">Prob. Empuje</div>
+            <div class="card-desc">% de repeler enemigos en el impacto</div>
+            <div class="card-progress-wrap">
+              <div class="card-progress-bar">
+                <div class="card-progress-fill" style="width:0%"></div>
+              </div>
+              <div class="card-level"><span class="lvl-cur">0</span>/50</div>
+            </div>
+          </div>
+          <div class="card-right">
+            <div class="card-value">0% <span class="val-unit">push</span></div>
+            <button class="btn-buy cant-afford" onclick="comprar('empuje',200,this)">
+              <span class="buy-icon">◈</span>
+              <span class="buy-cost" id="cost-empuje">200</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /section-defensa -->
+
+    <!-- ═══ BONIFICACIÓN ═══ -->
+    <div class="cat-section" id="section-bonificacion">
+      <div class="cat-section-title">
+        <div class="sect-line" style="background:linear-gradient(90deg,transparent,rgba(255,215,64,0.3))"></div>
+        <div class="sect-label" style="color:var(--cat-bonificacion)">◈ Bonificación</div>
+        <div class="sect-line" style="background:linear-gradient(90deg,rgba(255,215,64,0.3),transparent)"></div>
+      </div>
+
+      <!-- Bonus Ecos por Kill -->
+      <div class="upgrade-card cat-bonificacion affordable" id="card-bonusecos">
+        <div class="card-body">
+          <div class="card-icon-wrap">◈</div>
+          <div class="card-info">
+            <div class="card-name">Bonus Ecos/Kill</div>
+            <div class="card-desc">Ecos extra recibidos al eliminar enemigos</div>
+            <div class="card-progress-wrap">
+              <div class="card-progress-bar">
+                <div class="card-progress-fill" style="width:16%"></div>
+              </div>
+              <div class="card-level"><span class="lvl-cur">8</span>/50</div>
+            </div>
+          </div>
+          <div class="card-right">
+            <div class="card-value">×1.4 <span class="val-unit">ecos</span></div>
+            <button class="btn-buy" onclick="comprar('bonusecos',19,this)">
+              <span class="buy-icon">◈</span>
+              <span class="buy-cost" id="cost-bonusecos">19</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tasa de Interés -->
+      <div class="upgrade-card cat-bonificacion affordable" id="card-interes">
+        <div class="card-body">
+          <div class="card-icon-wrap">📈</div>
+          <div class="card-info">
+            <div class="card-name">Tasa de Interés</div>
+            <div class="card-desc">% de Energía acumulada ganada al ascender</div>
+            <div class="card-progress-wrap">
+              <div class="card-progress-bar">
+                <div class="card-progress-fill" style="width:10%"></div>
+              </div>
+              <div class="card-level"><span class="lvl-cur">5</span>/50</div>
+            </div>
+          </div>
+          <div class="card-right">
+            <div class="card-value">5% <span class="val-unit">int.</span></div>
+            <button class="btn-buy" onclick="comprar('interes',32,this)">
+              <span class="buy-icon">◈</span>
+              <span class="buy-cost" id="cost-interes">32</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Energía Inicial -->
+      <div class="upgrade-card cat-bonificacion" id="card-inicial">
+        <div class="card-body">
+          <div class="card-icon-wrap">⚡</div>
+          <div class="card-info">
+            <div class="card-name">Energía Inicial</div>
+            <div class="card-desc">Energía con la que comienzas cada partida</div>
+            <div class="card-progress-wrap">
+              <div class="card-progress-bar">
+                <div class="card-progress-fill" style="width:0%"></div>
+              </div>
+              <div class="card-level"><span class="lvl-cur">0</span>/50</div>
+            </div>
+          </div>
+          <div class="card-right">
+            <div class="card-value">+0 <span class="val-unit">en.</span></div>
+            <button class="btn-buy affordable" onclick="comprar('inicial',11,this)">
+              <span class="buy-icon">◈</span>
+              <span class="buy-cost" id="cost-inicial">11</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Gratis Mejoras -->
+      <div class="upgrade-card cat-bonificacion" id="card-gratis">
+        <div class="card-body">
+          <div class="card-icon-wrap">🎁</div>
+          <div class="card-info">
+            <div class="card-name">Mejora Gratis</div>
+            <div class="card-desc">% de que una mejora in-run cueste 0 Energía</div>
+            <div class="card-progress-wrap">
+              <div class="card-progress-bar">
+                <div class="card-progress-fill" style="width:0%"></div>
+              </div>
+              <div class="card-level"><span class="lvl-cur">0</span>/50</div>
+            </div>
+          </div>
+          <div class="card-right">
+            <div class="card-value">0% <span class="val-unit">free</span></div>
+            <button class="btn-buy cant-afford" onclick="comprar('gratis',500,this)">
+              <span class="buy-icon">◈</span>
+              <span class="buy-cost" id="cost-gratis">500</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /section-bonificacion -->
+
+  </div><!-- /upgrades-scroll -->
+
+</div><!-- /phone -->
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- BOTTOM NAV -->
+<div class="bottom-nav">
+  <div class="nav-item" onclick="goHome()">
+    <div class="nav-icon">⌂</div>
+    <div class="nav-label">Inicio</div>
+  </div>
+  <div class="nav-item active">
+    <div class="nav-icon">◈</div>
+    <div class="nav-label">Nexo</div>
+  </div>
+  <div class="nav-item play-nav">
+    <div class="nav-icon">▶</div>
+    <div class="nav-label">Jugar</div>
+  </div>
+  <div class="nav-item">
+    <div class="nav-icon">◆</div>
+    <div class="nav-label">Forja</div>
+  </div>
+  <div class="nav-item">
+    <div class="nav-icon">⬡</div>
+    <div class="nav-label">Perfil</div>
+  </div>
+  <div class="nav-item">
+    <div class="nav-icon">⬙</div>
+    <div class="nav-label">Tienda</div>
+  </div>
+</div>
+
+<script>
+  var ecos = 1247;
+
+  /* ── Cambiar categoría ── */
+  function switchCat(cat, btn) {
+    // Tabs
+    document.querySelectorAll('.cat-tab').forEach(function(t) {
+      t.className = 'cat-tab';
+    });
+    btn.classList.add('active-' + cat);
+
+    // Sections
+    document.querySelectorAll('.cat-section').forEach(function(s) {
+      s.classList.remove('visible');
+    });
+    document.getElementById('section-' + cat).classList.add('visible');
+  }
+
+  /* ── Comprar mejora ── */
+  function comprar(id, costo, btn) {
+    if (btn.classList.contains('cant-afford') || btn.classList.contains('maxed-btn')) return;
+
+    if (ecos < costo) {
+      showToast('Ecos insuficientes');
+      return;
+    }
+
+    ecos -= costo;
+    document.getElementById('ecos-display').textContent = ecos.toLocaleString();
+
+    // Actualizar costo (exponencial simple para demo)
+    var nuevoCosto = Math.round(costo * 1.09);
+    var costEl = document.getElementById('cost-' + id);
+    if (costEl) costEl.textContent = nuevoCosto.toLocaleString();
+
+    // Actualizar barra de progreso (demo)
+    var card = document.getElementById('card-' + id);
+    if (card) {
+      var fill = card.querySelector('.card-progress-fill');
+      var lvlEl = card.querySelector('.lvl-cur');
+      if (fill && lvlEl) {
+        var curLvl = parseInt(lvlEl.textContent) || 0;
+        curLvl += 1;
+        lvlEl.textContent = curLvl;
+        fill.style.width = Math.min(curLvl * 2, 100) + '%';
+      }
+
+      // Recalcular si puede pagar el nuevo costo
+      if (nuevoCosto > ecos) {
+        btn.classList.add('cant-afford');
+        card.classList.remove('affordable');
+      }
+    }
+
+    showToast('✓ Mejora adquirida');
+  }
+
+  /* ── Toast ── */
+  var toastTimer;
+  function showToast(msg) {
+    var t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function(){ t.classList.remove('show'); }, 1800);
+  }
+
+  function goHome() {
+    showToast('Volviendo al Inicio...');
+  }
+</script>
+
+</body>
+</html>

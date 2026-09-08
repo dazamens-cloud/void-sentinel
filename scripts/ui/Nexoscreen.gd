@@ -44,6 +44,19 @@ const CAT_COLORS := {
 	"bonificacion": MenuTheme.CAT_BONIFICACION,
 }
 
+# Icono de cada mejora. Se usan simbolos geometricos que las fuentes del
+# proyecto (Orbitron/Rajdhani) si traen: los emoji del mockup salen en blanco.
+const ICONOS := {
+	"danio": "✦", "velocidad_ataque": "⚡", "disparo_critico": "✧",
+	"multidisparo": "⁙", "rebote": "↻", "alcance_rebote": "◌",
+	"salud": "♥", "recuperacion": "✚", "escudo": "◇",
+	"dureza_escudo": "◆", "pulso_quartz": "◎", "poder_pulso": "❋",
+	"energia_ascension": "▲", "energia_espectro": "⚡",
+	"ecos_ascension": "◈", "ecos_rapido": "»",
+	"mejora_ataque_gratis": "★", "mejora_defensa_gratis": "★",
+	"mejora_bonificacion_gratis": "★",
+}
+
 # Etiquetas de los tabs (mas cortas que la categoria).
 const CAT_LABELS := {
 	"ataque": "ATAQUE",
@@ -338,32 +351,67 @@ func _make_upgrade_card(id: String, data: Dictionary, cat: String) -> Control:
 	panel.add_theme_stylebox_override("panel", MenuTheme.make_card_style(MenuTheme.BORDER_DIM))
 
 	var h := HBoxContainer.new()
-	h.add_theme_constant_override("separation", 10)
+	h.add_theme_constant_override("separation", 18)
 	panel.add_child(h)
+
+	# Barra de acento del color de la categoria, pegada al borde izquierdo.
+	var acento := PanelContainer.new()
+	acento.custom_minimum_size = Vector2(4, 0)
+	acento.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	var sb_acento := StyleBoxFlat.new()
+	sb_acento.bg_color = accent
+	sb_acento.set_corner_radius_all(2)
+	acento.add_theme_stylebox_override("panel", sb_acento)
+	h.add_child(acento)
+
+	# Icono en un cuadro tintado con el color de la categoria.
+	var icono_wrap := PanelContainer.new()
+	icono_wrap.custom_minimum_size = Vector2(66, 66)
+	icono_wrap.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	var sb_icono := StyleBoxFlat.new()
+	sb_icono.bg_color = Color(accent.r, accent.g, accent.b, 0.12)
+	sb_icono.set_corner_radius_all(15)
+	icono_wrap.add_theme_stylebox_override("panel", sb_icono)
+	# CenterContainer: con el Label suelto el glifo quedaba descentrado hacia
+	# la izquierda, porque el Label se ajusta al ancho del texto y no a la caja.
+	var icono_center := CenterContainer.new()
+	var icono_lbl := Label.new()
+	icono_lbl.text = ICONOS.get(id, MenuTheme.SYM_ECOS)
+	icono_lbl.add_theme_font_size_override("font_size", 30)
+	icono_lbl.add_theme_color_override("font_color", accent)
+	icono_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	icono_lbl.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	icono_center.add_child(icono_lbl)
+	icono_wrap.add_child(icono_center)
+	h.add_child(icono_wrap)
 
 	# Info (nombre + descripcion + barra de progreso).
 	var info := VBoxContainer.new()
 	info.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	info.add_theme_constant_override("separation", 3)
+	info.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	info.add_theme_constant_override("separation", 5)
 
 	var name_lbl := Label.new()
 	name_lbl.text = data.get("nombre", id)
-	name_lbl.add_theme_font_size_override("font_size", 13)
+	name_lbl.add_theme_font_size_override("font_size", MenuTheme.FS_SMALL + 2)
 	name_lbl.add_theme_color_override("font_color", MenuTheme.TEXT_PRIMARY)
-	_apply_hud_font(name_lbl)
+	# Sin _apply_hud_font: Orbitron no trae la enye y "Dano" salia con un
+	# acento raro. Rajdhani si la tiene.
 
 	var desc_lbl := Label.new()
 	desc_lbl.text = data.get("descripcion", "")
-	desc_lbl.add_theme_font_size_override("font_size", 12)
+	desc_lbl.add_theme_font_size_override("font_size", MenuTheme.FS_SMALL)
 	desc_lbl.add_theme_color_override("font_color", MenuTheme.TEXT_MUTED)
 	desc_lbl.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 
 	var prog_row := HBoxContainer.new()
-	prog_row.add_theme_constant_override("separation", 6)
+	prog_row.add_theme_constant_override("separation", 11)
 
 	var track := ProgressBar.new()
 	track.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	track.custom_minimum_size = Vector2(0, 3)
+	track.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	# 6 px: en el mockup son 3 sobre 390 de ancho, aqui el viewport es 720.
+	track.custom_minimum_size = Vector2(0, 6)
 	track.min_value = 0
 	track.max_value = data.get("max_nivel", 1)
 	track.value = data.get("nivel", 0)
@@ -372,7 +420,7 @@ func _make_upgrade_card(id: String, data: Dictionary, cat: String) -> Control:
 	track.add_theme_stylebox_override("fill", MenuTheme.make_progress_fill(accent))
 
 	var lvl_lbl := Label.new()
-	lvl_lbl.add_theme_font_size_override("font_size", 10)
+	lvl_lbl.add_theme_font_size_override("font_size", MenuTheme.FS_TINY)
 	_apply_hud_font(lvl_lbl)
 
 	prog_row.add_child(track)
@@ -383,16 +431,23 @@ func _make_upgrade_card(id: String, data: Dictionary, cat: String) -> Control:
 	info.add_child(prog_row)
 	h.add_child(info)
 
-	# Derecha (boton de compra).
+	# Derecha: valor actual destacado + boton de compra.
 	var right := VBoxContainer.new()
 	right.alignment = BoxContainer.ALIGNMENT_CENTER
-	right.add_theme_constant_override("separation", 4)
-	right.custom_minimum_size = Vector2(90, 0)
+	right.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	right.add_theme_constant_override("separation", 7)
+	right.custom_minimum_size = Vector2(150, 0)
+
+	# Lo que de verdad le interesa al jugador: cuanto vale la mejora ahora.
+	var value_lbl := Label.new()
+	value_lbl.add_theme_font_size_override("font_size", MenuTheme.FS_BODY)
+	value_lbl.add_theme_color_override("font_color", accent)
+	value_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	_apply_hud_font(value_lbl)
 
 	var buy_btn := Button.new()
-	buy_btn.flat = true
 	buy_btn.focus_mode = Control.FOCUS_NONE
-	buy_btn.add_theme_font_size_override("font_size", 11)
+	buy_btn.add_theme_font_size_override("font_size", MenuTheme.FS_SMALL)
 	buy_btn.add_theme_color_override("font_color", accent)
 	buy_btn.add_theme_stylebox_override("normal", MenuTheme.make_button_style(accent))
 	buy_btn.add_theme_stylebox_override("hover", MenuTheme.make_button_style(accent, true))
@@ -401,6 +456,7 @@ func _make_upgrade_card(id: String, data: Dictionary, cat: String) -> Control:
 
 	buy_btn.pressed.connect(func(): _on_buy(id))
 
+	right.add_child(value_lbl)
 	right.add_child(buy_btn)
 	h.add_child(right)
 
@@ -410,6 +466,7 @@ func _make_upgrade_card(id: String, data: Dictionary, cat: String) -> Control:
 		"track": track,
 		"lvl_lbl": lvl_lbl,
 		"buy_btn": buy_btn,
+		"value_lbl": value_lbl,
 	}
 
 	# Pintar estado inicial.
@@ -434,6 +491,7 @@ func _refresh_card(id: String) -> void:
 	var track: ProgressBar = refs["track"]
 	var lvl_lbl: Label = refs["lvl_lbl"]
 	var buy_btn: Button = refs["buy_btn"]
+	var value_lbl: Label = refs["value_lbl"]
 
 	# El Nexo refleja el nivel PERMANENTE (suelo), no el efectivo de partida.
 	var nivel: int = data.get("nivel_nexo", 0)
@@ -442,6 +500,7 @@ func _refresh_card(id: String) -> void:
 
 	track.value = nivel
 	track.max_value = maxn
+	value_lbl.text = _mm.formatear_valor(id, nivel)
 
 	if es_max:
 		lvl_lbl.text = "MAX"

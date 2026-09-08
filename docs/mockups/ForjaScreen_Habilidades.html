@@ -1,0 +1,918 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Void Sentinel — Forja</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            /* MenuTheme colors */
+            --bg-deep: #0a0e1a;
+            --cyan: #00e5ff;
+            --gold: #ffd700;
+            --violet: #9333ea;
+            --green: #00ff88;
+            --red: #ff2244;
+            --magenta: #ff00aa;
+            --text-primary: #f0f0f0;
+            --text-muted: #999;
+            --border-glow: rgba(0, 229, 255, 0.3);
+            --border-dim: rgba(255, 255, 255, 0.1);
+        }
+
+        body {
+            background: linear-gradient(135deg, #0a0e1a 0%, #0f1425 100%);
+            color: var(--text-primary);
+            font-family: 'Rajdhani', monospace;
+            font-size: 14px;
+            line-height: 1.4;
+            overflow-x: hidden;
+        }
+
+        /* Layout principal */
+        #app {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            width: 100%;
+            max-width: 390px;
+            margin: 0 auto;
+            background: var(--bg-deep);
+        }
+
+        /* Header */
+        header {
+            padding: 16px;
+            border-bottom: 1px solid var(--border-glow);
+            background: rgba(10, 14, 26, 0.95);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .header-title {
+            font-size: 20px;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        .header-title .subtitle {
+            font-size: 10px;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        .header-balance {
+            text-align: right;
+        }
+
+        .balance-label {
+            font-size: 8px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        .balance-value {
+            font-size: 14px;
+            color: var(--violet);
+            font-weight: bold;
+            margin-top: 2px;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid var(--border-dim);
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            background: transparent;
+            color: var(--text-muted);
+            font-size: 10px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.2s;
+            border-bottom: 2px solid transparent;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .tab-btn.active {
+            color: var(--cyan);
+            border-bottom-color: var(--cyan);
+        }
+
+        .tab-btn:hover {
+            color: var(--text-primary);
+        }
+
+        /* Contenedor de tabs */
+        .tab-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+        }
+
+        .tab-pane {
+            display: none;
+        }
+
+        .tab-pane.active {
+            display: block;
+        }
+
+        /* Grid de habilidades */
+        .abilities-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+        }
+
+        /* Card de habilidad */
+        .ability-card {
+            border: 1px solid var(--border-dim);
+            border-radius: 8px;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.02);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .ability-card:hover {
+            border-color: var(--border-glow);
+            background: rgba(255, 255, 255, 0.05);
+            transform: translateY(-2px);
+        }
+
+        .ability-card.offensive {
+            --accent: var(--red);
+        }
+
+        .ability-card.defensive {
+            --accent: var(--violet);
+        }
+
+        .ability-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 8px;
+        }
+
+        .ability-name {
+            font-size: 12px;
+            font-weight: bold;
+            color: var(--text-primary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .ability-icon {
+            font-size: 18px;
+        }
+
+        .ability-type {
+            font-size: 8px;
+            color: var(--accent);
+            text-transform: uppercase;
+            font-weight: bold;
+            margin-top: 2px;
+        }
+
+        .ability-description {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+            line-height: 1.5;
+        }
+
+        .ability-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 10px;
+            font-size: 10px;
+        }
+
+        .stat-row {
+            border-left: 2px solid var(--accent);
+            padding-left: 8px;
+        }
+
+        .stat-label {
+            color: var(--text-muted);
+            text-transform: uppercase;
+            font-size: 8px;
+        }
+
+        .stat-value {
+            color: var(--text-primary);
+            font-weight: bold;
+            font-size: 11px;
+        }
+
+        .ability-cooldown {
+            font-size: 11px;
+            color: var(--cyan);
+            margin-top: 8px;
+            padding: 6px;
+            background: rgba(0, 229, 255, 0.08);
+            border-radius: 4px;
+            text-align: center;
+            border: 1px solid rgba(0, 229, 255, 0.2);
+        }
+
+        .ability-action {
+            margin-top: 10px;
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 8px;
+            border: none;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: bold;
+            cursor: pointer;
+            text-transform: uppercase;
+            transition: all 0.2s;
+            text-align: center;
+        }
+
+        .btn-unlock {
+            background: var(--accent);
+            color: #000;
+            flex: 0.6;
+        }
+
+        .btn-unlock:hover {
+            opacity: 0.9;
+            transform: scale(1.05);
+        }
+
+        .btn-stats {
+            flex: 0.4;
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-primary);
+            border: 1px solid var(--border-dim);
+        }
+
+        .btn-stats:hover {
+            border-color: var(--border-glow);
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        /* Detalle expandido (modal) */
+        .ability-detail {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .ability-detail.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .detail-content {
+            background: var(--bg-deep);
+            border: 1px solid var(--border-glow);
+            border-radius: 8px;
+            padding: 20px;
+            max-height: 90vh;
+            overflow-y: auto;
+            max-width: 350px;
+            width: 100%;
+        }
+
+        .detail-close {
+            float: right;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--text-muted);
+            border: none;
+            background: none;
+            padding: 0;
+            margin: -10px -10px 10px 0;
+        }
+
+        .detail-close:hover {
+            color: var(--text-primary);
+        }
+
+        .detail-improvements {
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid var(--border-dim);
+        }
+
+        .detail-improvements h4 {
+            font-size: 10px;
+            color: var(--cyan);
+            text-transform: uppercase;
+            margin-bottom: 8px;
+            letter-spacing: 0.5px;
+        }
+
+        .improvement-list {
+            font-size: 11px;
+            color: var(--text-muted);
+            line-height: 1.8;
+        }
+
+        .improvement-list li {
+            margin-left: 16px;
+            margin-bottom: 4px;
+        }
+
+        /* Navbar inferior */
+        nav {
+            display: flex;
+            border-top: 1px solid var(--border-glow);
+            background: rgba(10, 14, 26, 0.95);
+            justify-content: space-around;
+            padding: 8px 0;
+        }
+
+        .nav-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            background: transparent;
+            color: var(--text-muted);
+            font-size: 12px;
+            cursor: pointer;
+            transition: color 0.2s;
+            text-align: center;
+            text-transform: uppercase;
+            font-size: 11px;
+            letter-spacing: 0.5px;
+        }
+
+        .nav-btn:hover,
+        .nav-btn.active {
+            color: var(--cyan);
+        }
+
+        .nav-icon {
+            font-size: 16px;
+            display: block;
+            margin-bottom: 2px;
+        }
+
+        /* Scrollbar custom */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border-glow);
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--cyan);
+        }
+
+        /* Responsive */
+        @media (max-width: 400px) {
+            body {
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <!-- Header -->
+        <header>
+            <div class="header-content">
+                <div>
+                    <div class="header-title" style="color: var(--violet);">⚙ FORJA</div>
+                    <div class="header-title" style="font-size: 10px; color: var(--text-muted); margin-top: 2px;">
+                        Armería contra Commander
+                    </div>
+                </div>
+                <div class="header-balance">
+                    <div class="balance-label">◆ Fragmentos</div>
+                    <div class="balance-value">1,250</div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Tabs -->
+        <div class="tabs">
+            <button class="tab-btn active" data-tab="ofensivas">⚔ Ofensivas</button>
+            <button class="tab-btn" data-tab="defensivas">🛡 Defensivas</button>
+        </div>
+
+        <!-- Contenido de Tabs -->
+        <div class="tab-content">
+            <!-- OFENSIVAS -->
+            <div class="tab-pane active" id="ofensivas">
+                <div class="abilities-grid">
+                    <!-- Enjambre de Fragmentos -->
+                    <div class="ability-card offensive" data-ability="enjambre">
+                        <div class="ability-header">
+                            <div>
+                                <div class="ability-name">Enjambre de Fragmentos</div>
+                                <div class="ability-type">⚔ Ofensiva</div>
+                            </div>
+                            <div class="ability-icon">🌪️</div>
+                        </div>
+                        <div class="ability-description">
+                            Libera una tormenta de 24 proyectiles en todas las direcciones. Limpieza máxima para pantallas llenas.
+                        </div>
+                        <div class="ability-stats">
+                            <div class="stat-row">
+                                <div class="stat-label">Proyectiles</div>
+                                <div class="stat-value">24</div>
+                            </div>
+                            <div class="stat-row">
+                                <div class="stat-label">Daño</div>
+                                <div class="stat-value">40% base</div>
+                            </div>
+                            <div class="stat-row">
+                                <div class="stat-label">Velocidad</div>
+                                <div class="stat-value">400 px/s</div>
+                            </div>
+                            <div class="stat-row">
+                                <div class="stat-label">Penetración</div>
+                                <div class="stat-value">1 enemigo</div>
+                            </div>
+                        </div>
+                        <div class="ability-cooldown">⏱ Cooldown: 18s</div>
+                        <div class="ability-action">
+                            <button class="btn btn-unlock">Desbloquear</button>
+                            <button class="btn btn-stats" onclick="showDetail('enjambre')">→</button>
+                        </div>
+                    </div>
+
+                    <!-- Singularidad -->
+                    <div class="ability-card offensive" data-ability="singularidad">
+                        <div class="ability-header">
+                            <div>
+                                <div class="ability-name">Singularidad</div>
+                                <div class="ability-type">⚔ Ofensiva</div>
+                            </div>
+                            <div class="ability-icon">⚫</div>
+                        </div>
+                        <div class="ability-description">
+                            Agujero negro que atrae todos los enemigos hacia el centro. Implosión masiva al colapsar.
+                        </div>
+                        <div class="ability-stats">
+                            <div class="stat-row">
+                                <div class="stat-label">Duración</div>
+                                <div class="stat-value">3s</div>
+                            </div>
+                            <div class="stat-row">
+                                <div class="stat-label">Daño Implosión</div>
+                                <div class="stat-value">150% base</div>
+                            </div>
+                            <div class="stat-row">
+                                <div class="stat-label">Atracción</div>
+                                <div class="stat-value">8 u/s²</div>
+                            </div>
+                            <div class="stat-row">
+                                <div class="stat-label">Explosión</div>
+                                <div class="stat-value">80% base</div>
+                            </div>
+                        </div>
+                        <div class="ability-cooldown">⏱ Cooldown: 25s</div>
+                        <div class="ability-action">
+                            <button class="btn btn-unlock">Desbloquear</button>
+                            <button class="btn btn-stats" onclick="showDetail('singularidad')">→</button>
+                        </div>
+                    </div>
+
+                    <!-- Pulso EMP -->
+                    <div class="ability-card offensive" data-ability="emp">
+                        <div class="ability-header">
+                            <div>
+                                <div class="ability-name">Pulso EMP</div>
+                                <div class="ability-type">⚔ Ofensiva</div>
+                            </div>
+                            <div class="ability-icon">⚡</div>
+                        </div>
+                        <div class="ability-description">
+                            Pulso electromagnético que destruye escudos y armaduras. El arma anti-elite.
+                        </div>
+                        <div class="ability-stats">
+                            <div class="stat-row">
+                                <div class="stat-label">Daño Base</div>
+                                <div class="stat-value">120% base</div>
+                            </div>
+                            <div class="stat-row">
+                                <div class="stat-label">vs Escudo</div>
+                                <div class="stat-value">x2.5</div>
+                            </div>
+                            <div class="stat-row">
+                                <div class="stat-label">vs Armadura</div>
+                                <div class="stat-value">x1.8</div>
+                            </div>
+                            <div class="stat-row">
+                                <div class="stat-label">Stun Escudo</div>
+                                <div class="stat-value">4s</div>
+                            </div>
+                        </div>
+                        <div class="ability-cooldown">⏱ Cooldown: 20s</div>
+                        <div class="ability-action">
+                            <button class="btn btn-unlock">Desbloquear</button>
+                            <button class="btn btn-stats" onclick="showDetail('emp')">→</button>
+                        </div>
+                    </div>
+
+                    <!-- Detonación en Cadena -->
+                    <div class="ability-card offensive" data-ability="cadena">
+                        <div class="ability-header">
+                            <div>
+                                <div class="ability-name">Detonación en Cadena</div>
+                                <div class="ability-type">⚔ Ofensiva</div>
+                            </div>
+                            <div class="ability-icon">🔥</div>
+                        </div>
+                        <div class="ability-description">
+                            El primer impacto detona. La explosión se propaga en cadena. Arrasa oleadas densas.
+                        </div>
+                        <div class="ability-stats">
+                            <div class="stat-row">
+                                <div class="stat-label">Daño Explosión</div>
+                                <div class="stat-value">200% base</div>
+                            </div>
+                            <div class="stat-row">
+                                <div class="stat-label">Radio</div>
+                                <div class="stat-value">100px</div>
+                            </div>
+                            <div class="stat-row">
+                                <div class="stat-label">Saltos</div>
+                                <div class="stat-value">3 máx</div>
+                            </div>
+                            <div class="stat-row">
+                                <div class="stat-label">Reducción/Salto</div>
+                                <div class="stat-value">-20%</div>
+                            </div>
+                        </div>
+                        <div class="ability-cooldown">⏱ Cooldown: 22s</div>
+                        <div class="ability-action">
+                            <button class="btn btn-unlock">Desbloquear</button>
+                            <button class="btn btn-stats" onclick="showDetail('cadena')">→</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- DEFENSIVAS -->
+            <div class="tab-pane" id="defensivas">
+                <div class="abilities-grid">
+                    <!-- Escudo de Colapso -->
+                    <div class="ability-card defensive" data-ability="escudo">
+                        <div class="ability-header">
+                            <div>
+                                <div class="ability-name">Escudo de Colapso</div>
+                                <div class="ability-type">🛡 Defensiva</div>
+                            </div>
+                            <div class="ability-icon">🛡️</div>
+                        </div>
+                        <div class="ability-description">
+                            Barrera de energía que absorbe daño. Activalo antes de que sea tarde.
+                        </div>
+                        <div class="ability-stats">
+                            <div class="stat-row">
+                                <div class="stat-label">Absorción</div>
+                                <div class="stat-value">300% vida</div>
+                            </div>
+                            <div class="stat-row">
+                                <div class="stat-label">Duración</div>
+                                <div class="stat-value">6s</div>
+                            </div>
+                            <div class="stat-row">
+                                <div class="stat-label">Tipo</div>
+                                <div class="stat-value">Preventivo</div>
+                            </div>
+                            <div class="stat-row">
+                                <div class="stat-label">Renovable</div>
+                                <div class="stat-value">Por cooldown</div>
+                            </div>
+                        </div>
+                        <div class="ability-cooldown">⏱ Cooldown: 30s</div>
+                        <div class="ability-action">
+                            <button class="btn btn-unlock">Desbloquear</button>
+                            <button class="btn btn-stats" onclick="showDetail('escudo')">→</button>
+                        </div>
+                    </div>
+
+                    <!-- Protocolo de Emergencia -->
+                    <div class="ability-card defensive" data-ability="protocolo">
+                        <div class="ability-header">
+                            <div>
+                                <div class="ability-name">Protocolo de Emergencia</div>
+                                <div class="ability-type">🛡 Defensiva</div>
+                            </div>
+                            <div class="ability-icon">💚</div>
+                        </div>
+                        <div class="ability-description">
+                            Curación instantánea de emergencia. Úsalo para no desaparecer completamente.
+                        </div>
+                        <div class="ability-stats">
+                            <div class="stat-row">
+                                <div class="stat-label">Curación</div>
+                                <div class="stat-value">25% vida max</div>
+                            </div>
+                            <div class="stat-row">
+                                <div class="stat-label">Tipo</div>
+                                <div class="stat-value">Instantáneo</div>
+                            </div>
+                            <div class="stat-row">
+                                <div class="stat-label">Condición</div>
+                                <div class="stat-value">Ninguna</div>
+                            </div>
+                            <div class="stat-row">
+                                <div class="stat-label">Sobre-curación</div>
+                                <div class="stat-value">Bloqueada</div>
+                            </div>
+                        </div>
+                        <div class="ability-cooldown">⏱ Cooldown: 35s</div>
+                        <div class="ability-action">
+                            <button class="btn btn-unlock">Desbloquear</button>
+                            <button class="btn btn-stats" onclick="showDetail('protocolo')">→</button>
+                        </div>
+                    </div>
+
+                    <!-- Campo de Tiempo -->
+                    <div class="ability-card defensive" data-ability="tiempo">
+                        <div class="ability-header">
+                            <div>
+                                <div class="ability-name">Campo de Tiempo</div>
+                                <div class="ability-type">🛡 Defensiva</div>
+                            </div>
+                            <div class="ability-icon">⏳</div>
+                        </div>
+                        <div class="ability-description">
+                            Distorsiona el tiempo. Los enemigos quedan en cámara lenta. Tiempo para respirar.
+                        </div>
+                        <div class="ability-stats">
+                            <div class="stat-row">
+                                <div class="stat-label">Velocidad Enemigos</div>
+                                <div class="stat-value">25%</div>
+                            </div>
+                            <div class="stat-row">
+                                <div class="stat-label">Duración</div>
+                                <div class="stat-value">5s</div>
+                            </div>
+                            <div class="stat-row">
+                                <div class="stat-label">Afecta Ataques</div>
+                                <div class="stat-value">Sí</div>
+                            </div>
+                            <div class="stat-row">
+                                <div class="stat-label">Afecta Sentinel</div>
+                                <div class="stat-value">No</div>
+                            </div>
+                        </div>
+                        <div class="ability-cooldown">⏱ Cooldown: 28s</div>
+                        <div class="ability-action">
+                            <button class="btn btn-unlock">Desbloquear</button>
+                            <button class="btn btn-stats" onclick="showDetail('tiempo')">→</button>
+                        </div>
+                    </div>
+
+                    <!-- Manto de Interferencia -->
+                    <div class="ability-card defensive" data-ability="manto">
+                        <div class="ability-header">
+                            <div>
+                                <div class="ability-name">Manto de Interferencia</div>
+                                <div class="ability-type">🛡 Defensiva</div>
+                            </div>
+                            <div class="ability-icon">📡</div>
+                        </div>
+                        <div class="ability-description">
+                            Bloquea el targeting enemigo. Los proyectiles se desvían. Pérdida total de enfoque.
+                        </div>
+                        <div class="ability-stats">
+                            <div class="stat-row">
+                                <div class="stat-label">Duración</div>
+                                <div class="stat-value">4s</div>
+                            </div>
+                            <div class="stat-row">
+                                <div class="stat-label">Desviación</div>
+                                <div class="stat-value">360° aleatoria</div>
+                            </div>
+                            <div class="stat-row">
+                                <div class="stat-label">CaC Desorientados</div>
+                                <div class="stat-value">100%</div>
+                            </div>
+                            <div class="stat-row">
+                                <div class="stat-label">Reflejo Proyecto</div>
+                                <div class="stat-value">Mejorable</div>
+                            </div>
+                        </div>
+                        <div class="ability-cooldown">⏱ Cooldown: 32s</div>
+                        <div class="ability-action">
+                            <button class="btn btn-unlock">Desbloquear</button>
+                            <button class="btn btn-stats" onclick="showDetail('manto')">→</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- NavBar -->
+        <nav>
+            <button class="nav-btn">
+                <span class="nav-icon">◆</span>
+                Nexo
+            </button>
+            <button class="nav-btn">
+                <span class="nav-icon">⚙</span>
+                Forja
+            </button>
+            <button class="nav-btn">
+                <span class="nav-icon">⌂</span>
+                Inicio
+            </button>
+            <button class="nav-btn">
+                <span class="nav-icon">👤</span>
+                Perfil
+            </button>
+            <button class="nav-btn">
+                <span class="nav-icon">💎</span>
+                Tienda
+            </button>
+        </nav>
+    </div>
+
+    <!-- Detail Modal -->
+    <div class="ability-detail" id="detailModal">
+        <div class="detail-content" id="detailContent"></div>
+    </div>
+
+    <script>
+        // Tab switching
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const tab = btn.dataset.tab;
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+                btn.classList.add('active');
+                document.getElementById(tab).classList.add('active');
+            });
+        });
+
+        // Ability details data
+        const abilityDetails = {
+            enjambre: {
+                name: 'Enjambre de Fragmentos',
+                type: 'Ofensiva',
+                description: 'Libera una tormenta de proyectiles de energía en todas las direcciones. Perfecto cuando la pantalla está llena y necesitas limpiar rápido.',
+                improvements: [
+                    '+ Más proyectiles: +4 por nivel (hasta 48)',
+                    '+ Daño: +10% por nivel',
+                    '+ Penetración: +1 enemigo por nivel (hasta 4)',
+                    '+ Cooldown reducido: -1s por nivel (mínimo 10s)'
+                ]
+            },
+            singularidad: {
+                name: 'Singularidad',
+                type: 'Ofensiva',
+                description: 'Crea un agujero negro temporal que atrae y aplasta todo lo que encuentra. Los enemigos no pueden escapar de su atracción gravitatoria.',
+                improvements: [
+                    '+ Fuerza de atracción: +2 por nivel',
+                    '+ Daño de implosión: +25% por nivel',
+                    '+ Duración: +0.5s por nivel (máximo 5s)',
+                    '+ Cooldown reducido: -2s por nivel (mínimo 15s)'
+                ]
+            },
+            emp: {
+                name: 'Pulso EMP',
+                type: 'Ofensiva',
+                description: 'Un pulso electromagnético que destruye los sistemas de defensa enemigos. Los enemigos con escudos o armaduras son su objetivo ideal.',
+                improvements: [
+                    '+ Daño base: +20% por nivel',
+                    '+ Multiplicador vs escudo: +0.3 por nivel',
+                    '+ Duración stun de escudo: +1s por nivel',
+                    '+ Cooldown reducido: -1.5s por nivel (mínimo 12s)'
+                ]
+            },
+            cadena: {
+                name: 'Detonación en Cadena',
+                type: 'Ofensiva',
+                description: 'El primer impacto detona al enemigo, que explota y propaga la detonación a los más cercanos. Una reacción en cadena que puede arrasar una oleada entera.',
+                improvements: [
+                    '+ Daño de explosión: +30% por nivel',
+                    '+ Radio de explosión: +15px por nivel',
+                    '+ Saltos de cadena: +1 por nivel (máximo 6)',
+                    '+ Reducción por salto: -5% por nivel (mínimo 0%)',
+                    '+ Cooldown reducido: -2s por nivel (mínimo 12s)'
+                ]
+            },
+            escudo: {
+                name: 'Escudo de Colapso',
+                type: 'Defensiva',
+                description: 'Activa una barrera de energía condensada alrededor del Sentinel. Absorbe el daño entrante durante unos segundos. Úsalo antes de que sea demasiado tarde.',
+                improvements: [
+                    '+ Absorción: +50% salud máxima por nivel',
+                    '+ Duración: +1s por nivel (máximo 10s)',
+                    '+ Cooldown reducido: -2s por nivel (mínimo 18s)',
+                    '+ Rebote: al romperse, emite pulso que daña enemigos cercanos (desbloqueable)'
+                ]
+            },
+            protocolo: {
+                name: 'Protocolo de Emergencia',
+                type: 'Defensiva',
+                description: 'Sistema de reparación de emergencia. Restaura instantáneamente un porcentaje de tu vida máxima. Para cuando el vacío te está ganando.',
+                improvements: [
+                    '+ Porcentaje de curación: +5% por nivel (máximo 50%)',
+                    '+ Cooldown reducido: -2s por nivel (mínimo 20s)',
+                    '+ Curación pasiva: al activarse, añade +1% regen/s durante 10s (desbloqueable)',
+                    '+ Doble pulso: cura dos veces con 1s de diferencia (desbloqueable)'
+                ]
+            },
+            tiempo: {
+                name: 'Campo de Tiempo',
+                type: 'Defensiva',
+                description: 'Distorsiona el continuum temporal alrededor del Sentinel. Los enemigos quedan atrapados en un flujo temporal lentísimo. Tiempo para respirar, tiempo para pensar.',
+                improvements: [
+                    '+ Intensidad de slow: -5% por nivel (mínimo 10% velocidad)',
+                    '+ Duración: +1s por nivel (máximo 9s)',
+                    '+ Cooldown reducido: -2s por nivel (mínimo 16s)',
+                    '+ Daño temporal: los enemigos en slow reciben +15% daño del Sentinel (desbloqueable)'
+                ]
+            },
+            manto: {
+                name: 'Manto de Interferencia',
+                type: 'Defensiva',
+                description: 'Emite una señal de interferencia que corrompe los sistemas de targeting enemigos. Por unos segundos, los enemigos pierden el rastro del Sentinel y sus proyectiles se desvían.',
+                improvements: [
+                    '+ Duración: +1s por nivel (máximo 8s)',
+                    '+ Cooldown reducido: -2s por nivel (mínimo 20s)',
+                    '+ Reflejo: los proyectiles desviados pasan a apuntar a los propios enemigos (desbloqueable)',
+                    '+ Radio ampliado: afecta también a enemigos que entran en pantalla durante la duración'
+                ]
+            }
+        };
+
+        function showDetail(abilityId) {
+            const ability = abilityDetails[abilityId];
+            const modal = document.getElementById('detailModal');
+            const content = document.getElementById('detailContent');
+
+            content.innerHTML = `
+                <button class="detail-close" onclick="closeDetail()">✕</button>
+                <h2 style="color: var(--cyan); margin-bottom: 8px;">${ability.name}</h2>
+                <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 12px; line-height: 1.6;">
+                    ${ability.description}
+                </div>
+                <div class="detail-improvements">
+                    <h4>Mejoras disponibles</h4>
+                    <ul class="improvement-list">
+                        ${ability.improvements.map(imp => `<li>${imp}</li>`).join('')}
+                    </ul>
+                </div>
+                <div style="margin-top: 16px;">
+                    <button class="btn btn-unlock" style="width: 100%;" onclick="closeDetail()">Cerrar</button>
+                </div>
+            `;
+
+            modal.classList.add('active');
+        }
+
+        function closeDetail() {
+            document.getElementById('detailModal').classList.remove('active');
+        }
+
+        // Close modal on background click
+        document.getElementById('detailModal').addEventListener('click', (e) => {
+            if (e.target === document.getElementById('detailModal')) {
+                closeDetail();
+            }
+        });
+    </script>
+</body>
+</html>
