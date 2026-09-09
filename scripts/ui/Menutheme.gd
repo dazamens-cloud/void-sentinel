@@ -78,8 +78,8 @@ const SYM_TIENDA    := "\u2B19"   # diamante con linea
 const SYM_PLAY      := "\u25B6"   # triangulo play
 const SYM_ARROW_R   := "\u203A"   # flecha derecha
 const SYM_SKULL     := "✕"   # cruz. El emoji calavera (U+1F480) esta
-                                  # fuera del BMP y no lo cubre ninguna fuente
-                                  # del proyecto ni el fallback del sistema.
+								  # fuera del BMP y no lo cubre ninguna fuente
+								  # del proyecto ni el fallback del sistema.
 
 
 # ============================================================
