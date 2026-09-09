@@ -244,31 +244,50 @@ func _make_card(id: String) -> Control:
 	v.add_theme_constant_override("separation", 6)
 	panel.add_child(v)
 
-	# Cabecera: nombre + cooldown.
-	var head := HBoxContainer.new()
-	head.add_theme_constant_override("separation", 8)
+	# Cabecera: nombre grande + etiqueta del tipo debajo.
 	var name_lbl := Label.new()
 	name_lbl.text = hab.get("nombre", id)
-	name_lbl.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	name_lbl.add_theme_font_size_override("font_size", 14)
+	name_lbl.add_theme_font_size_override("font_size", MenuTheme.FS_HEADER - 4)
 	name_lbl.add_theme_color_override("font_color", accent)
-	_apply_hud_font(name_lbl)
-	var cd_lbl := Label.new()
-	cd_lbl.text = "CD %ss" % _fmt_num(HabilidadManager.get_cooldown(id))
-	cd_lbl.add_theme_font_size_override("font_size", 11)
-	cd_lbl.add_theme_color_override("font_color", MenuTheme.TEXT_MUTED)
-	_apply_hud_font(cd_lbl)
-	head.add_child(name_lbl)
-	head.add_child(cd_lbl)
-	v.add_child(head)
+	v.add_child(name_lbl)
+
+	var tipo_lbl := Label.new()
+	tipo_lbl.text = str(hab.get("tipo", "ofensiva")).to_upper()
+	tipo_lbl.add_theme_font_size_override("font_size", MenuTheme.FS_TINY)
+	tipo_lbl.add_theme_color_override("font_color", accent)
+	_apply_hud_font(tipo_lbl)
+	v.add_child(tipo_lbl)
 
 	# Descripción.
 	var desc := Label.new()
 	desc.text = hab.get("descripcion", "")
-	desc.add_theme_font_size_override("font_size", 11)
+	desc.add_theme_font_size_override("font_size", MenuTheme.FS_SMALL)
 	desc.add_theme_color_override("font_color", MenuTheme.TEXT_MUTED)
 	desc.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	v.add_child(desc)
+
+	# Rejilla con los valores base: estos datos ya estaban en HabilidadManager
+	# pero no se mostraban en ningun sitio, asi que la card solo decia lo que
+	# costaba la habilidad y no lo que hacia.
+	var base: Dictionary = hab.get("base", {})
+	if not base.is_empty():
+		v.add_child(_make_stats_grid(base, accent))
+
+	# Cooldown como bloque propio, no como texto suelto en la esquina.
+	var cd_panel := PanelContainer.new()
+	var sb_cd := StyleBoxFlat.new()
+	sb_cd.bg_color = Color(1, 1, 1, 0.03)
+	sb_cd.set_corner_radius_all(11)
+	sb_cd.content_margin_top = 8
+	sb_cd.content_margin_bottom = 8
+	cd_panel.add_theme_stylebox_override("panel", sb_cd)
+	var cd_lbl := Label.new()
+	cd_lbl.text = "⏱ Cooldown: %ss" % _fmt_num(HabilidadManager.get_cooldown(id))
+	cd_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	cd_lbl.add_theme_font_size_override("font_size", MenuTheme.FS_SMALL)
+	cd_lbl.add_theme_color_override("font_color", MenuTheme.TEXT_MUTED)
+	cd_panel.add_child(cd_lbl)
+	v.add_child(cd_panel)
 
 	if not desbloqueada:
 		v.add_child(_make_unlock_button(id, accent))
@@ -281,14 +300,92 @@ func _make_card(id: String) -> Control:
 	return panel
 
 
+# Etiquetas legibles y unidades de cada valor base de una habilidad.
+const STAT_LABEL := {
+	"proyectiles": "PROYECTILES", "danio_pct": "DAÑO", "velocidad": "VELOCIDAD",
+	"penetracion": "PENETRACIÓN", "fuerza": "ATRACCIÓN", "duracion": "DURACIÓN",
+	"danio_implosion": "DAÑO IMPLOSIÓN", "danio_explosion": "DAÑO EXPLOSIÓN",
+	"radio_explosion": "RADIO EXPLOSIÓN", "mult_escudo": "VS ESCUDO",
+	"mult_armadura": "VS ARMADURA", "stun_escudo": "STUN ESCUDO",
+	"radio": "RADIO", "saltos": "SALTOS", "reduccion": "REDUCCIÓN",
+	"marca": "MARCA", "absorcion_pct": "ABSORCIÓN", "curacion_pct": "CURACIÓN",
+	"slow_pct": "RALENTIZA",
+}
+
+
+# Da formato a un valor base segun su clave: los _pct van en porcentaje,
+# las velocidades en px/s y las duraciones en segundos.
+func _fmt_stat(clave: String, valor) -> String:
+	if clave.ends_with("_pct") or clave.begins_with("danio_"):
+		return "%d%% base" % int(round(float(valor) * 100.0))
+	if clave.begins_with("mult_"):
+		return "x%s" % _fmt_num(float(valor))
+	if clave == "velocidad":
+		return "%s px/s" % _fmt_num(float(valor))
+	if clave == "duracion" or clave == "marca" or clave == "stun_escudo":
+		return "%ss" % _fmt_num(float(valor))
+	if clave == "penetracion":
+		return "%d enemigo%s" % [int(valor), "" if int(valor) == 1 else "s"]
+	if clave == "reduccion":
+		return "%d%%" % int(round(float(valor) * 100.0))
+	if clave == "fuerza":
+		return "%s u/s2" % _fmt_num(float(valor))
+	if clave == "radio" or clave == "radio_explosion":
+		return "%spx" % _fmt_num(float(valor))
+	if valor is float:
+		return _fmt_num(valor)
+	return str(valor)
+
+
+func _make_stats_grid(base: Dictionary, accent: Color) -> Control:
+	var grid := GridContainer.new()
+	grid.columns = 2
+	grid.add_theme_constant_override("h_separation", 8)
+	grid.add_theme_constant_override("v_separation", 8)
+
+	for clave in base.keys():
+		var caja := PanelContainer.new()
+		var sb := StyleBoxFlat.new()
+		sb.bg_color = Color(1, 1, 1, 0.03)
+		sb.set_corner_radius_all(8)
+		sb.content_margin_left = 12
+		sb.content_margin_right = 12
+		sb.content_margin_top = 7
+		sb.content_margin_bottom = 7
+		# Filo del color de la habilidad, como en el mockup.
+		sb.border_color = Color(accent.r, accent.g, accent.b, 0.25)
+		sb.border_width_left = 2
+		caja.add_theme_stylebox_override("panel", sb)
+		caja.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+
+		var vb := VBoxContainer.new()
+		vb.add_theme_constant_override("separation", 2)
+
+		var l_lbl := Label.new()
+		l_lbl.text = STAT_LABEL.get(clave, str(clave).to_upper())
+		l_lbl.add_theme_font_size_override("font_size", MenuTheme.FS_TINY)
+		l_lbl.add_theme_color_override("font_color", MenuTheme.TEXT_MUTED)
+
+		var v_lbl := Label.new()
+		v_lbl.text = _fmt_stat(clave, base[clave])
+		v_lbl.add_theme_font_size_override("font_size", MenuTheme.FS_SMALL)
+		v_lbl.add_theme_color_override("font_color", MenuTheme.TEXT_PRIMARY)
+
+		vb.add_child(l_lbl)
+		vb.add_child(v_lbl)
+		caja.add_child(vb)
+		grid.add_child(caja)
+
+	return grid
+
+
 func _make_unlock_button(id: String, accent: Color) -> Control:
 	var coste: int = HabilidadManager.get_hab(id).get("coste_desbloqueo", 0)
 	var btn := Button.new()
-	btn.flat = true
 	btn.focus_mode = Control.FOCUS_NONE
-	btn.custom_minimum_size = Vector2(0, 34)
+	btn.custom_minimum_size = Vector2(0, 60)
 	btn.text = "DESBLOQUEAR  %s %s" % [MenuTheme.SYM_FRAG, _format_number(coste)]
-	btn.add_theme_font_size_override("font_size", 12)
+	btn.add_theme_font_size_override("font_size", MenuTheme.FS_SMALL)
 	btn.add_theme_color_override("font_color", accent)
 	btn.add_theme_stylebox_override("normal", MenuTheme.make_button_style(accent))
 	btn.add_theme_stylebox_override("hover", MenuTheme.make_button_style(accent, true))
@@ -333,14 +430,14 @@ func _make_mejora_row(id: String, mid: String, accent: Color) -> Control:
 	info.add_theme_constant_override("separation", 1)
 	var nom := Label.new()
 	nom.text = m.get("nombre", mid)
-	nom.add_theme_font_size_override("font_size", 11)
+	nom.add_theme_font_size_override("font_size", MenuTheme.FS_SMALL)
 	nom.add_theme_color_override("font_color", MenuTheme.TEXT_PRIMARY)
-	_apply_hud_font(nom)
+	# Sin Orbitron: no trae la enye y "Dano" salia con un acento raro.
 	info.add_child(nom)
 	if not es_toggle:
 		var prog := Label.new()
 		prog.text = "%d/%d" % [nivel, m.get("max_nivel", 0)]
-		prog.add_theme_font_size_override("font_size", 10)
+		prog.add_theme_font_size_override("font_size", MenuTheme.FS_TINY)
 		prog.add_theme_color_override("font_color", MenuTheme.TEXT_MUTED)
 		_apply_hud_font(prog)
 		info.add_child(prog)
@@ -350,7 +447,7 @@ func _make_mejora_row(id: String, mid: String, accent: Color) -> Control:
 	btn.flat = true
 	btn.focus_mode = Control.FOCUS_NONE
 	btn.custom_minimum_size = Vector2(96, 28)
-	btn.add_theme_font_size_override("font_size", 11)
+	btn.add_theme_font_size_override("font_size", MenuTheme.FS_SMALL)
 	_apply_hud_font(btn)
 	if es_max:
 		btn.text = "✓" if es_toggle else "MAX"
