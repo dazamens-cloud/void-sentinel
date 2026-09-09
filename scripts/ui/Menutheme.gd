@@ -53,12 +53,15 @@ const R_LEGENDARIO := Color("ffd740")
 
 # ============================================================
 # TAMANOS DE FUENTE (px)
+# Escalados x1.85 respecto al mockup HTML: aquel se diseno para 390 px de
+# ancho y el viewport del juego son 720, asi que copiarlos literales dejaba
+# todo el menu a poco mas de la mitad de tamano.
 # ============================================================
-const FS_TITLE   := 22
-const FS_HEADER  := 16
-const FS_BODY    := 12
-const FS_SMALL   := 10
-const FS_TINY    := 8
+const FS_TITLE   := 40
+const FS_HEADER  := 30
+const FS_BODY    := 22
+const FS_SMALL   := 18
+const FS_TINY    := 15
 
 
 # ============================================================
@@ -111,11 +114,11 @@ static func make_card_style(border_color: Color = BORDER_DIM, bg_alpha: float = 
 	sb.bg_color = Color(BG_MID.r, BG_MID.g, BG_MID.b, bg_alpha)
 	sb.border_color = border_color
 	sb.set_border_width_all(1)
-	sb.set_corner_radius_all(12)
-	sb.content_margin_left = 12
-	sb.content_margin_right = 12
-	sb.content_margin_top = 10
-	sb.content_margin_bottom = 10
+	sb.set_corner_radius_all(22)
+	sb.content_margin_left = 22
+	sb.content_margin_right = 22
+	sb.content_margin_top = 18
+	sb.content_margin_bottom = 18
 	return sb
 
 # Estilo de boton de compra/accion con color de acento.
@@ -127,11 +130,11 @@ static func make_button_style(accent: Color, filled: bool = false) -> StyleBoxFl
 		sb.bg_color = Color(accent.r, accent.g, accent.b, 0.10)
 	sb.border_color = Color(accent.r, accent.g, accent.b, 0.30)
 	sb.set_border_width_all(1)
-	sb.set_corner_radius_all(8)
-	sb.content_margin_left = 10
-	sb.content_margin_right = 10
-	sb.content_margin_top = 6
-	sb.content_margin_bottom = 6
+	sb.set_corner_radius_all(15)
+	sb.content_margin_left = 18
+	sb.content_margin_right = 18
+	sb.content_margin_top = 11
+	sb.content_margin_bottom = 11
 	return sb
 
 # Barra de progreso (track de fondo).
@@ -146,4 +149,20 @@ static func make_progress_fill(color: Color) -> StyleBoxFlat:
 	var sb := StyleBoxFlat.new()
 	sb.bg_color = color
 	sb.set_corner_radius_all(2)
+	return sb
+
+# Relleno con degradado horizontal, del color al 60% al color pleno.
+# El mockup usa linear-gradient; en Godot hace falta una textura.
+static func make_progress_fill_gradient(color: Color) -> StyleBoxTexture:
+	var grad := Gradient.new()
+	grad.set_color(0, Color(color.r, color.g, color.b, 0.55))
+	grad.set_color(1, color)
+	var tex := GradientTexture2D.new()
+	tex.gradient = grad
+	tex.width = 64
+	tex.height = 4
+	tex.fill_from = Vector2(0, 0)
+	tex.fill_to = Vector2(1, 0)
+	var sb := StyleBoxTexture.new()
+	sb.texture = tex
 	return sb

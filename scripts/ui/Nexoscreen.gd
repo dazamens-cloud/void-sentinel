@@ -245,22 +245,54 @@ func _make_tab_button(cat: String, label: String) -> Button:
 	btn.flat = true
 	btn.focus_mode = Control.FOCUS_NONE
 	btn.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	btn.custom_minimum_size = Vector2(0, 40)
+	btn.custom_minimum_size = Vector2(0, 74)
+
+	# Nombre arriba y cuantas mejoras tiene la categoria debajo, como el mockup.
+	var v := VBoxContainer.new()
+	v.alignment = BoxContainer.ALIGNMENT_CENTER
+	v.add_theme_constant_override("separation", 2)
+	v.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	v.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 
 	var lbl := Label.new()
 	lbl.text = label
 	lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	lbl.add_theme_font_size_override("font_size", 11)
+	lbl.add_theme_font_size_override("font_size", MenuTheme.FS_SMALL)
 	lbl.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	lbl.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	lbl.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	_apply_hud_font(lbl)
-	btn.add_child(lbl)
+
+	var cnt := Label.new()
+	cnt.text = "%d mejoras" % _contar_mejoras(cat)
+	cnt.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	cnt.add_theme_font_size_override("font_size", MenuTheme.FS_TINY)
+	cnt.add_theme_color_override("font_color", MenuTheme.TEXT_MUTED)
+	cnt.mouse_filter = Control.MOUSE_FILTER_IGNORE
+
+	# Subrayado que marca la pestana activa.
+	var barra := PanelContainer.new()
+	barra.custom_minimum_size = Vector2(0, 3)
+	barra.mouse_filter = Control.MOUSE_FILTER_IGNORE
+
+	v.add_child(lbl)
+	v.add_child(cnt)
+	v.add_child(barra)
+	btn.add_child(v)
 	btn.set_meta("label", lbl)
+	btn.set_meta("barra", barra)
 
 	btn.pressed.connect(func(): _switch_category(cat))
 	_tab_buttons[cat] = btn
 	return btn
+
+
+func _contar_mejoras(cat: String) -> int:
+	if _mm == null:
+		return 0
+	var n := 0
+	for id in _mm.mejoras.keys():
+		if _mm.mejoras[id].get("categoria", "") == cat:
+			n += 1
+	return n
 
 
 func _switch_category(cat: String) -> void:
@@ -277,6 +309,23 @@ func _update_tab_colors() -> void:
 		var is_active: bool = (cat == _current_cat)
 		var col: Color = CAT_COLORS[cat] if is_active else MenuTheme.TEXT_MUTED
 		lbl.add_theme_color_override("font_color", col)
+
+		# Fondo tenue y subrayado para que la activa se distinga de un vistazo.
+		var barra: PanelContainer = btn.get_meta("barra")
+		var sb_barra := StyleBoxFlat.new()
+		sb_barra.bg_color = col if is_active else Color(0, 0, 0, 0)
+		sb_barra.set_corner_radius_all(2)
+		barra.add_theme_stylebox_override("panel", sb_barra)
+
+		var sb_fondo := StyleBoxFlat.new()
+		if is_active:
+			sb_fondo.bg_color = Color(col.r, col.g, col.b, 0.08)
+		else:
+			sb_fondo.bg_color = Color(0, 0, 0, 0)
+		sb_fondo.set_corner_radius_all(15)
+		btn.add_theme_stylebox_override("normal", sb_fondo)
+		btn.add_theme_stylebox_override("hover", sb_fondo)
+		btn.add_theme_stylebox_override("pressed", sb_fondo)
 
 
 # ------------------------------------------------------------
@@ -417,7 +466,7 @@ func _make_upgrade_card(id: String, data: Dictionary, cat: String) -> Control:
 	track.value = data.get("nivel", 0)
 	track.show_percentage = false
 	track.add_theme_stylebox_override("background", MenuTheme.make_progress_track())
-	track.add_theme_stylebox_override("fill", MenuTheme.make_progress_fill(accent))
+	track.add_theme_stylebox_override("fill", MenuTheme.make_progress_fill_gradient(accent))
 
 	var lvl_lbl := Label.new()
 	lvl_lbl.add_theme_font_size_override("font_size", MenuTheme.FS_TINY)
@@ -439,11 +488,24 @@ func _make_upgrade_card(id: String, data: Dictionary, cat: String) -> Control:
 	right.custom_minimum_size = Vector2(150, 0)
 
 	# Lo que de verdad le interesa al jugador: cuanto vale la mejora ahora.
+	var value_row := HBoxContainer.new()
+	value_row.alignment = BoxContainer.ALIGNMENT_END
+	value_row.add_theme_constant_override("separation", 5)
+
 	var value_lbl := Label.new()
 	value_lbl.add_theme_font_size_override("font_size", MenuTheme.FS_BODY)
 	value_lbl.add_theme_color_override("font_color", accent)
 	value_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	_apply_hud_font(value_lbl)
+
+	# La unidad va aparte, mas pequena y apagada: asi la cifra destaca.
+	var unit_lbl := Label.new()
+	unit_lbl.add_theme_font_size_override("font_size", MenuTheme.FS_TINY)
+	unit_lbl.add_theme_color_override("font_color", MenuTheme.TEXT_MUTED)
+	unit_lbl.vertical_alignment = VERTICAL_ALIGNMENT_BOTTOM
+
+	value_row.add_child(value_lbl)
+	value_row.add_child(unit_lbl)
 
 	var buy_btn := Button.new()
 	buy_btn.focus_mode = Control.FOCUS_NONE
@@ -456,7 +518,7 @@ func _make_upgrade_card(id: String, data: Dictionary, cat: String) -> Control:
 
 	buy_btn.pressed.connect(func(): _on_buy(id))
 
-	right.add_child(value_lbl)
+	right.add_child(value_row)
 	right.add_child(buy_btn)
 	h.add_child(right)
 
@@ -467,6 +529,7 @@ func _make_upgrade_card(id: String, data: Dictionary, cat: String) -> Control:
 		"lvl_lbl": lvl_lbl,
 		"buy_btn": buy_btn,
 		"value_lbl": value_lbl,
+		"unit_lbl": unit_lbl,
 	}
 
 	# Pintar estado inicial.
@@ -492,6 +555,7 @@ func _refresh_card(id: String) -> void:
 	var lvl_lbl: Label = refs["lvl_lbl"]
 	var buy_btn: Button = refs["buy_btn"]
 	var value_lbl: Label = refs["value_lbl"]
+	var unit_lbl: Label = refs["unit_lbl"]
 
 	# El Nexo refleja el nivel PERMANENTE (suelo), no el efectivo de partida.
 	var nivel: int = data.get("nivel_nexo", 0)
@@ -500,7 +564,24 @@ func _refresh_card(id: String) -> void:
 
 	track.value = nivel
 	track.max_value = maxn
-	value_lbl.text = _mm.formatear_valor(id, nivel)
+	# formatear_valor devuelve "200 atk" o "1.00s": si trae unidad suelta, se
+	# separa para pintarla mas pequena al lado de la cifra.
+	var texto: String = _mm.formatear_valor(id, nivel)
+	# Solo se separa si el sufijo es una unidad de verdad (letras sueltas).
+	# Con un rfind a secas, "5% / 1.5x" se partia en "5% /" y "1.5x".
+	var corte: int = texto.rfind(" ")
+	var sufijo: String = texto.substr(corte + 1) if corte > 0 else ""
+	var es_unidad: bool = sufijo != "" and not sufijo.contains("/")
+	for c in sufijo:
+		if c.is_valid_int():
+			es_unidad = false
+			break
+	if es_unidad:
+		value_lbl.text = texto.substr(0, corte)
+		unit_lbl.text = sufijo
+	else:
+		value_lbl.text = texto
+		unit_lbl.text = ""
 
 	if es_max:
 		lvl_lbl.text = "MAX"
