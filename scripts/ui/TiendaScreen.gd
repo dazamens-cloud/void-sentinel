@@ -199,11 +199,11 @@ func _make_gems_section() -> Control:
 	grid.columns = 3
 	grid.add_theme_constant_override("h_separation", 8)
 	grid.add_theme_constant_override("v_separation", 8)
-	grid.add_child(_make_gem_pack("110", "", "4.99 EUR", false))
-	grid.add_child(_make_gem_pack("248", "+13% mas", "9.99 EUR", true))
-	grid.add_child(_make_gem_pack("550", "+25% mas", "22.99 EUR", false))
-	grid.add_child(_make_gem_pack("1200", "+45% mas", "49.99 EUR", false))
-	grid.add_child(_make_gem_pack("2800", "+75% mas", "99.99 EUR", false))
+	grid.add_child(_make_gem_pack("110", "", "4,99 EUR", false))
+	grid.add_child(_make_gem_pack("248", "+13% mas", "9,99 EUR", true))
+	grid.add_child(_make_gem_pack("550", "+25% mas", "22,99 EUR", false))
+	grid.add_child(_make_gem_pack("1200", "+45% mas", "49,99 EUR", false))
+	grid.add_child(_make_gem_pack("2800", "+75% mas", "99,99 EUR", false))
 	v.add_child(grid)
 
 	return v
@@ -288,27 +288,48 @@ func _make_gem_pack(amount: String, bonus: String, price: String, best: bool) ->
 	v.add_theme_constant_override("separation", 1)
 	v.mouse_filter = Control.MOUSE_FILTER_IGNORE
 
+	if best:
+		var badge := PanelContainer.new()
+		badge.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+		var sb_badge := StyleBoxFlat.new()
+		sb_badge.bg_color = Color(MenuTheme.GOLD.r, MenuTheme.GOLD.g, MenuTheme.GOLD.b, 0.18)
+		sb_badge.border_color = Color(MenuTheme.GOLD.r, MenuTheme.GOLD.g, MenuTheme.GOLD.b, 0.5)
+		sb_badge.set_border_width_all(1)
+		sb_badge.set_corner_radius_all(7)
+		sb_badge.content_margin_left = 10
+		sb_badge.content_margin_right = 10
+		sb_badge.content_margin_top = 3
+		sb_badge.content_margin_bottom = 3
+		badge.add_theme_stylebox_override("panel", sb_badge)
+		var badge_lbl := Label.new()
+		badge_lbl.text = "MEJOR VALOR"
+		badge_lbl.add_theme_font_size_override("font_size", MenuTheme.FS_TINY)
+		badge_lbl.add_theme_color_override("font_color", MenuTheme.GOLD)
+		_apply_hud_font(badge_lbl)
+		badge.add_child(badge_lbl)
+		v.add_child(badge)
+
 	var icon := Label.new()
 	icon.text = MenuTheme.SYM_GEM
 	icon.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	icon.add_theme_font_size_override("font_size", 26)
+	icon.add_theme_font_size_override("font_size", 44)
 	icon.add_theme_color_override("font_color", MAGENTA)
 	var amt := Label.new()
 	amt.text = amount
 	amt.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	amt.add_theme_font_size_override("font_size", 17)
+	amt.add_theme_font_size_override("font_size", MenuTheme.FS_HEADER)
 	amt.add_theme_color_override("font_color", MAGENTA)
 	_apply_hud_font(amt)
 	var bon := Label.new()
 	bon.text = bonus if bonus != "" else " "
 	bon.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	bon.add_theme_font_size_override("font_size", 12)
+	bon.add_theme_font_size_override("font_size", MenuTheme.FS_TINY)
 	bon.add_theme_color_override("font_color", MenuTheme.GREEN)
 	_apply_hud_font(bon)
 	var pr := Label.new()
 	pr.text = price
 	pr.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	pr.add_theme_font_size_override("font_size", 14)
+	pr.add_theme_font_size_override("font_size", MenuTheme.FS_SMALL)
 	pr.add_theme_color_override("font_color", MenuTheme.GOLD)
 	_apply_hud_font(pr)
 
@@ -442,11 +463,11 @@ func _make_bundles_section() -> Control:
 
 	v.add_child(_make_bundle("starter", "Starter", "Pack Iniciado", "1.99 EUR", "",
 		["50 " + MenuTheme.SYM_GEM, "200 " + MenuTheme.SYM_ECOS, "50 " + MenuTheme.SYM_FRAG]))
-	v.add_child(_make_bundle("valor", "Valor", "Pack Centinela", "9.99 EUR", "14.99 EUR",
+	v.add_child(_make_bundle("valor", "Valor", "Pack Centinela", "9,99 EUR", "14.99 EUR",
 		["248 " + MenuTheme.SYM_GEM, "1,000 " + MenuTheme.SYM_ECOS, "250 " + MenuTheme.SYM_FRAG, "x2 Ecos 24h"]))
-	v.add_child(_make_bundle("elite", "Elite", "Pack Nexo", "34.99 EUR", "49.99 EUR",
+	v.add_child(_make_bundle("elite", "Elite", "Pack Nexo", "34.99 EUR", "49,99 EUR",
 		["750 " + MenuTheme.SYM_GEM, "4,000 " + MenuTheme.SYM_ECOS, "800 " + MenuTheme.SYM_FRAG, "Modulo Epico"]))
-	v.add_child(_make_bundle("void", "Void", "Pack Supremo", "66.99 EUR", "99.99 EUR",
+	v.add_child(_make_bundle("void", "Void", "Pack Supremo", "66.99 EUR", "99,99 EUR",
 		["2,000 " + MenuTheme.SYM_GEM, "10,000 " + MenuTheme.SYM_ECOS, "2,000 " + MenuTheme.SYM_FRAG, "Modulo Legendario"]))
 
 	return v

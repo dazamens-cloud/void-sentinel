@@ -40,10 +40,16 @@ func _exit_tree() -> void:
 
 
 func _build() -> void:
+	# Un poco de aire arriba: la cabecera quedaba pegada al borde de la
+	# pantalla, y en movil ademas se le echaria encima la barra de estado.
+	var marco := MarginContainer.new()
+	marco.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	marco.add_theme_constant_override("margin_top", 20)
+	add_child(marco)
+
 	var root := VBoxContainer.new()
-	root.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	root.add_theme_constant_override("separation", 12)
-	add_child(root)
+	marco.add_child(root)
 
 	root.add_child(_make_hero())
 	root.add_child(_make_tabs())
@@ -266,10 +272,10 @@ func _refresh_stats() -> void:
 	grid.add_theme_constant_override("h_separation", 10)
 	grid.add_theme_constant_override("v_separation", 10)
 	var em := EstadisticasManager
-	grid.add_child(_make_big_stat(_miles(em.mejor_ascension), "RECORD ASCENSION", "Tu mejor marca", MenuTheme.GOLD))
-	grid.add_child(_make_big_stat(_miles(em.partidas_jugadas), "PARTIDAS TOTALES", "Completadas", MenuTheme.CYAN))
-	grid.add_child(_make_big_stat(_miles(em.kills_total), "ENEMIGOS DESTRUIDOS", "Acumulado", MenuTheme.RED))
-	grid.add_child(_make_big_stat("%d/%d" % [_logros_completos(), em.ids_logros().size()], "LOGROS NIVEL MAX", "Al máximo", MenuTheme.VIOLET))
+	grid.add_child(_make_big_stat(_miles(em.mejor_ascension), "RECORD ASCENSION", "Tu mejor marca", MenuTheme.GOLD, "▲"))
+	grid.add_child(_make_big_stat(_miles(em.partidas_jugadas), "PARTIDAS TOTALES", "Completadas", MenuTheme.CYAN, "▶"))
+	grid.add_child(_make_big_stat(_miles(em.kills_total), "ENEMIGOS DESTRUIDOS", "Acumulado", MenuTheme.RED, "✕"))
+	grid.add_child(_make_big_stat("%d/%d" % [_logros_completos(), em.ids_logros().size()], "LOGROS NIVEL MAX", "Al máximo", MenuTheme.VIOLET, "★"))
 	v.add_child(grid)
 
 	# Stats de economia (saldo actual real).
@@ -296,26 +302,45 @@ func _logros_completos() -> int:
 	return n
 
 
-func _make_big_stat(value: String, label: String, sub: String, color: Color) -> Control:
+func _make_big_stat(value: String, label: String, sub: String, color: Color, icono: String = "") -> Control:
 	var panel := PanelContainer.new()
 	panel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	panel.add_theme_stylebox_override("panel", MenuTheme.make_card_style(MenuTheme.BORDER_DIM))
 	var v := VBoxContainer.new()
 	v.add_theme_constant_override("separation", 4)
 	panel.add_child(v)
+
+	# Icono en su propia caja tintada, arriba de la cifra.
+	if icono != "":
+		var caja := PanelContainer.new()
+		caja.custom_minimum_size = Vector2(52, 52)
+		caja.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
+		var sb := StyleBoxFlat.new()
+		sb.bg_color = Color(color.r, color.g, color.b, 0.12)
+		sb.set_corner_radius_all(13)
+		caja.add_theme_stylebox_override("panel", sb)
+		var centro := CenterContainer.new()
+		var ic := Label.new()
+		ic.text = icono
+		ic.add_theme_font_size_override("font_size", 26)
+		ic.add_theme_color_override("font_color", color)
+		centro.add_child(ic)
+		caja.add_child(centro)
+		v.add_child(caja)
+
 	var val := Label.new()
 	val.text = value
-	val.add_theme_font_size_override("font_size", 26)
+	val.add_theme_font_size_override("font_size", MenuTheme.FS_TITLE - 6)
 	val.add_theme_color_override("font_color", color)
 	_apply_hud_font(val)
 	var lbl := Label.new()
 	lbl.text = label
-	lbl.add_theme_font_size_override("font_size", 10)
+	lbl.add_theme_font_size_override("font_size", MenuTheme.FS_TINY)
 	lbl.add_theme_color_override("font_color", MenuTheme.TEXT_MUTED)
 	_apply_hud_font(lbl)
 	var sub_lbl := Label.new()
 	sub_lbl.text = sub
-	sub_lbl.add_theme_font_size_override("font_size", 12)
+	sub_lbl.add_theme_font_size_override("font_size", MenuTheme.FS_SMALL)
 	sub_lbl.add_theme_color_override("font_color", MenuTheme.TEXT_MUTED)
 	v.add_child(val)
 	v.add_child(lbl)
@@ -326,7 +351,7 @@ func _make_big_stat(value: String, label: String, sub: String, color: Color) -> 
 func _make_section_title(text: String) -> Control:
 	var lbl := Label.new()
 	lbl.text = text
-	lbl.add_theme_font_size_override("font_size", 11)
+	lbl.add_theme_font_size_override("font_size", MenuTheme.FS_SMALL)
 	lbl.add_theme_color_override("font_color", MenuTheme.GOLD)
 	_apply_hud_font(lbl)
 	return lbl
