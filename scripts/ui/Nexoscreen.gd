@@ -47,14 +47,25 @@ const CAT_COLORS := {
 # Icono de cada mejora. Se usan simbolos geometricos que las fuentes del
 # proyecto (Orbitron/Rajdhani) si traen: los emoji del mockup salen en blanco.
 const ICONOS := {
-	"danio": "✦", "velocidad_ataque": "⚡", "disparo_critico": "✧",
-	"multidisparo": "⁙", "rebote": "↻", "alcance_rebote": "◌",
-	"salud": "♥", "recuperacion": "✚", "escudo": "◇",
-	"dureza_escudo": "◆", "pulso_quartz": "◎", "poder_pulso": "❋",
-	"energia_ascension": "▲", "energia_espectro": "⚡",
-	"ecos_ascension": "◈", "ecos_rapido": "»",
-	"mejora_ataque_gratis": "★", "mejora_defensa_gratis": "★",
-	"mejora_bonificacion_gratis": "★",
+	"danio": IconoVec.Forma.DESTELLO,
+	"velocidad_ataque": IconoVec.Forma.RAYO,
+	"disparo_critico": IconoVec.Forma.ESTRELLA,
+	"multidisparo": IconoVec.Forma.PUNTOS,
+	"rebote": IconoVec.Forma.FLECHA_CIRC,
+	"alcance_rebote": IconoVec.Forma.CIRCULO,
+	"salud": IconoVec.Forma.CORAZON,
+	"recuperacion": IconoVec.Forma.MAS,
+	"escudo": IconoVec.Forma.ESCUDO,
+	"dureza_escudo": IconoVec.Forma.ROMBO,
+	"pulso_quartz": IconoVec.Forma.CIRCULO_DOBLE,
+	"poder_pulso": IconoVec.Forma.CIRCULO_DOBLE,
+	"energia_ascension": IconoVec.Forma.TRIANGULO,
+	"energia_espectro": IconoVec.Forma.RAYO,
+	"ecos_ascension": IconoVec.Forma.ROMBO_PUNTO,
+	"ecos_rapido": IconoVec.Forma.PLAY,
+	"mejora_ataque_gratis": IconoVec.Forma.ESTRELLA,
+	"mejora_defensa_gratis": IconoVec.Forma.ESTRELLA,
+	"mejora_bonificacion_gratis": IconoVec.Forma.ESTRELLA,
 }
 
 # Etiquetas de los tabs (mas cortas que la categoria).
@@ -421,16 +432,9 @@ func _make_upgrade_card(id: String, data: Dictionary, cat: String) -> Control:
 	sb_icono.bg_color = Color(accent.r, accent.g, accent.b, 0.12)
 	sb_icono.set_corner_radius_all(15)
 	icono_wrap.add_theme_stylebox_override("panel", sb_icono)
-	# CenterContainer: con el Label suelto el glifo quedaba descentrado hacia
-	# la izquierda, porque el Label se ajusta al ancho del texto y no a la caja.
 	var icono_center := CenterContainer.new()
-	var icono_lbl := Label.new()
-	icono_lbl.text = ICONOS.get(id, MenuTheme.SYM_ECOS)
-	icono_lbl.add_theme_font_size_override("font_size", 30)
-	icono_lbl.add_theme_color_override("font_color", accent)
-	icono_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	icono_lbl.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	icono_center.add_child(icono_lbl)
+	var forma: int = ICONOS.get(id, IconoVec.Forma.ROMBO)
+	icono_center.add_child(IconoVec.crear(forma, 32, accent))
 	icono_wrap.add_child(icono_center)
 	h.add_child(icono_wrap)
 

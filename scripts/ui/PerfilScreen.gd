@@ -272,10 +272,10 @@ func _refresh_stats() -> void:
 	grid.add_theme_constant_override("h_separation", 10)
 	grid.add_theme_constant_override("v_separation", 10)
 	var em := EstadisticasManager
-	grid.add_child(_make_big_stat(_miles(em.mejor_ascension), "RECORD ASCENSION", "Tu mejor marca", MenuTheme.GOLD, "▲"))
-	grid.add_child(_make_big_stat(_miles(em.partidas_jugadas), "PARTIDAS TOTALES", "Completadas", MenuTheme.CYAN, "▶"))
-	grid.add_child(_make_big_stat(_miles(em.kills_total), "ENEMIGOS DESTRUIDOS", "Acumulado", MenuTheme.RED, "✕"))
-	grid.add_child(_make_big_stat("%d/%d" % [_logros_completos(), em.ids_logros().size()], "LOGROS NIVEL MAX", "Al máximo", MenuTheme.VIOLET, "★"))
+	grid.add_child(_make_big_stat(_miles(em.mejor_ascension), "RECORD ASCENSION", "Tu mejor marca", MenuTheme.GOLD, IconoVec.Forma.TRIANGULO))
+	grid.add_child(_make_big_stat(_miles(em.partidas_jugadas), "PARTIDAS TOTALES", "Completadas", MenuTheme.CYAN, IconoVec.Forma.PLAY))
+	grid.add_child(_make_big_stat(_miles(em.kills_total), "ENEMIGOS DESTRUIDOS", "Acumulado", MenuTheme.RED, IconoVec.Forma.CRUZ))
+	grid.add_child(_make_big_stat("%d/%d" % [_logros_completos(), em.ids_logros().size()], "LOGROS NIVEL MAX", "Al máximo", MenuTheme.VIOLET, IconoVec.Forma.ESTRELLA))
 	v.add_child(grid)
 
 	# Stats de economia (saldo actual real).
@@ -302,7 +302,7 @@ func _logros_completos() -> int:
 	return n
 
 
-func _make_big_stat(value: String, label: String, sub: String, color: Color, icono: String = "") -> Control:
+func _make_big_stat(value: String, label: String, sub: String, color: Color, icono: int = -1) -> Control:
 	var panel := PanelContainer.new()
 	panel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	panel.add_theme_stylebox_override("panel", MenuTheme.make_card_style(MenuTheme.BORDER_DIM))
@@ -311,7 +311,7 @@ func _make_big_stat(value: String, label: String, sub: String, color: Color, ico
 	panel.add_child(v)
 
 	# Icono en su propia caja tintada, arriba de la cifra.
-	if icono != "":
+	if icono >= 0:
 		var caja := PanelContainer.new()
 		caja.custom_minimum_size = Vector2(52, 52)
 		caja.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
@@ -320,11 +320,7 @@ func _make_big_stat(value: String, label: String, sub: String, color: Color, ico
 		sb.set_corner_radius_all(13)
 		caja.add_theme_stylebox_override("panel", sb)
 		var centro := CenterContainer.new()
-		var ic := Label.new()
-		ic.text = icono
-		ic.add_theme_font_size_override("font_size", 26)
-		ic.add_theme_color_override("font_color", color)
-		centro.add_child(ic)
+		centro.add_child(IconoVec.crear(icono, 26, color))
 		caja.add_child(centro)
 		v.add_child(caja)
 
