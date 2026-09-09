@@ -18,13 +18,15 @@ signal screen_requested(screen_name: String)
 var _buttons: Dictionary = {}
 var _active: String = "home"
 
-# Definicion de los items: [clave, simbolo, etiqueta, es_central]
+# Definicion de los items: [clave, forma del icono, etiqueta, es_central]
+# Las formas se dibujan por codigo (IconoVec): los glifos de fuente dependian
+# del fallback del sistema para verse.
 const ITEMS := [
-	["nexo",   MenuTheme.SYM_ECOS,   "NEXO",   false],
-	["forja",  MenuTheme.SYM_FRAG,   "FORJA",  false],
-	["home",   MenuTheme.SYM_HOME,   "INICIO", true],
-	["perfil", MenuTheme.SYM_PERFIL, "PERFIL", false],
-	["tienda", MenuTheme.SYM_TIENDA, "TIENDA", false],
+	["nexo",   IconoVec.Forma.ROMBO_PUNTO, "NEXO",   false],
+	["forja",  IconoVec.Forma.ROMBO,       "FORJA",  false],
+	["home",   IconoVec.Forma.CASA,        "INICIO", true],
+	["perfil", IconoVec.Forma.HEXAGONO,    "PERFIL", false],
+	["tienda", IconoVec.Forma.ROMBO_HUECO, "TIENDA", false],
 ]
 
 
@@ -63,7 +65,7 @@ func _build() -> void:
 	# Crear cada boton.
 	for item in ITEMS:
 		var key: String = item[0]
-		var sym: String = item[1]
+		var sym: int = item[1]
 		var lbl: String = item[2]
 		var central: bool = item[3]
 		var btn := _make_nav_button(key, sym, lbl, central)
@@ -74,7 +76,7 @@ func _build() -> void:
 
 
 # Crea un boton de navegacion (icono arriba, etiqueta abajo).
-func _make_nav_button(key: String, sym: String, lbl: String, central: bool) -> Button:
+func _make_nav_button(key: String, sym: int, lbl: String, central: bool) -> Button:
 	var btn := Button.new()
 	btn.flat = true
 	btn.focus_mode = Control.FOCUS_NONE
@@ -99,15 +101,12 @@ func _make_nav_button(key: String, sym: String, lbl: String, central: bool) -> B
 	vbox.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	vbox.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 
-	var icon := Label.new()
-	icon.text = sym
-	icon.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	icon.add_theme_font_size_override("font_size", 24)
-	icon.add_theme_color_override("font_color", MenuTheme.TEXT_MUTED)
-	icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var icon_wrap := CenterContainer.new()
+	icon_wrap.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var icon := IconoVec.crear(sym, 26, MenuTheme.TEXT_MUTED)
+	icon_wrap.add_child(icon)
+	# El icono ya no es texto: no necesita fuente.
 	var hud_font := MenuTheme.get_font_hud()
-	if hud_font:
-		icon.add_theme_font_override("font", hud_font)
 
 	var label := Label.new()
 	label.text = lbl
@@ -118,7 +117,7 @@ func _make_nav_button(key: String, sym: String, lbl: String, central: bool) -> B
 	if hud_font:
 		label.add_theme_font_override("font", hud_font)
 
-	vbox.add_child(icon)
+	vbox.add_child(icon_wrap)
 	vbox.add_child(label)
 	btn.add_child(vbox)
 
@@ -138,9 +137,10 @@ func set_active(screen_name: String) -> void:
 	_active = screen_name
 	for key in _buttons.keys():
 		var btn: Button = _buttons[key]
-		var icon: Label = btn.get_meta("icon")
+		var icon: IconoVec = btn.get_meta("icon")
 		var label: Label = btn.get_meta("label")
 		var is_active: bool = (key == screen_name)
 		var col: Color = MenuTheme.CYAN if is_active else MenuTheme.TEXT_MUTED
-		icon.add_theme_color_override("font_color", col)
+		icon.color = col
+		icon.queue_redraw()
 		label.add_theme_color_override("font_color", col)

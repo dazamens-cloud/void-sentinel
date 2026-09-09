@@ -110,11 +110,12 @@ func _draw() -> void:
 				pts.append(c + Vector2(cos(a2), sin(a2)) * r * 0.24)
 			draw_colored_polygon(pts, color)
 		Forma.CASA:
+			# Tejado bajo y cuerpo ancho: con el tejado alto parecia una flecha.
+			var alero := -r * 0.15
 			draw_colored_polygon(PackedVector2Array([
-				c + Vector2(0, -r), c + Vector2(r, 0), c + Vector2(r * 0.62, 0),
-				c + Vector2(r * 0.62, r * 0.8), c + Vector2(-r * 0.62, r * 0.8),
-				c + Vector2(-r * 0.62, 0), c + Vector2(-r, 0),
+				c + Vector2(0, -r), c + Vector2(r, alero), c + Vector2(-r, alero),
 			]), color)
+			draw_rect(Rect2(c + Vector2(-r * 0.66, alero), Vector2(r * 1.32, r * 0.95)), color)
 		Forma.HEXAGONO:
 			var hex := PackedVector2Array()
 			for i in range(6):
