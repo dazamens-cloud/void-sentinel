@@ -432,7 +432,7 @@ func _make_mejora_row(id: String, mid: String, accent: Color) -> Control:
 	nom.text = m.get("nombre", mid)
 	nom.add_theme_font_size_override("font_size", MenuTheme.FS_SMALL)
 	nom.add_theme_color_override("font_color", MenuTheme.TEXT_PRIMARY)
-	# Sin Orbitron: no trae la enye y "Dano" salia con un acento raro.
+	# Sin Orbitron: su enye es tan plana que a este tamano se lee como "n".
 	info.add_child(nom)
 	if not es_toggle:
 		var prog := Label.new()

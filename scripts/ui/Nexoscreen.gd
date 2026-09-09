@@ -444,8 +444,8 @@ func _make_upgrade_card(id: String, data: Dictionary, cat: String) -> Control:
 	name_lbl.text = data.get("nombre", id)
 	name_lbl.add_theme_font_size_override("font_size", MenuTheme.FS_SMALL + 2)
 	name_lbl.add_theme_color_override("font_color", MenuTheme.TEXT_PRIMARY)
-	# Sin _apply_hud_font: Orbitron no trae la enye y "Dano" salia con un
-	# acento raro. Rajdhani si la tiene.
+	# Sin _apply_hud_font: Orbitron si tiene la enye, pero su trazo geometrico
+	# la deja casi plana y a este tamano se lee como una n con acento.
 
 	var desc_lbl := Label.new()
 	desc_lbl.text = data.get("descripcion", "")
