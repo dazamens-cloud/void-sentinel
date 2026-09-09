@@ -290,7 +290,7 @@ func _refresh_stats() -> void:
 	v.add_child(_make_section_title("ACUMULADO"))
 	v.add_child(_make_stat_row(MenuTheme.SYM_ECOS, "Ecos ganados en total", _miles(em.ecos_ganados_total), MenuTheme.CYAN))
 	v.add_child(_make_stat_row(MenuTheme.SYM_FRAG, "Fragmentos recogidos en total", _miles(em.fragmentos_recogidos_total), MenuTheme.VIOLET))
-	v.add_child(_make_stat_row("🌀", "Ascensiones completadas", _miles(em.ascensiones_total), MenuTheme.GOLD))
+	v.add_child(_make_stat_row("◎", "Ascensiones completadas", _miles(em.ascensiones_total), MenuTheme.GOLD))
 
 
 # Cuántos logros están en su nivel máximo (todos los tiers reclamados).

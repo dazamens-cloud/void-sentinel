@@ -129,7 +129,7 @@ func _construir_interfaz() -> void:
 	label_dron.position = Vector2(20, 1135 - _margen_bottom)
 	label_dron.add_theme_font_size_override("font_size", 10)
 	label_dron.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	label_dron.text = "🔋 0/50"
+	label_dron.text = "▮ 0/50"
 	raiz.add_child(label_dron)
 	
 	# Barra de ascensión
@@ -401,18 +401,18 @@ func _on_pausa_iniciada(_segundos: float) -> void:
 # ═══════════════════════════════════════════════════
 func _actualizar_ecos() -> void:
 	if lbl_ecos:
-		lbl_ecos.text = "🔷 %s" % Formato.abreviar(Economia.ecos)
+		lbl_ecos.text = "◈ %s" % Formato.abreviar(Economia.ecos)
 
 func _actualizar_fragmentos() -> void:
 	if lbl_fragmentos:
-		lbl_fragmentos.text = "💎 %s" % Formato.abreviar(Economia.fragmentos)
+		lbl_fragmentos.text = "◆ %s" % Formato.abreviar(Economia.fragmentos)
 
 func actualizar_barra_dron(actual: int, maximo: int) -> void:
 	if barra_dron:
 		barra_dron.max_value = maximo
 		barra_dron.value = actual
 		if label_dron:
-			label_dron.text = "🔋 %d/%d" % [actual, maximo]
+			label_dron.text = "▮ %d/%d" % [actual, maximo]
 
 func _actualizar_energia() -> void:
 	if lbl_energia:
