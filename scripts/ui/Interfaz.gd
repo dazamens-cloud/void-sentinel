@@ -8,8 +8,6 @@ extends CanvasLayer
 # Margen superior para no chocar con el notch/cámara del móvil, y tamaños
 # de fuente del HUD (se veían muy pequeños en pantalla real). Ajustables.
 const MARGEN_SUPERIOR: float = 100.0
-const HUD_FONT_PRINCIPAL: int = 30   # oleada, vida
-const HUD_FONT_RECURSOS: int = 34    # energía, ecos, fragmentos
 
 # Márgenes seguros calculados del dispositivo (notch arriba, barra de
 # navegación abajo). En PC valen el mínimo/0; en móvil, el área segura real.
@@ -18,6 +16,10 @@ var _margen_bottom: float = 0.0
 
 var barra_dron: ProgressBar
 var barra_ascension: ProgressBar
+var barra_vida: ProgressBar
+var _ic_vida: IconoVec = null
+var _tramo_vida: int = -1          # 0 sana, 1 media, 2 critica
+var _btn_pausa: Button = null
 var raiz: Control
 var label_dron: Label
 
@@ -145,14 +147,14 @@ func _construir_interfaz() -> void:
 
 	# ── UI del Commander ────────────────────────────────
 	lbl_commander_disparos = Label.new()
-	lbl_commander_disparos.position = Vector2(20, _margen_top + 30)
+	lbl_commander_disparos.position = Vector2(20, _margen_top + 170)
 	lbl_commander_disparos.add_theme_font_size_override("font_size", 24)
 	lbl_commander_disparos.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	lbl_commander_disparos.visible = false
 	raiz.add_child(lbl_commander_disparos)
 
 	lbl_commander_timer = Label.new()
-	lbl_commander_timer.position = Vector2(250, _margen_top + 30)
+	lbl_commander_timer.position = Vector2(250, _margen_top + 170)
 	lbl_commander_timer.add_theme_font_size_override("font_size", 26)
 	lbl_commander_timer.add_theme_color_override("font_color", Color(1.0, 0.5, 0.0))
 	lbl_commander_timer.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -160,7 +162,7 @@ func _construir_interfaz() -> void:
 	raiz.add_child(lbl_commander_timer)
 
 	lbl_commander_alerta = Label.new()
-	lbl_commander_alerta.position = Vector2(140, _margen_top + 120)
+	lbl_commander_alerta.position = Vector2(140, _margen_top + 260)
 	lbl_commander_alerta.size = Vector2(440, 80)
 	lbl_commander_alerta.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	lbl_commander_alerta.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -204,21 +206,128 @@ func _calcular_safe_area() -> void:
 	_margen_top = max(MARGEN_SUPERIOR, m["top"])
 	_margen_bottom = m["bottom"]
 
-# Agranda las fuentes del HUD y baja el PanelSuperior para esquivar el notch.
+# La barra superior se construye por codigo con el sistema visual del menu
+# (MenuTheme, IconoVec) en lugar de las etiquetas sueltas de la escena: el HUD
+# no compartia ni una linea de estilo con el menu y parecia otro juego.
 func _ajustar_escala_movil() -> void:
-	# Bajar la barra superior por debajo de la cámara/notch del móvil.
-	var panel_sup := get_node_or_null("PanelSuperior") as Control
-	if panel_sup:
-		panel_sup.offset_top = _margen_top + 60
-		panel_sup.offset_bottom = _margen_top + 60 + 145.0
+	_construir_barra_superior()
 
-	# Agrandar las etiquetas del HUD (override sobre los tamaños de la escena).
-	for lbl in [lbl_ascension, lbl_salud]:
-		if lbl:
-			lbl.add_theme_font_size_override("font_size", HUD_FONT_PRINCIPAL)
-	for lbl in [lbl_energia, lbl_ecos, lbl_fragmentos]:
-		if lbl:
-			lbl.add_theme_font_size_override("font_size", HUD_FONT_RECURSOS)
+func _construir_barra_superior() -> void:
+	var viejo := get_node_or_null("PanelSuperior") as Control
+
+	var marco := MarginContainer.new()
+	marco.set_anchors_and_offsets_preset(Control.PRESET_TOP_WIDE)
+	marco.offset_top = _margen_top - 40.0
+	marco.add_theme_constant_override("margin_left", 16)
+	marco.add_theme_constant_override("margin_right", 16)
+	marco.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	add_child(marco)
+
+	var tarjeta := PanelContainer.new()
+	tarjeta.add_theme_stylebox_override("panel", MenuTheme.make_card_style(MenuTheme.BORDER_GLOW, 0.72))
+	tarjeta.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	marco.add_child(tarjeta)
+
+	var v := VBoxContainer.new()
+	v.add_theme_constant_override("separation", 10)
+	v.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	tarjeta.add_child(v)
+
+	# Fila 1: ascension a la izquierda, recursos y pausa a la derecha.
+	var fila := HBoxContainer.new()
+	fila.add_theme_constant_override("separation", 14)
+	fila.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	v.add_child(fila)
+
+	var bloque_asc := VBoxContainer.new()
+	bloque_asc.add_theme_constant_override("separation", 0)
+	bloque_asc.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	bloque_asc.add_child(_etiqueta("ASCENSIÓN", MenuTheme.FS_TINY, MenuTheme.TEXT_MUTED, true))
+	lbl_ascension = _etiqueta("0", MenuTheme.FS_HEADER, MenuTheme.TEXT_PRIMARY, false)
+	bloque_asc.add_child(lbl_ascension)
+	fila.add_child(bloque_asc)
+
+	var hueco := Control.new()
+	hueco.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	hueco.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	fila.add_child(hueco)
+
+	lbl_energia = _recurso(fila, IconoVec.Forma.RAYO, MenuTheme.GOLD)
+	lbl_ecos = _recurso(fila, IconoVec.Forma.ROMBO_PUNTO, MenuTheme.CYAN)
+	lbl_fragmentos = _recurso(fila, IconoVec.Forma.ROMBO, MenuTheme.VIOLET)
+
+	if is_instance_valid(_btn_pausa):
+		_btn_pausa.get_parent().remove_child(_btn_pausa)
+		_btn_pausa.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+		fila.add_child(_btn_pausa)
+
+	# Fila 2: la barra de ascension pasa dentro de la tarjeta. Su visibilidad
+	# la siguen gobernando _on_ascension_iniciada / _on_pausa_iniciada.
+	if is_instance_valid(barra_ascension):
+		barra_ascension.get_parent().remove_child(barra_ascension)
+		barra_ascension.custom_minimum_size = Vector2(0, 6)
+		barra_ascension.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		barra_ascension.show_percentage = false
+		barra_ascension.add_theme_stylebox_override("background", MenuTheme.make_progress_track())
+		barra_ascension.add_theme_stylebox_override("fill", MenuTheme.make_progress_fill_gradient(MenuTheme.CYAN))
+		v.add_child(barra_ascension)
+
+	# Fila 3: la vida como barra. Antes era solo un texto, siendo el dato mas
+	# critico de la partida.
+	var fila_vida := HBoxContainer.new()
+	fila_vida.add_theme_constant_override("separation", 10)
+	fila_vida.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	v.add_child(fila_vida)
+
+	var centro_vida := CenterContainer.new()
+	centro_vida.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_ic_vida = IconoVec.crear(IconoVec.Forma.CORAZON, 24, MenuTheme.GREEN)
+	centro_vida.add_child(_ic_vida)
+	fila_vida.add_child(centro_vida)
+
+	barra_vida = ProgressBar.new()
+	barra_vida.custom_minimum_size = Vector2(0, 12)
+	barra_vida.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	barra_vida.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	barra_vida.show_percentage = false
+	barra_vida.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	barra_vida.add_theme_stylebox_override("background", MenuTheme.make_progress_track())
+	fila_vida.add_child(barra_vida)
+
+	lbl_salud = _etiqueta("", MenuTheme.FS_SMALL, MenuTheme.GREEN, false)
+	fila_vida.add_child(lbl_salud)
+
+	# La escena de la barra antigua ya no se usa.
+	if viejo:
+		viejo.queue_free()
+
+# Un recurso: icono vectorial + cifra en su color. Devuelve la etiqueta.
+func _recurso(fila: HBoxContainer, forma: int, color: Color) -> Label:
+	var h := HBoxContainer.new()
+	h.add_theme_constant_override("separation", 6)
+	h.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var centro := CenterContainer.new()
+	centro.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	centro.add_child(IconoVec.crear(forma, 24, color))
+	h.add_child(centro)
+	var lbl := _etiqueta("0", MenuTheme.FS_BODY + 2, color, false)
+	h.add_child(lbl)
+	fila.add_child(h)
+	return lbl
+
+# Las cifras van en la fuente de cuerpo a proposito: el cero de Orbitron es un
+# rectangulo con barra diagonal y, con contadores a 0, parece un glifo roto.
+func _etiqueta(texto: String, tam: int, color: Color, fuente_hud: bool) -> Label:
+	var l := Label.new()
+	l.text = texto
+	l.add_theme_font_size_override("font_size", tam)
+	l.add_theme_color_override("font_color", color)
+	l.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	l.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var f: Font = MenuTheme.get_font_hud() if fuente_hud else MenuTheme.get_font_body()
+	if f:
+		l.add_theme_font_override("font", f)
+	return l
 
 # ═══════════════════════════════════════════════════
 # BARRA DE HABILIDADES (Forja — activas en partida)
@@ -303,15 +412,27 @@ func _refrescar_habilidades() -> void:
 # ═══════════════════════════════════════════════════
 # Botón ⏸ arriba a la derecha. La pantalla mide 720×1280.
 func _crear_boton_pausa() -> void:
-	var btn = Button.new()
-	btn.text = "⏸"
-	btn.add_theme_font_size_override("font_size", 34)
-	btn.size = Vector2(64, 64)
-	# Esquina superior derecha, por debajo del notch (igual margen que el HUD).
-	btn.position = Vector2(720 - 64 - 16, _margen_top + 60)
+	var btn := Button.new()
+	btn.custom_minimum_size = Vector2(64, 64)
+	btn.focus_mode = Control.FOCUS_NONE
+	var sb := StyleBoxFlat.new()
+	sb.bg_color = Color(MenuTheme.CYAN.r, MenuTheme.CYAN.g, MenuTheme.CYAN.b, 0.10)
+	sb.border_color = Color(MenuTheme.CYAN.r, MenuTheme.CYAN.g, MenuTheme.CYAN.b, 0.35)
+	sb.set_border_width_all(1)
+	sb.set_corner_radius_all(32)
+	for estado in ["normal", "hover", "pressed"]:
+		btn.add_theme_stylebox_override(estado, sb)
+	# Icono dibujado: el glifo de pausa (U+23F8) salia como un cuadro vacio en
+	# Android.
+	var centro := CenterContainer.new()
+	centro.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	centro.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	centro.add_child(IconoVec.crear(IconoVec.Forma.PAUSA, 26, MenuTheme.CYAN))
+	btn.add_child(centro)
 	btn.z_index = 150
 	btn.pressed.connect(_abrir_menu_pausa)
 	add_child(btn)
+	_btn_pausa = btn
 
 func _abrir_menu_pausa() -> void:
 	# No abrir sobre el game over ni dos veces.
@@ -401,11 +522,11 @@ func _on_pausa_iniciada(_segundos: float) -> void:
 # ═══════════════════════════════════════════════════
 func _actualizar_ecos() -> void:
 	if lbl_ecos:
-		lbl_ecos.text = "◈ %s" % Formato.abreviar(Economia.ecos)
+		lbl_ecos.text = Formato.abreviar(Economia.ecos)
 
 func _actualizar_fragmentos() -> void:
 	if lbl_fragmentos:
-		lbl_fragmentos.text = "◆ %s" % Formato.abreviar(Economia.fragmentos)
+		lbl_fragmentos.text = Formato.abreviar(Economia.fragmentos)
 
 func actualizar_barra_dron(actual: int, maximo: int) -> void:
 	if barra_dron:
@@ -419,10 +540,27 @@ func _actualizar_energia() -> void:
 		lbl_energia.text = Formato.abreviar(Economia.energia)
 
 func _actualizar_ascension(numero: int) -> void:
-	lbl_ascension.text = "Ascensión: %d" % numero
+	lbl_ascension.text = str(numero)
 
 func _actualizar_salud(actual: float, maxima: float) -> void:
 	lbl_salud.text = "%s / %s" % [Formato.abreviar(actual), Formato.abreviar(maxima)]
+	if not is_instance_valid(barra_vida):
+		return
+	var tope := maxf(maxima, 1.0)
+	barra_vida.max_value = tope
+	barra_vida.value = actual
+	# Color por tramos. Solo se regenera el estilo al cambiar de tramo, no en
+	# cada golpe.
+	var frac := actual / tope
+	var tramo := 0 if frac >= 0.5 else (1 if frac >= 0.25 else 2)
+	if tramo != _tramo_vida:
+		_tramo_vida = tramo
+		var col: Color = [MenuTheme.GREEN, MenuTheme.GOLD, MenuTheme.RED][tramo]
+		barra_vida.add_theme_stylebox_override("fill", MenuTheme.make_progress_fill_gradient(col))
+		lbl_salud.add_theme_color_override("font_color", col)
+		if is_instance_valid(_ic_vida):
+			_ic_vida.color = col
+			_ic_vida.queue_redraw()
 
 # ═══════════════════════════════════════════════════
 # UI DEL COMMANDER

@@ -33,6 +33,7 @@ enum Forma {
 	HEXAGONO,       # perfil
 	FLECHA_CIRC,    # rebote
 	PUNTOS,         # multidisparo
+	PAUSA,          # boton de pausa
 }
 
 var forma: Forma = Forma.ROMBO
@@ -134,6 +135,10 @@ func _draw() -> void:
 			for dx in [-0.45, 0.45]:
 				for dy in [-0.45, 0.45]:
 					draw_circle(c + Vector2(r * dx, r * dy), r * 0.2, color)
+		Forma.PAUSA:
+			var ancho := r * 0.34
+			draw_rect(Rect2(c + Vector2(-r * 0.62, -r * 0.8), Vector2(ancho, r * 1.6)), color)
+			draw_rect(Rect2(c + Vector2(r * 0.28, -r * 0.8), Vector2(ancho, r * 1.6)), color)
 
 
 func _rombo(c: Vector2, r: float) -> PackedVector2Array:
