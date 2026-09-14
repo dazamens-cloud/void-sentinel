@@ -1,7 +1,8 @@
 extends Control
 # ═══════════════════════════════════════════════════
 # PANEL MEJORAS — Void Sentinel
-# FIX MODAL: centrado en viewport + más opaco
+# Altura fija con scroll interior; estilo del menú (MenuTheme) aplicado por
+# código en _estilizar() para no editar el .tscn a mano.
 # ═══════════════════════════════════════════════════
 
 @onready var btn_toggle:   Button = $BarraTitulo/BtnToggle
@@ -15,6 +16,7 @@ extends Control
 @onready var btn_bonificacion: Button  = $Contenido/Tabs/BtnBonificacion
 @onready var btn_commander:    Button  = $Contenido/Tabs/BtnCommander
 @onready var contenido:        Control = $Contenido
+@onready var scroll:           ScrollContainer = $Contenido/ScrollContainer
 
 @onready var ataque_container:       GridContainer = $Contenido/ScrollContainer/MejorasContainer/AtaqueContainer
 @onready var defensa_container:      GridContainer = $Contenido/ScrollContainer/MejorasContainer/DefensaContainer
@@ -36,29 +38,28 @@ var expandido:        bool   = true
 var multiplicador:    int    = 1
 var _tween_panel: Tween = null
 var _tween_modal: Tween = null
-# Altura del panel (sin la barra) ajustada al contenido de la pestaña activa.
-# Se recalcula en _recalcular_altura(); arranca en el máximo por seguridad.
-var altura_panel:     float  = 500.0
 
 const ALTURA_BARRA: float = 50.0
-# Tope: si el grid excede esta altura, el ScrollContainer toma el relevo.
-const ALTURA_PANEL_MAX: float = 500.0
-# Alto de la franja de pestañas + su separación (offset_top del Scroll en la escena).
-const ALTURA_TABS: float = 44.0
-# Margen inferior dentro del panel para que las cards no queden pegadas al borde.
-const PAD_CONTENIDO: float = 8.0
+# Altura FIJA del panel (sin la barra). Antes se ajustaba al contenido de cada
+# pestaña y la fila de pestañas cambiaba de sitio al pasar de Ataque (6 mejoras)
+# a Bonus (9). Lo que no cabe se desplaza dentro del ScrollContainer; la altura
+# deja asomar parte de la cuarta fila para que se note que hay más.
+const ALTURA_PANEL: float = 500.0
+var altura_panel: float = ALTURA_PANEL
+# Franja de las pestañas; el scroll empieza debajo.
+const ALTURA_TABS: float = 52.0
+# Separación de las rejillas con los bordes de la pantalla y entre cards.
+const MARGEN_LATERAL: float = 12.0
+const SEPARACION_CARDS: int = 10
 # Margen inferior para que la barra (sobre todo colapsada) no quede pegada al
 # borde y la tape la barra de gestos del móvil.
 const MARGEN_INFERIOR: float = 48.0
 
-const COLOR_ACTIVO   := Color(1.0, 1.0, 1.0, 1.0)
-const COLOR_INACTIVO := Color(0.5, 0.5, 0.5, 1.0)
-
 const COLORES_CAT := {
-	"ataque":       Color(0.06, 0.35, 0.54),
-	"defensa":      Color(0.04, 0.29, 0.18),
-	"bonificacion": Color(0.29, 0.22, 0.00),
-	"commander":    Color(0.29, 0.16, 0.00),
+	"ataque":       MenuTheme.CAT_ATAQUE,
+	"defensa":      MenuTheme.CAT_DEFENSA,
+	"bonificacion": MenuTheme.CAT_BONIFICACION,
+	"commander":    MenuTheme.CAT_COMMANDER,
 }
 
 # ═══════════════════════════════════════════════════
@@ -82,6 +83,7 @@ func _ready() -> void:
 		modal_overlay.visible = false
 
 	await get_tree().process_frame
+	_estilizar()
 	_reposicionar()
 	_inicializar_cards()
 	_conectar_senales()
@@ -89,20 +91,131 @@ func _ready() -> void:
 	_expandir(false, false)
 	_actualizar_botones_mult()
 
-# Línea de "Valor: X → Y · Siguiente: Z ⚡" del modal. Se crea por código
-# para no tocar la escena (.tscn solo se edita desde el editor).
+# Línea de "Valor: X → Y · Siguiente nivel: Z energía" del modal. Se crea por
+# código para no tocar la escena (.tscn solo se edita desde el editor).
 func _crear_label_stats_modal() -> void:
 	var vbox := modal_panel.get_node_or_null("VBox")
 	if not vbox:
 		return
 	modal_stats = Label.new()
-	modal_stats.add_theme_font_size_override("font_size", 14)
-	modal_stats.add_theme_color_override("font_color", Color(0.85, 0.9, 1.0))
+	_fuente(modal_stats, MenuTheme.FS_SMALL, MenuTheme.TEXT_PRIMARY, false)
 	modal_stats.autowrap_mode = TextServer.AUTOWRAP_WORD
 	vbox.add_child(modal_stats)
 	# Colocarla entre la descripción y la fila de nivel.
 	var desc_idx: int = modal_desc.get_index() if modal_desc else vbox.get_child_count() - 1
 	vbox.move_child(modal_stats, desc_idx + 1)
+
+# ═══════════════════════════════════════════════════
+# ESTILO
+# ═══════════════════════════════════════════════════
+func _estilizar() -> void:
+	var fondo := get_node_or_null("Background") as ColorRect
+	if fondo:
+		fondo.color = Color(MenuTheme.BG_DEEP, 0.96)
+		# Filo superior: separa el panel del campo de batalla.
+		var filo := ColorRect.new()
+		filo.color = MenuTheme.BORDER_GLOW
+		filo.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		fondo.add_child(filo)
+		filo.set_anchors_and_offsets_preset(Control.PRESET_TOP_WIDE)
+		filo.offset_bottom = 1.0
+
+	# Barra de título: ancho completo con margen, en vez de 720 px fijos.
+	var barra := $BarraTitulo as HBoxContainer
+	barra.anchor_right  = 1.0
+	barra.offset_left   = MARGEN_LATERAL
+	barra.offset_right  = -MARGEN_LATERAL
+	barra.add_theme_constant_override("separation", 6)
+	var titulo := $BarraTitulo/Titulo as Label
+	titulo.text = "MEJORAS"
+	titulo.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	_fuente(titulo, MenuTheme.FS_SMALL, MenuTheme.CYAN, true)
+	($BarraTitulo/MultContainer as HBoxContainer).add_theme_constant_override("separation", 6)
+	for btn in [btn_mult_x1, btn_mult_x5, btn_mult_x10, btn_mult_max, btn_toggle]:
+		btn.focus_mode = Control.FOCUS_NONE
+		btn.custom_minimum_size = Vector2(54, 40)
+		btn.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+		_fuente(btn, MenuTheme.FS_SMALL, MenuTheme.TEXT_MUTED, false)
+	_aplicar_pildora(btn_toggle, MenuTheme.CYAN, false)
+	btn_toggle.add_theme_color_override("font_color", MenuTheme.CYAN)
+
+	# Pestañas
+	var tabs := $Contenido/Tabs as HBoxContainer
+	tabs.offset_left   = MARGEN_LATERAL
+	tabs.offset_right  = -MARGEN_LATERAL
+	tabs.offset_top    = 4.0
+	tabs.offset_bottom = ALTURA_TABS - 6.0
+	tabs.add_theme_constant_override("separation", 6)
+	for btn in [btn_ataque, btn_defensa, btn_bonificacion, btn_commander]:
+		btn.focus_mode = Control.FOCUS_NONE
+		_fuente(btn, MenuTheme.FS_TINY, MenuTheme.TEXT_MUTED, true)
+
+	# Rejillas: margen lateral y aire entre cards. Sin barra de scroll visible
+	# (se desplaza con el dedo); la fila cortada abajo ya indica que hay más.
+	scroll.offset_left   = MARGEN_LATERAL
+	scroll.offset_right  = -MARGEN_LATERAL
+	scroll.offset_top    = ALTURA_TABS
+	scroll.offset_bottom = -6.0
+	scroll.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_SHOW_NEVER
+	scroll.scroll_deadzone = 12
+	for grid in [ataque_container, defensa_container, bonificacion_container, commander_container]:
+		grid.add_theme_constant_override("h_separation", SEPARACION_CARDS)
+		grid.add_theme_constant_override("v_separation", SEPARACION_CARDS)
+
+	# Modal: a escala del viewport (tenía fuentes de 13-16 px).
+	if modal_panel:
+		var ancho_modal := Vector2(520, 0)
+		var vbox := modal_panel.get_node_or_null("VBox") as VBoxContainer
+		if vbox:
+			vbox.custom_minimum_size = ancho_modal
+			vbox.add_theme_constant_override("separation", 12)
+		if modal_titulo:
+			_fuente(modal_titulo, MenuTheme.FS_BODY, MenuTheme.TEXT_PRIMARY, true)
+		if modal_desc:
+			modal_desc.custom_minimum_size = ancho_modal
+			_fuente(modal_desc, MenuTheme.FS_SMALL, Color(MenuTheme.TEXT_PRIMARY, 0.7), false)
+		var lbl_nivel_txt := modal_panel.get_node_or_null("VBox/FilaNivel/LblNivelLabel") as Label
+		if lbl_nivel_txt:
+			_fuente(lbl_nivel_txt, MenuTheme.FS_SMALL, MenuTheme.TEXT_MUTED, false)
+		if modal_nivel:
+			_fuente(modal_nivel, MenuTheme.FS_SMALL, MenuTheme.TEXT_PRIMARY, false)
+		if btn_cerrar_modal:
+			btn_cerrar_modal.text = "✕"
+			btn_cerrar_modal.focus_mode = Control.FOCUS_NONE
+			btn_cerrar_modal.custom_minimum_size = Vector2(48, 48)
+			_fuente(btn_cerrar_modal, MenuTheme.FS_BODY, MenuTheme.TEXT_PRIMARY, false)
+			_aplicar_pildora(btn_cerrar_modal, MenuTheme.TEXT_MUTED, false)
+
+func _fuente(ctrl: Control, tam: int, color: Color, fuente_hud: bool) -> void:
+	ctrl.add_theme_font_size_override("font_size", tam)
+	ctrl.add_theme_color_override("font_color", color)
+	var f: Font = MenuTheme.get_font_hud() if fuente_hud else MenuTheme.get_font_body()
+	if f:
+		ctrl.add_theme_font_override("font", f)
+
+# Botón pequeño con borde redondeado; relleno del color si está activo.
+func _aplicar_pildora(btn: Button, color: Color, activo: bool) -> void:
+	var sb := StyleBoxFlat.new()
+	sb.bg_color = Color(color, 0.22 if activo else 0.0)
+	sb.border_color = Color(color, 0.7 if activo else 0.2)
+	sb.set_border_width_all(1)
+	sb.set_corner_radius_all(12)
+	sb.content_margin_left  = 8
+	sb.content_margin_right = 8
+	for estado in ["normal", "hover", "pressed", "focus"]:
+		btn.add_theme_stylebox_override(estado, sb)
+	btn.modulate = Color.WHITE
+
+# Pestaña: la activa lleva un velo y un subrayado del color de su categoría.
+func _estilo_pestana(color: Color, activa: bool) -> StyleBoxFlat:
+	var sb := StyleBoxFlat.new()
+	sb.bg_color = Color(color, 0.14 if activa else 0.0)
+	sb.border_color = Color(color, 0.9 if activa else 0.0)
+	sb.border_width_bottom = 3 if activa else 0
+	sb.corner_radius_top_left  = 10
+	sb.corner_radius_top_right = 10
+	sb.set_content_margin_all(4)
+	return sb
 
 func _reposicionar(animar: bool = false) -> void:
 	var vp := get_viewport_rect().size
@@ -129,22 +242,6 @@ func _container_activo() -> GridContainer:
 		"bonificacion": return bonificacion_container
 		"commander":    return commander_container
 	return ataque_container
-
-# Ajusta la altura del panel al contenido de la pestaña activa (con tope).
-# Se difiere un frame porque el grid recién hecho visible aún no tiene
-# calculado su get_combined_minimum_size() en el mismo frame.
-func _recalcular_altura(animar: bool = true) -> void:
-	if not expandido:
-		return
-	await get_tree().process_frame
-	if not expandido or not is_inside_tree():
-		return
-	var container := _container_activo()
-	var h_grid: float = 0.0
-	if container:
-		h_grid = container.get_combined_minimum_size().y
-	altura_panel = minf(ALTURA_TABS + h_grid + PAD_CONTENIDO, ALTURA_PANEL_MAX)
-	_reposicionar(animar)
 
 func _inicializar_cards() -> void:
 	for container in [ataque_container, defensa_container, bonificacion_container, commander_container]:
@@ -205,44 +302,27 @@ func _mostrar_modal(mejora_id: String, color: Color) -> void:
 	var max_nivel: int = mejora_manager.get_max_nivel(mejora_id)
 
 	modal_mejora_id   = mejora_id
-	modal_titulo.text = data["nombre"]
+	modal_titulo.text = data["nombre"].to_upper()
 	modal_desc.text   = data.get("descripcion", "Sin descripcion.")
 	modal_nivel.text  = "Nv %d / %d" % [nivel, max_nivel]
 	_actualizar_stats_modal()
 
-	# Opción C: tinte sutil con más opacidad para legibilidad
-	var color_borde := Color(color.r, color.g, color.b, 0.7)
-	var color_fondo := Color(color.r * 0.15 + 0.05, color.g * 0.15 + 0.05, color.b * 0.15 + 0.05, 0.97)
-	var color_titulo := Color(
-		minf(color.r * 2.5 + 0.5, 1.0),
-		minf(color.g * 2.5 + 0.5, 1.0),
-		minf(color.b * 2.5 + 0.5, 1.0),
-		1.0
-	)
-
+	# Tarjeta oscura con el borde y el título del color de la categoría.
 	if modal_panel:
 		var sb := StyleBoxFlat.new()
-		sb.bg_color                   = color_fondo
-		sb.border_color               = color_borde
-		sb.border_width_left          = 2
-		sb.border_width_right         = 2
-		sb.border_width_top           = 2
-		sb.border_width_bottom        = 2
-		sb.corner_radius_top_left     = 14
-		sb.corner_radius_top_right    = 14
-		sb.corner_radius_bottom_left  = 14
-		sb.corner_radius_bottom_right = 14
-		sb.content_margin_left   = 20
-		sb.content_margin_right  = 20
-		sb.content_margin_top    = 16
-		sb.content_margin_bottom = 16
+		sb.bg_color     = Color(MenuTheme.BG_CARD, 0.98)
+		sb.border_color = Color(color, 0.6)
+		sb.set_border_width_all(2)
+		sb.set_corner_radius_all(18)
+		sb.content_margin_left   = 24
+		sb.content_margin_right  = 24
+		sb.content_margin_top    = 20
+		sb.content_margin_bottom = 22
 		modal_panel.add_theme_stylebox_override("panel", sb)
 
-	modal_titulo.add_theme_color_override("font_color", color_titulo)
+	modal_titulo.add_theme_color_override("font_color", color)
 
-	# ✅ FIX: centrar el modal en el centro del viewport global
-	# El ModalOverlay cubre todo el PanelMejoras, pero el juego
-	# ocupa toda la pantalla — centramos el panel dentro del overlay
+	# El ModalOverlay cubre todo el PanelMejoras y el panel va anclado a su centro.
 	modal_overlay.visible = true
 	_animar_apertura_modal()
 
@@ -256,7 +336,7 @@ func _actualizar_stats_modal() -> void:
 		modal_nivel.text = "Nv %d / %d" % [nivel, max_nivel]
 	var actual: String = mejora_manager.formatear_valor(modal_mejora_id, nivel)
 	if nivel >= max_nivel:
-		modal_stats.text = "Valor: %s (MAX)" % actual
+		modal_stats.text = "Valor: %s (MÁX)" % actual
 	else:
 		var siguiente: String = mejora_manager.formatear_valor(modal_mejora_id, nivel + 1)
 		var coste: int = mejora_manager.get_coste_acumulado(modal_mejora_id, 1)
@@ -306,15 +386,13 @@ func _expandir(estado: bool, animar: bool = true) -> void:
 	expandido = estado
 	contenido.visible = estado
 	btn_toggle.text = "▲" if estado else "▼"
-	if estado:
-		_recalcular_altura(animar)
-	else:
+	if not estado:
 		# El ModalOverlay cubre el rect del panel: si se queda abierto al colapsar,
 		# encoge con él hasta la barra de título y, como ColorRect con mouse_filter
 		# STOP, se traga los clics del botón de toggle — el panel ya no se puede
 		# volver a abrir. Al colapsar se cierra siempre.
 		_cerrar_modal()
-		_reposicionar(animar)
+	_reposicionar(animar)
 
 # ═══════════════════════════════════════════════════
 # PESTAÑAS
@@ -333,7 +411,9 @@ func cambiar_categoria(categoria: String) -> void:
 		container.modulate.a = 0.0
 		var tw := create_tween()
 		tw.tween_property(container, "modulate:a", 1.0, 0.15)
-	_recalcular_altura()
+	# Cada pestaña empieza arriba; la altura del panel ya no cambia.
+	scroll.scroll_vertical = 0
+	_refrescar_container_activo()
 
 func _actualizar_visual_pestanas() -> void:
 	var tabs := {
@@ -344,16 +424,17 @@ func _actualizar_visual_pestanas() -> void:
 	}
 	for cat in tabs:
 		var btn: Button = tabs[cat]
-		if cat == categoria_actual:
-			var c: Color = COLORES_CAT.get(cat, COLOR_ACTIVO)
-			btn.modulate = Color(
-				minf(c.r * 3.0 + 0.3, 1.0),
-				minf(c.g * 3.0 + 0.3, 1.0),
-				minf(c.b * 3.0 + 0.3, 1.0),
-				1.0
-			)
-		else:
-			btn.modulate = COLOR_INACTIVO
+		var c: Color = COLORES_CAT.get(cat, MenuTheme.CYAN)
+		var activa: bool = cat == categoria_actual
+		var sb := _estilo_pestana(c, activa)
+		for estado in ["normal", "hover", "pressed", "focus"]:
+			btn.add_theme_stylebox_override(estado, sb)
+		btn.add_theme_stylebox_override("disabled", _estilo_pestana(c, false))
+		var color_texto: Color = c if activa else MenuTheme.TEXT_MUTED
+		for clave in ["font_color", "font_hover_color", "font_pressed_color", "font_focus_color"]:
+			btn.add_theme_color_override(clave, color_texto)
+		btn.add_theme_color_override("font_disabled_color", Color(MenuTheme.TEXT_MUTED, 0.45))
+		btn.modulate = Color.WHITE
 
 # ═══════════════════════════════════════════════════
 # MULTIPLICADOR
@@ -364,10 +445,14 @@ func _set_multiplicador(valor: int) -> void:
 	_notificar_multiplicador()
 
 func _actualizar_botones_mult() -> void:
-	btn_mult_x1.modulate  = COLOR_ACTIVO  if multiplicador == 1  else COLOR_INACTIVO
-	btn_mult_x5.modulate  = COLOR_ACTIVO  if multiplicador == 5  else COLOR_INACTIVO
-	btn_mult_x10.modulate = COLOR_ACTIVO  if multiplicador == 10 else COLOR_INACTIVO
-	btn_mult_max.modulate = COLOR_ACTIVO  if multiplicador == -1 else COLOR_INACTIVO
+	var botones := {1: btn_mult_x1, 5: btn_mult_x5, 10: btn_mult_x10, -1: btn_mult_max}
+	for valor in botones:
+		var btn: Button = botones[valor]
+		var activo: bool = valor == multiplicador
+		_aplicar_pildora(btn, MenuTheme.CYAN, activo)
+		var color_texto: Color = MenuTheme.CYAN if activo else MenuTheme.TEXT_MUTED
+		for clave in ["font_color", "font_hover_color", "font_pressed_color", "font_focus_color"]:
+			btn.add_theme_color_override(clave, color_texto)
 
 func _notificar_multiplicador() -> void:
 	for container in [ataque_container, defensa_container, bonificacion_container, commander_container]:

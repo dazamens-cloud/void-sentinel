@@ -447,7 +447,8 @@ func formatear_valor(mejora_id: String, nivel: int) -> String:
 		"interes_cap":
 			# Muestra el cap TOTAL (base + mejora)
 			var cap_total: int = int(Economia.CAP_INTERES_BASE + nivel * data.get("incremento", 150.0))
-			return str(cap_total) + "⚡ cap"
+			# Sin "⚡": U+26A1 sale como hueco en Android.
+			return str(cap_total) + " cap"
 		"mejora_ataque_gratis", "mejora_defensa_gratis", "mejora_bonificacion_gratis":
 			# Probabilidad de compra gratis, como porcentaje.
 			var prob_g: float = nivel * data.get("incremento", 0.01)

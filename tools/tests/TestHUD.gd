@@ -37,6 +37,7 @@ func _ready() -> void:
 	if _hud != null:
 		await _test_senales()
 		_test_simbolos()
+		await _test_panel_mejoras()
 
 	print("\n═══ RESULTADO: %d pasados, %d fallos ═══" % [_pasados, _fallos])
 	get_tree().quit(1 if _fallos > 0 else 0)
@@ -100,6 +101,53 @@ func _test_simbolos() -> void:
 		var malos := _simbolos_problematicos(lbl.text)
 		_ok(malos.is_empty(), "%s sin símbolos que fallan en Android%s"
 			% [campo, "" if malos.is_empty() else " (encontrados: %s)" % malos])
+
+
+# Lo que se vio mal en el móvil: la fila de pestañas se movía al cambiar de
+# categoría, las cards medían distinto según su texto y el coste llevaba "⚡".
+func _test_panel_mejoras() -> void:
+	print("── Panel de mejoras")
+	var panel: Control = _hud.get("panel_mejoras")
+	if not is_instance_valid(panel):
+		return
+	panel.abrir()
+	await get_tree().create_timer(0.4).timeout
+	var top_ataque: float = panel.offset_top
+	panel.cambiar_categoria("bonificacion")
+	await get_tree().create_timer(0.4).timeout
+	_ok(is_equal_approx(panel.offset_top, top_ataque),
+		"la barra no se mueve al pasar de Ataque a Bonus (%.0f → %.0f)" % [top_ataque, panel.offset_top])
+
+	var anchos := {}
+	var altos := {}
+	for card in panel.bonificacion_container.get_children():
+		anchos[roundi(card.size.x)] = true
+		altos[roundi(card.size.y)] = true
+	_ok(anchos.size() == 1, "las cards de Bonus miden igual de ancho %s" % [anchos.keys()])
+	_ok(altos.size() == 1, "las cards de Bonus miden igual de alto %s" % [altos.keys()])
+
+	var manager := get_node("/root/MejoraManager")
+	var valores_malos := ""
+	for id in manager.mejoras:
+		for nivel in [0, 1, manager.get_max_nivel(id)]:
+			var texto: String = manager.formatear_valor(id, nivel)
+			if not _simbolos_problematicos(texto).is_empty():
+				valores_malos += "%s=\"%s\" " % [id, texto]
+	_ok(valores_malos.is_empty(), "los valores de las mejoras se pintan en Android%s"
+		% ("" if valores_malos.is_empty() else " (%s)" % valores_malos.strip_edges()))
+
+	var textos_malos := ""
+	for grid in [panel.ataque_container, panel.defensa_container,
+			panel.bonificacion_container, panel.commander_container]:
+		for card in grid.get_children():
+			if card.has_method("refrescar"):
+				card.refrescar()
+			for lbl in card.find_children("*", "Label", true, false):
+				if not _simbolos_problematicos(lbl.text).is_empty():
+					textos_malos += "%s=\"%s\" " % [card.name, lbl.text]
+	_ok(textos_malos.is_empty(), "los textos de las cards se pintan en Android%s"
+		% ("" if textos_malos.is_empty() else " (%s)" % textos_malos.strip_edges()))
+	panel.cerrar()
 
 
 func _simbolos_problematicos(texto: String) -> String:

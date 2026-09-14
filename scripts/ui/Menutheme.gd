@@ -40,6 +40,7 @@ const BORDER_DIM  := Color(0.0, 0.898, 1.0, 0.06)   # cyan 6%
 const CAT_ATAQUE       := Color("ff6b6b")
 const CAT_DEFENSA      := Color("00e5ff")
 const CAT_BONIFICACION := Color("ffd740")
+const CAT_COMMANDER    := Color("ff9f40")
 
 # ---- COLOR FORJA / FRAGMENTOS ----
 const FRAG := Color("b388ff")

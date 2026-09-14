@@ -70,6 +70,12 @@ func _run() -> void:
 			panel.cambiar_categoria("bonificacion")
 			await _esperar(0.5)
 			await _capturar("mundo_panel_bonus")
+			# Bonus no cabe entero: el final se ve desplazando dentro del panel.
+			var scroll: ScrollContainer = panel.get("scroll")
+			if scroll:
+				scroll.scroll_vertical = 10000
+				await _esperar(0.3)
+				await _capturar("mundo_panel_bonus_scroll")
 			# Multiplicador MAX y modal de info (valor → siguiente + coste).
 			panel.cambiar_categoria("ataque")
 			if panel.has_method("_set_multiplicador"):
@@ -77,7 +83,7 @@ func _run() -> void:
 			await _esperar(0.5)
 			await _capturar("mundo_panel_max")
 			if panel.has_method("_mostrar_modal"):
-				panel._mostrar_modal("danio", Color(0.06, 0.35, 0.54))
+				panel._mostrar_modal("danio", MenuTheme.CAT_ATAQUE)
 				await _esperar(0.5)
 				await _capturar("mundo_panel_modal")
 				panel._cerrar_modal()
@@ -86,7 +92,7 @@ func _run() -> void:
 			# overlay sobre la barra de título tragándose los clics, y el panel
 			# ya no se podía reabrir en toda la partida.
 			if panel.has_method("_mostrar_modal") and panel.has_method("_toggle_panel"):
-				panel._mostrar_modal("danio", Color(0.06, 0.35, 0.54))
+				panel._mostrar_modal("danio", MenuTheme.CAT_ATAQUE)
 				await _esperar(0.4)
 				panel._toggle_panel()          # colapsar SIN cerrar el modal
 				await _esperar(0.6)
