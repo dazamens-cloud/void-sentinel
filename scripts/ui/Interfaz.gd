@@ -416,13 +416,13 @@ func actualizar_barra_dron(actual: int, maximo: int) -> void:
 
 func _actualizar_energia() -> void:
 	if lbl_energia:
-		lbl_energia.text = "⚡ %s" % Formato.abreviar(Economia.energia)
+		lbl_energia.text = Formato.abreviar(Economia.energia)
 
 func _actualizar_ascension(numero: int) -> void:
 	lbl_ascension.text = "Ascensión: %d" % numero
 
 func _actualizar_salud(actual: float, maxima: float) -> void:
-	lbl_salud.text = "❤️ %s / %s" % [Formato.abreviar(actual), Formato.abreviar(maxima)]
+	lbl_salud.text = "%s / %s" % [Formato.abreviar(actual), Formato.abreviar(maxima)]
 
 # ═══════════════════════════════════════════════════
 # UI DEL COMMANDER
@@ -430,7 +430,7 @@ func _actualizar_salud(actual: float, maxima: float) -> void:
 func _on_disparos_actualizados(disponibles: int) -> void:
 	if not lbl_commander_disparos: return
 	if disponibles > 0:
-		lbl_commander_disparos.text = "⚡ %d" % disponibles
+		lbl_commander_disparos.text = "DISPAROS %d" % disponibles
 		lbl_commander_disparos.visible = true
 		# Amarillo si hay Commander activo; azul si está "en espera"
 		var activo: bool = Sistemadisparosespeciales.get_commander_activo()
@@ -567,7 +567,7 @@ func mostrar_game_over(causa: String) -> void:
 
 	# ── Energía total conseguida ──────────────────────────────
 	var lbl_energia_total = Label.new()
-	lbl_energia_total.text = "Energía conseguida: %d ⚡" % int(Economia.energia_total_partida)
+	lbl_energia_total.text = "Energía conseguida: %d" % int(Economia.energia_total_partida)
 	lbl_energia_total.add_theme_font_size_override("font_size", 16)
 	lbl_energia_total.add_theme_color_override("font_color", Color(0.6, 0.9, 1.0))
 	lbl_energia_total.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER

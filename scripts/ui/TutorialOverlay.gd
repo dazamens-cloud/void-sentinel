@@ -22,10 +22,10 @@ const SLIDES := [
 	{
 		"icono": "◈",
 		"titulo": "Tu Nexus",
-		"cuerpo": "El núcleo del centro es tu [b]Nexus[/b]. Dispara solo a los Espectros que se acercan.\n\nSi demasiados Espectros lo alcanzan, su vida ❤️ baja. Si llega a cero, [b]pierdes la partida[/b].",
+		"cuerpo": "El núcleo del centro es tu [b]Nexus[/b]. Dispara solo a los Espectros que se acercan.\n\nSi demasiados Espectros lo alcanzan, su vida baja. Si llega a cero, [b]pierdes la partida[/b].",
 	},
 	{
-		"icono": "⚡",
+		"icono": "◆",
 		"titulo": "Energía y Mejoras",
 		"cuerpo": "Cada Espectro destruido te da [b]energía[/b]. Gástala en el panel de [b]Mejoras[/b] para reforzar tu Nexus: más daño, cadencia, vida...\n\nEl [b]Dron[/b] recoge fragmentos automáticamente y los lleva al Nexus.",
 	},

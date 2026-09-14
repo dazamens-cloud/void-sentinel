@@ -260,7 +260,7 @@ func _actualizar_stats_modal() -> void:
 	else:
 		var siguiente: String = mejora_manager.formatear_valor(modal_mejora_id, nivel + 1)
 		var coste: int = mejora_manager.get_coste_acumulado(modal_mejora_id, 1)
-		modal_stats.text = "Valor: %s → %s\nSiguiente nivel: %s ⚡" % [
+		modal_stats.text = "Valor: %s → %s\nSiguiente nivel: %s energía" % [
 			actual, siguiente, Formato.abreviar(coste),
 		]
 
