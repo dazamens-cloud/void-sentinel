@@ -242,8 +242,8 @@ func _construir_barra_superior() -> void:
 	var bloque_asc := VBoxContainer.new()
 	bloque_asc.add_theme_constant_override("separation", 0)
 	bloque_asc.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	bloque_asc.add_child(_etiqueta("ASCENSIÓN", MenuTheme.FS_TINY, MenuTheme.TEXT_MUTED, true))
-	lbl_ascension = _etiqueta("0", MenuTheme.FS_HEADER, MenuTheme.TEXT_PRIMARY, false)
+	bloque_asc.add_child(_etiqueta("ASCENSIÓN", MenuTheme.FS_SMALL, MenuTheme.TEXT_MUTED, true))
+	lbl_ascension = _etiqueta("0", MenuTheme.FS_HEADER + 6, MenuTheme.TEXT_PRIMARY, false)
 	bloque_asc.add_child(lbl_ascension)
 	fila.add_child(bloque_asc)
 
@@ -281,7 +281,7 @@ func _construir_barra_superior() -> void:
 
 	var centro_vida := CenterContainer.new()
 	centro_vida.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_ic_vida = IconoVec.crear(IconoVec.Forma.CORAZON, 24, MenuTheme.GREEN)
+	_ic_vida = IconoVec.crear(IconoVec.Forma.CORAZON, 28, MenuTheme.GREEN)
 	centro_vida.add_child(_ic_vida)
 	fila_vida.add_child(centro_vida)
 
@@ -294,7 +294,7 @@ func _construir_barra_superior() -> void:
 	barra_vida.add_theme_stylebox_override("background", MenuTheme.make_progress_track())
 	fila_vida.add_child(barra_vida)
 
-	lbl_salud = _etiqueta("", MenuTheme.FS_SMALL, MenuTheme.GREEN, false)
+	lbl_salud = _etiqueta("", MenuTheme.FS_SMALL + 4, MenuTheme.GREEN, false)
 	fila_vida.add_child(lbl_salud)
 
 	# La escena de la barra antigua ya no se usa.
@@ -308,9 +308,9 @@ func _recurso(fila: HBoxContainer, forma: int, color: Color) -> Label:
 	h.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	var centro := CenterContainer.new()
 	centro.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	centro.add_child(IconoVec.crear(forma, 24, color))
+	centro.add_child(IconoVec.crear(forma, 30, color))
 	h.add_child(centro)
-	var lbl := _etiqueta("0", MenuTheme.FS_BODY + 2, color, false)
+	var lbl := _etiqueta("0", MenuTheme.FS_BODY + 8, color, false)
 	h.add_child(lbl)
 	fila.add_child(h)
 	return lbl
