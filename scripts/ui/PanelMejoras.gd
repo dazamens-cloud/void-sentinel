@@ -385,7 +385,8 @@ func _toggle_panel() -> void:
 func _expandir(estado: bool, animar: bool = true) -> void:
 	expandido = estado
 	contenido.visible = estado
-	btn_toggle.text = "▲" if estado else "▼"
+	# La flecha indica a dónde va el panel al pulsarla, no su estado.
+	btn_toggle.text = "▼" if estado else "▲"
 	if not estado:
 		# El ModalOverlay cubre el rect del panel: si se queda abierto al colapsar,
 		# encoge con él hasta la barra de título y, como ColorRect con mouse_filter

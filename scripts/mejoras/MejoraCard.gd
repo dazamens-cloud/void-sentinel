@@ -34,6 +34,12 @@ var _pos_pulsacion: Vector2 = Vector2.ZERO
 var _arrastrando: bool = false
 var _scroll: ScrollContainer = null
 var _scroll_y: float = 0.0
+# Inercia al soltar: sin ella el panel se para en seco y hacen falta varios
+# arrastres para llegar al final de Bonus.
+const ROZAMIENTO: float = 5.0     # cuánto frena por segundo
+const INERCIA_MINIMA: float = 60.0  # por debajo de esto, ni se lanza ni sigue
+var _velocidad: float = 0.0
+var _inercia: float = 0.0
 
 var _tween_pulso: Tween = null
 
@@ -63,6 +69,8 @@ func inicializar(manager, color: Color) -> void:
 	if not _construida:
 		_construir()
 		_construida = true
+		# _process solo corre mientras hay inercia; las 25 cards no gastan frames.
+		set_process(false)
 	if not _senales_conectadas:
 		btn_info.pressed.connect(_on_info_presionado)
 		btn_info.gui_input.connect(_on_boton_input)
@@ -259,6 +267,11 @@ func _on_boton_input(event: InputEvent) -> void:
 		if event.pressed:
 			_pos_pulsacion = event.global_position
 			_arrastrando = false
+			_velocidad = 0.0
+			_parar_inercia()
+		elif _arrastrando and _scroll and absf(_velocidad) > INERCIA_MINIMA:
+			_inercia = _velocidad
+			set_process(true)
 	elif event is InputEventMouseMotion and event.button_mask & MOUSE_BUTTON_MASK_LEFT:
 		if not _arrastrando and event.global_position.distance_to(_pos_pulsacion) > UMBRAL_ARRASTRE:
 			_arrastrando = true
@@ -267,11 +280,29 @@ func _on_boton_input(event: InputEvent) -> void:
 			if _scroll:
 				_scroll_y = float(_scroll.scroll_vertical)
 		if _arrastrando and _scroll:
-			_scroll_y = clampf(_scroll_y - event.relative.y, 0.0,
-				maxf(_scroll.get_v_scroll_bar().max_value - _scroll.size.y, 0.0))
-			_scroll.scroll_vertical = int(_scroll_y)
+			_velocidad = event.velocity.y
+			_desplazar(event.relative.y)
 			# Que no lo procese nadie más: ni otro nivel de la card ni el scroll nativo.
 			accept_event()
+
+func _process(delta: float) -> void:
+	if not _scroll or absf(_inercia) < INERCIA_MINIMA:
+		_parar_inercia()
+		return
+	_desplazar(_inercia * delta)
+	_inercia = lerpf(_inercia, 0.0, clampf(ROZAMIENTO * delta, 0.0, 1.0))
+
+func _desplazar(delta_y: float) -> void:
+	var tope: float = maxf(_scroll.get_v_scroll_bar().max_value - _scroll.size.y, 0.0)
+	_scroll_y = clampf(_scroll_y - delta_y, 0.0, tope)
+	_scroll.scroll_vertical = int(_scroll_y)
+	# Llegar al borde mata la inercia: si no, sigue gastando frames sin mover nada.
+	if is_equal_approx(_scroll_y, 0.0) or is_equal_approx(_scroll_y, tope):
+		_parar_inercia()
+
+func _parar_inercia() -> void:
+	_inercia = 0.0
+	set_process(false)
 
 func _buscar_scroll() -> ScrollContainer:
 	var n := get_parent()

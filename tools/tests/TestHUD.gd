@@ -136,6 +136,17 @@ func _test_panel_mejoras() -> void:
 	_ok(valores_malos.is_empty(), "los valores de las mejoras se pintan en Android%s"
 		% ("" if valores_malos.is_empty() else " (%s)" % valores_malos.strip_edges()))
 
+	# El texto flotante de recompensas también se pinta en el móvil.
+	var flotante: Label = load("res://escenas/Objetos/TextoFlotante.tscn").instantiate()
+	add_child(flotante)
+	flotante.set_energia(1234)
+	var malo_energia := _simbolos_problematicos(flotante.text)
+	flotante.set_ecos(5)
+	var malo_ecos := _simbolos_problematicos(flotante.text)
+	_ok(malo_energia.is_empty() and malo_ecos.is_empty(),
+		"el texto flotante se pinta en Android (%s / %s)" % [malo_energia, malo_ecos])
+	flotante.queue_free()
+
 	var textos_malos := ""
 	for grid in [panel.ataque_container, panel.defensa_container,
 			panel.bonificacion_container, panel.commander_container]:
