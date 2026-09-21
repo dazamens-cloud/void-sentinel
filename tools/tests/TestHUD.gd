@@ -38,6 +38,8 @@ func _ready() -> void:
 		await _test_senales()
 		_test_simbolos()
 		await _test_panel_mejoras()
+		# Antes que el game over: con el game over mostrado la pausa ya no abre.
+		await _test_menu_pausa()
 		await _test_game_over()
 
 	print("\n═══ RESULTADO: %d pasados, %d fallos ═══" % [_pasados, _fallos])
@@ -160,6 +162,38 @@ func _test_panel_mejoras() -> void:
 	_ok(textos_malos.is_empty(), "los textos de las cards se pintan en Android%s"
 		% ("" if textos_malos.is_empty() else " (%s)" % textos_malos.strip_edges()))
 	panel.cerrar()
+
+
+# El menú de pausa comparte tarjeta con el game over; sus botones tienen que
+# responder con el árbol en pausa y cerrar tiene que reanudar la partida.
+func _test_menu_pausa() -> void:
+	print("── Menú de pausa")
+	_hud._abrir_menu_pausa()
+	await get_tree().create_timer(0.3).timeout
+	var menu: Control = _hud.get("_menu_pausa")
+	_ok(is_instance_valid(menu) and get_tree().paused, "abre el menú y pausa la partida")
+	if not is_instance_valid(menu):
+		return
+	var tarjeta: Control = menu.find_child("Tarjeta", true, false)
+	_ok(tarjeta != null and get_viewport().get_visible_rect().encloses(tarjeta.get_global_rect()),
+		"la tarjeta cabe en pantalla")
+	var titulo: Label = menu.find_child("Titulo", true, false)
+	_ok(titulo != null and titulo.get_minimum_size().x <= titulo.size.x + 0.5,
+		"\"PAUSA\" cabe entero")
+	var botones_ok := true
+	for nombre in ["BtnVolver", "BtnSalir", "BtnAbandonar"]:
+		var b: Button = menu.find_child(nombre, true, false)
+		botones_ok = botones_ok and b != null and b.can_process()
+	_ok(botones_ok, "los tres botones responden con el juego en pausa")
+	# El panel está en otra CanvasLayer que se pinta encima: si sigue visible,
+	# tapa los botones del menú.
+	var panel: Control = _hud.get("panel_mejoras")
+	_ok(is_instance_valid(panel) and not panel.visible, "el panel de mejoras no tapa el menú")
+
+	_hud._cerrar_menu_pausa()
+	await get_tree().process_frame
+	_ok(not get_tree().paused and not is_instance_valid(menu), "cerrar reanuda la partida")
+	_ok(is_instance_valid(panel) and panel.visible, "al cerrar vuelve el panel de mejoras")
 
 
 # En el móvil "GAME OVER" salía cortado y los textos descolocados: estaban en

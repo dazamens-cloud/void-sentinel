@@ -107,6 +107,12 @@ func _run() -> void:
 	await _capturar("mundo_combate")
 
 	var interfaz := mundo.get_node_or_null("Interfaz")
+	if interfaz and interfaz.has_method("_abrir_menu_pausa"):
+		interfaz._abrir_menu_pausa()
+		await _esperar(0.5)
+		await _capturar("mundo_pausa")
+		interfaz._cerrar_menu_pausa()
+		await _esperar(0.3)
 	if interfaz and interfaz.has_method("mostrar_game_over"):
 		interfaz.mostrar_game_over("tanque")
 		await _esperar(1.2)

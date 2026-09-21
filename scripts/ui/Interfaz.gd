@@ -48,6 +48,7 @@ var _hab_cd_lbls: Dictionary = {}   # id → Label cooldown
 
 # Overlay del menú de pausa (null cuando está cerrado)
 var _menu_pausa: Control = null
+var _panel_visible_antes_pausa: bool = true
 
 @onready var lbl_ascension: Label = $PanelSuperior/LblOleada
 @onready var lbl_energia: Label   = $PanelSuperior/VBoxContainer/LblDinero
@@ -439,55 +440,52 @@ func _abrir_menu_pausa() -> void:
 	if _game_over_mostrado or is_instance_valid(_menu_pausa):
 		return
 	get_tree().paused = true
+	# El panel de mejoras vive en CapaUI, otra CanvasLayer en la misma capa pero
+	# posterior en el árbol: se pinta encima de esta interfaz y tapaba los botones
+	# del menú (el z_index no cruza CanvasLayers). Se oculta mientras dura la pausa.
+	if is_instance_valid(panel_mejoras):
+		_panel_visible_antes_pausa = panel_mejoras.visible
+		panel_mejoras.visible = false
 	_menu_pausa = _construir_menu_pausa()
 	add_child(_menu_pausa)
 
 func _cerrar_menu_pausa() -> void:
 	get_tree().paused = false
+	if is_instance_valid(panel_mejoras):
+		panel_mejoras.visible = _panel_visible_antes_pausa
 	if is_instance_valid(_menu_pausa):
 		_menu_pausa.queue_free()
 	_menu_pausa = null
 
 func _construir_menu_pausa() -> Control:
-	# Contenedor raíz: ALWAYS para responder con el árbol pausado; los hijos
-	# heredan este process_mode.
-	var cont = Control.new()
-	cont.set_anchors_preset(Control.PRESET_FULL_RECT)
-	cont.process_mode = Node.PROCESS_MODE_ALWAYS
+	# Misma tarjeta que el game over. _capa_modal la deja en ALWAYS para que
+	# responda con el árbol pausado; los hijos heredan ese process_mode.
+	var cont := _capa_modal("MenuPausa", MenuTheme.CYAN)
 	cont.z_index = 250
+	var v: VBoxContainer = cont.get_node("Centro/Tarjeta/Contenido")
 
-	# Fondo oscuro que captura el input para no tocar el juego de fondo.
-	var fondo = ColorRect.new()
-	fondo.color = Color(0.0, 0.0, 0.0, 0.78)
-	fondo.set_anchors_preset(Control.PRESET_FULL_RECT)
-	fondo.mouse_filter = Control.MOUSE_FILTER_STOP
-	cont.add_child(fondo)
-
-	# Título
-	var titulo = Label.new()
-	titulo.text = "PAUSA"
-	titulo.add_theme_font_size_override("font_size", 48)
-	titulo.add_theme_color_override("font_color", Color(0.3, 0.85, 1.0))
+	var titulo := _etiqueta("PAUSA", MenuTheme.FS_TITLE + 12, MenuTheme.CYAN, true)
+	titulo.name = "Titulo"
 	titulo.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	titulo.size = Vector2(440, 70)
-	titulo.position = Vector2(140, 430)
-	cont.add_child(titulo)
+	v.add_child(titulo)
 
-	# Botones (centrados, 360 px de ancho)
-	cont.add_child(_boton_pausa("VOLVER AL JUEGO", 560, Color(0.2, 0.7, 0.4), _cerrar_menu_pausa))
-	cont.add_child(_boton_pausa("SALIR AL MENÚ", 650, Color(0.3, 0.5, 0.9), _salir_al_menu))
-	cont.add_child(_boton_pausa("ABANDONAR PARTIDA", 740, Color(0.8, 0.25, 0.25), _abandonar_partida))
+	var sub := _etiqueta("Ascensión %d" % Economia.numero_ascension, MenuTheme.FS_BODY,
+		Color(MenuTheme.TEXT_PRIMARY, 0.7), false)
+	sub.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	v.add_child(sub)
+
+	var hueco := Control.new()
+	hueco.custom_minimum_size = Vector2(0, 6)
+	v.add_child(hueco)
+
+	v.add_child(_boton_tarjeta("VOLVER AL JUEGO", MenuTheme.CYAN, true, MenuTheme.CYAN,
+		"BtnVolver", _cerrar_menu_pausa))
+	v.add_child(_boton_tarjeta("SALIR AL MENÚ", MenuTheme.TEXT_MUTED, false, MenuTheme.TEXT_PRIMARY,
+		"BtnSalir", _salir_al_menu))
+	# Rojo y sin relleno: termina la partida, que no parezca la opción normal.
+	v.add_child(_boton_tarjeta("ABANDONAR PARTIDA", MenuTheme.RED, false, MenuTheme.RED,
+		"BtnAbandonar", _abandonar_partida))
 	return cont
-
-func _boton_pausa(texto: String, y: float, color: Color, accion: Callable) -> Button:
-	var btn = Button.new()
-	btn.text = texto
-	btn.add_theme_font_size_override("font_size", 22)
-	btn.add_theme_color_override("font_color", color)
-	btn.size = Vector2(360, 64)
-	btn.position = Vector2((720 - 360) / 2.0, y)
-	btn.pressed.connect(accion)
-	return btn
 
 func _salir_al_menu() -> void:
 	# Guardar progreso permanente + checkpoint de la run para poder reanudar.
@@ -645,41 +643,13 @@ func mostrar_game_over(causa: String) -> void:
 	if is_instance_valid(panel_mejoras):
 		panel_mejoras.visible = false
 
-	# Todo cuelga de una capa a pantalla completa con PROCESS_MODE_ALWAYS:
-	# mundo.gd pausa el árbol y los botones y las animaciones deben seguir vivos.
 	# Maquetado con contenedores: antes eran posiciones fijas pensadas para 440 px
-	# de ancho y "GAME OVER" salía cortado.
-	var capa := Control.new()
-	capa.name = "GameOver"
-	capa.set_anchors_preset(Control.PRESET_FULL_RECT)
-	capa.process_mode = Node.PROCESS_MODE_ALWAYS
+	# de ancho y "GAME OVER" salía cortado. mundo.gd pausa el árbol: la capa va en
+	# PROCESS_MODE_ALWAYS (lo pone _capa_modal) para que botones y animaciones vivan.
+	var capa := _capa_modal("GameOver", MenuTheme.RED)
 	capa.z_index = 200
 	add_child(capa)
-
-	var fondo := ColorRect.new()
-	fondo.color = Color(MenuTheme.BG_DEEP, 0.85)
-	fondo.set_anchors_preset(Control.PRESET_FULL_RECT)
-	# STOP: que ningún toque llegue a la partida de debajo.
-	fondo.mouse_filter = Control.MOUSE_FILTER_STOP
-	capa.add_child(fondo)
-
-	var centro := CenterContainer.new()
-	centro.set_anchors_preset(Control.PRESET_FULL_RECT)
-	centro.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	capa.add_child(centro)
-
-	var tarjeta := PanelContainer.new()
-	tarjeta.name = "Tarjeta"
-	tarjeta.custom_minimum_size = Vector2(600, 0)
-	var estilo := MenuTheme.make_card_style(Color(MenuTheme.RED, 0.45), 0.95)
-	estilo.content_margin_top    = 36
-	estilo.content_margin_bottom = 32
-	tarjeta.add_theme_stylebox_override("panel", estilo)
-	centro.add_child(tarjeta)
-
-	var v := VBoxContainer.new()
-	v.add_theme_constant_override("separation", 18)
-	tarjeta.add_child(v)
+	var v: VBoxContainer = capa.get_node("Centro/Tarjeta/Contenido")
 
 	var titulo := _etiqueta("GAME OVER", MenuTheme.FS_TITLE + 12, MenuTheme.RED, true)
 	titulo.name = "Titulo"
@@ -712,22 +682,10 @@ func mostrar_game_over(causa: String) -> void:
 	hueco.custom_minimum_size = Vector2(0, 6)
 	v.add_child(hueco)
 
-	var btn_reiniciar := _boton_game_over("REINTENTAR", MenuTheme.CYAN, true)
-	btn_reiniciar.name = "BtnReintentar"
-	btn_reiniciar.pressed.connect(func():
-		get_tree().paused = false
-		Economia.iniciar_partida()
-		get_tree().change_scene_to_file("res://escenas/mundo.tscn")
-	)
-	v.add_child(btn_reiniciar)
-
-	var btn_menu := _boton_game_over("MENÚ", MenuTheme.TEXT_MUTED, false)
-	btn_menu.name = "BtnMenu"
-	btn_menu.pressed.connect(func():
-		get_tree().paused = false
-		get_tree().change_scene_to_file("res://escenas/ui/MainMenu.tscn")
-	)
-	v.add_child(btn_menu)
+	v.add_child(_boton_tarjeta("REINTENTAR", MenuTheme.CYAN, true, MenuTheme.CYAN,
+		"BtnReintentar", _reintentar_partida))
+	v.add_child(_boton_tarjeta("MENÚ", MenuTheme.TEXT_MUTED, false, MenuTheme.TEXT_PRIMARY,
+		"BtnMenu", _volver_al_menu))
 
 	# Entrada con fundido. TWEEN_PAUSE_PROCESS: el árbol está en pausa.
 	capa.modulate.a = 0.0
@@ -768,13 +726,65 @@ func _stat_game_over(fila: HBoxContainer, forma: int, color: Color, valor: int, 
 	tw.tween_method(func(x: float): lbl.text = Formato.abreviar(int(x)),
 		0.0, float(valor), 0.8)
 
-func _boton_game_over(texto: String, color: Color, principal: bool) -> Button:
+func _reintentar_partida() -> void:
+	get_tree().paused = false
+	Economia.iniciar_partida()
+	get_tree().change_scene_to_file("res://escenas/mundo.tscn")
+
+func _volver_al_menu() -> void:
+	get_tree().paused = false
+	get_tree().change_scene_to_file("res://escenas/ui/MainMenu.tscn")
+
+# ═══════════════════════════════════════════════════
+# TARJETAS MODALES (pausa y game over)
+# ═══════════════════════════════════════════════════
+# Capa a pantalla completa con una tarjeta centrada del estilo del menú.
+# PROCESS_MODE_ALWAYS porque las dos pantallas se usan con el árbol en pausa.
+# El contenido se añade a "Centro/Tarjeta/Contenido".
+func _capa_modal(nombre: String, borde: Color) -> Control:
+	var capa := Control.new()
+	capa.name = nombre
+	capa.set_anchors_preset(Control.PRESET_FULL_RECT)
+	capa.process_mode = Node.PROCESS_MODE_ALWAYS
+
+	var fondo := ColorRect.new()
+	fondo.color = Color(MenuTheme.BG_DEEP, 0.85)
+	fondo.set_anchors_preset(Control.PRESET_FULL_RECT)
+	# STOP: que ningún toque llegue a la partida de debajo.
+	fondo.mouse_filter = Control.MOUSE_FILTER_STOP
+	capa.add_child(fondo)
+
+	var centro := CenterContainer.new()
+	centro.name = "Centro"
+	centro.set_anchors_preset(Control.PRESET_FULL_RECT)
+	centro.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	capa.add_child(centro)
+
+	var tarjeta := PanelContainer.new()
+	tarjeta.name = "Tarjeta"
+	tarjeta.custom_minimum_size = Vector2(600, 0)
+	var estilo := MenuTheme.make_card_style(Color(borde, 0.45), 0.95)
+	estilo.content_margin_top    = 36
+	estilo.content_margin_bottom = 32
+	tarjeta.add_theme_stylebox_override("panel", estilo)
+	centro.add_child(tarjeta)
+
+	var v := VBoxContainer.new()
+	v.name = "Contenido"
+	v.add_theme_constant_override("separation", 18)
+	tarjeta.add_child(v)
+	return capa
+
+# Botón de las tarjetas modales. `relleno` marca la acción principal.
+func _boton_tarjeta(texto: String, color: Color, relleno: bool, color_texto: Color,
+		nombre: String, accion: Callable) -> Button:
 	var b := Button.new()
+	b.name = nombre
 	b.text = texto
 	b.custom_minimum_size = Vector2(0, 76)
 	b.focus_mode = Control.FOCUS_NONE
-	var sb := MenuTheme.make_button_style(color, principal)
-	if principal:
+	var sb := MenuTheme.make_button_style(color, relleno)
+	if relleno:
 		sb.bg_color     = Color(color, 0.20)
 		sb.border_color = Color(color, 0.70)
 	var sb_pulsado := sb.duplicate() as StyleBoxFlat
@@ -786,7 +796,7 @@ func _boton_game_over(texto: String, color: Color, principal: bool) -> Button:
 	if f:
 		b.add_theme_font_override("font", f)
 	b.add_theme_font_size_override("font_size", MenuTheme.FS_BODY)
-	var color_texto: Color = color if principal else MenuTheme.TEXT_PRIMARY
 	for clave in ["font_color", "font_hover_color", "font_pressed_color", "font_focus_color"]:
 		b.add_theme_color_override(clave, color_texto)
+	b.pressed.connect(accion)
 	return b
