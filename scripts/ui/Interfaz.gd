@@ -645,101 +645,148 @@ func mostrar_game_over(causa: String) -> void:
 	if is_instance_valid(panel_mejoras):
 		panel_mejoras.visible = false
 
-	# ── Fondo oscuro ──────────────────────────────────────────
-	var fondo = ColorRect.new()
-	fondo.color = Color(0.0, 0.0, 0.0, 0.75)
+	# Todo cuelga de una capa a pantalla completa con PROCESS_MODE_ALWAYS:
+	# mundo.gd pausa el árbol y los botones y las animaciones deben seguir vivos.
+	# Maquetado con contenedores: antes eran posiciones fijas pensadas para 440 px
+	# de ancho y "GAME OVER" salía cortado.
+	var capa := Control.new()
+	capa.name = "GameOver"
+	capa.set_anchors_preset(Control.PRESET_FULL_RECT)
+	capa.process_mode = Node.PROCESS_MODE_ALWAYS
+	capa.z_index = 200
+	add_child(capa)
+
+	var fondo := ColorRect.new()
+	fondo.color = Color(MenuTheme.BG_DEEP, 0.85)
 	fondo.set_anchors_preset(Control.PRESET_FULL_RECT)
-	fondo.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	fondo.z_index = 200
-	add_child(fondo)
+	# STOP: que ningún toque llegue a la partida de debajo.
+	fondo.mouse_filter = Control.MOUSE_FILTER_STOP
+	capa.add_child(fondo)
 
-	# ── "GAME OVER" ───────────────────────────────────────────
-	var lbl_go = Label.new()
-	lbl_go.text = "GAME OVER"
-	lbl_go.add_theme_font_size_override("font_size", 52)
-	lbl_go.add_theme_color_override("font_color", Color.RED)
-	lbl_go.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	lbl_go.set_anchors_preset(Control.PRESET_CENTER_TOP)
-	lbl_go.size = Vector2(440, 80)
-	lbl_go.position = Vector2(0, 420)
-	lbl_go.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	lbl_go.z_index = 201
-	add_child(lbl_go)
+	var centro := CenterContainer.new()
+	centro.set_anchors_preset(Control.PRESET_FULL_RECT)
+	centro.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	capa.add_child(centro)
 
-	# ── Causa de muerte ───────────────────────────────────────
-	var lbl_causa = Label.new()
-	lbl_causa.text = _formatear_causa(causa)
-	lbl_causa.add_theme_font_size_override("font_size", 20)
-	lbl_causa.add_theme_color_override("font_color", Color.WHITE)
+	var tarjeta := PanelContainer.new()
+	tarjeta.name = "Tarjeta"
+	tarjeta.custom_minimum_size = Vector2(600, 0)
+	var estilo := MenuTheme.make_card_style(Color(MenuTheme.RED, 0.45), 0.95)
+	estilo.content_margin_top    = 36
+	estilo.content_margin_bottom = 32
+	tarjeta.add_theme_stylebox_override("panel", estilo)
+	centro.add_child(tarjeta)
+
+	var v := VBoxContainer.new()
+	v.add_theme_constant_override("separation", 18)
+	tarjeta.add_child(v)
+
+	var titulo := _etiqueta("GAME OVER", MenuTheme.FS_TITLE + 12, MenuTheme.RED, true)
+	titulo.name = "Titulo"
+	titulo.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	v.add_child(titulo)
+
+	var lbl_causa := _etiqueta(_formatear_causa(causa), MenuTheme.FS_BODY,
+		Color(MenuTheme.TEXT_PRIMARY, 0.8), false)
 	lbl_causa.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	lbl_causa.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	lbl_causa.size = Vector2(440, 70)
-	lbl_causa.position = Vector2(0, 510)
-	lbl_causa.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	lbl_causa.z_index = 201
-	add_child(lbl_causa)
+	v.add_child(lbl_causa)
 
-	# ── Ascensión alcanzada ───────────────────────────────────
-	var lbl_asc = Label.new()
-	lbl_asc.text = "Ascensión alcanzada: %d" % Economia.numero_ascension
-	lbl_asc.add_theme_font_size_override("font_size", 18)
-	lbl_asc.add_theme_color_override("font_color", Color.YELLOW)
-	lbl_asc.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	lbl_asc.size = Vector2(440, 50)
-	lbl_asc.position = Vector2(0, 590)
-	lbl_asc.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	lbl_asc.z_index = 201
-	add_child(lbl_asc)
+	var filo := ColorRect.new()
+	filo.color = MenuTheme.BORDER_GLOW
+	filo.custom_minimum_size = Vector2(0, 1)
+	filo.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	v.add_child(filo)
 
-	# ── Espectros destruidos ──────────────────────────────────
-	var lbl_espectros = Label.new()
-	lbl_espectros.text = "Espectros destruidos: %d" % Economia.espectros_eliminados
-	lbl_espectros.add_theme_font_size_override("font_size", 18)
-	lbl_espectros.add_theme_color_override("font_color", Color(0.8, 0.8, 0.8))
-	lbl_espectros.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	lbl_espectros.size = Vector2(440, 50)
-	lbl_espectros.position = Vector2(0, 640)
-	lbl_espectros.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	lbl_espectros.z_index = 201
-	add_child(lbl_espectros)
+	var fila := HBoxContainer.new()
+	fila.add_theme_constant_override("separation", 12)
+	v.add_child(fila)
+	_stat_game_over(fila, IconoVec.Forma.TRIANGULO, MenuTheme.CYAN,
+		Economia.numero_ascension, "ASCENSIÓN")
+	_stat_game_over(fila, IconoVec.Forma.CRUZ, MenuTheme.RED,
+		Economia.espectros_eliminados, "ESPECTROS")
+	_stat_game_over(fila, IconoVec.Forma.RAYO, MenuTheme.GOLD,
+		int(Economia.energia_total_partida), "ENERGÍA")
 
-	# ── Energía total conseguida ──────────────────────────────
-	var lbl_energia_total = Label.new()
-	lbl_energia_total.text = "Energía conseguida: %d" % int(Economia.energia_total_partida)
-	lbl_energia_total.add_theme_font_size_override("font_size", 16)
-	lbl_energia_total.add_theme_color_override("font_color", Color(0.6, 0.9, 1.0))
-	lbl_energia_total.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	lbl_energia_total.size = Vector2(440, 45)
-	lbl_energia_total.position = Vector2(0, 690)
-	lbl_energia_total.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	lbl_energia_total.z_index = 201
-	add_child(lbl_energia_total)
+	var hueco := Control.new()
+	hueco.custom_minimum_size = Vector2(0, 6)
+	v.add_child(hueco)
 
-	# ── Botón REINTENTAR ─────────────────────────────────────
-	var btn_reiniciar = Button.new()
-	btn_reiniciar.text = "REINTENTAR"
-	btn_reiniciar.size = Vector2(220, 60)
-	btn_reiniciar.position = Vector2(250, 760)
-	btn_reiniciar.z_index = 210
-	# ✅ #10: con el árbol en pausa, el botón debe seguir respondiendo
-	btn_reiniciar.process_mode = Node.PROCESS_MODE_ALWAYS
+	var btn_reiniciar := _boton_game_over("REINTENTAR", MenuTheme.CYAN, true)
+	btn_reiniciar.name = "BtnReintentar"
 	btn_reiniciar.pressed.connect(func():
 		get_tree().paused = false
 		Economia.iniciar_partida()
 		get_tree().change_scene_to_file("res://escenas/mundo.tscn")
 	)
-	add_child(btn_reiniciar)
+	v.add_child(btn_reiniciar)
 
-	# ── Botón MENÚ ───────────────────────────────────────────
-	var btn_menu = Button.new()
-	btn_menu.text = "MENÚ"
-	btn_menu.size = Vector2(220, 60)
-	btn_menu.position = Vector2(250, 840)
-	btn_menu.z_index = 210
-	# ✅ #10: con el árbol en pausa, el botón debe seguir respondiendo
-	btn_menu.process_mode = Node.PROCESS_MODE_ALWAYS
+	var btn_menu := _boton_game_over("MENÚ", MenuTheme.TEXT_MUTED, false)
+	btn_menu.name = "BtnMenu"
 	btn_menu.pressed.connect(func():
 		get_tree().paused = false
 		get_tree().change_scene_to_file("res://escenas/ui/MainMenu.tscn")
 	)
-	add_child(btn_menu)
+	v.add_child(btn_menu)
+
+	# Entrada con fundido. TWEEN_PAUSE_PROCESS: el árbol está en pausa.
+	capa.modulate.a = 0.0
+	var tw := capa.create_tween().set_pause_mode(Tween.TWEEN_PAUSE_PROCESS)
+	tw.tween_property(capa, "modulate:a", 1.0, 0.3)
+
+# Una casilla de estadística: icono, cifra que cuenta desde 0 y rótulo.
+func _stat_game_over(fila: HBoxContainer, forma: int, color: Color, valor: int, texto: String) -> void:
+	var casilla := PanelContainer.new()
+	casilla.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	var sb := MenuTheme.make_card_style(Color(color, 0.25), 0.6)
+	sb.set_corner_radius_all(16)
+	sb.content_margin_left   = 8
+	sb.content_margin_right  = 8
+	sb.content_margin_top    = 14
+	sb.content_margin_bottom = 14
+	casilla.add_theme_stylebox_override("panel", sb)
+	fila.add_child(casilla)
+
+	var v := VBoxContainer.new()
+	v.alignment = BoxContainer.ALIGNMENT_CENTER
+	v.add_theme_constant_override("separation", 4)
+	casilla.add_child(v)
+	var c := CenterContainer.new()
+	c.add_child(IconoVec.crear(forma, 30, color))
+	v.add_child(c)
+	var lbl := _etiqueta("0", MenuTheme.FS_HEADER, MenuTheme.TEXT_PRIMARY, false)
+	lbl.name = "Valor"
+	lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	v.add_child(lbl)
+	var pie := _etiqueta(texto, MenuTheme.FS_TINY, MenuTheme.TEXT_MUTED, true)
+	pie.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	v.add_child(pie)
+
+	# La cifra sube desde 0: el resultado se lee mejor si se ve llegar.
+	var tw := casilla.create_tween().set_pause_mode(Tween.TWEEN_PAUSE_PROCESS)
+	tw.set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_QUAD)
+	tw.tween_method(func(x: float): lbl.text = Formato.abreviar(int(x)),
+		0.0, float(valor), 0.8)
+
+func _boton_game_over(texto: String, color: Color, principal: bool) -> Button:
+	var b := Button.new()
+	b.text = texto
+	b.custom_minimum_size = Vector2(0, 76)
+	b.focus_mode = Control.FOCUS_NONE
+	var sb := MenuTheme.make_button_style(color, principal)
+	if principal:
+		sb.bg_color     = Color(color, 0.20)
+		sb.border_color = Color(color, 0.70)
+	var sb_pulsado := sb.duplicate() as StyleBoxFlat
+	sb_pulsado.bg_color = Color(color, 0.35)
+	for estado in ["normal", "hover", "focus"]:
+		b.add_theme_stylebox_override(estado, sb)
+	b.add_theme_stylebox_override("pressed", sb_pulsado)
+	var f := MenuTheme.get_font_hud()
+	if f:
+		b.add_theme_font_override("font", f)
+	b.add_theme_font_size_override("font_size", MenuTheme.FS_BODY)
+	var color_texto: Color = color if principal else MenuTheme.TEXT_PRIMARY
+	for clave in ["font_color", "font_hover_color", "font_pressed_color", "font_focus_color"]:
+		b.add_theme_color_override(clave, color_texto)
+	return b

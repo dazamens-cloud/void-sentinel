@@ -38,6 +38,7 @@ func _ready() -> void:
 		await _test_senales()
 		_test_simbolos()
 		await _test_panel_mejoras()
+		await _test_game_over()
 
 	print("\n═══ RESULTADO: %d pasados, %d fallos ═══" % [_pasados, _fallos])
 	get_tree().quit(1 if _fallos > 0 else 0)
@@ -159,6 +160,46 @@ func _test_panel_mejoras() -> void:
 	_ok(textos_malos.is_empty(), "los textos de las cards se pintan en Android%s"
 		% ("" if textos_malos.is_empty() else " (%s)" % textos_malos.strip_edges()))
 	panel.cerrar()
+
+
+# En el móvil "GAME OVER" salía cortado y los textos descolocados: estaban en
+# posiciones fijas pensadas para 440 px de ancho.
+func _test_game_over() -> void:
+	print("── Game over")
+	_hud.mostrar_game_over("tanque")
+	await get_tree().create_timer(1.0).timeout
+	var capa: Control = _hud.get_node_or_null("GameOver")
+	_ok(capa != null, "monta la pantalla de game over")
+	if capa == null:
+		return
+	var tarjeta: Control = capa.find_child("Tarjeta", true, false)
+	var pantalla := get_viewport().get_visible_rect()
+	_ok(tarjeta != null and pantalla.encloses(tarjeta.get_global_rect()),
+		"la tarjeta cabe en pantalla")
+	var titulo: Label = capa.find_child("Titulo", true, false)
+	_ok(titulo != null and titulo.get_minimum_size().x <= titulo.size.x + 0.5,
+		"\"GAME OVER\" cabe entero")
+
+	var valores := capa.find_children("Valor", "Label", true, false)
+	var esperado := [Economia.numero_ascension, Economia.espectros_eliminados,
+		int(Economia.energia_total_partida)]
+	var cuadran := valores.size() == 3
+	for i in mini(valores.size(), 3):
+		cuadran = cuadran and valores[i].text == Formato.abreviar(esperado[i])
+	_ok(cuadran, "las cifras terminan en su valor real %s" % [valores.map(func(l): return l.text)])
+
+	# Con el árbol en pausa (lo hace mundo.gd), los botones deben seguir vivos.
+	var botones_ok := true
+	for nombre in ["BtnReintentar", "BtnMenu"]:
+		var b: Button = capa.find_child(nombre, true, false)
+		botones_ok = botones_ok and b != null and b.can_process()
+	_ok(botones_ok, "los botones responden con el juego en pausa")
+
+	var malos := ""
+	for lbl in capa.find_children("*", "Label", true, false):
+		malos += _simbolos_problematicos(lbl.text)
+	_ok(malos.is_empty(), "los textos del game over se pintan en Android%s"
+		% ("" if malos.is_empty() else " (%s)" % malos))
 
 
 func _simbolos_problematicos(texto: String) -> String:

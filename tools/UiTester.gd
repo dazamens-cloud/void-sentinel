@@ -106,6 +106,12 @@ func _run() -> void:
 	await _esperar(2.0)
 	await _capturar("mundo_combate")
 
+	var interfaz := mundo.get_node_or_null("Interfaz")
+	if interfaz and interfaz.has_method("mostrar_game_over"):
+		interfaz.mostrar_game_over("tanque")
+		await _esperar(1.2)
+		await _capturar("mundo_game_over")
+
 	mundo.queue_free()
 	await _esperar(0.2)
 	# Restaura el estado del tutorial (lo marcamos visto solo para capturar).
