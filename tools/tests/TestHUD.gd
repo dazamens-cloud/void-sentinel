@@ -38,6 +38,7 @@ func _ready() -> void:
 		await _test_senales()
 		_test_simbolos()
 		await _test_panel_mejoras()
+		_test_habilidades_y_dron()
 		# Antes que el game over: con el game over mostrado la pausa ya no abre.
 		await _test_menu_pausa()
 		await _test_game_over()
@@ -162,6 +163,41 @@ func _test_panel_mejoras() -> void:
 	_ok(textos_malos.is_empty(), "los textos de las cards se pintan en Android%s"
 		% ("" if textos_malos.is_empty() else " (%s)" % textos_malos.strip_edges()))
 	panel.cerrar()
+
+
+# El cooldown se leía como texto ("17s") casi ilegible en el móvil; ahora es un
+# anillo alrededor del icono. El dron era una ProgressBar gris suelta.
+func _test_habilidades_y_dron() -> void:
+	print("── Habilidades y dron")
+	_hud.actualizar_barra_dron(12, 50)
+	var pildora: Control = _hud.raiz.find_child("PildoraDron", true, false)
+	_ok(pildora != null, "monta la píldora del dron")
+	_ok(_hud.label_dron.text == "12 / 50",
+		"el contador del dron muestra el valor (\"%s\")" % _hud.label_dron.text)
+	_ok(_simbolos_problematicos(_hud.label_dron.text).is_empty(),
+		"el contador del dron se pinta en Android")
+
+	var activas: Array = HabilidadManager.get_activas()
+	if activas.is_empty():
+		print("   · sin habilidades activas en este guardado: nada que comprobar")
+		return
+	var fila: Control = _hud.raiz.find_child("BarraHabilidades", true, false)
+	_ok(fila != null, "monta la fila de habilidades")
+
+	var id: String = activas[0]
+	var anillo = _hud._hab_anillos.get(id)
+	var lbl: Label = _hud._hab_cd_lbls.get(id)
+	var ejecutor := get_node("/root/HabilidadEjecutor")
+	# Enfriándose: el anillo arranca casi vacío y la etiqueta da los segundos.
+	ejecutor._cooldowns[id] = HabilidadManager.get_cooldown(id)
+	_hud._refrescar_habilidades()
+	_ok(anillo != null and anillo.progreso < 0.05, "el anillo se vacía al lanzarla")
+	_ok(lbl != null and lbl.text.ends_with("s"), "la etiqueta muestra los segundos (\"%s\")" % lbl.text)
+	# Lista otra vez: anillo lleno y el nombre de vuelta.
+	ejecutor._cooldowns[id] = 0.0
+	_hud._refrescar_habilidades()
+	_ok(anillo.progreso >= 0.99, "el anillo se llena cuando está lista")
+	_ok(lbl.text == ejecutor.nombre_corto(id), "vuelve el nombre corto (\"%s\")" % lbl.text)
 
 
 # El menú de pausa comparte tarjeta con el game over; sus botones tienen que

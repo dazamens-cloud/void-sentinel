@@ -44,7 +44,26 @@ var _game_over_mostrado: bool = false
 
 # ── Barra de habilidades ────────────────────────────
 var _hab_botones: Dictionary = {}   # id → Button
-var _hab_cd_lbls: Dictionary = {}   # id → Label cooldown
+var _hab_cd_lbls: Dictionary = {}   # id → Label (nombre corto o segundos)
+var _hab_anillos: Dictionary = {}   # id → AnilloCooldown
+
+# Altura de la fila de habilidades y hueco que deja libre debajo para la barra
+# colapsada del PanelMejoras (MARGEN_INFERIOR 48 + ALTURA_BARRA 50 + 8 de aire).
+const ALTO_HABILIDADES: float = 96.0
+const SUELO_HABILIDADES: float = 106.0
+const ALTO_DRON: float = 52.0
+
+# Icono y color de cada habilidad de la Forja.
+const ICONOS_HAB := {
+	"enjambre":       [IconoVec.Forma.PUNTOS,        MenuTheme.GREEN],
+	"singularidad":   [IconoVec.Forma.CIRCULO_DOBLE, MenuTheme.VIOLET],
+	"pulso_emp":      [IconoVec.Forma.CIRCULO,       MenuTheme.CYAN],
+	"detonacion":     [IconoVec.Forma.DESTELLO,      MenuTheme.CAT_ATAQUE],
+	"escudo_colapso": [IconoVec.Forma.ESCUDO,        MenuTheme.CYAN],
+	"protocolo":      [IconoVec.Forma.MAS,           MenuTheme.GREEN],
+	"campo_tiempo":   [IconoVec.Forma.FLECHA_CIRC,   MenuTheme.MAGENTA],
+	"manto":          [IconoVec.Forma.ROMBO_HUECO,   MenuTheme.GOLD],
+}
 
 # Overlay del menú de pausa (null cuando está cerrado)
 var _menu_pausa: Control = null
@@ -116,24 +135,55 @@ func _construir_interfaz() -> void:
 	raiz.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(raiz)
 	
-	# Barra del dron. Por encima de la barra colapsada del PanelMejoras
-	# (CanvasLayer, top en ~1182 - safe_bottom): a 1220 quedaba tapada.
+	# Dron: píldora con icono, contador y barra fina. Antes eran una ProgressBar
+	# gris y un Label sueltos, con el estilo por defecto de Godot. Va por encima
+	# de la fila de habilidades, que a su vez despeja la barra del PanelMejoras.
+	var pildora := PanelContainer.new()
+	pildora.name = "PildoraDron"
+	var sb_dron := MenuTheme.make_card_style(Color(MenuTheme.VIOLET, 0.35), 0.8)
+	sb_dron.set_corner_radius_all(22)
+	sb_dron.content_margin_left   = 14
+	sb_dron.content_margin_right  = 14
+	sb_dron.content_margin_top    = 8
+	sb_dron.content_margin_bottom = 8
+	pildora.add_theme_stylebox_override("panel", sb_dron)
+	pildora.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	pildora.set_anchors_preset(Control.PRESET_BOTTOM_LEFT)
+	pildora.offset_left   = 16.0
+	pildora.offset_right  = 190.0
+	pildora.offset_top    = -(_margen_bottom + ALTO_DRON + SUELO_HABILIDADES + ALTO_HABILIDADES + 8.0)
+	pildora.offset_bottom = -(_margen_bottom + SUELO_HABILIDADES + ALTO_HABILIDADES + 8.0)
+	raiz.add_child(pildora)
+
+	var fila_dron := HBoxContainer.new()
+	fila_dron.add_theme_constant_override("separation", 8)
+	fila_dron.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	pildora.add_child(fila_dron)
+	var centro_dron := CenterContainer.new()
+	centro_dron.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	centro_dron.add_child(IconoVec.crear(IconoVec.Forma.ROMBO, 26, MenuTheme.VIOLET))
+	fila_dron.add_child(centro_dron)
+
+	var col_dron := VBoxContainer.new()
+	col_dron.add_theme_constant_override("separation", 4)
+	col_dron.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	col_dron.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	col_dron.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	fila_dron.add_child(col_dron)
+
+	label_dron = _etiqueta("0 / 50", MenuTheme.FS_SMALL, MenuTheme.VIOLET, false)
+	col_dron.add_child(label_dron)
+
 	barra_dron = ProgressBar.new()
-	barra_dron.position = Vector2(20, 1140 - _margen_bottom)
-	barra_dron.size = Vector2(200, 20)
+	barra_dron.custom_minimum_size = Vector2(110, 6)
+	barra_dron.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	barra_dron.max_value = 50
 	barra_dron.value = 0
+	barra_dron.show_percentage = false
 	barra_dron.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	barra_dron.add_theme_color_override("font_color", Color.CYAN)
-	raiz.add_child(barra_dron)
-
-	# Label texto barra dron
-	label_dron = Label.new()
-	label_dron.position = Vector2(20, 1135 - _margen_bottom)
-	label_dron.add_theme_font_size_override("font_size", 10)
-	label_dron.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	label_dron.text = "▮ 0/50"
-	raiz.add_child(label_dron)
+	barra_dron.add_theme_stylebox_override("background", MenuTheme.make_progress_track())
+	barra_dron.add_theme_stylebox_override("fill", MenuTheme.make_progress_fill_gradient(MenuTheme.VIOLET))
+	col_dron.add_child(barra_dron)
 	
 	# Barra de ascensión
 	barra_ascension = ProgressBar.new()
@@ -337,76 +387,104 @@ func _construir_barra_habilidades() -> void:
 	var activas := HabilidadManager.get_activas()
 	if activas.is_empty(): return
 
-	var n     := activas.size()
-	var btn_w := 80
-	var gap   := 6
-	var total := n * btn_w + (n - 1) * gap
-	# Situar encima de la barra colapsada del PanelMejoras:
-	# MARGEN_INFERIOR(48) + ALTURA_BARRA(50) + gap(8) + btn_h(72) = 178
-	var vp    := get_viewport().get_visible_rect().size
-	# Centrar sobre el ancho real: con stretch expand el viewport no siempre
-	# mide los 720 de diseño y la barra quedaba descentrada a la izquierda.
-	var x0    := int((vp.x - total) / 2.0)
-	var y0    := int(vp.y - _margen_bottom - 178.0)
+	# Fila centrada con contenedor: antes se calculaban las posiciones a mano
+	# sobre el ancho del viewport, que con stretch expand no son los 720 del diseño.
+	var fila := HBoxContainer.new()
+	fila.name = "BarraHabilidades"
+	fila.alignment = BoxContainer.ALIGNMENT_CENTER
+	fila.add_theme_constant_override("separation", 10)
+	fila.set_anchors_preset(Control.PRESET_BOTTOM_WIDE)
+	fila.offset_left   = 16.0
+	fila.offset_right  = -16.0
+	fila.offset_top    = -(_margen_bottom + SUELO_HABILIDADES + ALTO_HABILIDADES)
+	fila.offset_bottom = -(_margen_bottom + SUELO_HABILIDADES)
+	fila.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	fila.z_index = 120
+	raiz.add_child(fila)
 
-	for i in range(n):
-		var id: String = activas[i]
-		var x := x0 + i * (btn_w + gap)
+	for id in activas:
+		fila.add_child(_boton_habilidad(id))
 
-		var btn := Button.new()
-		btn.size = Vector2(btn_w, 72)
-		btn.position = Vector2(x, y0)
-		btn.z_index = 120
-		btn.process_mode = Node.PROCESS_MODE_PAUSABLE
-		btn.mouse_filter = Control.MOUSE_FILTER_STOP
-		btn.flat = true
+# Botón cuadrado: icono dentro del anillo de cooldown y, debajo, el nombre
+# corto — que pasa a ser los segundos que faltan mientras se enfría.
+func _boton_habilidad(id: String) -> Button:
+	var datos: Array = ICONOS_HAB.get(id, [IconoVec.Forma.DESTELLO, MenuTheme.CYAN])
+	var color: Color = datos[1]
 
-		# Nombre abreviado
-		var nombre_lbl := Label.new()
-		nombre_lbl.text = HabilidadEjecutor.nombre_corto(id)
-		nombre_lbl.add_theme_font_size_override("font_size", 11)
-		nombre_lbl.add_theme_color_override("font_color", Color(0.6, 0.9, 1.0))
-		nombre_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		# Sin preset de anchors: combinarlo con size hacía que Godot avisara de
-		# "non-equal opposite anchors" y sobrescribiera el tamaño tras _ready().
-		# Se posiciona a mano, igual que cd_lbl.
-		nombre_lbl.size = Vector2(btn_w, 28)
-		nombre_lbl.position = Vector2(0, 4)
-		nombre_lbl.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		btn.add_child(nombre_lbl)
+	var btn := Button.new()
+	btn.name = "Hab_" + id
+	btn.custom_minimum_size = Vector2(ALTO_HABILIDADES, ALTO_HABILIDADES)
+	btn.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	btn.focus_mode = Control.FOCUS_NONE
+	btn.process_mode = Node.PROCESS_MODE_PAUSABLE
+	btn.mouse_filter = Control.MOUSE_FILTER_STOP
+	for estado in ["normal", "hover", "pressed", "focus"]:
+		var alfa := 0.14
+		if estado == "hover":   alfa = 0.20
+		if estado == "pressed": alfa = 0.30
+		var sb := StyleBoxFlat.new()
+		sb.bg_color = Color(color, alfa)
+		sb.border_color = Color(color, 0.5)
+		sb.set_border_width_all(1)
+		sb.set_corner_radius_all(20)
+		btn.add_theme_stylebox_override(estado, sb)
 
-		# Cooldown / listo
-		var cd_lbl := Label.new()
-		cd_lbl.text = "LISTA"
-		cd_lbl.add_theme_font_size_override("font_size", 13)
-		cd_lbl.add_theme_color_override("font_color", Color(0.3, 1.0, 0.5))
-		cd_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		cd_lbl.size = Vector2(btn_w, 28)
-		cd_lbl.position = Vector2(0, 38)
-		cd_lbl.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		btn.add_child(cd_lbl)
+	var marco := MarginContainer.new()
+	marco.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	for lado in ["margin_left", "margin_right", "margin_top", "margin_bottom"]:
+		marco.add_theme_constant_override(lado, 8)
+	btn.add_child(marco)
+	marco.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 
-		var _id := id  # captura para la lambda
-		btn.pressed.connect(func(): HabilidadEjecutor.activar(_id))
+	var col := VBoxContainer.new()
+	col.alignment = BoxContainer.ALIGNMENT_CENTER
+	col.add_theme_constant_override("separation", 2)
+	col.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	marco.add_child(col)
 
-		_hab_botones[id] = btn
-		_hab_cd_lbls[id] = cd_lbl
-		raiz.add_child(btn)
+	var centro := CenterContainer.new()
+	centro.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var anillo := AnilloCooldown.crear(50, color)
+	centro.add_child(anillo)
+	col.add_child(centro)
+	# El icono va centrado dentro del anillo.
+	var centro_icono := CenterContainer.new()
+	centro_icono.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	anillo.add_child(centro_icono)
+	centro_icono.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	centro_icono.add_child(IconoVec.crear(datos[0], 26, color))
+
+	var lbl := _etiqueta(HabilidadEjecutor.nombre_corto(id), MenuTheme.FS_TINY - 2,
+		Color(MenuTheme.TEXT_PRIMARY, 0.8), true)
+	lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	col.add_child(lbl)
+
+	var _id := id  # captura para la lambda
+	btn.pressed.connect(func(): HabilidadEjecutor.activar(_id))
+
+	_hab_botones[id] = btn
+	_hab_cd_lbls[id] = lbl
+	_hab_anillos[id] = anillo
+	return btn
 
 func _refrescar_habilidades() -> void:
 	for id in _hab_botones.keys():
 		var btn: Button = _hab_botones[id]
-		var cd_lbl: Label = _hab_cd_lbls[id]
+		var lbl: Label = _hab_cd_lbls[id]
+		var anillo: AnilloCooldown = _hab_anillos[id]
 		if not is_instance_valid(btn): continue
 		var restante := HabilidadEjecutor.get_cooldown_restante(id)
+		var total: float = maxf(HabilidadManager.get_cooldown(id), 0.01)
+		# El anillo se rellena según se enfría: lleno = lista.
+		anillo.progreso = clampf(1.0 - restante / total, 0.0, 1.0)
 		if restante > 0.0:
-			btn.modulate = Color(0.4, 0.4, 0.4, 0.9)
-			cd_lbl.text = "%ds" % ceili(restante)
-			cd_lbl.add_theme_color_override("font_color", Color(0.7, 0.4, 0.4))
+			btn.modulate = Color(0.55, 0.55, 0.55, 0.95)
+			lbl.text = "%ds" % ceili(restante)
+			lbl.add_theme_color_override("font_color", MenuTheme.TEXT_MUTED)
 		else:
 			btn.modulate = Color.WHITE
-			cd_lbl.text = "LISTA"
-			cd_lbl.add_theme_color_override("font_color", Color(0.3, 1.0, 0.5))
+			lbl.text = HabilidadEjecutor.nombre_corto(id)
+			lbl.add_theme_color_override("font_color", Color(MenuTheme.TEXT_PRIMARY, 0.8))
 
 # ═══════════════════════════════════════════════════
 # MENÚ DE PAUSA
@@ -531,7 +609,7 @@ func actualizar_barra_dron(actual: int, maximo: int) -> void:
 		barra_dron.max_value = maximo
 		barra_dron.value = actual
 		if label_dron:
-			label_dron.text = "▮ %d/%d" % [actual, maximo]
+			label_dron.text = "%d / %d" % [actual, maximo]
 
 func _actualizar_energia() -> void:
 	if lbl_energia:
