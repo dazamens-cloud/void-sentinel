@@ -38,7 +38,7 @@ func _ready() -> void:
 		await _test_senales()
 		_test_simbolos()
 		await _test_panel_mejoras()
-		_test_habilidades_y_dron()
+		await _test_habilidades_y_dron()
 		# Antes que el game over: con el game over mostrado la pausa ya no abre.
 		await _test_menu_pausa()
 		await _test_game_over()
@@ -198,6 +198,23 @@ func _test_habilidades_y_dron() -> void:
 	_hud._refrescar_habilidades()
 	_ok(anillo.progreso >= 0.99, "el anillo se llena cuando está lista")
 	_ok(lbl.text == ejecutor.nombre_corto(id), "vuelve el nombre corto (\"%s\")" % lbl.text)
+
+	# El panel de mejoras abierto las tapaba: tienen que subir por encima.
+	var panel: Control = _hud.panel_mejoras
+	if is_instance_valid(panel) and is_instance_valid(fila):
+		# Partir del panel plegado y dejar que termine su animación: si no, se
+		# mide una posición a medio camino y la comprobación no dice nada.
+		panel.cerrar()
+		await get_tree().create_timer(0.4).timeout
+		var y_cerrado: float = fila.offset_top
+		panel.abrir()
+		await get_tree().create_timer(0.4).timeout
+		var subida: float = y_cerrado - fila.offset_top
+		_ok(is_equal_approx(subida, panel.ALTURA_PANEL),
+			"suben justo la altura del panel (%.0f de %.0f)" % [subida, panel.ALTURA_PANEL])
+		panel.cerrar()
+		await get_tree().create_timer(0.4).timeout
+		_ok(is_equal_approx(fila.offset_top, y_cerrado), "y vuelven abajo al plegarlo")
 
 
 # El menú de pausa comparte tarjeta con el game over; sus botones tienen que

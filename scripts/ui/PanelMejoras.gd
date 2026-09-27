@@ -5,6 +5,10 @@ extends Control
 # código en _estilizar() para no editar el .tscn a mano.
 # ═══════════════════════════════════════════════════
 
+# Lo escucha el HUD (Interfaz) para subir la fila de habilidades y la píldora
+# del dron por encima del panel: si no, el panel abierto las tapa.
+signal desplegado(expandido: bool)
+
 @onready var btn_toggle:   Button = $BarraTitulo/BtnToggle
 @onready var btn_mult_x1:  Button = $BarraTitulo/MultContainer/BtnX1
 @onready var btn_mult_x5:  Button = $BarraTitulo/MultContainer/BtnX5
@@ -394,6 +398,7 @@ func _expandir(estado: bool, animar: bool = true) -> void:
 		# volver a abrir. Al colapsar se cierra siempre.
 		_cerrar_modal()
 	_reposicionar(animar)
+	desplegado.emit(estado)
 
 # ═══════════════════════════════════════════════════
 # PESTAÑAS

@@ -46,6 +46,9 @@ var _game_over_mostrado: bool = false
 var _hab_botones: Dictionary = {}   # id → Button
 var _hab_cd_lbls: Dictionary = {}   # id → Label (nombre corto o segundos)
 var _hab_anillos: Dictionary = {}   # id → AnilloCooldown
+var _fila_habilidades: Control = null
+var _pildora_dron: Control = null
+var _tween_barras: Tween = null
 
 # Altura de la fila de habilidades y hueco que deja libre debajo para la barra
 # colapsada del PanelMejoras (MARGEN_INFERIOR 48 + ALTURA_BARRA 50 + 8 de aire).
@@ -154,6 +157,7 @@ func _construir_interfaz() -> void:
 	pildora.offset_top    = -(_margen_bottom + ALTO_DRON + SUELO_HABILIDADES + ALTO_HABILIDADES + 8.0)
 	pildora.offset_bottom = -(_margen_bottom + SUELO_HABILIDADES + ALTO_HABILIDADES + 8.0)
 	raiz.add_child(pildora)
+	_pildora_dron = pildora
 
 	var fila_dron := HBoxContainer.new()
 	fila_dron.add_theme_constant_override("separation", 8)
@@ -244,6 +248,8 @@ func _construir_interfaz() -> void:
 	panel_mejoras = get_parent().get_node_or_null("CapaUI/PanelMejoras")
 	if panel_mejoras == null:
 		push_warning("Interfaz: PanelMejoras no encontrado en CapaUI")
+	elif panel_mejoras.has_signal("desplegado"):
+		panel_mejoras.desplegado.connect(_on_panel_desplegado)
 
 	_crear_boton_pausa()
 	_construir_barra_habilidades()
@@ -404,6 +410,43 @@ func _construir_barra_habilidades() -> void:
 
 	for id in activas:
 		fila.add_child(_boton_habilidad(id))
+
+	_fila_habilidades = fila
+	var abierto: bool = panel_mejoras.expandido if is_instance_valid(panel_mejoras) else false
+	_colocar_barras_inferiores(abierto, false)
+
+func _on_panel_desplegado(expandido: bool) -> void:
+	_colocar_barras_inferiores(expandido, true)
+
+# Sube la fila de habilidades y la píldora del dron por encima del panel de
+# mejoras cuando se despliega: está en una CanvasLayer posterior, así que las
+# tapaba justo cuando hacen falta. Se mueven con la misma animación del panel.
+func _colocar_barras_inferiores(panel_abierto: bool, animar: bool) -> void:
+	var suelo := SUELO_HABILIDADES
+	if panel_abierto and is_instance_valid(panel_mejoras):
+		suelo += panel_mejoras.ALTURA_PANEL
+	var destinos: Array = []
+	if is_instance_valid(_fila_habilidades):
+		destinos.append([_fila_habilidades,
+			-(_margen_bottom + suelo + ALTO_HABILIDADES), -(_margen_bottom + suelo)])
+	if is_instance_valid(_pildora_dron):
+		var base := suelo + ALTO_HABILIDADES + 8.0
+		destinos.append([_pildora_dron,
+			-(_margen_bottom + base + ALTO_DRON), -(_margen_bottom + base)])
+
+	if _tween_barras:
+		_tween_barras.kill()
+	if animar:
+		_tween_barras = create_tween().set_parallel(true)
+		_tween_barras.set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_CUBIC)
+	for d in destinos:
+		var ctrl: Control = d[0]
+		if animar:
+			_tween_barras.tween_property(ctrl, "offset_top", d[1], 0.2)
+			_tween_barras.tween_property(ctrl, "offset_bottom", d[2], 0.2)
+		else:
+			ctrl.offset_top = d[1]
+			ctrl.offset_bottom = d[2]
 
 # Botón cuadrado: icono dentro del anillo de cooldown y, debajo, el nombre
 # corto — que pasa a ser los segundos que faltan mientras se enfría.
