@@ -115,7 +115,10 @@ func _crear_label_stats_modal() -> void:
 func _estilizar() -> void:
 	var fondo := get_node_or_null("Background") as ColorRect
 	if fondo:
-		fondo.color = Color(MenuTheme.BG_DEEP, 0.96)
+		# Translúcido a propósito: con el panel abierto se pierde el 40% de la
+		# pantalla, y así se ven las siluetas de los enemigos que se acercan.
+		# Las cards llevan su propio fondo, así que el texto no pierde contraste.
+		fondo.color = Color(MenuTheme.BG_DEEP, 0.85)
 		# Filo superior: separa el panel del campo de batalla.
 		var filo := ColorRect.new()
 		filo.color = MenuTheme.BORDER_GLOW

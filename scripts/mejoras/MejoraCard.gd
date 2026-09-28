@@ -177,7 +177,9 @@ func _estilo_etiqueta(lbl: Label, tam: int, color: Color, fuente_hud: bool,
 	lbl.mouse_filter = Control.MOUSE_FILTER_IGNORE
 
 func _aplicar_estilos() -> void:
-	var fondo := Color(MenuTheme.BG_CARD, 0.92)
+	# Translúcidas a propósito, como el fondo del panel: con el panel abierto se
+	# ve moverse lo que pasa detrás sin perder legibilidad del texto.
+	var fondo := Color(MenuTheme.BG_CARD, 0.72)
 	_estilo_card     = _caja(fondo, Color(color_boton, 0.35), 14, 8)
 	_estilo_card_max = _caja(fondo, Color(MenuTheme.GOLD, 0.7), 14, 8)
 	_estilo_agotado  = _caja(Color(1, 1, 1, 0.04), Color(1, 1, 1, 0.10), 10, 0)
