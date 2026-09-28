@@ -21,6 +21,7 @@ func _ready() -> void:
 	_test_reinicio()
 	await _test_espectros()
 	await _test_espectro_muerte()
+	await _test_dron_objetivo()
 	print("\n═══ RESULTADO: %d pasados, %d fallos ═══" % [_pasados, _fallos])
 	get_tree().quit(1 if _fallos > 0 else 0)
 
@@ -193,6 +194,53 @@ func _test_espectro_muerte() -> void:
 	if is_instance_valid(e):
 		e.queue_free()
 	await get_tree().process_frame
+
+
+# A por qué fragmento va el dron. Antes era siempre el más cercano y lo
+# reelegía cada frame: con dos a distancia parecida se quedaba titubeando.
+func _test_dron_objetivo() -> void:
+	_sec("Dron — a por qué fragmento va")
+	var escena: PackedScene = load("res://escenas/jugador/Dron.tscn")
+	if escena == null:
+		return
+	var dron: Node2D = escena.instantiate()
+	add_child(dron)
+	await get_tree().process_frame
+	dron.set_physics_process(false)   # que no se mueva mientras se le pregunta
+	dron.global_position = Vector2.ZERO
+
+	# El suelto, más cerca, pero lo bastante lejos del racimo (>130) para que no
+	# cuente como parte de él.
+	var sueltos: Array[Node2D] = []
+	var racimo: Array[Node2D] = []
+	sueltos.append(_fragmento_falso(Vector2(300, 0)))
+	for p in [Vector2(330, 160), Vector2(355, 185), Vector2(370, 155)]:
+		racimo.append(_fragmento_falso(p))
+
+	var elegido: Node2D = dron.elegir_objetivo()
+	_ok(elegido in racimo, "prefiere el racimo aunque el suelto esté más cerca")
+
+	# Histéresis: un fragmento apenas mejor no le hace cambiar de idea.
+	dron._objetivo = sueltos[0]
+	var casi: Node2D = _fragmento_falso(Vector2(250, 0))
+	_ok(dron.elegir_objetivo() == sueltos[0],
+		"mantiene el objetivo si el nuevo solo está un poco mejor")
+	# Uno claramente mejor sí lo cambia.
+	var mucho_mejor: Node2D = _fragmento_falso(Vector2(60, 0))
+	_ok(dron.elegir_objetivo() == mucho_mejor, "cambia si el nuevo está mucho mejor")
+
+	for f in sueltos + racimo + [casi, mucho_mejor]:
+		f.queue_free()
+	dron.queue_free()
+	await get_tree().process_frame
+
+
+func _fragmento_falso(pos: Vector2) -> Node2D:
+	var n := Node2D.new()
+	n.add_to_group("fragmentos")
+	add_child(n)
+	n.global_position = pos
+	return n
 
 
 # ═══════════════════════════════════════════════════

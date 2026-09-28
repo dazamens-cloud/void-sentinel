@@ -20,6 +20,18 @@ var _juego_terminado_ya_emitido: bool = false
 
 const VELOCIDAD_ATRACCION_BASE: float = 280.0
 
+# Persecución de fragmentos. Antes se reelegía el más cercano en cada frame, así
+# que con dos fragmentos a distancia parecida el dron titubeaba entre los dos, y
+# aceleraba tan despacio que los lejanos se enfriaban.
+const VELOCIDAD_MAX: float = 360.0      # acelera cuanto más lejos está el objetivo
+const INTERVALO_OBJETIVO: float = 0.25  # cada cuánto se replantea a por cuál va
+const HISTERESIS: float = 70.0          # no cambia de objetivo por menos de esto
+const RADIO_RACIMO: float = 130.0
+const BONUS_RACIMO: float = 45.0        # px de "descuento" por cada vecino cercano
+
+var _objetivo: Node2D = null
+var _timer_objetivo: float = 0.0
+
 func get_radio_atraccion() -> float:
 	return 140.0
 
@@ -75,28 +87,55 @@ func _buscar_y_atraer_fragmentos(delta: float) -> void:
 	if fragmentos_en_dron >= capacidad_actual:
 		return
 	
-	var fragmento_mas_cercano = null
-	var dist_min = INF
-	
-	for frag in get_tree().get_nodes_in_group("fragmentos"):
-		if not is_instance_valid(frag):
-			continue
-		var d = global_position.distance_to(frag.global_position)
-		if d < dist_min:
-			dist_min = d
-			fragmento_mas_cercano = frag
-	
-	# Si existe CUALQUIER fragmento en el mapa, el dron va siempre a por el más
-	# cercano (sin importar la distancia). Solo vaga cuando no hay ninguno.
-	if fragmento_mas_cercano:
-		var direccion = (fragmento_mas_cercano.global_position - global_position).normalized()
-		velocity = velocity.lerp(direccion * VELOCIDAD_NORMAL, 3.0 * delta)
-		rotation = lerp_angle(rotation, direccion.angle(), 6.0 * delta)
+	_timer_objetivo -= delta
+	if _timer_objetivo <= 0.0 or not is_instance_valid(_objetivo):
+		_objetivo = elegir_objetivo()
+		_timer_objetivo = INTERVALO_OBJETIVO
+
+	# Si hay fragmentos en el mapa va siempre a por el elegido, esté donde esté.
+	# Solo vaga cuando no queda ninguno.
+	if is_instance_valid(_objetivo):
+		var hacia: Vector2 = _objetivo.global_position - global_position
+		var direccion: Vector2 = hacia.normalized()
+		var deseada: float = clampf(VELOCIDAD_NORMAL + hacia.length() * 0.45,
+			VELOCIDAD_NORMAL, VELOCIDAD_MAX)
+		velocity = velocity.lerp(direccion * deseada, 8.0 * delta)
+		rotation = lerp_angle(rotation, direccion.angle(), 10.0 * delta)
 		move_and_slide()
 		_atraer_fragmentos_cercanos(delta)
 	else:
 		_tick_vagando(delta)
 		_atraer_fragmentos_cercanos(delta)
+
+# El fragmento más cercano, pero uno rodeado de otros cuenta como si estuviera
+# BONUS_RACIMO px más cerca por vecino: así el dron limpia racimos en vez de
+# cruzarse el mapa a por el suelto. Pública para poder probarla.
+func elegir_objetivo() -> Node2D:
+	var fragmentos: Array = get_tree().get_nodes_in_group("fragmentos")
+	var mejor: Node2D = null
+	var mejor_coste: float = INF
+	var coste_objetivo: float = INF   # el del objetivo actual, con su mismo baremo
+	for frag in fragmentos:
+		if not is_instance_valid(frag):
+			continue
+		var vecinos: int = 0
+		for otro in fragmentos:
+			if otro != frag and is_instance_valid(otro) \
+					and frag.global_position.distance_to(otro.global_position) < RADIO_RACIMO:
+				vecinos += 1
+		var coste: float = global_position.distance_to(frag.global_position) \
+			- float(mini(vecinos, 4)) * BONUS_RACIMO
+		if frag == _objetivo:
+			coste_objetivo = coste
+		if coste < mejor_coste:
+			mejor_coste = coste
+			mejor = frag
+	# Histéresis: no soltar el objetivo actual por una diferencia pequeña. Se
+	# comparan costes, no distancias: mezclarlos hacía cambiar de idea de más.
+	if is_instance_valid(_objetivo) and mejor != _objetivo \
+			and coste_objetivo - mejor_coste < HISTERESIS:
+		return _objetivo
+	return mejor
 
 func _atraer_fragmentos_cercanos(delta: float) -> void:
 	var radio_actual: float = get_radio_atraccion()
@@ -129,6 +168,7 @@ func _recoger_fragmento(frag: Node) -> void:
 
 	if fragmentos_en_dron >= capacidad_actual:
 		_activar_laser_360()
+		_objetivo = null
 		estado = Estado.YENDO_NEXUS
 
 # ═══════════════════════════════════════════════════════

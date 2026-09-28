@@ -55,9 +55,10 @@ const ALTURA_TABS: float = 52.0
 # Separación de las rejillas con los bordes de la pantalla y entre cards.
 const MARGEN_LATERAL: float = 12.0
 const SEPARACION_CARDS: int = 10
-# Margen inferior para que la barra (sobre todo colapsada) no quede pegada al
-# borde y la tape la barra de gestos del móvil.
-const MARGEN_INFERIOR: float = 48.0
+# Aire entre la barra del panel y el borde inferior. La barra de gestos del
+# sistema ya la reserva SafeArea aparte; con 48 px se sumaban los dos márgenes
+# y quedaba una franja muerta en el móvil.
+const MARGEN_INFERIOR: float = 12.0
 
 const COLORES_CAT := {
 	"ataque":       MenuTheme.CAT_ATAQUE,

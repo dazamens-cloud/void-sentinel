@@ -50,10 +50,11 @@ var _fila_habilidades: Control = null
 var _pildora_dron: Control = null
 var _tween_barras: Tween = null
 
-# Altura de la fila de habilidades y hueco que deja libre debajo para la barra
-# colapsada del PanelMejoras (MARGEN_INFERIOR 48 + ALTURA_BARRA 50 + 8 de aire).
+# Altura de la fila de habilidades. El hueco que deja libre debajo sale de las
+# constantes del propio PanelMejoras (_suelo_barras): si allí cambia el margen,
+# esto lo sigue solo. SUELO_HABILIDADES es el respaldo si el panel no está.
 const ALTO_HABILIDADES: float = 96.0
-const SUELO_HABILIDADES: float = 106.0
+const SUELO_HABILIDADES: float = 70.0
 const ALTO_DRON: float = 52.0
 
 # Icono y color de cada habilidad de la Forja.
@@ -421,8 +422,13 @@ func _on_panel_desplegado(expandido: bool) -> void:
 # Sube la fila de habilidades y la píldora del dron por encima del panel de
 # mejoras cuando se despliega: está en una CanvasLayer posterior, así que las
 # tapaba justo cuando hacen falta. Se mueven con la misma animación del panel.
+func _suelo_barras() -> float:
+	if is_instance_valid(panel_mejoras):
+		return panel_mejoras.MARGEN_INFERIOR + panel_mejoras.ALTURA_BARRA + 8.0
+	return SUELO_HABILIDADES
+
 func _colocar_barras_inferiores(panel_abierto: bool, animar: bool) -> void:
-	var suelo := SUELO_HABILIDADES
+	var suelo := _suelo_barras()
 	if panel_abierto and is_instance_valid(panel_mejoras):
 		suelo += panel_mejoras.ALTURA_PANEL
 	var destinos: Array = []
