@@ -110,7 +110,7 @@ func _make_hero() -> Control:
 
 	var name_lbl := Label.new()
 	name_lbl.text = "CENTINELA"
-	name_lbl.add_theme_font_size_override("font_size", 20)
+	name_lbl.add_theme_font_size_override("font_size", MenuTheme.FS_HEADER)
 	name_lbl.add_theme_color_override("font_color", MenuTheme.TEXT_PRIMARY)
 	_apply_hud_font(name_lbl)
 
@@ -130,7 +130,7 @@ func _make_hero() -> Control:
 	badge_panel.add_theme_stylebox_override("panel", badge_style)
 	_hero_badge_lbl = Label.new()
 	_hero_badge_lbl.text = rango["nombre"]
-	_hero_badge_lbl.add_theme_font_size_override("font_size", 10)
+	_hero_badge_lbl.add_theme_font_size_override("font_size", MenuTheme.FS_TINY)
 	_hero_badge_lbl.add_theme_color_override("font_color", MenuTheme.GOLD)
 	_apply_hud_font(_hero_badge_lbl)
 	badge_panel.add_child(_hero_badge_lbl)
@@ -138,7 +138,7 @@ func _make_hero() -> Control:
 	_hero_rank_pts = Label.new()
 	var sig_txt := ("Asc. %d" % rango["siguiente"]) if rango["siguiente"] >= 0 else "MÁXIMO"
 	_hero_rank_pts.text = "Asc. %d → %s" % [em.mejor_ascension, sig_txt]
-	_hero_rank_pts.add_theme_font_size_override("font_size", 11)
+	_hero_rank_pts.add_theme_font_size_override("font_size", MenuTheme.FS_BODY)
 	_hero_rank_pts.add_theme_color_override("font_color", MenuTheme.TEXT_MUTED)
 	_hero_rank_pts.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	rank_row.add_child(badge_panel)
@@ -158,7 +158,7 @@ func _make_hero() -> Control:
 	_hero_xp_bar.add_theme_stylebox_override("fill", MenuTheme.make_progress_fill(MenuTheme.GOLD))
 	_hero_xp_lbl = Label.new()
 	_hero_xp_lbl.text = "%d%% rango" % int(prog_rango * 100.0)
-	_hero_xp_lbl.add_theme_font_size_override("font_size", 10)
+	_hero_xp_lbl.add_theme_font_size_override("font_size", MenuTheme.FS_TINY)
 	_hero_xp_lbl.add_theme_color_override("font_color", MenuTheme.TEXT_MUTED)
 	_apply_hud_font(_hero_xp_lbl)
 	xp_row.add_child(_hero_xp_bar)
@@ -186,7 +186,7 @@ func _make_pill(text: String, color: Color) -> Control:
 	panel.add_theme_stylebox_override("panel", style)
 	var lbl := Label.new()
 	lbl.text = text
-	lbl.add_theme_font_size_override("font_size", 10)
+	lbl.add_theme_font_size_override("font_size", MenuTheme.FS_TINY)
 	lbl.add_theme_color_override("font_color", color)
 	_apply_hud_font(lbl)
 	panel.add_child(lbl)
@@ -221,7 +221,7 @@ func _make_tab_button(tab: String, label: String) -> Button:
 	lbl.text = label
 	lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	lbl.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	lbl.add_theme_font_size_override("font_size", 11)
+	lbl.add_theme_font_size_override("font_size", MenuTheme.FS_BODY)
 	lbl.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	lbl.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	_apply_hud_font(lbl)
@@ -358,17 +358,17 @@ func _make_stat_row(symbol: String, label: String, value: String, color: Color) 
 	h.add_theme_constant_override("separation", 8)
 	var icon := Label.new()
 	icon.text = symbol
-	icon.add_theme_font_size_override("font_size", 16)
+	icon.add_theme_font_size_override("font_size", MenuTheme.FS_BODY + 2)
 	icon.custom_minimum_size = Vector2(20, 0)
 	icon.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	var name_lbl := Label.new()
 	name_lbl.text = label
 	name_lbl.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	name_lbl.add_theme_font_size_override("font_size", 14)
+	name_lbl.add_theme_font_size_override("font_size", MenuTheme.FS_SMALL)
 	name_lbl.add_theme_color_override("font_color", MenuTheme.TEXT_MUTED)
 	var val := Label.new()
 	val.text = value
-	val.add_theme_font_size_override("font_size", 14)
+	val.add_theme_font_size_override("font_size", MenuTheme.FS_SMALL)
 	val.add_theme_color_override("font_color", color)
 	_apply_hud_font(val)
 	h.add_child(icon)
@@ -434,12 +434,12 @@ func _make_achievement_card(id: String) -> Control:
 	var name_lbl := Label.new()
 	name_lbl.text = em.get_logro(id).get("nombre", id)
 	name_lbl.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	name_lbl.add_theme_font_size_override("font_size", 13)
+	name_lbl.add_theme_font_size_override("font_size", MenuTheme.FS_SMALL)
 	name_lbl.add_theme_color_override("font_color", MenuTheme.TEXT_PRIMARY)
 	_apply_hud_font(name_lbl)
 	var nivel_lbl := Label.new()
 	nivel_lbl.text = "Nv. %d/%d" % [nivel, total]
-	nivel_lbl.add_theme_font_size_override("font_size", 10)
+	nivel_lbl.add_theme_font_size_override("font_size", MenuTheme.FS_TINY)
 	nivel_lbl.add_theme_color_override("font_color", accent)
 	_apply_hud_font(nivel_lbl)
 	name_row.add_child(name_lbl)
@@ -447,7 +447,7 @@ func _make_achievement_card(id: String) -> Control:
 
 	var desc_lbl := Label.new()
 	desc_lbl.text = "Completado — máximo nivel" if completo else em.descripcion_actual(id)
-	desc_lbl.add_theme_font_size_override("font_size", 12)
+	desc_lbl.add_theme_font_size_override("font_size", MenuTheme.FS_SMALL)
 	desc_lbl.add_theme_color_override("font_color", MenuTheme.TEXT_MUTED)
 
 	var prog_row := HBoxContainer.new()
@@ -467,7 +467,7 @@ func _make_achievement_card(id: String) -> Control:
 	else:
 		var stat_val: int = em.get_stat(em.get_logro(id).get("stat", ""))
 		prog_lbl.text = "%s / %s" % [_miles(stat_val), _miles(em.objetivo_actual(id))]
-	prog_lbl.add_theme_font_size_override("font_size", 10)
+	prog_lbl.add_theme_font_size_override("font_size", MenuTheme.FS_TINY)
 	prog_lbl.add_theme_color_override("font_color", MenuTheme.TEXT_MUTED)
 	_apply_hud_font(prog_lbl)
 	prog_row.add_child(track)
@@ -484,7 +484,7 @@ func _make_achievement_card(id: String) -> Control:
 	var reward := Label.new()
 	reward.text = "—" if completo else "%s %s" % [MenuTheme.SYM_ECOS, _miles(em.reward_actual(id))]
 	reward.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-	reward.add_theme_font_size_override("font_size", 11)
+	reward.add_theme_font_size_override("font_size", MenuTheme.FS_BODY)
 	reward.add_theme_color_override("font_color", MenuTheme.GOLD)
 	_apply_hud_font(reward)
 
@@ -492,7 +492,7 @@ func _make_achievement_card(id: String) -> Control:
 	btn.flat = true
 	btn.focus_mode = Control.FOCUS_NONE
 	btn.custom_minimum_size = Vector2(80, 26)
-	btn.add_theme_font_size_override("font_size", 10)
+	btn.add_theme_font_size_override("font_size", MenuTheme.FS_TINY)
 	_apply_hud_font(btn)
 	if completo:
 		btn.text = "✓ MAX"
@@ -541,7 +541,7 @@ func _make_history_section() -> Control:
 	if runs.is_empty():
 		var lbl := Label.new()
 		lbl.text = "Aún no hay partidas registradas.\nJuega tu primera partida para ver el historial aquí."
-		lbl.add_theme_font_size_override("font_size", 14)
+		lbl.add_theme_font_size_override("font_size", MenuTheme.FS_SMALL)
 		lbl.add_theme_color_override("font_color", MenuTheme.TEXT_MUTED)
 		lbl.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -575,7 +575,7 @@ func _make_run_card(r: Dictionary) -> Control:
 	var asc_lbl := Label.new()
 	asc_lbl.text = "Ascensión %d" % asc_num
 	asc_lbl.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	asc_lbl.add_theme_font_size_override("font_size", 18)
+	asc_lbl.add_theme_font_size_override("font_size", MenuTheme.FS_BODY)
 	asc_lbl.add_theme_color_override("font_color", accent if es_record else MenuTheme.TEXT_PRIMARY)
 	_apply_hud_font(asc_lbl)
 	top.add_child(asc_lbl)
@@ -599,11 +599,11 @@ func _make_run_card(r: Dictionary) -> Control:
 	var causa_lbl := Label.new()
 	causa_lbl.text = _causa_texto(causa)
 	causa_lbl.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	causa_lbl.add_theme_font_size_override("font_size", 11)
+	causa_lbl.add_theme_font_size_override("font_size", MenuTheme.FS_BODY)
 	causa_lbl.add_theme_color_override("font_color", MenuTheme.TEXT_MUTED)
 	var fecha_lbl := Label.new()
 	fecha_lbl.text = _tiempo_relativo(r.get("ts", 0))
-	fecha_lbl.add_theme_font_size_override("font_size", 11)
+	fecha_lbl.add_theme_font_size_override("font_size", MenuTheme.FS_BODY)
 	fecha_lbl.add_theme_color_override("font_color", Color(MenuTheme.TEXT_MUTED.r, MenuTheme.TEXT_MUTED.g, MenuTheme.TEXT_MUTED.b, 0.6))
 	bottom.add_child(causa_lbl)
 	bottom.add_child(fecha_lbl)
@@ -648,13 +648,13 @@ func _make_run_stat(value: String, label: String, color: Color) -> Control:
 	var val := Label.new()
 	val.text = value
 	val.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	val.add_theme_font_size_override("font_size", 14)
+	val.add_theme_font_size_override("font_size", MenuTheme.FS_SMALL)
 	val.add_theme_color_override("font_color", color)
 	_apply_hud_font(val)
 	var lbl := Label.new()
 	lbl.text = label
 	lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	lbl.add_theme_font_size_override("font_size", 10)
+	lbl.add_theme_font_size_override("font_size", MenuTheme.FS_TINY)
 	lbl.add_theme_color_override("font_color", MenuTheme.TEXT_MUTED)
 	_apply_hud_font(lbl)
 	v.add_child(val)

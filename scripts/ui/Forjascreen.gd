@@ -81,75 +81,12 @@ func _build() -> void:
 # HEADER.
 # ------------------------------------------------------------
 func _make_header() -> Control:
-	var margin := MarginContainer.new()
-	margin.add_theme_constant_override("margin_left", 16)
-	margin.add_theme_constant_override("margin_right", 16)
-	margin.add_theme_constant_override("margin_top", 12)
-
-	var h := HBoxContainer.new()
-	margin.add_child(h)
-
-	var tb := VBoxContainer.new()
-	tb.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	tb.add_theme_constant_override("separation", 2)
-	var eyebrow := Label.new()
-	eyebrow.text = "HABILIDADES MANUALES"
-	eyebrow.add_theme_font_size_override("font_size", 10)
-	eyebrow.add_theme_color_override("font_color", MenuTheme.TEXT_MUTED)
-	_apply_hud_font(eyebrow)
-	var title := Label.new()
-	title.text = "FORJA"
-	title.add_theme_font_size_override("font_size", 26)
-	title.add_theme_color_override("font_color", MenuTheme.FRAG)
-	_apply_hud_font(title)
-	tb.add_child(eyebrow)
-	tb.add_child(title)
-	h.add_child(tb)
-
-	h.add_child(_make_frag_pill())
-	return margin
-
-
-func _make_frag_pill() -> Control:
-	var v := VBoxContainer.new()
-	v.alignment = BoxContainer.ALIGNMENT_END
-	var lbl := Label.new()
-	lbl.text = "FRAGMENTOS"
-	lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-	lbl.add_theme_font_size_override("font_size", 10)
-	lbl.add_theme_color_override("font_color", MenuTheme.TEXT_MUTED)
-	_apply_hud_font(lbl)
-
-	var pill := PanelContainer.new()
-	var style := StyleBoxFlat.new()
-	style.bg_color = Color(MenuTheme.FRAG.r, MenuTheme.FRAG.g, MenuTheme.FRAG.b, 0.08)
-	style.border_color = Color(MenuTheme.FRAG.r, MenuTheme.FRAG.g, MenuTheme.FRAG.b, 0.28)
-	style.set_border_width_all(1)
-	style.set_corner_radius_all(20)
-	style.content_margin_left = 10
-	style.content_margin_right = 10
-	style.content_margin_top = 4
-	style.content_margin_bottom = 4
-	pill.add_theme_stylebox_override("panel", style)
-
-	var ph := HBoxContainer.new()
-	ph.add_theme_constant_override("separation", 5)
-	var icon := Label.new()
-	icon.text = MenuTheme.SYM_FRAG
-	icon.add_theme_font_size_override("font_size", 15)
-	icon.add_theme_color_override("font_color", MenuTheme.FRAG)
-	_lbl_frag = Label.new()
+	# La cabecera (linea + titulo + pildora) es comun a las seis pantallas del
+	# menu y vive en CabeceraMenu, ya con los tamanos de MenuTheme.
+	var pildora: Array = CabeceraMenu.pildora("FRAGMENTOS", IconoVec.Forma.ROMBO, MenuTheme.FRAG)
+	_lbl_frag = pildora[1]
 	_lbl_frag.text = _format_number(_leer_frag())
-	_lbl_frag.add_theme_font_size_override("font_size", 16)
-	_lbl_frag.add_theme_color_override("font_color", MenuTheme.FRAG)
-	_apply_hud_font(_lbl_frag)
-	ph.add_child(icon)
-	ph.add_child(_lbl_frag)
-	pill.add_child(ph)
-
-	v.add_child(lbl)
-	v.add_child(pill)
-	return v
+	return CabeceraMenu.crear("HABILIDADES MANUALES", "FORJA", MenuTheme.FRAG, pildora[0])
 
 
 # ------------------------------------------------------------
@@ -179,7 +116,7 @@ func _make_tab_button(cat: String) -> Button:
 	lbl.text = CAT_LABEL[cat]
 	lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	lbl.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	lbl.add_theme_font_size_override("font_size", 11)
+	lbl.add_theme_font_size_override("font_size", MenuTheme.FS_BODY)
 	lbl.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	lbl.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	_apply_hud_font(lbl)
@@ -403,7 +340,7 @@ func _make_toggle_button(id: String, accent: Color) -> Control:
 	btn.focus_mode = Control.FOCUS_NONE
 	btn.custom_minimum_size = Vector2(0, 30)
 	btn.text = "✓ ACTIVA  (en partida)" if activa else "INACTIVA  (toca para activar)"
-	btn.add_theme_font_size_override("font_size", 11)
+	btn.add_theme_font_size_override("font_size", MenuTheme.FS_SMALL)
 	var col: Color = accent if activa else MenuTheme.TEXT_MUTED
 	btn.add_theme_color_override("font_color", col)
 	btn.add_theme_stylebox_override("normal", MenuTheme.make_button_style(col, activa))

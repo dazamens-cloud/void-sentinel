@@ -164,13 +164,13 @@ func _make_header() -> Control:
 
 	var eyebrow := Label.new()
 	eyebrow.text = "MEJORAS PERMANENTES"
-	eyebrow.add_theme_font_size_override("font_size", 10)
+	eyebrow.add_theme_font_size_override("font_size", MenuTheme.FS_TINY)
 	eyebrow.add_theme_color_override("font_color", MenuTheme.TEXT_MUTED)
 	_apply_hud_font(eyebrow)
 
 	var title := Label.new()
 	title.text = "NEXO"
-	title.add_theme_font_size_override("font_size", 26)
+	title.add_theme_font_size_override("font_size", MenuTheme.FS_TITLE)
 	title.add_theme_color_override("font_color", MenuTheme.CYAN)
 	_apply_hud_font(title)
 
@@ -190,7 +190,7 @@ func _make_balance_pill() -> Control:
 	var lbl := Label.new()
 	lbl.text = "ECOS"
 	lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-	lbl.add_theme_font_size_override("font_size", 10)
+	lbl.add_theme_font_size_override("font_size", MenuTheme.FS_TINY)
 	lbl.add_theme_color_override("font_color", MenuTheme.TEXT_MUTED)
 	_apply_hud_font(lbl)
 
@@ -211,12 +211,12 @@ func _make_balance_pill() -> Control:
 
 	var icon := Label.new()
 	icon.text = MenuTheme.SYM_ECOS
-	icon.add_theme_font_size_override("font_size", 15)
+	icon.add_theme_font_size_override("font_size", MenuTheme.FS_BODY)
 	icon.add_theme_color_override("font_color", MenuTheme.CYAN)
 
 	_lbl_ecos = Label.new()
 	_lbl_ecos.text = _format_number(_get_ecos())
-	_lbl_ecos.add_theme_font_size_override("font_size", 16)
+	_lbl_ecos.add_theme_font_size_override("font_size", MenuTheme.FS_BODY + 2)
 	_lbl_ecos.add_theme_color_override("font_color", MenuTheme.CYAN)
 	_apply_hud_font(_lbl_ecos)
 
@@ -387,7 +387,7 @@ func _make_section_heading(cat: String) -> Control:
 
 	var label := Label.new()
 	label.text = CAT_LABELS[cat]
-	label.add_theme_font_size_override("font_size", 11)
+	label.add_theme_font_size_override("font_size", MenuTheme.FS_BODY)
 	label.add_theme_color_override("font_color", color)
 	_apply_hud_font(label)
 

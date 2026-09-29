@@ -77,12 +77,12 @@ func _make_header() -> Control:
 	tb.add_theme_constant_override("separation", 2)
 	var eyebrow := Label.new()
 	eyebrow.text = "RECURSOS Y MEJORAS"
-	eyebrow.add_theme_font_size_override("font_size", 10)
+	eyebrow.add_theme_font_size_override("font_size", MenuTheme.FS_TINY)
 	eyebrow.add_theme_color_override("font_color", MenuTheme.TEXT_MUTED)
 	_apply_hud_font(eyebrow)
 	var title := Label.new()
 	title.text = "TIENDA"
-	title.add_theme_font_size_override("font_size", 26)
+	title.add_theme_font_size_override("font_size", MenuTheme.FS_TITLE)
 	title.add_theme_color_override("font_color", MAGENTA)
 	_apply_hud_font(title)
 	tb.add_child(eyebrow)
@@ -95,7 +95,7 @@ func _make_header() -> Control:
 	var lbl := Label.new()
 	lbl.text = "GEMAS"
 	lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-	lbl.add_theme_font_size_override("font_size", 10)
+	lbl.add_theme_font_size_override("font_size", MenuTheme.FS_TINY)
 	lbl.add_theme_color_override("font_color", MenuTheme.TEXT_MUTED)
 	_apply_hud_font(lbl)
 	var pill := PanelContainer.new()
@@ -113,11 +113,11 @@ func _make_header() -> Control:
 	ph.add_theme_constant_override("separation", 5)
 	var icon := Label.new()
 	icon.text = MenuTheme.SYM_GEM
-	icon.add_theme_font_size_override("font_size", 15)
+	icon.add_theme_font_size_override("font_size", MenuTheme.FS_BODY)
 	icon.add_theme_color_override("font_color", MAGENTA)
 	_lbl_gems = Label.new()
 	_lbl_gems.text = _format_number(_gems)
-	_lbl_gems.add_theme_font_size_override("font_size", 16)
+	_lbl_gems.add_theme_font_size_override("font_size", MenuTheme.FS_BODY + 2)
 	_lbl_gems.add_theme_color_override("font_color", MAGENTA)
 	_apply_hud_font(_lbl_gems)
 	ph.add_child(icon)
@@ -157,7 +157,7 @@ func _make_tab_button(tab: String, label: String) -> Button:
 	lbl.text = label
 	lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	lbl.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	lbl.add_theme_font_size_override("font_size", 11)
+	lbl.add_theme_font_size_override("font_size", MenuTheme.FS_BODY)
 	lbl.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	lbl.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	_apply_hud_font(lbl)
@@ -231,16 +231,16 @@ func _make_daily_banner() -> Control:
 	info.add_theme_constant_override("separation", 3)
 	var lbl := Label.new()
 	lbl.text = "RECOMPENSA DIARIA"
-	lbl.add_theme_font_size_override("font_size", 10)
+	lbl.add_theme_font_size_override("font_size", MenuTheme.FS_TINY)
 	lbl.add_theme_color_override("font_color", MenuTheme.GREEN)
 	_apply_hud_font(lbl)
 	var t := Label.new()
 	t.text = "Ver un anuncio gratis"
-	t.add_theme_font_size_override("font_size", 16)
+	t.add_theme_font_size_override("font_size", MenuTheme.FS_BODY + 2)
 	t.add_theme_color_override("font_color", MenuTheme.TEXT_PRIMARY)
 	var timer := Label.new()
 	timer.text = "Siguiente en 17h 24m"
-	timer.add_theme_font_size_override("font_size", 11)
+	timer.add_theme_font_size_override("font_size", MenuTheme.FS_BODY)
 	timer.add_theme_color_override("font_color", MenuTheme.TEXT_MUTED)
 	_apply_hud_font(timer)
 	info.add_child(lbl)
@@ -252,7 +252,7 @@ func _make_daily_banner() -> Control:
 	btn.flat = true
 	btn.focus_mode = Control.FOCUS_NONE
 	btn.text = "+5 " + MenuTheme.SYM_GEM
-	btn.add_theme_font_size_override("font_size", 15)
+	btn.add_theme_font_size_override("font_size", MenuTheme.FS_BODY)
 	btn.add_theme_color_override("font_color", MAGENTA)
 	btn.add_theme_stylebox_override("normal", MenuTheme.make_button_style(MenuTheme.GREEN, true))
 	btn.add_theme_stylebox_override("hover", MenuTheme.make_button_style(MenuTheme.GREEN, true))
@@ -312,7 +312,7 @@ func _make_gem_pack(amount: String, bonus: String, price: String, best: bool) ->
 	var icon := Label.new()
 	icon.text = MenuTheme.SYM_GEM
 	icon.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	icon.add_theme_font_size_override("font_size", 44)
+	icon.add_theme_font_size_override("font_size", MenuTheme.FS_TITLE + 12)
 	icon.add_theme_color_override("font_color", MAGENTA)
 	var amt := Label.new()
 	amt.text = amount
@@ -388,18 +388,18 @@ func _make_resource_card(nombre: String, sym: String, desc: String, color: Color
 	head.add_theme_constant_override("separation", 8)
 	var icon := Label.new()
 	icon.text = sym
-	icon.add_theme_font_size_override("font_size", 26)
+	icon.add_theme_font_size_override("font_size", MenuTheme.FS_TITLE)
 	icon.add_theme_color_override("font_color", color)
 	var titles := VBoxContainer.new()
 	titles.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	var name_lbl := Label.new()
 	name_lbl.text = nombre
-	name_lbl.add_theme_font_size_override("font_size", 12)
+	name_lbl.add_theme_font_size_override("font_size", MenuTheme.FS_SMALL)
 	name_lbl.add_theme_color_override("font_color", color)
 	_apply_hud_font(name_lbl)
 	var desc_lbl := Label.new()
 	desc_lbl.text = desc
-	desc_lbl.add_theme_font_size_override("font_size", 12)
+	desc_lbl.add_theme_font_size_override("font_size", MenuTheme.FS_SMALL)
 	desc_lbl.add_theme_color_override("font_color", MenuTheme.TEXT_MUTED)
 	titles.add_child(name_lbl)
 	titles.add_child(desc_lbl)
@@ -436,13 +436,13 @@ func _make_tier_button(amount: String, cost: int, color: Color) -> Button:
 	var amt := Label.new()
 	amt.text = amount
 	amt.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	amt.add_theme_font_size_override("font_size", 12)
+	amt.add_theme_font_size_override("font_size", MenuTheme.FS_SMALL)
 	amt.add_theme_color_override("font_color", color)
 	_apply_hud_font(amt)
 	var pr := Label.new()
 	pr.text = "%d %s" % [cost, MenuTheme.SYM_GEM]
 	pr.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	pr.add_theme_font_size_override("font_size", 10)
+	pr.add_theme_font_size_override("font_size", MenuTheme.FS_TINY)
 	pr.add_theme_color_override("font_color", MenuTheme.TEXT_MUTED)
 	_apply_hud_font(pr)
 	v.add_child(amt)
@@ -508,14 +508,14 @@ func _make_bundle(tier: String, tier_name: String, nombre: String, price: String
 	badge.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
 	var blbl := Label.new()
 	blbl.text = tier_name.to_upper()
-	blbl.add_theme_font_size_override("font_size", 7)
+	blbl.add_theme_font_size_override("font_size", MenuTheme.FS_TINY - 3)
 	blbl.add_theme_color_override("font_color", accent)
 	_apply_hud_font(blbl)
 	badge.add_child(blbl)
 
 	var name_lbl := Label.new()
 	name_lbl.text = nombre
-	name_lbl.add_theme_font_size_override("font_size", 15)
+	name_lbl.add_theme_font_size_override("font_size", MenuTheme.FS_BODY)
 	name_lbl.add_theme_color_override("font_color", MenuTheme.TEXT_PRIMARY)
 	_apply_hud_font(name_lbl)
 
@@ -525,7 +525,7 @@ func _make_bundle(tier: String, tier_name: String, nombre: String, price: String
 	for c in contents:
 		var cpill := Label.new()
 		cpill.text = c
-		cpill.add_theme_font_size_override("font_size", 10)
+		cpill.add_theme_font_size_override("font_size", MenuTheme.FS_TINY)
 		cpill.add_theme_color_override("font_color", MenuTheme.TEXT_MUTED)
 		_apply_hud_font(cpill)
 		contents_flow.add_child(cpill)
@@ -543,21 +543,21 @@ func _make_bundle(tier: String, tier_name: String, nombre: String, price: String
 		var old := Label.new()
 		old.text = old_price
 		old.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-		old.add_theme_font_size_override("font_size", 11)
+		old.add_theme_font_size_override("font_size", MenuTheme.FS_BODY)
 		old.add_theme_color_override("font_color", MenuTheme.TEXT_MUTED)
 		_apply_hud_font(old)
 		right.add_child(old)
 	var pr := Label.new()
 	pr.text = price
 	pr.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-	pr.add_theme_font_size_override("font_size", 18)
+	pr.add_theme_font_size_override("font_size", MenuTheme.FS_BODY)
 	pr.add_theme_color_override("font_color", accent)
 	_apply_hud_font(pr)
 	var btn := Button.new()
 	btn.flat = true
 	btn.focus_mode = Control.FOCUS_NONE
 	btn.text = "Comprar"
-	btn.add_theme_font_size_override("font_size", 11)
+	btn.add_theme_font_size_override("font_size", MenuTheme.FS_BODY)
 	btn.add_theme_color_override("font_color", accent)
 	btn.add_theme_stylebox_override("normal", MenuTheme.make_button_style(accent))
 	btn.add_theme_stylebox_override("hover", MenuTheme.make_button_style(accent, true))
