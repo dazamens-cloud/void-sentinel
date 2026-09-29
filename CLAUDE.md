@@ -46,7 +46,7 @@ No aplican aquí y se pueden ignorar: multiplayer, XR, 3D, GDExtension, C#, dedi
 Casi todos los bugs de este proyecto eran **invisibles leyendo el código**: compilaban sin
 una queja. Lo que los saca es ejecutar y mirar.
 
-251 comprobaciones en cinco baterías (`tools/tests/`):
+254 comprobaciones en cinco baterías (`tools/tests/`):
 
 ```powershell
 powershell -File tools\tests\ejecutar-pruebas.ps1
@@ -122,6 +122,6 @@ cualquier densidad y el color va por parámetro.
 
 ## Ramas
 
-Rama actual: `feat/ui-escala-mockup`, que sale de `fix/panel-mejoras` (PR #1 abierto) con
-19 commits encima. **Está pendiente decidir cómo juntarlas** — preguntar antes de hacer
-nada que dé por resuelto ese cruce.
+**Una sola rama viva: `main`.** El 2026-09-30 se fusionaron ahí `fix/panel-mejoras` (PR #1)
+y `feat/ui-escala-mockup` en avance directo, y se borraron. Quedan `fix/bugs-fases-1-6` y
+`nombres-cambiados`, viejas y ya contenidas en `main`: no aportan nada.
