@@ -11,18 +11,20 @@ de feedback dentro del juego. Cualquiera con el enlace puede instalarla y opinar
 
 ## 1. Juego
 
-- [ ] **Menú a escala**: Forja, Perfil, Tienda, Lab y Misiones siguen con pestañas a 11 px
+- [x] **Menú a escala**: Forja, Perfil, Tienda, Lab y Misiones siguen con pestañas a 11 px
       y cabeceras a 10/26 px sin escalar. Es el último resto del rediseño.
 - [ ] **Lab y Misiones**: solo tienen el escalado global, sin repasar pantalla a pantalla.
 - [ ] **Modal de información del panel de mejoras**: verificado en PC, falta en el móvil.
 - [ ] **Fondos**: mejorar los de partida y menú. Es el único trabajo de arte de la beta;
       el resto de placeholders se quedan.
-- [ ] **Cero de Orbitron**: decidir si se cambia por Rajdhani. Con estadísticas a 0 la
+- [x] **Cero de Orbitron**: decidir si se cambia por Rajdhani. Con estadísticas a 0 la
       pantalla parece rota sin estarlo.
 
 ## 2. Pruebas y balance
 
-- [ ] **Cubrir lo que no tiene pruebas**: Dron, Commander, tutorial y disparos especiales.
+- [x] **Cubrir lo que no tiene pruebas**: Dron, Commander, tutorial y disparos especiales.
+      Hecho en `TestPartida` (25 comprobaciones): recarga y tope de disparos, Commander que
+      muere frente a Commander que escapa, depósito del dron y flag del tutorial.
 - [ ] **Simulador de balance headless**: que juegue cientos de partidas y saque curvas de
       tiempo por ascensión, causas de muerte y economía. Hoy "partida larga / balance real"
       es el único ❓ grande del estado del proyecto y se puede medir sin jugar.

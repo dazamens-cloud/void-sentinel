@@ -46,7 +46,7 @@ No aplican aquí y se pueden ignorar: multiplayer, XR, 3D, GDExtension, C#, dedi
 Casi todos los bugs de este proyecto eran **invisibles leyendo el código**: compilaban sin
 una queja. Lo que los saca es ejecutar y mirar.
 
-254 comprobaciones en cinco baterías (`tools/tests/`):
+279 comprobaciones en seis baterías (`tools/tests/`):
 
 ```powershell
 powershell -File tools\tests\ejecutar-pruebas.ps1
@@ -117,7 +117,7 @@ cualquier densidad y el color va por parámetro.
 | `scripts/ui/MenuTheme.gd` | Escalado y estilo del menú |
 | `scripts/ui/IconoVec.gd` | Los 18 iconos vectoriales |
 | `scripts/utils/EscaladoEnemigos.gd` | Fuente única de la dificultad |
-| `tools/tests/` | Cinco baterías y su runner |
+| `tools/tests/` | Seis baterías y su runner |
 | `tools/UiTester.gd` | Capturas automáticas |
 
 ## Ramas

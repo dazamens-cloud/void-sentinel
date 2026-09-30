@@ -32,7 +32,7 @@ if (Test-Path $userDir) {
 }
 
 # ── Pruebas ─────────────────────────────────────────
-$suites = @('TestSistemas', 'TestPantallas', 'TestCombate', 'TestProgresion', 'TestHUD')
+$suites = @('TestSistemas', 'TestPantallas', 'TestCombate', 'TestProgresion', 'TestHUD', 'TestPartida')
 $fallos = 0
 
 foreach ($s in $suites) {
