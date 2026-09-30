@@ -312,9 +312,8 @@ func _make_card(id: String, data: Dictionary, accent: Color) -> Control:
 	btn.focus_mode = Control.FOCUS_NONE
 	btn.custom_minimum_size = Vector2(0, 38)
 	btn.add_theme_font_size_override("font_size", MenuTheme.FS_BODY)
-	var f := MenuTheme.get_font_hud()
-	if f:
-		btn.add_theme_font_override("font", f)
+	# Lleva coste y tiempo ("INVESTIGAR 200 ... 5m 00s"): fuente de cuerpo.
+	MenuTheme.aplicar_fuente_cifra(btn)
 	btn.pressed.connect(_on_investigar.bind(id))
 	v.add_child(btn)
 
@@ -343,8 +342,8 @@ func _make_card(id: String, data: Dictionary, accent: Color) -> Control:
 	var btn_acel := Button.new()
 	btn_acel.focus_mode = Control.FOCUS_NONE
 	btn_acel.add_theme_font_size_override("font_size", MenuTheme.FS_SMALL)
-	if f:
-		btn_acel.add_theme_font_override("font", f)
+	# Lleva el coste en fragmentos: fuente de cuerpo.
+	MenuTheme.aplicar_fuente_cifra(btn_acel)
 	btn_acel.add_theme_stylebox_override("normal", MenuTheme.make_button_style(MenuTheme.VIOLET))
 	btn_acel.add_theme_stylebox_override("hover", MenuTheme.make_button_style(MenuTheme.VIOLET, true))
 	btn_acel.add_theme_stylebox_override("pressed", MenuTheme.make_button_style(MenuTheme.VIOLET, true))

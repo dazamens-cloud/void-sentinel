@@ -54,15 +54,16 @@ const R_LEGENDARIO := Color("ffd740")
 
 # ============================================================
 # TAMANOS DE FUENTE (px)
-# Escalados x1.85 respecto al mockup HTML: aquel se diseno para 390 px de
+# Escalados x1.85 respecto al mockup HTML y subidos un punto (+2 px) a
+# peticion del usuario tras verlo en el movil.: aquel se diseno para 390 px de
 # ancho y el viewport del juego son 720, asi que copiarlos literales dejaba
 # todo el menu a poco mas de la mitad de tamano.
 # ============================================================
-const FS_TITLE   := 40
-const FS_HEADER  := 30
-const FS_BODY    := 22
-const FS_SMALL   := 18
-const FS_TINY    := 15
+const FS_TITLE   := 42
+const FS_HEADER  := 32
+const FS_BODY    := 24
+const FS_SMALL   := 20
+const FS_TINY    := 17
 
 
 # ============================================================

@@ -385,7 +385,7 @@ func _make_mejora_row(id: String, mid: String, accent: Color) -> Control:
 	btn.focus_mode = Control.FOCUS_NONE
 	btn.custom_minimum_size = Vector2(96, 28)
 	btn.add_theme_font_size_override("font_size", MenuTheme.FS_SMALL)
-	_apply_hud_font(btn)
+	MenuTheme.aplicar_fuente_cifra(btn)
 	if es_max:
 		btn.text = "✓" if es_toggle else "MAX"
 		btn.add_theme_color_override("font_color", MenuTheme.GOLD)

@@ -41,11 +41,16 @@ var color: Color = Color.WHITE
 var grosor: float = 2.0
 
 
+# Los iconos acompanan a la subida de tamano de las fuentes (MenuTheme): se
+# escalan aqui para no tener que tocar las decenas de llamadas.
+const ESCALA: float = 1.12
+
+
 static func crear(f: Forma, tam: float, c: Color) -> IconoVec:
 	var ic := IconoVec.new()
 	ic.forma = f
 	ic.color = c
-	ic.custom_minimum_size = Vector2(tam, tam)
+	ic.custom_minimum_size = Vector2(tam, tam) * ESCALA
 	ic.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	return ic
 
