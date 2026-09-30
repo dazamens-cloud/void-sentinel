@@ -119,7 +119,7 @@ func _make_header() -> Control:
 	_lbl_gems.text = _format_number(_gems)
 	_lbl_gems.add_theme_font_size_override("font_size", MenuTheme.FS_BODY + 2)
 	_lbl_gems.add_theme_color_override("font_color", MAGENTA)
-	_apply_hud_font(_lbl_gems)
+	MenuTheme.aplicar_fuente_cifra(_lbl_gems)
 	ph.add_child(icon)
 	ph.add_child(_lbl_gems)
 	pill.add_child(ph)
@@ -319,7 +319,7 @@ func _make_gem_pack(amount: String, bonus: String, price: String, best: bool) ->
 	amt.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	amt.add_theme_font_size_override("font_size", MenuTheme.FS_HEADER)
 	amt.add_theme_color_override("font_color", MAGENTA)
-	_apply_hud_font(amt)
+	MenuTheme.aplicar_fuente_cifra(amt)
 	var bon := Label.new()
 	bon.text = bonus if bonus != "" else " "
 	bon.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -331,7 +331,7 @@ func _make_gem_pack(amount: String, bonus: String, price: String, best: bool) ->
 	pr.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	pr.add_theme_font_size_override("font_size", MenuTheme.FS_SMALL)
 	pr.add_theme_color_override("font_color", MenuTheme.GOLD)
-	_apply_hud_font(pr)
+	MenuTheme.aplicar_fuente_cifra(pr)
 
 	v.add_child(icon)
 	v.add_child(amt)
@@ -438,13 +438,13 @@ func _make_tier_button(amount: String, cost: int, color: Color) -> Button:
 	amt.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	amt.add_theme_font_size_override("font_size", MenuTheme.FS_SMALL)
 	amt.add_theme_color_override("font_color", color)
-	_apply_hud_font(amt)
+	MenuTheme.aplicar_fuente_cifra(amt)
 	var pr := Label.new()
 	pr.text = "%d %s" % [cost, MenuTheme.SYM_GEM]
 	pr.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	pr.add_theme_font_size_override("font_size", MenuTheme.FS_TINY)
 	pr.add_theme_color_override("font_color", MenuTheme.TEXT_MUTED)
-	_apply_hud_font(pr)
+	MenuTheme.aplicar_fuente_cifra(pr)
 	v.add_child(amt)
 	v.add_child(pr)
 	btn.add_child(v)
@@ -545,14 +545,14 @@ func _make_bundle(tier: String, tier_name: String, nombre: String, price: String
 		old.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 		old.add_theme_font_size_override("font_size", MenuTheme.FS_BODY)
 		old.add_theme_color_override("font_color", MenuTheme.TEXT_MUTED)
-		_apply_hud_font(old)
+		MenuTheme.aplicar_fuente_cifra(old)
 		right.add_child(old)
 	var pr := Label.new()
 	pr.text = price
 	pr.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	pr.add_theme_font_size_override("font_size", MenuTheme.FS_BODY)
 	pr.add_theme_color_override("font_color", accent)
-	_apply_hud_font(pr)
+	MenuTheme.aplicar_fuente_cifra(pr)
 	var btn := Button.new()
 	btn.flat = true
 	btn.focus_mode = Control.FOCUS_NONE

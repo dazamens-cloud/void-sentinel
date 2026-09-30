@@ -218,7 +218,7 @@ func _make_balance_pill() -> Control:
 	_lbl_ecos.text = _format_number(_get_ecos())
 	_lbl_ecos.add_theme_font_size_override("font_size", MenuTheme.FS_BODY + 2)
 	_lbl_ecos.add_theme_color_override("font_color", MenuTheme.CYAN)
-	_apply_hud_font(_lbl_ecos)
+	MenuTheme.aplicar_fuente_cifra(_lbl_ecos)
 
 	ph.add_child(icon)
 	ph.add_child(_lbl_ecos)
@@ -474,7 +474,7 @@ func _make_upgrade_card(id: String, data: Dictionary, cat: String) -> Control:
 
 	var lvl_lbl := Label.new()
 	lvl_lbl.add_theme_font_size_override("font_size", MenuTheme.FS_TINY)
-	_apply_hud_font(lvl_lbl)
+	MenuTheme.aplicar_fuente_cifra(lvl_lbl)
 
 	prog_row.add_child(track)
 	prog_row.add_child(lvl_lbl)
@@ -500,7 +500,7 @@ func _make_upgrade_card(id: String, data: Dictionary, cat: String) -> Control:
 	value_lbl.add_theme_font_size_override("font_size", MenuTheme.FS_BODY)
 	value_lbl.add_theme_color_override("font_color", accent)
 	value_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-	_apply_hud_font(value_lbl)
+	MenuTheme.aplicar_fuente_cifra(value_lbl)
 
 	# La unidad va aparte, mas pequena y apagada: asi la cifra destaca.
 	var unit_lbl := Label.new()

@@ -99,6 +99,15 @@ static func get_font_hud() -> Font:
 		return load(path)
 	return null
 
+# Las CIFRAS van en la fuente de cuerpo, nunca en Orbitron: su cero es un
+# rectangulo con barra diagonal, casi identico al glifo de "caracter no
+# soportado", y con estadisticas a 0 la pantalla parece rota sin estarlo.
+static func aplicar_fuente_cifra(ctrl: Control) -> void:
+	var f := get_font_body()
+	if f:
+		ctrl.add_theme_font_override("font", f)
+
+
 static func get_font_body() -> Font:
 	var path := "res://fonts/Rajdhani.ttf"
 	if ResourceLoader.exists(path):

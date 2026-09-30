@@ -162,7 +162,7 @@ func _make_header() -> Control:
 	_lbl_slots.text = ""
 	_lbl_slots.add_theme_font_size_override("font_size", MenuTheme.FS_SMALL)
 	_lbl_slots.add_theme_color_override("font_color", MenuTheme.TEXT_MUTED)
-	_apply_hud_font(_lbl_slots)
+	MenuTheme.aplicar_fuente_cifra(_lbl_slots)
 
 	titleblock.add_child(eyebrow)
 	titleblock.add_child(title)
@@ -185,7 +185,7 @@ func _make_header() -> Control:
 	_lbl_ecos.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	_lbl_ecos.add_theme_font_size_override("font_size", MenuTheme.FS_HEADER)
 	_lbl_ecos.add_theme_color_override("font_color", MenuTheme.CYAN)
-	_apply_hud_font(_lbl_ecos)
+	MenuTheme.aplicar_fuente_cifra(_lbl_ecos)
 
 	v.add_child(lbl)
 	v.add_child(_lbl_ecos)
@@ -287,7 +287,7 @@ func _make_card(id: String, data: Dictionary, accent: Color) -> Control:
 	var nivel := Label.new()
 	nivel.add_theme_font_size_override("font_size", MenuTheme.FS_BODY)
 	nivel.add_theme_color_override("font_color", accent)
-	_apply_hud_font(nivel)
+	MenuTheme.aplicar_fuente_cifra(nivel)
 
 	fila1.add_child(nombre)
 	fila1.add_child(nivel)
@@ -338,7 +338,7 @@ func _make_card(id: String, data: Dictionary, accent: Color) -> Control:
 	tiempo.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	tiempo.add_theme_font_size_override("font_size", MenuTheme.FS_SMALL)
 	tiempo.add_theme_color_override("font_color", accent)
-	_apply_hud_font(tiempo)
+	MenuTheme.aplicar_fuente_cifra(tiempo)
 
 	var btn_acel := Button.new()
 	btn_acel.focus_mode = Control.FOCUS_NONE

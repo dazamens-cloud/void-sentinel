@@ -226,7 +226,7 @@ func _make_stat_with_label(value_lbl: Label, label: String, color: Color) -> Con
 	value_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	value_lbl.add_theme_font_size_override("font_size", 26)
 	value_lbl.add_theme_color_override("font_color", color)
-	_apply_hud_font(value_lbl)
+	MenuTheme.aplicar_fuente_cifra(value_lbl)
 
 	var lbl := Label.new()
 	lbl.text = label
@@ -534,7 +534,7 @@ func _make_mini_stat_with_label(val: Label, value: String, label: String) -> Con
 	val.text = value
 	val.add_theme_font_size_override("font_size", 20)
 	val.add_theme_color_override("font_color", MenuTheme.TEXT_PRIMARY)
-	_apply_hud_font(val)
+	MenuTheme.aplicar_fuente_cifra(val)
 	var lbl := Label.new()
 	lbl.text = label
 	lbl.add_theme_font_size_override("font_size", 14)

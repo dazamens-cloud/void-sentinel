@@ -160,7 +160,7 @@ func _make_hero() -> Control:
 	_hero_xp_lbl.text = "%d%% rango" % int(prog_rango * 100.0)
 	_hero_xp_lbl.add_theme_font_size_override("font_size", MenuTheme.FS_TINY)
 	_hero_xp_lbl.add_theme_color_override("font_color", MenuTheme.TEXT_MUTED)
-	_apply_hud_font(_hero_xp_lbl)
+	MenuTheme.aplicar_fuente_cifra(_hero_xp_lbl)
 	xp_row.add_child(_hero_xp_bar)
 	xp_row.add_child(_hero_xp_lbl)
 
@@ -328,7 +328,7 @@ func _make_big_stat(value: String, label: String, sub: String, color: Color, ico
 	val.text = value
 	val.add_theme_font_size_override("font_size", MenuTheme.FS_TITLE - 6)
 	val.add_theme_color_override("font_color", color)
-	_apply_hud_font(val)
+	MenuTheme.aplicar_fuente_cifra(val)
 	var lbl := Label.new()
 	lbl.text = label
 	lbl.add_theme_font_size_override("font_size", MenuTheme.FS_TINY)
@@ -370,7 +370,7 @@ func _make_stat_row(symbol: String, label: String, value: String, color: Color) 
 	val.text = value
 	val.add_theme_font_size_override("font_size", MenuTheme.FS_SMALL)
 	val.add_theme_color_override("font_color", color)
-	_apply_hud_font(val)
+	MenuTheme.aplicar_fuente_cifra(val)
 	h.add_child(icon)
 	h.add_child(name_lbl)
 	h.add_child(val)
@@ -441,7 +441,7 @@ func _make_achievement_card(id: String) -> Control:
 	nivel_lbl.text = "Nv. %d/%d" % [nivel, total]
 	nivel_lbl.add_theme_font_size_override("font_size", MenuTheme.FS_TINY)
 	nivel_lbl.add_theme_color_override("font_color", accent)
-	_apply_hud_font(nivel_lbl)
+	MenuTheme.aplicar_fuente_cifra(nivel_lbl)
 	name_row.add_child(name_lbl)
 	name_row.add_child(nivel_lbl)
 
@@ -469,7 +469,7 @@ func _make_achievement_card(id: String) -> Control:
 		prog_lbl.text = "%s / %s" % [_miles(stat_val), _miles(em.objetivo_actual(id))]
 	prog_lbl.add_theme_font_size_override("font_size", MenuTheme.FS_TINY)
 	prog_lbl.add_theme_color_override("font_color", MenuTheme.TEXT_MUTED)
-	_apply_hud_font(prog_lbl)
+	MenuTheme.aplicar_fuente_cifra(prog_lbl)
 	prog_row.add_child(track)
 	prog_row.add_child(prog_lbl)
 
@@ -486,7 +486,7 @@ func _make_achievement_card(id: String) -> Control:
 	reward.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	reward.add_theme_font_size_override("font_size", MenuTheme.FS_BODY)
 	reward.add_theme_color_override("font_color", MenuTheme.GOLD)
-	_apply_hud_font(reward)
+	MenuTheme.aplicar_fuente_cifra(reward)
 
 	var btn := Button.new()
 	btn.flat = true
@@ -577,7 +577,7 @@ func _make_run_card(r: Dictionary) -> Control:
 	asc_lbl.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	asc_lbl.add_theme_font_size_override("font_size", MenuTheme.FS_BODY)
 	asc_lbl.add_theme_color_override("font_color", accent if es_record else MenuTheme.TEXT_PRIMARY)
-	_apply_hud_font(asc_lbl)
+	MenuTheme.aplicar_fuente_cifra(asc_lbl)
 	top.add_child(asc_lbl)
 	top.add_child(_make_pill(badge_txt, accent))
 	v.add_child(top)
@@ -650,7 +650,7 @@ func _make_run_stat(value: String, label: String, color: Color) -> Control:
 	val.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	val.add_theme_font_size_override("font_size", MenuTheme.FS_SMALL)
 	val.add_theme_color_override("font_color", color)
-	_apply_hud_font(val)
+	MenuTheme.aplicar_fuente_cifra(val)
 	var lbl := Label.new()
 	lbl.text = label
 	lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER

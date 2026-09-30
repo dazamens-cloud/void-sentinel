@@ -120,7 +120,7 @@ func _make_header() -> Control:
 	_lbl_reset.text = ""
 	_lbl_reset.add_theme_font_size_override("font_size", MenuTheme.FS_SMALL)
 	_lbl_reset.add_theme_color_override("font_color", MenuTheme.TEXT_MUTED)
-	_apply_hud_font(_lbl_reset)
+	MenuTheme.aplicar_fuente_cifra(_lbl_reset)
 
 	titleblock.add_child(eyebrow)
 	titleblock.add_child(title)
@@ -168,7 +168,7 @@ func _make_card(id: String) -> Control:
 	reward.text = "+%d %s" % [data.get("recompensa", 0), sym]
 	reward.add_theme_font_size_override("font_size", MenuTheme.FS_BODY + 2)
 	reward.add_theme_color_override("font_color", accent)
-	_apply_hud_font(reward)
+	MenuTheme.aplicar_fuente_cifra(reward)
 
 	fila1.add_child(desc)
 	fila1.add_child(reward)
@@ -189,7 +189,7 @@ func _make_card(id: String) -> Control:
 	prog.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	prog.add_theme_font_size_override("font_size", MenuTheme.FS_SMALL)
 	prog.add_theme_color_override("font_color", MenuTheme.TEXT_MUTED)
-	_apply_hud_font(prog)
+	MenuTheme.aplicar_fuente_cifra(prog)
 
 	var btn := Button.new()
 	btn.focus_mode = Control.FOCUS_NONE

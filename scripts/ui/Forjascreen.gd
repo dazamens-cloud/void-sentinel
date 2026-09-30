@@ -327,7 +327,7 @@ func _make_unlock_button(id: String, accent: Color) -> Control:
 	btn.add_theme_stylebox_override("normal", MenuTheme.make_button_style(accent))
 	btn.add_theme_stylebox_override("hover", MenuTheme.make_button_style(accent, true))
 	btn.add_theme_stylebox_override("pressed", MenuTheme.make_button_style(accent, true))
-	_apply_hud_font(btn)
+	MenuTheme.aplicar_fuente_cifra(btn)
 	btn.modulate.a = 1.0 if _leer_frag() >= coste else 0.4
 	btn.pressed.connect(func(): _on_desbloquear(id))
 	return btn
@@ -376,7 +376,7 @@ func _make_mejora_row(id: String, mid: String, accent: Color) -> Control:
 		prog.text = "%d/%d" % [nivel, m.get("max_nivel", 0)]
 		prog.add_theme_font_size_override("font_size", MenuTheme.FS_TINY)
 		prog.add_theme_color_override("font_color", MenuTheme.TEXT_MUTED)
-		_apply_hud_font(prog)
+		MenuTheme.aplicar_fuente_cifra(prog)
 		info.add_child(prog)
 	h.add_child(info)
 
