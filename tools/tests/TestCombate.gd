@@ -209,6 +209,16 @@ func _test_dron_objetivo() -> void:
 	dron.set_physics_process(false)   # que no se mueva mientras se le pregunta
 	dron.global_position = Vector2.ZERO
 
+	# `elegir_objetivo()` mira el grupo "fragmentos" ENTERO, así que la sección
+	# anterior lo contamina: al morir, los espectros sueltan su fragmento con
+	# `call_deferred("add_child", …)` —obligado, porque morir ocurre dentro del
+	# flush de física— y eso los hace aterrizar un frame después, ya aquí. La
+	# prueba pasaba o no según el frame en que cayeran. Se limpia el grupo antes
+	# de montar el escenario para que no dependa de lo que corrió antes.
+	for sobrante in get_tree().get_nodes_in_group("fragmentos"):
+		sobrante.queue_free()
+	await get_tree().process_frame
+
 	# El suelto, más cerca, pero lo bastante lejos del racimo (>130) para que no
 	# cuente como parte de él.
 	var sueltos: Array[Node2D] = []
