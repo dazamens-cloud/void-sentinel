@@ -18,6 +18,11 @@ extends Node
 #   --politica=X     bonus | ataque | defensa | equilibrada | todas (por defecto todas)
 #   --velocidad=N    aceleracion del tiempo (por defecto 5)
 #   --tope=N         ascension a la que se corta la partida (por defecto 25)
+#   --campana=N      modo campana: N partidas SEGUIDAS gastando los ecos ganados
+#                    en mejoras permanentes del Nexo entre una y otra. Sin esto
+#                    solo se mide la partida suelta, que en un idle es media
+#                    verdad: el bucle real es partida -> gastar ecos -> partida
+#                    mas fuerte.
 #
 # Deja `tools/balance/resultados.csv` con una fila por partida.
 #
@@ -52,6 +57,9 @@ var _partidas: int = 3
 var _politicas: Array = []
 var _velocidad: float = 5.0
 var _tope_ascension: int = 25
+# Nombre del CSV: permite lanzar varias politicas en paralelo sin pisarse.
+var _salida: String = "resultados"
+var _campana: int = 0
 
 var _filas: Array = []
 
@@ -63,11 +71,14 @@ func _ready() -> void:
 		% [_partidas, _tope_ascension, _velocidad])
 
 	for politica in _politicas:
-		for i in _partidas:
-			var fila: Dictionary = await _jugar_partida(politica, i + 1)
-			_filas.append(fila)
-			print("  %-12s #%d -> asc %d, %s, %.0fs de juego"
-				% [politica, i + 1, fila["ascension"], fila["causa"], fila["segundos"]])
+		if _campana > 0:
+			await _jugar_campana(politica)
+		else:
+			for i in _partidas:
+				var fila: Dictionary = await _jugar_partida(politica, i + 1)
+				_filas.append(fila)
+				print("  %-12s #%d -> asc %d, %s, %.0fs de juego"
+					% [politica, i + 1, fila["ascension"], fila["causa"], fila["segundos"]])
 
 	_escribir_csv()
 	_resumen()
@@ -85,6 +96,8 @@ func _leer_argumentos() -> void:
 			"--politica":  politica = partes[1]
 			"--velocidad": _velocidad = maxf(1.0, float(partes[1]))
 			"--tope":      _tope_ascension = maxi(1, int(partes[1]))
+			"--salida":    _salida = partes[1]
+			"--campana":   _campana = maxi(0, int(partes[1]))
 	_politicas = POLITICAS.keys() if politica == "todas" else [politica]
 
 
@@ -183,20 +196,72 @@ func _comprar(politica: String) -> int:
 
 
 # ═══════════════════════════════════════════════════
+# CAMPANA: el bucle real del idle
+# ═══════════════════════════════════════════════════
+# Una partida suelta no dice como se juega esto de verdad: lo que hace avanzar
+# es la cadena partida -> gastar los ecos en el Nexo -> partida mas fuerte. Aqui
+# se encadenan N partidas desde cero (sin ecos ni niveles permanentes) para ver
+# cuanto progresa cada politica, no solo hasta donde llega a la primera.
+func _jugar_campana(politica: String) -> void:
+	_preparar_campana()
+	for i in _campana:
+		var fila: Dictionary = await _jugar_partida(politica, i + 1)
+		var comprado: int = _gastar_ecos(politica)
+		fila["compras_nexo"] = comprado
+		fila["ecos"] = Economia.ecos
+		_filas.append(fila)
+		print("  %-12s partida %d -> asc %d, %s | ecos %d, %d mejoras del Nexo"
+			% [politica, i + 1, fila["ascension"], fila["causa"], Economia.ecos, comprado])
+
+
+# Campana limpia: sin ecos ni niveles permanentes heredados, para que las
+# politicas se comparen desde el mismo punto de partida.
+func _preparar_campana() -> void:
+	Economia.ecos = 0
+	Economia.fragmentos = 0
+	for id in MejoraManager.mejoras.keys():
+		MejoraManager.mejoras[id]["nivel_nexo"] = 0
+	MejoraManager.reiniciar_mejoras_inrun()
+
+
+# Gasta los ecos en mejoras permanentes del Nexo siguiendo el mismo orden de la
+# politica (los ids del Nexo y los de partida son los mismos). Compra mientras
+# alcance. Devuelve cuantos niveles se compraron.
+func _gastar_ecos(politica: String) -> int:
+	var comprados := 0
+	var sigue := true
+	while sigue:
+		sigue = false
+		for id in POLITICAS[politica]:
+			if not MejoraManager.mejoras.has(id):
+				continue
+			var coste: int = MejoraManager.get_coste_nexo(id)
+			if coste <= 0 or Economia.ecos < coste:
+				continue
+			if not Economia.gastar_ecos(coste):
+				continue
+			MejoraManager.subir_nivel_nexo(id)
+			comprados += 1
+			sigue = true
+	return comprados
+
+
+# ═══════════════════════════════════════════════════
 # SALIDA
 # ═══════════════════════════════════════════════════
 func _escribir_csv() -> void:
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(DIR_SALIDA))
-	var ruta := DIR_SALIDA + "/resultados.csv"
+	var ruta := "%s/%s.csv" % [DIR_SALIDA, _salida]
 	var f := FileAccess.open(ruta, FileAccess.WRITE)
 	if not f:
 		print("No se pudo escribir ", ruta)
 		return
-	f.store_line("politica,partida,ascension,causa,segundos,compras,energia_total,salud_final")
+	f.store_line("politica,partida,ascension,causa,segundos,compras,energia_total,salud_final,compras_nexo,ecos")
 	for fila in _filas:
-		f.store_line("%s,%d,%d,%s,%.0f,%d,%.0f,%.0f" % [
+		f.store_line("%s,%d,%d,%s,%.0f,%d,%.0f,%.0f,%d,%d" % [
 			fila["politica"], fila["partida"], fila["ascension"], fila["causa"],
 			fila["segundos"], fila["compras"], fila["energia_total"], fila["salud_final"],
+			fila.get("compras_nexo", 0), fila.get("ecos", 0),
 		])
 	f.close()
 	print("\nCSV en ", ProjectSettings.globalize_path(ruta))
