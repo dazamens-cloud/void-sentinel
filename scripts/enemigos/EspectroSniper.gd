@@ -142,15 +142,15 @@ func _destruir() -> void:
 	var texto_energia = ESCENA_TEXTO.instantiate()
 	texto_energia.set_energia(recompensa_energia)
 	texto_energia.global_position = global_position
-	get_tree().current_scene.add_child(texto_energia)
+	get_tree().current_scene.call_deferred("add_child", texto_energia)
 
 	var explosion = ESCENA_EXPLOSION.instantiate()
 	explosion.global_position = global_position
-	get_tree().current_scene.add_child(explosion)
+	get_tree().current_scene.call_deferred("add_child", explosion)
 
 	var fragmento = ESCENA_FRAGMENTO.instantiate()
 	fragmento.global_position = global_position
-	get_tree().current_scene.add_child(fragmento)
+	get_tree().current_scene.call_deferred("add_child", fragmento)
 
 	Economia.procesar_drop_espectro({
 		"recompensa": recompensa_energia,
