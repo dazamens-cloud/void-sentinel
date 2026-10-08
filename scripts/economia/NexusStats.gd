@@ -36,6 +36,10 @@ var mejora_critico_chance: float = 0.0
 var mejora_critico_factor: float = 0.0
 var mejora_regeneracion: float = 0.0
 var mejora_defensa: float = 0.0
+# Píxeles de radio que suma la mejora de alcance del panel de partida. Aditiva
+# en px (no multiplicador) para que el jugador sepa qué compra: el radio base
+# son 280 y el sniper entra a 600.
+var mejora_rango: float = 0.0
 var mejora_multidisparo: int = 0
 var mejora_rebote_cantidad: int = 0
 var mejora_rebote_alcance: float = 0.0
@@ -85,7 +89,8 @@ func get_regeneracion() -> float:
 	return regeneracion_base + mejora_regeneracion + _lab("regeneracion_celular")
 
 func get_rango_escaneo() -> float:
-	return rango_escaneo_base * (1.0 + _lab("sensores_largo_alcance"))
+	# La mejora de partida suma píxeles y el Lab multiplica sobre el total.
+	return (rango_escaneo_base + mejora_rango) * (1.0 + _lab("sensores_largo_alcance"))
 
 func get_critico_chance() -> float:
 	return min(0.75, critico_chance_base + mejora_critico_chance + _lab("balistica_avanzada"))
@@ -152,6 +157,7 @@ func reiniciar_partida() -> void:
 	mejora_critico_chance = 0.0
 	mejora_critico_factor = 0.0
 	mejora_defensa = 0.0
+	mejora_rango = 0.0
 	mejora_multidisparo = 0
 	mejora_rebote_cantidad = 0
 	mejora_rebote_alcance = 0.0
@@ -204,6 +210,9 @@ func set_mejora_regen(valor: float) -> void:
 
 func set_mejora_defensa(valor: float) -> void:
 	mejora_defensa = valor
+
+func set_mejora_rango(pixeles: float) -> void:
+	mejora_rango = max(0.0, pixeles)
 
 func set_mejora_multidisparo(cantidad: int) -> void:
 	mejora_multidisparo = max(0, cantidad)

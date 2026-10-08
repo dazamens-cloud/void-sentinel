@@ -48,11 +48,19 @@ const POLITICAS := {
 	],
 	"defensa": [
 		"salud", "recuperacion", "escudo", "dureza_escudo", "blindaje",
-		"danio", "energia_espectro",
+		"rango_escaneo", "danio", "energia_espectro",
 	],
 	"equilibrada": [
 		"danio", "salud", "energia_espectro", "velocidad_ataque", "recuperacion",
-		"interes_tasa", "disparo_critico", "escudo",
+		"rango_escaneo", "interes_tasa", "disparo_critico", "escudo",
+	],
+	# Control del experimento del alcance (2026-10-08): mismas compras que
+	# "ataque" pero metiendo el alcance en segundo lugar. Si esta llega mas
+	# lejos que "ataque", la respuesta al dano a distancia existe y la decision
+	# de comprarla tiene sentido; si empatan, el alcance no es la respuesta.
+	"alcance": [
+		"danio", "rango_escaneo", "velocidad_ataque", "disparo_critico",
+		"multidisparo", "rebote", "salud", "energia_espectro",
 	],
 }
 

@@ -16,6 +16,12 @@ var objetivo_especial: Node2D = null
 
 const ESCENA_TEXTO = preload("res://escenas/Objetos/TextoFlotante.tscn")
 
+# Prioridad de objetivo: el número más bajo se dispara antes. Los que hacen daño
+# desde lejos van primero porque NO se acercan solos; el resto acaba llegando al
+# nexo por su propio pie, así que esperar no cuesta nada. Un tipo que no esté
+# aquí vale 1. Ver `_disparar()`.
+const PRIORIDAD_OBJETIVO := {"sniper": 0}
+
 # Pulso de Quartz (onda defensiva periódica)
 const PULSO_INTERVALO: float = 50.0
 const PULSO_EMPUJE_BASE: float = 250.0
@@ -114,15 +120,24 @@ func _disparar() -> void:
 	var candidatos: Array = []
 	for e in espectros:
 		if not is_instance_valid(e): continue
-		if e.get("tipo_espectro") == "commander": continue
+		var tipo := str(e.get("tipo_espectro"))
+		if tipo == "commander": continue
 		var d: float = global_position.distance_to(e.global_position)
 		if d <= rango:
-			candidatos.append({"e": e, "d": d})
+			candidatos.append({
+				"e": e, "d": d, "p": PRIORIDAD_OBJETIVO.get(tipo, 1),
+			})
 
 	if candidatos.is_empty(): return
 
-	# Más cercanos primero.
-	candidatos.sort_custom(func(a, b): return a["d"] < b["d"])
+	# Primero por prioridad, y dentro de cada grupo el más cercano.
+	# Antes se ordenaba SOLO por distancia y el sniper nunca subía en la cola:
+	# orbita lejos mientras los demás caminan hasta tocar el nexo, así que
+	# siempre quedaba el último y no se le disparaba nunca.
+	candidatos.sort_custom(func(a, b):
+		if a["p"] != b["p"]:
+			return a["p"] < b["p"]
+		return a["d"] < b["d"])
 
 	# ✅ Multidisparo = nº de OBJETIVOS distintos atacados a la vez (el más
 	# cercano + uno extra por nivel), no proyectiles al mismo enemigo.

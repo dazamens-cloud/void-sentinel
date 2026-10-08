@@ -140,7 +140,22 @@ var mejoras: Dictionary = {
 		"max_nivel": 20,
 		"descripcion": "Aumenta la lentitud y fuerza de empuje del pulso."
 	},
-	
+	# Es DEFENSA, no ataque, aunque amplíe el radio de tiro: existe para que el
+	# daño a distancia tenga una respuesta comprable dentro de la partida.
+	# Medido el 2026-10-08: el sniper hacía el 88 % del daño encajado por los
+	# builds de ataque y no había forma de contestarle in-run — el alcance solo
+	# estaba en el Lab, que es permanente. 10 niveles × 40 px llevan el radio de
+	# 280 a 680, justo por encima de los 600 a los que entra el sniper.
+	"rango_escaneo": {
+		"nombre": "Alcance",
+		"categoria": "defensa",
+		"nivel": 0,
+		"incremento": 40,
+		"coste_base": 18,
+		"max_nivel": 10,
+		"descripcion": "Amplía el radio del Nexus. Imprescindible contra los que disparan de lejos."
+	},
+
 	# ========== BONIFICACIÓN ==========
 	"energia_ascension": {
 		"nombre": "Energía por Ascensión",
@@ -552,7 +567,11 @@ func _aplicar_mejora(mejora_id: String) -> void:
 		"poder_pulso":
 			if NexusStats.has_method("set_mejora_pulso"):
 				NexusStats.set_mejora_pulso(get_valor("pulso_quartz"), get_valor("poder_pulso"), get_valor_secundario("poder_pulso"))
-		
+
+		"rango_escaneo":
+			if NexusStats.has_method("set_mejora_rango"):
+				NexusStats.set_mejora_rango(get_valor(mejora_id))
+
 		# ═══════ BONIFICACIÓN ═══════
 		# Estas se leen bajo demanda por EconomiaEcos y Economia
 		# No necesitan aplicarse inmediatamente a NexusStats

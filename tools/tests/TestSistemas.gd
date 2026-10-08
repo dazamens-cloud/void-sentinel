@@ -32,6 +32,7 @@ func _ready() -> void:
 	_test_mejoras_datos()
 	_test_mejoras_costes()
 	_test_mejoras_compra()
+	_test_mejora_alcance()
 	await _test_habilidades()
 	_test_laboratorio()
 	_test_laboratorio_offline()
@@ -263,6 +264,61 @@ func _test_mejoras_compra() -> void:
 
 	MejoraManager.reiniciar_mejoras_inrun()
 	_eq(float(MejoraManager.get_nivel(id)), 0.0, "reiniciar_mejoras_inrun deja el nivel a 0")
+
+
+# ═══════════════════════════════════════════════════
+# MEJORA DE ALCANCE
+#
+# Existe para que el daño a distancia tenga respuesta DENTRO de la partida: el
+# sniper hacía el 88 % del daño encajado por los builds de ataque y el alcance
+# solo estaba en el Lab, que es permanente. Si este cableado se rompe, la
+# mejora se compra y no hace nada, y eso no se ve jugando.
+# ═══════════════════════════════════════════════════
+func _test_mejora_alcance() -> void:
+	_sec("Mejoras — alcance del Nexus")
+	MejoraManager.reiniciar_mejoras_inrun()
+	NexusStats.reiniciar_partida()
+	var id := "rango_escaneo"
+
+	_ok(MejoraManager.mejoras.has(id), "la mejora de alcance está definida")
+	_eq(float(MejoraManager.get_nivel(id)), 0.0, "arranca a nivel 0")
+	_eq(NexusStats.mejora_rango, 0.0, "y sin píxeles de alcance comprados")
+
+	var base: float = NexusStats.get_rango_escaneo()
+	_ok(base > 0.0, "el radio base del Nexus es positivo (%.0f px)" % base)
+
+	# Comprar tiene que mover el radio de verdad, no solo el nivel.
+	Economia.energia = 1e9
+	_eq(float(MejoraManager.comprar_mejora(id, 1)), 1.0, "se compra un nivel")
+	var con_uno: float = NexusStats.get_rango_escaneo()
+	_ok(con_uno > base,
+		"un nivel amplía el radio (%.0f → %.0f px)" % [base, con_uno])
+
+	# Y tiene que escalar con los niveles, no quedarse en el primero.
+	MejoraManager.comprar_mejora(id, 4)
+	var con_cinco: float = NexusStats.get_rango_escaneo()
+	_ok(con_cinco > con_uno,
+		"cinco niveles amplían más que uno (%.0f → %.0f px)" % [con_uno, con_cinco])
+
+	# El objetivo de diseño: al máximo tiene que llegar a donde orbita el
+	# sniper, o la compra no responde a lo que se compró para responder.
+	MejoraManager.reiniciar_mejoras_inrun()
+	NexusStats.reiniciar_partida()
+	Economia.energia = 1e12
+	MejoraManager.comprar_mejora(id, MejoraManager.get_max_nivel(id))
+	var tope: float = NexusStats.get_rango_escaneo()
+	var sniper := preload("res://scripts/enemigos/EspectroSniper.gd")
+	_ok(tope >= sniper.DISTANCIA_MINIMA,
+		"a tope alcanza la posición final del sniper (%.0f px >= %.0f)"
+		% [tope, sniper.DISTANCIA_MINIMA])
+	_ok(tope >= sniper.DISTANCIA_INICIAL,
+		"a tope alcanza incluso su posición de entrada (%.0f px >= %.0f)"
+		% [tope, sniper.DISTANCIA_INICIAL])
+
+	MejoraManager.reiniciar_mejoras_inrun()
+	NexusStats.reiniciar_partida()
+	_eq(NexusStats.mejora_rango, 0.0,
+		"reiniciar la partida devuelve el alcance comprado a cero")
 
 
 # ═══════════════════════════════════════════════════
