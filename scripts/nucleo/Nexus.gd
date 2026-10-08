@@ -170,6 +170,7 @@ func recibir_ataque(cantidad: float, tipo_atacante: String = "") -> void:
 		dano_final = max(1.0, cantidad * (1.0 - def_pct))
 
 	NexusStats.recibir_ataque(dano_final)
+	NexusStats.registrar_dano(tipo_atacante, dano_final)
 	_parpadeo_dano()
 	# 🎇 Juice: sacudida media + sonido cuando el Nexus encaja un golpe.
 	FX.sacudir(0.30)

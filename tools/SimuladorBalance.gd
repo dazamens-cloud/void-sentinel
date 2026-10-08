@@ -32,6 +32,9 @@ extends Node
 const RUTA_MUNDO := "res://escenas/mundo.tscn"
 const DIR_SALIDA := "res://tools/balance"
 
+# Tipos de atacante que se desglosan en el CSV, en orden fijo de columnas.
+const TIPOS_DANO := ["basico", "tanque", "kamikaze", "sniper", "jefe"]
+
 # Orden de compra de cada politica. Se compra lo primero que se pueda pagar,
 # de arriba abajo, asi que el orden ES la estrategia.
 const POLITICAS := {
@@ -173,6 +176,18 @@ func _jugar_partida(politica: String, numero: int) -> Dictionary:
 		"energia_total": energia_total,
 		"salud_final": NexusStats.salud_actual,
 	}
+
+	# Daño encajado por tipo de atacante. La columna `causa` solo dice quién
+	# metió el ÚLTIMO golpe, y el sniper se lo lleva casi siempre por disparar
+	# a distancia toda la oleada: sin este reparto no se sabe de dónde viene
+	# el daño de verdad.
+	var dano: Dictionary = NexusStats.dano_por_tipo.duplicate()
+	var total_dano := 0.0
+	for v in dano.values():
+		total_dano += float(v)
+	fila["dano_total"] = total_dano
+	for tipo in TIPOS_DANO:
+		fila["dano_" + tipo] = float(dano.get(tipo, 0.0))
 
 	if Economia.juego_terminado.is_connected(cb):
 		Economia.juego_terminado.disconnect(cb)
@@ -323,14 +338,21 @@ func _escribir_csv() -> void:
 	if not f:
 		print("No se pudo escribir ", ruta)
 		return
-	f.store_line("politica,partida,ascension,causa,segundos,compras,energia_total,salud_final,compras_nexo,ecos,compras_forja,fragmentos")
+	var cabecera := "politica,partida,ascension,causa,segundos,compras,energia_total,salud_final,compras_nexo,ecos,compras_forja,fragmentos,dano_total"
+	for tipo in TIPOS_DANO:
+		cabecera += ",dano_" + tipo
+	f.store_line(cabecera)
 	for fila in _filas:
-		f.store_line("%s,%d,%d,%s,%.0f,%d,%.0f,%.0f,%d,%d,%d,%d" % [
+		var linea := "%s,%d,%d,%s,%.0f,%d,%.0f,%.0f,%d,%d,%d,%d,%.0f" % [
 			fila["politica"], fila["partida"], fila["ascension"], fila["causa"],
 			fila["segundos"], fila["compras"], fila["energia_total"], fila["salud_final"],
 			fila.get("compras_nexo", 0), fila.get("ecos", 0),
 			fila.get("compras_forja", 0), fila.get("fragmentos", 0),
-		])
+			fila.get("dano_total", 0.0),
+		]
+		for tipo in TIPOS_DANO:
+			linea += ",%.0f" % fila.get("dano_" + tipo, 0.0)
+		f.store_line(linea)
 	f.close()
 	print("\nCSV en ", ProjectSettings.globalize_path(ruta))
 
@@ -350,5 +372,21 @@ func _resumen() -> void:
 			causas[f["causa"]] = causas.get(f["causa"], 0) + 1
 		print("   %-12s ascension media %.1f, %.0fs de juego, causas: %s"
 			% [politica, asc / suyas.size(), seg / suyas.size(), causas])
+
+		# Reparto del daño encajado. La columna `causa` solo dice quien metio el
+		# ultimo golpe; esto dice de donde vino el dano.
+		var total := 0.0
+		var por_tipo := {}
+		for tipo in TIPOS_DANO:
+			var s := 0.0
+			for f in suyas:
+				s += float(f.get("dano_" + tipo, 0.0))
+			por_tipo[tipo] = s
+			total += s
+		if total > 0.0:
+			var partes: Array[String] = []
+			for tipo in TIPOS_DANO:
+				partes.append("%s %d%%" % [tipo, round(100.0 * por_tipo[tipo] / total)])
+			print("                dano encajado: %s" % ", ".join(partes))
 	print("\nOjo: son partidas reales aceleradas. Si una politica gana por mucho,")
 	print("es que esa rama domina y las demas decisiones pesan poco.")

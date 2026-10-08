@@ -18,6 +18,13 @@ var critico_factor_base: float = 1.5
 # ── Stats actuales ──────────────────────────────────────
 var salud_actual: float = 100.0
 
+# Daño encajado en esta partida, por tipo de atacante. La causa de muerte que
+# se enseña es el ÚLTIMO que golpeó, y eso engaña: el sniper dispara desde
+# lejos durante toda la oleada mientras los demás solo pegan al contacto, así
+# que casi siempre mete él el último golpe aunque el daño venga de otro sitio.
+# Esto mide de dónde viene de verdad. Lo rellena `Nexus.recibir_ataque()`.
+var dano_por_tipo: Dictionary = {}
+
 # ── Mejoras ────────────────────────────────────────────
 # Daño y vida son MULTIPLICATIVOS (fase 2): valor = base × multiplicador,
 # donde el multiplicador = FACTOR^nivel lo calcula MejoraManager. Esto deja
@@ -120,6 +127,11 @@ func recibir_ataque(cantidad: float) -> bool:
 	_emitir_salud_si_cambio()
 	return salud_actual > 0.0
 
+
+func registrar_dano(tipo: String, cantidad: float) -> void:
+	var clave := tipo if tipo != "" else "desconocido"
+	dano_por_tipo[clave] = float(dano_por_tipo.get(clave, 0.0)) + cantidad
+
 func curar(cantidad: float) -> void:
 	# ✅ No curar si ya está al máximo — evita señal innecesaria cada frame
 	if salud_actual >= salud_base:
@@ -128,6 +140,7 @@ func curar(cantidad: float) -> void:
 	_emitir_salud_si_cambio()
 
 func reiniciar_partida() -> void:
+	dano_por_tipo.clear()
 	salud_base = 100.0
 	danio_base = 200.0        # ← añadir
 	rango_escaneo_base = 280.0  # ← añadir
