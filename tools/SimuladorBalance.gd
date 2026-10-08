@@ -207,11 +207,15 @@ func _jugar_campana(politica: String) -> void:
 	for i in _campana:
 		var fila: Dictionary = await _jugar_partida(politica, i + 1)
 		var comprado: int = _gastar_ecos(politica)
+		var forja: int = _gastar_fragmentos(politica)
 		fila["compras_nexo"] = comprado
+		fila["compras_forja"] = forja
 		fila["ecos"] = Economia.ecos
+		fila["fragmentos"] = Economia.fragmentos
 		_filas.append(fila)
-		print("  %-12s partida %d -> asc %d, %s | ecos %d, %d mejoras del Nexo"
-			% [politica, i + 1, fila["ascension"], fila["causa"], Economia.ecos, comprado])
+		print("  %-12s partida %d -> asc %d, %s | Nexo +%d (quedan %d ecos), Forja +%d (quedan %d frag)"
+			% [politica, i + 1, fila["ascension"], fila["causa"], comprado, Economia.ecos,
+				forja, Economia.fragmentos])
 
 
 # Campana limpia: sin ecos ni niveles permanentes heredados, para que las
@@ -222,6 +226,14 @@ func _preparar_campana() -> void:
 	for id in MejoraManager.mejoras.keys():
 		MejoraManager.mejoras[id]["nivel_nexo"] = 0
 	MejoraManager.reiniciar_mejoras_inrun()
+	# La Forja también arranca de cero: solo la habilidad gratis desbloqueada.
+	for id in HabilidadManager.habilidades.keys():
+		var hab: Dictionary = HabilidadManager.habilidades[id]
+		var gratis: bool = int(hab.get("coste_desbloqueo", 0)) <= 0
+		hab["desbloqueada"] = gratis
+		hab["activa"] = gratis
+		for mid in hab.get("mejoras", {}).keys():
+			hab["mejoras"][mid]["nivel"] = 0
 
 
 # Gasta los ecos en mejoras permanentes del Nexo siguiendo el mismo orden de la
@@ -246,6 +258,61 @@ func _gastar_ecos(politica: String) -> int:
 	return comprados
 
 
+# Gasta los fragmentos en la Forja: primero desbloquea habilidades, luego sube
+# sus mejoras. Los fragmentos se ganaban y no se usaban, asi que el bucle que
+# median las campanas estaba incompleto.
+#
+# Cada politica tira a su rama: ataque compra ofensivas, defensa defensivas, y
+# bonus/equilibrada lo mas barato que haya. Devuelve cuantas compras hizo.
+func _gastar_fragmentos(politica: String) -> int:
+	var preferido := ""
+	match politica:
+		"ataque":  preferido = "ofensiva"
+		"defensa": preferido = "defensiva"
+
+	var compras := 0
+	var sigue := true
+	while sigue:
+		sigue = false
+		# Desbloquear: primero las de la rama preferida, de menor coste a mayor.
+		var candidatas: Array = []
+		for id in HabilidadManager.habilidades.keys():
+			var hab: Dictionary = HabilidadManager.habilidades[id]
+			if hab.get("desbloqueada", false):
+				continue
+			var coste: int = int(hab.get("coste_desbloqueo", 0))
+			if coste > Economia.fragmentos:
+				continue
+			var penalizacion: int = 0 if (preferido == "" or hab.get("tipo", "") == preferido) else 100000
+			candidatas.append([coste + penalizacion, id])
+		candidatas.sort()
+		if not candidatas.is_empty():
+			if HabilidadManager.desbloquear(candidatas[0][1]):
+				compras += 1
+				sigue = true
+				continue
+
+		# Mejorar lo ya desbloqueado, siempre la linea mas barata que alcance.
+		var mejor: Array = []
+		for id in HabilidadManager.habilidades.keys():
+			var hab: Dictionary = HabilidadManager.habilidades[id]
+			if not hab.get("desbloqueada", false):
+				continue
+			for mid in hab.get("mejoras", {}).keys():
+				var m: Dictionary = hab["mejoras"][mid]
+				if int(m.get("nivel", 0)) >= int(m.get("max_nivel", 0)):
+					continue
+				var c: int = HabilidadManager.get_coste_mejora(id, mid)
+				if c <= 0 or c > Economia.fragmentos:
+					continue
+				if mejor.is_empty() or c < mejor[0]:
+					mejor = [c, id, mid]
+		if not mejor.is_empty() and HabilidadManager.mejorar(mejor[1], mejor[2]):
+			compras += 1
+			sigue = true
+	return compras
+
+
 # ═══════════════════════════════════════════════════
 # SALIDA
 # ═══════════════════════════════════════════════════
@@ -256,12 +323,13 @@ func _escribir_csv() -> void:
 	if not f:
 		print("No se pudo escribir ", ruta)
 		return
-	f.store_line("politica,partida,ascension,causa,segundos,compras,energia_total,salud_final,compras_nexo,ecos")
+	f.store_line("politica,partida,ascension,causa,segundos,compras,energia_total,salud_final,compras_nexo,ecos,compras_forja,fragmentos")
 	for fila in _filas:
-		f.store_line("%s,%d,%d,%s,%.0f,%d,%.0f,%.0f,%d,%d" % [
+		f.store_line("%s,%d,%d,%s,%.0f,%d,%.0f,%.0f,%d,%d,%d,%d" % [
 			fila["politica"], fila["partida"], fila["ascension"], fila["causa"],
 			fila["segundos"], fila["compras"], fila["energia_total"], fila["salud_final"],
 			fila.get("compras_nexo", 0), fila.get("ecos", 0),
+			fila.get("compras_forja", 0), fila.get("fragmentos", 0),
 		])
 	f.close()
 	print("\nCSV en ", ProjectSettings.globalize_path(ruta))
