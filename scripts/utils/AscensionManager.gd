@@ -38,6 +38,25 @@ const MAX_ENEMIGOS_SIMULTANEOS: int = 15
 # se aplana: en asc altas la dificultad la lleva el HP, no más enemigos.
 const TOPE_ESPECTROS_OLEADA: int = 30
 
+# ── Aparición del sniper: RAMPA, no escalón ────────────────────────────────
+# Antes era `ascension >= 10` con un 6 % fijo, y eso plantaba el muro del juego
+# justo ahí. Medido el 2026-10-08 sobre 240 partidas simuladas más dos tandas
+# de daño por fuente:
+#
+#   · Todo enemigo salvo el sniper tiene que LLEGAR al nexo para hacer daño.
+#     Un build de daño los mata de camino, así que hasta la asc 10 es
+#     intocable: básicos y tanques le hacían el 2-3 % del daño.
+#   · El sniper es el único que pega sin llegar. En la asc 10 entraba de golpe
+#     y pasaba a ser el 84-98 % del daño encajado siendo el 6 % de los enemigos.
+#
+# O sea: el jugador pasaba de recibir cero a recibir todo de una sola fuente
+# que no conocía. La probabilidad en ascensión alta NO cambia (sigue 0,06); lo
+# que cambia es que ahora se presenta antes y de poco en poco.
+const SNIPER_ASC_MINIMA: int = 4
+const SNIPER_ASC_PLENA: int = 10
+const SNIPER_PROB_INICIAL: float = 0.015
+const SNIPER_PROB_PLENA: float = 0.06
+
 # Total de enemigos de la oleada actual (para repartir el spawn en la ventana).
 var _total_oleada: int = 0
 
@@ -170,6 +189,16 @@ func _generar_espectro() -> void:
 	espectros_a_spawnear -= 1
 	espectros_vivos += 1
 
+# Probabilidad de que el siguiente enemigo sea un sniper. Estática y pública
+# para que las pruebas fijen la curva sin montar el nodo (AscensionManager vive
+# en mundo.tscn, no es autoload). Ver el bloque de constantes de arriba.
+static func prob_sniper(ascension: int) -> float:
+	if ascension < SNIPER_ASC_MINIMA:
+		return 0.0
+	var t := float(ascension - SNIPER_ASC_MINIMA) / float(SNIPER_ASC_PLENA - SNIPER_ASC_MINIMA)
+	return lerpf(SNIPER_PROB_INICIAL, SNIPER_PROB_PLENA, clampf(t, 0.0, 1.0))
+
+
 func _elegir_tipo_enemigo() -> PackedScene:
 	var ascension = Economia.numero_ascension
 
@@ -178,7 +207,7 @@ func _elegir_tipo_enemigo() -> PackedScene:
 			jefe_generado_esta_ascension = true
 			return escena_espectro_jefe
 
-	if ascension >= 10 and escena_espectro_sniper and randf() < 0.06:
+	if escena_espectro_sniper and randf() < prob_sniper(ascension):
 		return escena_espectro_sniper
 
 	if ascension >= 6 and escena_espectro_kamikaze and randf() < 0.12:

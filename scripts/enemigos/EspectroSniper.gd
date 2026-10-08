@@ -20,12 +20,24 @@ const ESCENA_FRAGMENTO = preload("res://escenas/Objetos/fragmento.tscn")
 var angulo_actual: float = 0.0
 const VELOCIDAD_ORBITAL: float = 1.0
 const DISTANCIA_INICIAL: float = 600.0
+# DISTANCIA_MINIMA queda DENTRO del radio del nexo (`rango_escaneo_base`, hoy
+# 280), así que al final de su aproximación el sniper es alcanzable. Si se baja
+# el rango del nexo por debajo de esto, el sniper se vuelve intocable.
 const DISTANCIA_MINIMA: float = 250.0
 const PASO_AVANCE: float = 100.0
 
 # Cadencia de disparo
 const COOLDOWN_DISPARO: float = 2.5
 const DURACION_ORBITA: float = 2.0
+# La escalera de aproximación: 600 → 500 → 400 → 300 → 250, y solo la última
+# casilla entra en el radio del nexo (280). Con 3 disparos por casilla son 12
+# disparos (~54 s) desde fuera de alcance.
+#
+# Probado a 1 el 2026-10-08 (4 disparos, ~18 s) buscando quitarle ese daño
+# gratis: NO cambió nada. Las partidas largas duran ~3.900 s, así que el sniper
+# se pasa la pelea entera en la casilla final de todas formas y los 8 disparos
+# de diferencia son ruido. El daño del sniper no viene de su impunidad inicial
+# — ver la nota del cerebro sobre por qué domina.
 const DISPAROS_ANTES_AVANZAR: int = 3
 
 var distancia_objetivo: float = DISTANCIA_INICIAL

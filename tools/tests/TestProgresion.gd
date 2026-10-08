@@ -26,6 +26,7 @@ func _ready() -> void:
 	_respaldar()
 	print("═══ PRUEBAS DE PROGRESIÓN ═══\n")
 	_test_oleadas()
+	_test_sniper()
 	_test_ascension()
 	_test_reanudar()
 	print("\n═══ RESULTADO: %d pasados, %d fallos ═══" % [_pasados, _fallos])
@@ -60,6 +61,52 @@ func _test_oleadas() -> void:
 		% [ASC.MAX_ENEMIGOS_SIMULTANEOS, tope])
 	_ok(ASC.DURACION_ASCENSION > 0.0 and ASC.PAUSA_ENTRE_ASCENSIONES > 0.0,
 		"la duración de ascensión y la pausa son positivas")
+
+
+# ═══════════════════════════════════════════════════
+# APARICIÓN DEL SNIPER
+#
+# Era un escalón (`ascension >= 10` con 6 % fijo) y ahí estaba el muro del
+# juego: hasta la asc 10 un build de daño es intocable, porque todo enemigo
+# tiene que LLEGAR al nexo y los mata de camino, y en la 10 entraba de golpe el
+# único que pega sin llegar — el 84-98 % del daño encajado, medido. Ahora es una
+# rampa desde la asc 4. Estas comprobaciones la fijan para que no se desajuste.
+# ═══════════════════════════════════════════════════
+func _test_sniper() -> void:
+	print("── Aparición del sniper")
+
+	for asc in range(0, ASC.SNIPER_ASC_MINIMA):
+		_eq(ASC.prob_sniper(asc), 0.0, "asc %d → todavía no hay snipers" % asc)
+
+	_eq(ASC.prob_sniper(ASC.SNIPER_ASC_MINIMA), ASC.SNIPER_PROB_INICIAL,
+		"en la asc mínima (%d) arranca en la probabilidad inicial"
+		% ASC.SNIPER_ASC_MINIMA)
+	_eq(ASC.prob_sniper(ASC.SNIPER_ASC_PLENA), ASC.SNIPER_PROB_PLENA,
+		"en la asc plena (%d) alcanza la probabilidad plena"
+		% ASC.SNIPER_ASC_PLENA)
+
+	# La rampa sube sin bajones ni saltos hacia atrás.
+	var monotona := true
+	var anterior := -1.0
+	for asc in range(ASC.SNIPER_ASC_MINIMA, ASC.SNIPER_ASC_PLENA + 1):
+		var p: float = ASC.prob_sniper(asc)
+		if p < anterior:
+			monotona = false
+		anterior = p
+	_ok(monotona, "la rampa no baja en ningún punto entre la asc mínima y la plena")
+
+	# Y se clava arriba: el cambio NO debe endurecer la ascensión alta.
+	for asc in [ASC.SNIPER_ASC_PLENA, 15, 50, 1000]:
+		_eq(ASC.prob_sniper(asc), ASC.SNIPER_PROB_PLENA,
+			"asc %d → se queda en la probabilidad plena, no sigue subiendo" % asc)
+
+	# Invariantes de la curva: si se rompen, la rampa deja de tener sentido.
+	_ok(ASC.SNIPER_ASC_MINIMA < ASC.SNIPER_ASC_PLENA,
+		"la asc mínima es anterior a la plena (si no, la rampa divide por cero)")
+	_ok(ASC.SNIPER_PROB_INICIAL < ASC.SNIPER_PROB_PLENA,
+		"la probabilidad inicial es menor que la plena")
+	_ok(ASC.SNIPER_PROB_INICIAL > 0.0 and ASC.SNIPER_PROB_PLENA <= 1.0,
+		"las dos probabilidades siguen estando en rango")
 
 
 # ═══════════════════════════════════════════════════
